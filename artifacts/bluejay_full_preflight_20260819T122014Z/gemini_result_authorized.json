@@ -1,0 +1,56 @@
+{
+  "auth_probe": {
+    "header_value_not_logged": true,
+    "provider_identity_sanitized": true
+  },
+  "content": "Project Bluejay current state and specifications:\n- Deployment Target: 32 GB RAM (corrected from 24 GB).\n- Database: SQLite is the primary database; Redis was explicitly rejected for V1.\n- Performance Goal: Interactive latency maintained below 100 ms.\n- Lease-Expiry Race & Reproduction: The two-worker out-of-order reproduction succeeded, confirming the lease-expiry race scenario.\n- Conditional Renewal Status: Conditional renewal on capsule generation has been approved for implementation.\n- Lease-Renewal Patch: The existing lease-renewal patch remains temporarily disabled until the conditional renewal implementation is ready.",
+  "credential_persisted": false,
+  "evidence_event_ids": [
+    "evt_e00202734bec4d5fb5e9f7d61811bee1"
+  ],
+  "evidence_ids_subset_valid": true,
+  "model_identity": "fixture-consolidator",
+  "prompt_version": "sanitized-fixture-v1",
+  "request_hash": "5bc00ce353a78d87843d50a39f85802d0ad6ef402bf217f604a7cdb93cc26e47",
+  "request_hash_verified": true,
+  "semantic_checks": {
+    "conditional_renewal_approved": true,
+    "lease_expiry_race_confirmed": true,
+    "old_patch_disabled": true,
+    "ram_32gb": true,
+    "reasoning_marker_absent": true,
+    "redis_rejected_v1": true,
+    "sqlite_primary": true,
+    "sub_100ms_latency": true,
+    "two_worker_reproduction_succeeded": true
+  },
+  "status": "SUCCEEDED",
+  "telemetry": {
+    "canonicalizer_batch_index": null,
+    "created_at": "2026-08-19T12:41:44.252+00:00",
+    "diagnostic_excerpt": null,
+    "endpoint": "https://provider.example/openai",
+    "error": null,
+    "finish_reason": "stop",
+    "generation": null,
+    "generation_settings_json": "{\"reasoning_effort\":\"none\",\"response_format\":{\"json_schema\":{\"name\":\"consolidator_response_v1\",\"schema\":{\"additionalProperties\":false,\"properties\":{\"content\":{\"type\":\"string\"},\"evidence_event_ids\":{\"items\":{\"type\":\"string\"},\"type\":\"array\"}},\"required\":[\"content\",\"evidence_event_ids\"],\"type\":\"object\"},\"strict\":true},\"type\":\"json_schema\"},\"stream\":false,\"temperature\":0,\"top_p\":1}",
+    "id": "run_7b74c1910ad948e6bea72ca6b708ebcf",
+    "input_hash": "9ed80c28d28834d9041c33d3f0b454a8dd541c83c384c2a450d3e5d45df41fd9",
+    "input_tokens": 114100,
+    "job_id": null,
+    "metadata_json": "{\"end_timestamp\":\"2026-08-19T12:41:44.250+00:00\",\"start_timestamp\":\"2026-08-19T12:41:39.782+00:00\",\"stream\":false,\"ttft_ms\":4467.360399998142}",
+    "model": "fixture-consolidator",
+    "output_hash": null,
+    "output_tokens": 184,
+    "pass_name": "consolidator",
+    "prompt_version": "sanitized-fixture-v1",
+    "raw_response_hash": "e37aa7790b56b0c77e5090c78f162fd5e30eb82b631312350bd9ca9827ec9ea5",
+    "reasoning_tokens": 0,
+    "selector_chunk_index": null,
+    "source_refs_json": "[\"evt_5284b197cce14594aa1d2aeb7aefc70f::span::000000\",\"evt_5284b197cce14594aa1d2aeb7aefc70f::span::000001\",\"evt_5284b197cce14594aa1d2aeb7aefc70f::span::000002\",\"evt_36640e174edc497fb8ff4c35fe7f32d7\",\"evt_c39dd3ba1f0e4d4aaec2ea0b4576f782::span::000000\",\"evt_1a4944cbee774f66896e0cfb79edecde\",\"evt_3a401caaf26a49b0ba651bb37a651244\",\"evt_e00202734bec4d5fb5e9f7d61811bee1\",\"evt_ad8158c48b8841ebbc4eacb5b77b1799\",\"evt_da4fff5e13904993ab95d9f6ab720c45::span::000000\",\"evt_da4fff5e13904993ab95d9f6ab720c45::span::000001\",\"evt_e1f6b7ddc640469fb1f6bf05a397f04e\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000000\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000001\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000002\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000003\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000004\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000005\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000006\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000007\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000008\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000009\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000010\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000011\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000012\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000013\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000014\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000015\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000016\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000017\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000018\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000019\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000020\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000021\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000022\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000023\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000024\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000025\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000026\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000027\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000028\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000029\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000030\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000031\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000032\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000033\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000034\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000035\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000036\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000037\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000038\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000039\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000040\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000041\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000042\",\"evt_1561aa292d824ea4b0bc64a5b5611f67::span::000043\",\"evt_dac6e7bac6384ebe9f6248134abdc298\",\"evt_af85498304ad4ad1b067e8da85311ff9\",\"evt_382b4033786340cfa5340d3126a258a2\",\"evt_425a324fdf3c459dbd274d0e761dc5a2\",\"evt_317eaab0dc504d74856254cb49acd254\",\"evt_7e41099cb5854638b58ea7d3993b2c97\"]",
+    "stage": "consolidator",
+    "status": "SUCCEEDED",
+    "thread_id": "thread-1",
+    "wall_ms": 4467.955300002359
+  }
+}

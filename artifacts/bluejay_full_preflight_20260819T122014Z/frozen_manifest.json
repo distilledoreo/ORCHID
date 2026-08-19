@@ -1,0 +1,60 @@
+{
+  "active_capsule_id": "cap_9900875566ad474dba66be920be4abaa",
+  "canonicalization": {
+    "batch_count": 7,
+    "covered_source_ref_count": 62,
+    "mechanical_coverage_order_preserved": true
+  },
+  "canonicalizer_input_budget_tokens": 8192,
+  "canonicalizer_model": "fixture-local-canonicalizer",
+  "consolidator_input": {
+    "input_payload_chars": 65656,
+    "input_payload_sha256": "19cb7a63970d8275b2bd880e1fb20c943b395b6f3225d7598bf725844c755e40",
+    "original_request_body_sha256": "5bc00ce353a78d87843d50a39f85802d0ad6ef402bf217f604a7cdb93cc26e47",
+    "request_body_chars": 71929,
+    "request_body_sha256": "2e313d53f24c0402bc0b3fd869f6f8de532f73068412055d4b45322410470836"
+  },
+  "fixture_status": "public_sanitized_equivalent",
+  "format": "orchid_bluejay_full_preflight_sanitized_v1",
+  "privacy": {
+    "original_specimen_preserved_outside_repository": true,
+    "private_paths_removed": true,
+    "provider_credentials_removed": true,
+    "provider_identities_sanitized": true,
+    "raw_prompts_removed": true,
+    "raw_source_content_removed": true
+  },
+  "selector_chunk_target_tokens": 1200,
+  "selector_context_tokens": 32768,
+  "selector_model": "fixture-local-selector",
+  "selector_result": {
+    "chunk_count": 55,
+    "selected_source_ref_count": 62
+  },
+  "snapshot_end_event_id": "evt_7e41099cb5854638b58ea7d3993b2c97",
+  "snapshot_end_sequence": 32,
+  "snapshot_event_ids": [
+    "evt_5284b197cce14594aa1d2aeb7aefc70f",
+    "evt_36640e174edc497fb8ff4c35fe7f32d7",
+    "evt_c39dd3ba1f0e4d4aaec2ea0b4576f782",
+    "evt_1a4944cbee774f66896e0cfb79edecde",
+    "evt_b1cd1689df8d48dd93186f99936519bd",
+    "evt_3a401caaf26a49b0ba651bb37a651244",
+    "evt_e00202734bec4d5fb5e9f7d61811bee1",
+    "evt_ad8158c48b8841ebbc4eacb5b77b1799",
+    "evt_da4fff5e13904993ab95d9f6ab720c45",
+    "evt_e1f6b7ddc640469fb1f6bf05a397f04e",
+    "evt_1561aa292d824ea4b0bc64a5b5611f67",
+    "evt_dac6e7bac6384ebe9f6248134abdc298",
+    "evt_19957292d37248c1a7f08f7f97f36f49",
+    "evt_af85498304ad4ad1b067e8da85311ff9",
+    "evt_382b4033786340cfa5340d3126a258a2",
+    "evt_425a324fdf3c459dbd274d0e761dc5a2",
+    "evt_317eaab0dc504d74856254cb49acd254",
+    "evt_7e41099cb5854638b58ea7d3993b2c97"
+  ],
+  "snapshot_start_event_id": "evt_5284b197cce14594aa1d2aeb7aefc70f",
+  "snapshot_start_sequence": 15,
+  "source_database": "data/live_test.db (sanitized fixture)",
+  "thread_id": "thread-1"
+}

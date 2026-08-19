@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orchid-memory-gateway"
+version = "0.1.0"
+description = "Local OpenAI-compatible memory gateway with versioned compaction primitives"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115",
+  "httpx>=0.28",
+  "pydantic>=2.10",
+  "uvicorn[standard]>=0.34",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8.3"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.setuptools.packages.find]
+include = ["memory_gateway*"]
