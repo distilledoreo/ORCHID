@@ -25,6 +25,8 @@ The model boundary is deliberately narrow:
 
 Normal events stay whole. Oversized events become deterministic verbatim source spans with parent IDs, character ranges, and hashes. Selector chunks target about 1,200 estimated tokens; canonicalizer batches default to 8,192 estimated input tokens. All three model stages use structured JSON Schema responses.
 
+For the conceptual motivation and design trade-offs, read [Why ORCHID exists](docs/why-orchid-exists.md).
+
 ## Evidence: Bluejay
 
 The generation-9 live lineage test produced the first successful descendant of the preserved Bluejay capsule:
