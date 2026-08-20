@@ -1,0 +1,20 @@
+{
+  "prompt_version": "awake-recall-instruction-v3-qid",
+  "schema_version": "orchid_endurance_recall_v3_qid",
+  "capsule_id": "cap_afb3cc81568144488febf4b4a403ce51",
+  "passed": true,
+  "answers": {
+    "q1": "30 seconds",
+    "q2": "only if recover_expired_jobs is true",
+    "q3": "Undecided",
+    "q4": null,
+    "q5": "Orchid Memory Gateway",
+    "q6": "Disti",
+    "q7": "America/New_York",
+    "q8": "Events are append-only; corrections add a new event",
+    "q9": null,
+    "q10": null,
+    "q11": "oat latte",
+    "q12": "teal"
+  }
+}

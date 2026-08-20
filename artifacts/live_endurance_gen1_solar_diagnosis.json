@@ -1,0 +1,214 @@
+{
+  "frozen_capsule_id": "cap_afb3cc81568144488febf4b4a403ce51",
+  "phase1": {
+    "message_roles": [
+      "system",
+      "system",
+      "user"
+    ],
+    "message_count": 3,
+    "capsule_message_index": 0,
+    "capsule_char_offset_in_concatenated_prompt": 0,
+    "active_capsule_text_in_outbound": true,
+    "lease_seconds_value_30_in_capsule": true,
+    "lease_duration_phrase_in_outbound": true,
+    "recover_conditional_in_capsule": true,
+    "recover_conditional_in_outbound": true,
+    "lease_truncated": false,
+    "conditional_truncated": false,
+    "unrelated_tail_before_capsule": false,
+    "unrelated_tail_after_capsule": true,
+    "raw_tail_event_ids": [
+      "evt_58ce85d1a5ac405485d15eca16bfb2b7",
+      "evt_78763e1dcf634723be5e87e0a9f21b67",
+      "evt_f7c23a1d5c0246a992192c271f78acc5",
+      "evt_8971a5616d0845f199ef5c3ae5ebcaa7",
+      "evt_7f78857884944a18959ec8839ecdd857",
+      "evt_2c135ecd26a446f4b245779203f4e57f"
+    ],
+    "capsule_tokens_estimate": 94,
+    "raw_tail_tokens_estimate": 72,
+    "concatenated_prompt_chars": 1303,
+    "concatenated_prompt_tokens_estimate": 325,
+    "per_message_chars": [
+      505,
+      666,
+      128
+    ],
+    "per_message_tokens_estimate": [
+      126,
+      166,
+      32
+    ],
+    "prompt_sha256": "5c623f72a562bc24c41cbac8ef049517252f7209ff58181ab108a8b646751b91",
+    "body_input_hash": "ffb9c343330fc2b100a7c6674f0afa00c1374b64df45725d7743aee872cfb1d5",
+    "capsule_id": "cap_afb3cc81568144488febf4b4a403ce51",
+    "capsule_chars": 377,
+    "capsule_sha256": "4d4a3c37781ec818248e665268292f9c510f2198d32010b3d26770721f085062",
+    "capsule_text": "Project: Orchid Memory Gateway\nOwner: Disti\nTimezone: America/New_York\nLease Duration: 30 seconds\nDatabase Status: Undecided\nCompaction Generation: Current (1)\nJob Recovery Policy: Expired RUNNING jobs restart only if recover_expired_jobs is true.\nEvent Model: Events are append-only; corrections add a new event.\nPreferences: Coffee order is oat latte; favorite color is teal.",
+    "schema": {
+      "lease_seconds": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "recover_expired_jobs": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "empty_string_permitted": true,
+      "null_permitted": true,
+      "minLength_enforced": false,
+      "user_instruction_allows_null": true
+    },
+    "assembly_ok": true
+  },
+  "phase2": {
+    "A": {
+      "prompt_chars": 1299,
+      "prompt_tokens_estimate": 325,
+      "message_roles": [
+        "system",
+        "system",
+        "user"
+      ],
+      "includes_raw_tail": true,
+      "http_status": 200,
+      "wall_ms": 16688.0,
+      "finish_reason": "stop",
+      "provider_input_tokens": 556,
+      "provider_output_tokens": 123,
+      "raw_response_sha256": "21c84c749e84684514b02e2d9360260e1dcb2d5add59a30c361dd08d4176e8e3",
+      "error_excerpt": null,
+      "score": {
+        "passed": false,
+        "lease_seconds": "",
+        "recover_expired_jobs": "true",
+        "answers": {
+          "project_name": "Orchid Memory Gateway",
+          "owner": "Disti",
+          "timezone": "America/New_York",
+          "lease_seconds": "",
+          "database": "Undecided",
+          "database_rejected": "Undecided",
+          "recover_expired_jobs": "true",
+          "event_model": "append-only",
+          "promotion": "append-only",
+          "backend_model": "append-only",
+          "coffee_order": "oat latte",
+          "favorite_color": "teal"
+        },
+        "probes": [
+          {
+            "name": "awake_recall",
+            "passed": false,
+            "detail": "lease_seconds expected '30' got ''; recover_expired_jobs expected 'expired RUNNING jobs restart only if recover_expired_jobs is true' got 'true'; event_model expected 'events are append-only; corrections add a new event' got 'append-only'"
+          },
+          {
+            "name": "recall_no_invented_state",
+            "passed": false,
+            "detail": "database_rejected=Undecided; promotion=append-only; backend_model=append-only"
+          }
+        ]
+      }
+    },
+    "B": {
+      "prompt_chars": 633,
+      "prompt_tokens_estimate": 158,
+      "message_roles": [
+        "system",
+        "user"
+      ],
+      "includes_raw_tail": false,
+      "http_status": 200,
+      "wall_ms": 9336.3,
+      "finish_reason": "stop",
+      "provider_input_tokens": 242,
+      "provider_output_tokens": 127,
+      "raw_response_sha256": "69c14297924424510fbd651f1f705737dd24dc2cb16dc3838ec24a3f32588e3c",
+      "error_excerpt": null,
+      "score": {
+        "passed": false,
+        "lease_seconds": "",
+        "recover_expired_jobs": "true",
+        "answers": {
+          "project_name": "Orchid Memory Gateway",
+          "owner": "Disti",
+          "timezone": "America/New_York",
+          "lease_seconds": "",
+          "database": "Undecided",
+          "database_rejected": "Undecided",
+          "recover_expired_jobs": "true",
+          "event_model": "append-only",
+          "promotion": "oat latte",
+          "backend_model": "Solar Pro4",
+          "coffee_order": "oat latte",
+          "favorite_color": "teal"
+        },
+        "probes": [
+          {
+            "name": "awake_recall",
+            "passed": false,
+            "detail": "lease_seconds expected '30' got ''; recover_expired_jobs expected 'expired RUNNING jobs restart only if recover_expired_jobs is true' got 'true'; event_model expected 'events are append-only; corrections add a new event' got 'append-only'"
+          },
+          {
+            "name": "recall_no_invented_state",
+            "passed": false,
+            "detail": "database_rejected=Undecided; promotion=oat latte; backend_model=Solar Pro4"
+          }
+        ]
+      }
+    },
+    "C": {
+      "prompt_chars": 796,
+      "prompt_tokens_estimate": 199,
+      "message_roles": [
+        "system",
+        "user"
+      ],
+      "includes_raw_tail": false,
+      "http_status": 200,
+      "wall_ms": 7900.7,
+      "finish_reason": "stop",
+      "provider_input_tokens": 270,
+      "provider_output_tokens": 157,
+      "raw_response_sha256": "4ea80137a64a5b39a2d7440bd3c79e5af16d87383142562d125babc5a39f9d43",
+      "error_excerpt": null,
+      "score": {
+        "passed": false,
+        "lease_seconds": "",
+        "recover_expired_jobs": "Expired RUNNING jobs restart only if recover_expired_jobs is true.",
+        "answers": {
+          "project_name": "Orchid Memory Gateway",
+          "owner": "Disti",
+          "timezone": "America/New_York",
+          "lease_seconds": "",
+          "database": "Undecided",
+          "database_rejected": "Undecided",
+          "recover_expired_jobs": "Expired RUNNING jobs restart only if recover_expired_jobs is true.",
+          "event_model": "Events are append-only; corrections add a new event.",
+          "promotion": "Coffee order is oat latte; favorite color is teal.",
+          "backend_model": "Solar Pro4",
+          "coffee_order": "oat latte",
+          "favorite_color": "teal"
+        },
+        "probes": [
+          {
+            "name": "awake_recall",
+            "passed": false,
+            "detail": "lease_seconds expected '30' got ''"
+          },
+          {
+            "name": "recall_no_invented_state",
+            "passed": false,
+            "detail": "database_rejected=Undecided; promotion=Coffee order is oat latte; favorite color is teal.; backend_model=Solar Pro4"
+          }
+        ]
+      }
+    }
+  },
+  "attribution": "Solar/model extraction limitation on this representation"
+}

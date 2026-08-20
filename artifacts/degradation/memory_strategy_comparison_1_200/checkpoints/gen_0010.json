@@ -1,0 +1,346 @@
+{
+  "generation": 10,
+  "comparison": {
+    "generation": 10,
+    "raw_history_tokens": 2644,
+    "full_raw_resident_tokens": 2644,
+    "traditional_summary_tokens": 114,
+    "traditional_tail_tokens": 76,
+    "traditional_total_resident_tokens": 190,
+    "orchid_active_tokens": 85,
+    "orchid_tail_tokens": 76,
+    "orchid_total_resident_tokens": 161,
+    "traditional_current_fact_loss": true,
+    "orchid_current_fact_loss": false,
+    "traditional_resurrection": 0,
+    "orchid_resurrection": 0,
+    "traditional_invented_state": false,
+    "orchid_invented_state": false,
+    "traditional_residue": 3,
+    "orchid_residue": 1,
+    "orchid_background_input_tokens": 6843,
+    "orchid_background_output_tokens": 747,
+    "traditional_background_input_tokens": 1222,
+    "traditional_background_output_tokens": 103
+  },
+  "awake_recall": {
+    "full_raw": {
+      "generation": 10,
+      "arm": "full_raw",
+      "prompt_estimated_tokens": 4737,
+      "context_limit_tokens": 32768,
+      "fits_context_limit": true,
+      "messages_hash": "45f13f814a636480d358e3ea06977a07a20331f93c20611dc213b4ce24e9c5fa",
+      "status": "completed",
+      "answers": {
+        "q1": "900 seconds",
+        "q2": "expired RUNNING jobs restart only if recover_expired_jobs is true",
+        "q3": "SQLite",
+        "q4": "Yes, Postgres",
+        "q5": "Orchid Memory Gateway",
+        "q6": "Disti",
+        "q7": "America/New_York",
+        "q8": "events are append-only; corrections add a new event",
+        "q9": null,
+        "q10": null,
+        "q11": "oat latte",
+        "q12": "teal"
+      },
+      "answers_hash": "77101dac44aea6f3dd88bdcc2a8c15ee302a2846efe84d9bfdc3e711bfed39d2",
+      "wall_ms": 3529.72389999195,
+      "classification": {
+        "per_question": {
+          "q1": {
+            "status": "correct",
+            "expected": "900",
+            "observed": "900 seconds"
+          },
+          "q2": {
+            "status": "correct",
+            "expected": "recover_expired_jobs",
+            "observed": "expired RUNNING jobs restart only if recover_expired_jobs is true"
+          },
+          "q3": {
+            "status": "correct",
+            "expected": "SQLite",
+            "observed": "SQLite"
+          },
+          "q4": {
+            "status": "correct",
+            "expected": "Postgres",
+            "observed": "Yes, Postgres"
+          },
+          "q5": {
+            "status": "correct",
+            "expected": "Orchid Memory Gateway",
+            "observed": "Orchid Memory Gateway"
+          },
+          "q6": {
+            "status": "correct",
+            "expected": "Disti",
+            "observed": "Disti"
+          },
+          "q7": {
+            "status": "correct",
+            "expected": "America/New_York",
+            "observed": "America/New_York"
+          },
+          "q8": {
+            "status": "correct",
+            "expected": "append-only",
+            "observed": "events are append-only; corrections add a new event"
+          },
+          "q9": {
+            "status": "correct",
+            "expected": null,
+            "observed": null
+          },
+          "q10": {
+            "status": "correct",
+            "expected": null,
+            "observed": null
+          },
+          "q11": {
+            "status": "correct",
+            "expected": "oat latte",
+            "observed": "oat latte"
+          },
+          "q12": {
+            "status": "correct",
+            "expected": "teal",
+            "observed": "teal"
+          }
+        },
+        "correct_count": 12,
+        "missing_count": 0,
+        "stale_count": 0,
+        "invented_count": 0,
+        "score": 1.0
+      },
+      "recall_probes": [
+        {
+          "name": "awake_recall",
+          "passed": true,
+          "detail": "Solar matched still-valid state"
+        },
+        {
+          "name": "recall_no_invented_state",
+          "passed": true,
+          "detail": "no extra recall claims"
+        }
+      ]
+    },
+    "traditional_recursive_summary": {
+      "generation": 10,
+      "arm": "traditional_recursive_summary",
+      "prompt_estimated_tokens": 494,
+      "context_limit_tokens": 32768,
+      "fits_context_limit": true,
+      "messages_hash": "e5ec2febafb65b68cf4e2ea7bdc1e6db79e5cfc6bf280319aa8c399bc2c1720e",
+      "status": "completed",
+      "answers": {
+        "q1": "900 seconds",
+        "q2": "Only if recover_expired_jobs is true",
+        "q3": "SQLite",
+        "q4": "Yes, Postgres was rejected",
+        "q5": "Orchid Memory Gateway",
+        "q6": "Disti",
+        "q7": "America/New_York",
+        "q8": "The event model is append-only with corrections recorded as new events",
+        "q9": null,
+        "q10": null,
+        "q11": "oat latte",
+        "q12": "teal"
+      },
+      "answers_hash": "f3cee3b0b4d6c923e637018f38148fccb6fc2426ba234da4dc58b39ee022e796",
+      "wall_ms": 3940.038300002925,
+      "classification": {
+        "per_question": {
+          "q1": {
+            "status": "correct",
+            "expected": "900",
+            "observed": "900 seconds"
+          },
+          "q2": {
+            "status": "correct",
+            "expected": "recover_expired_jobs",
+            "observed": "Only if recover_expired_jobs is true"
+          },
+          "q3": {
+            "status": "correct",
+            "expected": "SQLite",
+            "observed": "SQLite"
+          },
+          "q4": {
+            "status": "correct",
+            "expected": "Postgres",
+            "observed": "Yes, Postgres was rejected"
+          },
+          "q5": {
+            "status": "correct",
+            "expected": "Orchid Memory Gateway",
+            "observed": "Orchid Memory Gateway"
+          },
+          "q6": {
+            "status": "correct",
+            "expected": "Disti",
+            "observed": "Disti"
+          },
+          "q7": {
+            "status": "correct",
+            "expected": "America/New_York",
+            "observed": "America/New_York"
+          },
+          "q8": {
+            "status": "correct",
+            "expected": "append-only",
+            "observed": "The event model is append-only with corrections recorded as new events"
+          },
+          "q9": {
+            "status": "correct",
+            "expected": null,
+            "observed": null
+          },
+          "q10": {
+            "status": "correct",
+            "expected": null,
+            "observed": null
+          },
+          "q11": {
+            "status": "correct",
+            "expected": "oat latte",
+            "observed": "oat latte"
+          },
+          "q12": {
+            "status": "correct",
+            "expected": "teal",
+            "observed": "teal"
+          }
+        },
+        "correct_count": 12,
+        "missing_count": 0,
+        "stale_count": 0,
+        "invented_count": 0,
+        "score": 1.0
+      },
+      "recall_probes": [
+        {
+          "name": "awake_recall",
+          "passed": true,
+          "detail": "Solar matched still-valid state"
+        },
+        {
+          "name": "recall_no_invented_state",
+          "passed": true,
+          "detail": "no extra recall claims"
+        }
+      ]
+    },
+    "orchid": {
+      "generation": 10,
+      "arm": "orchid",
+      "prompt_estimated_tokens": 465,
+      "context_limit_tokens": 32768,
+      "fits_context_limit": true,
+      "messages_hash": "8c19ac7844939ada0c52c81317a844b1c34fa101eb345eeaee11e57234bc51cd",
+      "status": "completed",
+      "answers": {
+        "q1": "900 seconds",
+        "q2": "Only if recover_expired_jobs is true",
+        "q3": "SQLite",
+        "q4": null,
+        "q5": "Orchid Memory Gateway",
+        "q6": "Disti",
+        "q7": "America/New_York",
+        "q8": "Events are append-only; corrections add a new event",
+        "q9": null,
+        "q10": null,
+        "q11": "oat latte",
+        "q12": "teal"
+      },
+      "answers_hash": "fd373ee7016fcbd26bd7e057f5a3c26e0036db7eee937b0fe08f9c376874b620",
+      "wall_ms": 3699.2805000045337,
+      "classification": {
+        "per_question": {
+          "q1": {
+            "status": "correct",
+            "expected": "900",
+            "observed": "900 seconds"
+          },
+          "q2": {
+            "status": "correct",
+            "expected": "recover_expired_jobs",
+            "observed": "Only if recover_expired_jobs is true"
+          },
+          "q3": {
+            "status": "correct",
+            "expected": "SQLite",
+            "observed": "SQLite"
+          },
+          "q4": {
+            "status": "missing",
+            "expected": "Postgres",
+            "observed": null
+          },
+          "q5": {
+            "status": "correct",
+            "expected": "Orchid Memory Gateway",
+            "observed": "Orchid Memory Gateway"
+          },
+          "q6": {
+            "status": "correct",
+            "expected": "Disti",
+            "observed": "Disti"
+          },
+          "q7": {
+            "status": "correct",
+            "expected": "America/New_York",
+            "observed": "America/New_York"
+          },
+          "q8": {
+            "status": "correct",
+            "expected": "append-only",
+            "observed": "Events are append-only; corrections add a new event"
+          },
+          "q9": {
+            "status": "correct",
+            "expected": null,
+            "observed": null
+          },
+          "q10": {
+            "status": "correct",
+            "expected": null,
+            "observed": null
+          },
+          "q11": {
+            "status": "correct",
+            "expected": "oat latte",
+            "observed": "oat latte"
+          },
+          "q12": {
+            "status": "correct",
+            "expected": "teal",
+            "observed": "teal"
+          }
+        },
+        "correct_count": 11,
+        "missing_count": 1,
+        "stale_count": 0,
+        "invented_count": 0,
+        "score": 0.9166666666666666
+      },
+      "recall_probes": [
+        {
+          "name": "awake_recall",
+          "passed": false,
+          "detail": "q4 expected 'Postgres' got None"
+        },
+        {
+          "name": "recall_no_invented_state",
+          "passed": true,
+          "detail": "no extra recall claims"
+        }
+      ]
+    }
+  }
+}

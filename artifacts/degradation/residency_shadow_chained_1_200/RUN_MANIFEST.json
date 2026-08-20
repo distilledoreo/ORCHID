@@ -1,0 +1,14 @@
+{
+  "experiment_name": "residency_shadow_chained_1_200",
+  "prompt_version": "residency_shadow_v1",
+  "prompt_bundle_hash": "124048d4f7475a2ec70141d8483026ee2d77817b93682ee38a65f0dcac89068c",
+  "gemini_model": "gemini-3.7-flash",
+  "reconstruction_classification": "CANONICALIZER_OUTPUT_VERIFIED logical-input chained replay",
+  "source_dbs": {
+    "generations_1_62": "C:\\Users\\disti\\orchid_memory_gateway_v1\\data\\live_endurance_degradation.db",
+    "generations_63_200": "C:\\Users\\disti\\orchid_memory_gateway_v1\\data\\live_endurance_protocol_hardened.db"
+  },
+  "planned_generations": 200,
+  "start_timestamp": "2026-08-19T23:01:25.991394+00:00",
+  "run_id": "837af973-1ce6-4d95-82c8-4c788e868fee"
+}

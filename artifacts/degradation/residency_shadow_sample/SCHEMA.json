@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "residency_shadow_v1_response",
+  "type": "object",
+  "properties": {
+    "active": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["content", "evidence_refs"],
+      "additionalProperties": false
+    },
+    "retire": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "memory": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": ["memory", "evidence_refs", "reason"],
+        "additionalProperties": false
+      }
+    },
+    "raw_only": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": ["description", "evidence_refs", "reason"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["active", "retire", "raw_only"],
+  "additionalProperties": false
+}

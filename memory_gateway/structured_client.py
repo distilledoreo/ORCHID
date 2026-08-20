@@ -126,7 +126,7 @@ class OpenAICompatStructuredClient:
         settings.setdefault("top_p", 1)
         settings["stream"] = stream
         if self.response_format is not None:
-            settings.setdefault("response_format", self.response_format)
+            settings["response_format"] = self.response_format
         body = {
             "model": self.model,
             "messages": [
@@ -414,6 +414,7 @@ class OpenAICompatStructuredClient:
                     "end_timestamp": telemetry.get("end_timestamp"),
                     "ttft_ms": telemetry.get("ttft_ms"),
                     "stream": telemetry.get("stream"),
+                    "transport_attempt": getattr(self, "_transport_attempt", 1),
                 },
             }
         )

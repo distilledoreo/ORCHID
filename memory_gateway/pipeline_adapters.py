@@ -49,6 +49,32 @@ SELECTOR_RESPONSE_FORMAT: dict[str, Any] = {
     },
 }
 
+
+def selector_response_format_for_chunk(allowed_ids: tuple[str, ...] | list[str]) -> dict[str, Any]:
+    """Build a per-chunk selector schema that only permits exact in-chunk source IDs."""
+
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "selector_response_v1",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": list(allowed_ids),
+                        },
+                    },
+                },
+                "required": ["selected_event_ids"],
+                "additionalProperties": False,
+            },
+        },
+    }
+
 CANONICALIZER_RESPONSE_FORMAT: dict[str, Any] = {
     "type": "json_schema",
     "json_schema": {
@@ -210,19 +236,21 @@ class OpenAICompatSelectorEngine:
             source_items = tuple(events)
         chunks = _chunk_events(list(source_items), target_tokens=self.chunk_target_tokens)
         for chunk_index, chunk in enumerate(chunks):
+            chunk_ids = [event.id for event in chunk]
             chunk_payload = {
                 "events": [_event_payload(event) for event in chunk],
-                "event_ids_in_order": [event.id for event in chunk],
-                "source_ids_in_order": [event.id for event in chunk],
+                "event_ids_in_order": chunk_ids,
+                "source_ids_in_order": chunk_ids,
             }
             try:
                 _set_call_context(
                     self.client,
                     stage="selector",
-                    source_refs=tuple(event.id for event in chunk),
+                    source_refs=tuple(chunk_ids),
                     selector_chunk_index=chunk_index,
                 )
                 _check_call_ownership(self.client)
+                self.client.response_format = selector_response_format_for_chunk(chunk_ids)
                 response = await self.client.complete_json(chunk_payload)
                 _check_call_ownership(self.client)
                 _require_exact_response_keys(
