@@ -1,0 +1,51 @@
+{
+  "status": "preflight_failed_compaction_provider_timeout",
+  "provider": "OpenRouter/upstage/solar-pro4",
+  "workspace": "fresh sealed FreetoShop historical baseline copy",
+  "orchid_database": "C:\\Users\\disti\\benchmark_work\\operability_preflight_20260820\\orchid-memory.db",
+  "control_messages": "disabled; no synthetic follow-up messages were sent",
+  "observed_run_span_seconds": 2600.359,
+  "configured_wall_limit_seconds": 2700,
+  "rpc": {
+    "assistant_message_end": 185,
+    "tool_calls": 122,
+    "tool_failures": 0,
+    "turn_starts": 63,
+    "turn_ends": 62,
+    "provider_error_events": 1
+  },
+  "stream_runs": {
+    "succeeded": 61,
+    "failed": 1,
+    "provider_error_frame_failures": 1,
+    "left_provider_started_by_harness_stop": 1,
+    "next_requests_after_live_failure_succeeded": 2
+  },
+  "event_ingestion": {
+    "events": 186,
+    "message_hash_events": 185,
+    "unique_message_hashes": 185,
+    "duplicate_message_hashes": 0,
+    "stored_tokens": 120234
+  },
+  "compaction": {
+    "jobs_total": 3,
+    "failed_jobs": 2,
+    "running_at_stop": 1,
+    "promotions": 0,
+    "active_capsules": 0,
+    "failure": "canonicalizer stage timed out twice after 180 seconds"
+  },
+  "criteria": {
+    "stream_continuity_after_observed_provider_error": true,
+    "bounded_scheduler_work": true,
+    "unique_event_ingestion": true,
+    "repeated_active_promotions": false,
+    "backlog_catchup": false,
+    "awake_context_collapse": false,
+    "dense_production_injection": false,
+    "manual_coding_agent_rescue": false
+  },
+  "stop_reason": "controller wall-clock limit; controller cleanup hung after abort and known preflight child processes were terminated without restart or work repair",
+  "ready_for_full_ab_rerun": false
+}

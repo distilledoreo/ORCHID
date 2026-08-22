@@ -1,0 +1,22 @@
+{
+  "candidate_limit": 20,
+  "corpus_sizes": [
+    25,
+    100,
+    200
+  ],
+  "corpus_sizes_description": "anchor durable memories plus unrelated lexical distractors",
+  "includes_awake_llm": false,
+  "iterations": 20,
+  "max_injected": 3,
+  "minimum_score": 0.35,
+  "phase": "cold_memory_phase1_1_decision_audit",
+  "project_id": "phase1-project",
+  "query_forensics": true,
+  "thread_id": "phase1-thread",
+  "threshold_tuning_performed": false,
+  "timeout_ms": 50,
+  "token_budget": 512,
+  "warmup": 5,
+  "warmups_excluded_from_latency_samples": true
+}

@@ -1,0 +1,19 @@
+{
+  "arm": "RECURSIVE_RAW_SOLAR_PLAIN_TEXT",
+  "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+  "semantic_oracle_manifest_sha256": "8fb7696c32206bb156f725e1dec2ca04f42ed97fe2dda2dde275c1b812931add",
+  "batch_plan_hash": "30268cde0a16f05d0ef55337f1c774f3cc7ae6b6cd60dd76aff0e9e390083e17",
+  "solar_endpoint": "https://openrouter.ai/api",
+  "solar_model": "upstage/solar-pro4",
+  "solar_timeout_seconds": 180.0,
+  "generation": {
+    "temperature": 0,
+    "top_p": 1,
+    "stream": false,
+    "reasoning_effort": "none"
+  },
+  "response_format": null,
+  "plain_text_capsule": true,
+  "recursive_base_capsule": true,
+  "capture_note": "A post-timeout harness bug issued one additional raw record; it is retained in raw telemetry but excluded from the primary prefix."
+}

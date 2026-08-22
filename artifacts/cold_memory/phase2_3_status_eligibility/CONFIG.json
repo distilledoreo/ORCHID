@@ -1,0 +1,40 @@
+{
+  "active_memory_count": 100,
+  "base_corpus": "artifacts\\cold_memory\\phase2_1_abstention_calibration\\QUERY_CORPUS.jsonl",
+  "base_corpus_sha256": "cbcaa9ea29a3c0b93c504f678e66331675f832eb7cce7acfca1467db39856541",
+  "calibration_count": 176,
+  "corpus_size": 100,
+  "dense_production_injection": false,
+  "expanded_corpus": "artifacts\\cold_memory\\phase2_3_status_eligibility\\QUERY_CORPUS.jsonl",
+  "expanded_corpus_sha256": "1c535234a3374e2b705b3501980151711bd11ee8220b8447db6ec10e0a73be0b",
+  "external_guardrail_count": 18,
+  "fts_unchanged": true,
+  "holdout_count": 300,
+  "hot_path_state_unchanged": true,
+  "iterations": 5,
+  "memory_count": 105,
+  "model_id": "sentence-transformers/all-MiniLM-L12-v2",
+  "model_revision": "a50ef00143b4d5391434df20ae11632588ac25be",
+  "output_root": "artifacts\\cold_memory\\phase2_3_status_eligibility",
+  "phase": "2.3",
+  "query_count": 494,
+  "semantic_query_count": 476,
+  "status_calibration_count": 25,
+  "status_policy": {
+    "explicit": [
+      "ACTIVE",
+      "SUPERSEDED"
+    ],
+    "implicit": [
+      "ACTIVE"
+    ],
+    "scope": {
+      "project_id": "phase1-project",
+      "thread_id": "phase1-thread"
+    }
+  },
+  "superseded_memory_count": 5,
+  "target_accept_precision": 0.99,
+  "top_k": 5,
+  "warmup": 2
+}

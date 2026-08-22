@@ -12,6 +12,7 @@ import pytest
 from memory_gateway.compaction import (
     CompactionWorker,
     Event,
+    RetireMemory,
     SourceSpan,
     compute_input_hash,
     expand_source_items,
@@ -36,6 +37,7 @@ from memory_gateway.pipeline_adapters import (
     OpenAICompatConsolidatorEngine,
     OpenAICompatSelectorEngine,
     SELECTOR_RESPONSE_FORMAT,
+    canonicalizer_response_format_for_batch,
     _chunk_events,
     _event_payload,
     selector_response_format_for_chunk,
@@ -566,6 +568,17 @@ def test_lossless_pipeline_moves_authoritative_data_in_software() -> None:
         "event-2",
     )
     assert result.output_hash == sha256(b"rendered capsule").hexdigest()
+    assert engine.last_telemetry is not None
+    assert engine.last_telemetry["status"] == "SUCCEEDED"
+    assert engine.last_telemetry["source_event_count"] == 2
+    assert engine.last_telemetry["source_tokens"] == sum(
+        estimate_tokens(item.content) for item in (event("event-1", 1), event("event-2", 2))
+    )
+    assert engine.last_telemetry["source_tokens_per_second"] > 0
+    assert engine.last_telemetry["selector"]["status"] == "SUCCEEDED"
+    assert engine.last_telemetry["canonicalizer"]["status"] == "SUCCEEDED"
+    assert engine.last_telemetry["consolidator"]["status"] == "SUCCEEDED"
+    assert engine.last_telemetry["validation_ms"] >= 0
 
 
 def test_concrete_stage_adapters_keep_distinct_output_contracts() -> None:
@@ -603,8 +616,22 @@ def test_concrete_stage_adapters_keep_distinct_output_contracts() -> None:
         "selected_event_ids"
     ]["items"]["enum"]
     assert selector_enum == ["event-1", "event-2"]
-    assert canonicalizer_client.response_format == CANONICALIZER_RESPONSE_FORMAT
+    assert canonicalizer_client.response_format["json_schema"]["name"] == "canonicalizer_response_v1"
+    assert canonicalizer_client.response_format["json_schema"]["schema"]["properties"][
+        "cited_source_refs"
+    ]["items"]["enum"] == ["event-2"]
     assert consolidator_client.response_format == CONSOLIDATOR_RESPONSE_FORMAT
+
+
+def test_canonicalizer_response_format_allows_only_exact_batch_ids() -> None:
+    schema = canonicalizer_response_format_for_batch(
+        ["evt_a::span::000000", "evt_a::span::000001"]
+    )
+    enum = schema["json_schema"]["schema"]["properties"]["cited_source_refs"]["items"][
+        "enum"
+    ]
+    assert enum == ["evt_a::span::000000", "evt_a::span::000001"]
+    assert "evt_a" not in enum
 
 
 def test_consolidator_schema_is_strict_and_requires_both_fields() -> None:
@@ -617,6 +644,32 @@ def test_consolidator_schema_is_strict_and_requires_both_fields() -> None:
             "evidence_event_ids": {
                 "type": "array",
                 "items": {"type": "string"},
+            },
+            "retire": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "content": {"type": "string"},
+                        "memory_type": {"type": "string"},
+                        "importance": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1,
+                        },
+                        "evidence_event_ids": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                    },
+                    "required": [
+                        "content",
+                        "memory_type",
+                        "importance",
+                        "evidence_event_ids",
+                    ],
+                    "additionalProperties": False,
+                },
             },
         },
         "required": ["content", "evidence_event_ids"],
@@ -642,6 +695,43 @@ def test_consolidator_accepts_semantic_citation_subset() -> None:
     )
 
     assert result.evidence_event_ids == ("event-2",)
+
+
+def test_consolidator_accepts_optional_retire_memories() -> None:
+    events = [event("event-1", 1)]
+    canonical_result = asyncio.run(Canonicalizer().canonicalize(events=events))
+    client = StructuredClient(
+        {
+            "content": "rendered",
+            "evidence_event_ids": ["event-1"],
+            "retire": [
+                {
+                    "content": "renew_lease must verify worker ownership",
+                    "memory_type": "decision",
+                    "importance": 0.9,
+                    "evidence_event_ids": ["event-1"],
+                }
+            ],
+        }
+    )
+
+    result = asyncio.run(
+        OpenAICompatConsolidatorEngine(client).consolidate(
+            base_capsule=None,
+            events=events,
+            snapshot_end_event_id="event-1",
+            packet=build_lossless_packet(canonical_result, events),
+        )
+    )
+
+    assert result.retire_memories == (
+        RetireMemory(
+            content="renew_lease must verify worker ownership",
+            memory_type="decision",
+            importance=0.9,
+            evidence_event_ids=("event-1",),
+        ),
+    )
 
 
 @pytest.mark.parametrize(

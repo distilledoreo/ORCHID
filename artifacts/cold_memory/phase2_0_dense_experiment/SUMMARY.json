@@ -1,0 +1,246 @@
+{
+  "config": {
+    "case_counts": {
+      "frozen_semantic": 5,
+      "hard_negatives": 15,
+      "lexical_guardrail": 18,
+      "paraphrase_holdout": 15
+    },
+    "corpus_size": 100,
+    "decision_gate": {
+      "max_dense_query_p95_ms": 20.0,
+      "max_negative_false_would_inject_rate": 0.1,
+      "minimum_frozen_incremental_injection_recoveries": 1,
+      "minimum_frozen_incremental_recoveries": 1
+    },
+    "dense_measurement_threshold": 0.5,
+    "dense_production_injection": false,
+    "dense_top_k": 5,
+    "fts_policy": "phase1_2_calibrated",
+    "fts_unchanged": true,
+    "iterations": 10,
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "output_root": "artifacts\\cold_memory\\phase2_0_dense_experiment",
+    "phase": "2.0",
+    "warmup": 2
+  },
+  "corpus": {
+    "anchor_count": 14,
+    "distractor_count": 86,
+    "memory_count": 100,
+    "project_id": "phase1-project",
+    "source": "tests/cold_memory_phase1_benchmark.py::_corpus",
+    "status_filter": "ACTIVE",
+    "thread_id": "phase1-thread"
+  },
+  "frozen_semantic_injection_recoveries": 0,
+  "frozen_semantic_recoveries": 2,
+  "hot_path_impact": {
+    "active_mutation_by_experiment": false,
+    "event_append_by_experiment": false,
+    "gateway_dense_enabled": false,
+    "production_dense_injection_count": 0,
+    "state_after": {
+      "active_capsule_ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "active_memory_count": 100,
+      "active_memory_ids_sha256": "618a1563d0fe44141a77a120782525573bbadce252c362315564abc87dcee799",
+      "event_count": 100,
+      "event_ids_sha256": "4a9ad3578619049adae68ab85a6f8b76bf214cbb50dcda576613cf1b034c0693"
+    },
+    "state_before": {
+      "active_capsule_ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "active_memory_count": 100,
+      "active_memory_ids_sha256": "618a1563d0fe44141a77a120782525573bbadce252c362315564abc87dcee799",
+      "event_count": 100,
+      "event_ids_sha256": "4a9ad3578619049adae68ab85a6f8b76bf214cbb50dcda576613cf1b034c0693"
+    },
+    "state_unchanged": true
+  },
+  "latency": {
+    "dense_query_ms": {
+      "count": 350,
+      "max": 4.3795,
+      "mean": 3.333844,
+      "p50": 3.3323,
+      "p95": 3.8498,
+      "p99": 4.0492
+    },
+    "fts_ms": {
+      "count": 350,
+      "max": 3.8652,
+      "mean": 0.592019,
+      "p50": 0.5157,
+      "p95": 0.9425,
+      "p99": 1.1285
+    },
+    "fts_total_ms": {
+      "count": 350,
+      "max": 11.1539,
+      "mean": 2.58093,
+      "p50": 2.2264,
+      "p95": 4.5291,
+      "p99": 7.5743
+    },
+    "iterations": 10,
+    "sample_count": 350,
+    "warmup_iterations": 2
+  },
+  "model": {
+    "embedding_dimension": 384,
+    "max_length": 256,
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "model_path": "artifacts\\cold_memory\\phase2_0_dense_experiment\\model\\model.onnx",
+    "model_sha256": "6fd5d72fe4589f189f8ebc006442dbb529bb7ce38f8082112682524616046452",
+    "pooling": "attention_mask_mean_then_l2_normalize",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "similarity": "cosine_dot_product",
+    "source": {
+      "repo_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "source_files": {
+        "onnx/model.onnx": "artifacts\\cold_memory\\phase2_0_dense_experiment\\model\\model.onnx",
+        "tokenizer.json": "artifacts\\cold_memory\\phase2_0_dense_experiment\\model\\tokenizer.json"
+      }
+    },
+    "tokenizer_path": "artifacts\\cold_memory\\phase2_0_dense_experiment\\model\\tokenizer.json",
+    "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037"
+  },
+  "quality": {
+    "frozen_semantic": {
+      "failure_categories": {
+        "dense_measurement_threshold_issue": 1,
+        "dense_ranking_issue": 1,
+        "no_semantic_match_likely_encoder_gap": 3
+      },
+      "false_positive_candidate_rate": 0.92,
+      "false_would_inject_query_rate": 0.0,
+      "fts_recall_at_1": 0.0,
+      "fts_recall_at_5": 0.0,
+      "fts_would_inject_expected_rate": 0.0,
+      "incremental_semantic_injection_recovery_rate": 0.0,
+      "incremental_semantic_recovery_rate": 0.4,
+      "measurement_would_inject_rate": 0.0,
+      "mrr": 0.3,
+      "name": "frozen_semantic",
+      "negative_candidate_rate": 0.0,
+      "negative_false_would_inject_rate": 0.0,
+      "negative_query_count": 0,
+      "positive_query_count": 5,
+      "query_count": 5,
+      "query_latency_ms": {
+        "count": 5,
+        "max": 4.6636,
+        "mean": 3.78164,
+        "p50": 3.57,
+        "p95": 4.0406,
+        "p99": 4.0406
+      },
+      "recall_at_1": 0.2,
+      "recall_at_3": 0.4,
+      "recall_at_5": 0.4,
+      "zero_candidate_rate": 0.0
+    },
+    "hard_negatives": {
+      "failure_categories": {
+        "dense_candidate_without_abstention": 14,
+        "dense_false_injection": 1
+      },
+      "false_positive_candidate_rate": 1.0,
+      "false_would_inject_query_rate": 0.066667,
+      "fts_recall_at_1": 0.0,
+      "fts_recall_at_5": 0.0,
+      "fts_would_inject_expected_rate": 0.0,
+      "incremental_semantic_injection_recovery_rate": 0.0,
+      "incremental_semantic_recovery_rate": 0.0,
+      "measurement_would_inject_rate": 0.066667,
+      "mrr": 0.0,
+      "name": "hard_negatives",
+      "negative_candidate_rate": 1.0,
+      "negative_false_would_inject_rate": 0.066667,
+      "negative_query_count": 15,
+      "positive_query_count": 0,
+      "query_count": 15,
+      "query_latency_ms": {
+        "count": 15,
+        "max": 3.6621,
+        "mean": 3.323047,
+        "p50": 3.338,
+        "p95": 3.6429,
+        "p99": 3.6429
+      },
+      "recall_at_1": 0.0,
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "zero_candidate_rate": 0.0
+    },
+    "lexical_guardrail": {
+      "failure_categories": {
+        "dense_candidate_without_abstention": 3,
+        "dense_measurement_threshold_issue": 2,
+        "dense_ranking_issue": 1
+      },
+      "false_positive_candidate_rate": 0.833333,
+      "false_would_inject_query_rate": 0.0,
+      "fts_recall_at_1": 1.0,
+      "fts_recall_at_5": 1.0,
+      "fts_would_inject_expected_rate": 1.0,
+      "incremental_semantic_injection_recovery_rate": 0.0,
+      "incremental_semantic_recovery_rate": 0.0,
+      "measurement_would_inject_rate": 0.666667,
+      "mrr": 0.966667,
+      "name": "lexical_guardrail",
+      "negative_candidate_rate": 1.0,
+      "negative_false_would_inject_rate": 0.0,
+      "negative_query_count": 3,
+      "positive_query_count": 15,
+      "query_count": 18,
+      "query_latency_ms": {
+        "count": 18,
+        "max": 5.0084,
+        "mean": 3.886194,
+        "p50": 3.9145,
+        "p95": 4.6997,
+        "p99": 4.6997
+      },
+      "recall_at_1": 0.933333,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "zero_candidate_rate": 0.0
+    },
+    "paraphrase_holdout": {
+      "failure_categories": {
+        "dense_measurement_threshold_issue": 8,
+        "dense_ranking_issue": 6,
+        "no_semantic_match_likely_encoder_gap": 1
+      },
+      "false_positive_candidate_rate": 0.813333,
+      "false_would_inject_query_rate": 0.0,
+      "fts_recall_at_1": 0.4,
+      "fts_recall_at_5": 0.6,
+      "fts_would_inject_expected_rate": 0.2,
+      "incremental_semantic_injection_recovery_rate": 0.0,
+      "incremental_semantic_recovery_rate": 0.733333,
+      "measurement_would_inject_rate": 0.0,
+      "mrr": 0.722222,
+      "name": "paraphrase_holdout",
+      "negative_candidate_rate": 0.0,
+      "negative_false_would_inject_rate": 0.0,
+      "negative_query_count": 0,
+      "positive_query_count": 15,
+      "query_count": 15,
+      "query_latency_ms": {
+        "count": 15,
+        "max": 4.2526,
+        "mean": 3.5001,
+        "p50": 3.4667,
+        "p95": 4.0753,
+        "p99": 4.0753
+      },
+      "recall_at_1": 0.533333,
+      "recall_at_3": 0.933333,
+      "recall_at_5": 0.933333,
+      "zero_candidate_rate": 0.0
+    }
+  }
+}

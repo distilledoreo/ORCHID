@@ -1,0 +1,7 @@
+{
+  "manual_intervention": false,
+  "promotions": 0,
+  "reason": "No candidate completed the frozen trace with zero semantic failures and throughput above 75 source tok/s.",
+  "status": "NOT_AUTHORIZED",
+  "stream_continuity": "NOT_RUN"
+}

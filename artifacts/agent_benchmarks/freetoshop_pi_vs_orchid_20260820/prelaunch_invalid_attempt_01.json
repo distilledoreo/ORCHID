@@ -1,0 +1,10 @@
+{
+  "status": "invalid_not_counted",
+  "started_at": "2026-08-20T16:45:20Z",
+  "stopped_at": "2026-08-20T16:46Z",
+  "reason": "ORCHID Arm B custom provider used a dummy bearer token; ORCHID forwarded it and OpenRouter returned 401 Missing Authentication header.",
+  "agent_work_started": true,
+  "agent_repository_changes_observed": "none; both arms remained at their sealed baseline plus BENCHMARK_GOAL.md",
+  "benchmark_outcome": "discarded before meaningful work; no score or duration result",
+  "correction": "Arm B now resolves apiKey from OPENROUTER_API_KEY so both arms send the same provider credential. A new ORCHID database and new session directories will be used."
+}

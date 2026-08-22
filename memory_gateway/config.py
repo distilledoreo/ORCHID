@@ -66,6 +66,14 @@ class RuntimeConfig:
     lease_seconds: int = 900
     lease_renewal_seconds: float = 30.0
     recover_expired_jobs: bool = False
+    cold_memory_mode: str = "off"
+    cold_memory_candidate_limit: int = 20
+    cold_memory_timeout_ms: int = 50
+    cold_memory_token_budget: int = 512
+    cold_memory_max_injected: int = 3
+    cold_memory_telemetry_queue_size: int = 256
+    cold_memory_telemetry_batch_size: int = 32
+    cold_memory_telemetry_flush_ms: int = 5
 
     @classmethod
     def from_env(
@@ -81,6 +89,9 @@ class RuntimeConfig:
                 "ORCHID_LEASE_RENEWAL_SECONDS must be positive and shorter "
                 "than ORCHID_LEASE_SECONDS"
             )
+        cold_memory_mode = (_env("ORCHID_COLD_MEMORY_MODE", "off") or "off").lower()
+        if cold_memory_mode not in {"off", "shadow", "inject"}:
+            raise ValueError("ORCHID_COLD_MEMORY_MODE must be off, shadow, or inject")
         return cls(
             db_path=db_path or _env("ORCHID_DB", "./data/memory.db"),
             backend_url=(backend_url or _env("ORCHID_BACKEND_URL", "http://127.0.0.1:1234")).rstrip("/"),
@@ -108,6 +119,22 @@ class RuntimeConfig:
             lease_seconds=lease_seconds,
             lease_renewal_seconds=lease_renewal_seconds,
             recover_expired_jobs=_bool_env("ORCHID_RECOVER_EXPIRED_JOBS", False),
+            cold_memory_mode=cold_memory_mode,
+            cold_memory_candidate_limit=_int_env(
+                "ORCHID_COLD_MEMORY_CANDIDATE_LIMIT", 20
+            ),
+            cold_memory_timeout_ms=_int_env("ORCHID_COLD_MEMORY_TIMEOUT_MS", 50),
+            cold_memory_token_budget=_int_env("ORCHID_COLD_MEMORY_TOKEN_BUDGET", 512),
+            cold_memory_max_injected=_int_env("ORCHID_COLD_MEMORY_MAX_INJECTED", 3),
+            cold_memory_telemetry_queue_size=_int_env(
+                "ORCHID_COLD_MEMORY_TELEMETRY_QUEUE_SIZE", 256
+            ),
+            cold_memory_telemetry_batch_size=_int_env(
+                "ORCHID_COLD_MEMORY_TELEMETRY_BATCH_SIZE", 32
+            ),
+            cold_memory_telemetry_flush_ms=_int_env(
+                "ORCHID_COLD_MEMORY_TELEMETRY_FLUSH_MS", 5
+            ),
         )
 
     @property

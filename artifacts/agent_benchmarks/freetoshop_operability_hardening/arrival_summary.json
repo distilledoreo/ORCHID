@@ -1,0 +1,1208 @@
+{
+  "trace": [
+    {
+      "timestamp": "2026-08-20T16:49:05.673+00:00",
+      "tokens": 696,
+      "role": "developer",
+      "event_id": "replay_evt_000001"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:05.673+00:00",
+      "tokens": 3919,
+      "role": "user",
+      "event_id": "replay_evt_000002"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:10.486+00:00",
+      "tokens": 147,
+      "role": "assistant",
+      "event_id": "replay_evt_000003"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:10.720+00:00",
+      "tokens": 1125,
+      "role": "tool",
+      "event_id": "replay_evt_000004"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:10.720+00:00",
+      "tokens": 788,
+      "role": "tool",
+      "event_id": "replay_evt_000005"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:23.397+00:00",
+      "tokens": 187,
+      "role": "assistant",
+      "event_id": "replay_evt_000006"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:23.756+00:00",
+      "tokens": 1606,
+      "role": "tool",
+      "event_id": "replay_evt_000007"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:23.756+00:00",
+      "tokens": 399,
+      "role": "tool",
+      "event_id": "replay_evt_000008"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:43.291+00:00",
+      "tokens": 197,
+      "role": "assistant",
+      "event_id": "replay_evt_000009"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:43.337+00:00",
+      "tokens": 1769,
+      "role": "tool",
+      "event_id": "replay_evt_000010"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:43.337+00:00",
+      "tokens": 1836,
+      "role": "tool",
+      "event_id": "replay_evt_000011"
+    },
+    {
+      "timestamp": "2026-08-20T16:49:43.337+00:00",
+      "tokens": 1071,
+      "role": "tool",
+      "event_id": "replay_evt_000012"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:07.096+00:00",
+      "tokens": 198,
+      "role": "assistant",
+      "event_id": "replay_evt_000013"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:07.132+00:00",
+      "tokens": 788,
+      "role": "tool",
+      "event_id": "replay_evt_000014"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:07.132+00:00",
+      "tokens": 805,
+      "role": "tool",
+      "event_id": "replay_evt_000015"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:07.132+00:00",
+      "tokens": 13521,
+      "role": "tool",
+      "event_id": "replay_evt_000016"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:45.041+00:00",
+      "tokens": 215,
+      "role": "assistant",
+      "event_id": "replay_evt_000017"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:45.100+00:00",
+      "tokens": 393,
+      "role": "tool",
+      "event_id": "replay_evt_000018"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:45.100+00:00",
+      "tokens": 1055,
+      "role": "tool",
+      "event_id": "replay_evt_000019"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:45.100+00:00",
+      "tokens": 716,
+      "role": "tool",
+      "event_id": "replay_evt_000020"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:53.232+00:00",
+      "tokens": 194,
+      "role": "assistant",
+      "event_id": "replay_evt_000021"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:53.395+00:00",
+      "tokens": 234,
+      "role": "tool",
+      "event_id": "replay_evt_000022"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:53.395+00:00",
+      "tokens": 878,
+      "role": "tool",
+      "event_id": "replay_evt_000023"
+    },
+    {
+      "timestamp": "2026-08-20T16:50:53.395+00:00",
+      "tokens": 74,
+      "role": "tool",
+      "event_id": "replay_evt_000024"
+    },
+    {
+      "timestamp": "2026-08-20T16:51:11.852+00:00",
+      "tokens": 216,
+      "role": "assistant",
+      "event_id": "replay_evt_000025"
+    },
+    {
+      "timestamp": "2026-08-20T16:51:11.897+00:00",
+      "tokens": 1218,
+      "role": "tool",
+      "event_id": "replay_evt_000026"
+    },
+    {
+      "timestamp": "2026-08-20T16:51:11.897+00:00",
+      "tokens": 1076,
+      "role": "tool",
+      "event_id": "replay_evt_000027"
+    },
+    {
+      "timestamp": "2026-08-20T16:51:11.897+00:00",
+      "tokens": 124,
+      "role": "tool",
+      "event_id": "replay_evt_000028"
+    },
+    {
+      "timestamp": "2026-08-20T16:51:49.622+00:00",
+      "tokens": 226,
+      "role": "assistant",
+      "event_id": "replay_evt_000029"
+    },
+    {
+      "timestamp": "2026-08-20T16:51:49.659+00:00",
+      "tokens": 805,
+      "role": "tool",
+      "event_id": "replay_evt_000030"
+    },
+    {
+      "timestamp": "2026-08-20T16:52:08.020+00:00",
+      "tokens": 388,
+      "role": "assistant",
+      "event_id": "replay_evt_000031"
+    },
+    {
+      "timestamp": "2026-08-20T16:52:08.057+00:00",
+      "tokens": 360,
+      "role": "tool",
+      "event_id": "replay_evt_000032"
+    },
+    {
+      "timestamp": "2026-08-20T16:52:27.501+00:00",
+      "tokens": 356,
+      "role": "assistant",
+      "event_id": "replay_evt_000033"
+    },
+    {
+      "timestamp": "2026-08-20T16:52:27.540+00:00",
+      "tokens": 54,
+      "role": "tool",
+      "event_id": "replay_evt_000034"
+    },
+    {
+      "timestamp": "2026-08-20T16:52:50.231+00:00",
+      "tokens": 151,
+      "role": "assistant",
+      "event_id": "replay_evt_000035"
+    },
+    {
+      "timestamp": "2026-08-20T16:52:50.271+00:00",
+      "tokens": 54,
+      "role": "tool",
+      "event_id": "replay_evt_000036"
+    },
+    {
+      "timestamp": "2026-08-20T16:53:05.084+00:00",
+      "tokens": 67,
+      "role": "assistant",
+      "event_id": "replay_evt_000037"
+    },
+    {
+      "timestamp": "2026-08-20T16:53:05.123+00:00",
+      "tokens": 1005,
+      "role": "tool",
+      "event_id": "replay_evt_000038"
+    },
+    {
+      "timestamp": "2026-08-20T16:53:35.649+00:00",
+      "tokens": 223,
+      "role": "assistant",
+      "event_id": "replay_evt_000039"
+    },
+    {
+      "timestamp": "2026-08-20T16:53:35.691+00:00",
+      "tokens": 55,
+      "role": "tool",
+      "event_id": "replay_evt_000040"
+    },
+    {
+      "timestamp": "2026-08-20T16:53:56.784+00:00",
+      "tokens": 86,
+      "role": "assistant",
+      "event_id": "replay_evt_000041"
+    },
+    {
+      "timestamp": "2026-08-20T16:53:56.830+00:00",
+      "tokens": 1076,
+      "role": "tool",
+      "event_id": "replay_evt_000042"
+    },
+    {
+      "timestamp": "2026-08-20T16:54:35.250+00:00",
+      "tokens": 237,
+      "role": "assistant",
+      "event_id": "replay_evt_000043"
+    },
+    {
+      "timestamp": "2026-08-20T16:54:35.294+00:00",
+      "tokens": 55,
+      "role": "tool",
+      "event_id": "replay_evt_000044"
+    },
+    {
+      "timestamp": "2026-08-20T16:54:42.151+00:00",
+      "tokens": 68,
+      "role": "assistant",
+      "event_id": "replay_evt_000045"
+    },
+    {
+      "timestamp": "2026-08-20T16:54:42.198+00:00",
+      "tokens": 1135,
+      "role": "tool",
+      "event_id": "replay_evt_000046"
+    },
+    {
+      "timestamp": "2026-08-20T16:54:54.211+00:00",
+      "tokens": 84,
+      "role": "assistant",
+      "event_id": "replay_evt_000047"
+    },
+    {
+      "timestamp": "2026-08-20T16:54:54.262+00:00",
+      "tokens": 757,
+      "role": "tool",
+      "event_id": "replay_evt_000048"
+    },
+    {
+      "timestamp": "2026-08-20T16:55:05.938+00:00",
+      "tokens": 69,
+      "role": "assistant",
+      "event_id": "replay_evt_000049"
+    },
+    {
+      "timestamp": "2026-08-20T16:55:05.992+00:00",
+      "tokens": 574,
+      "role": "tool",
+      "event_id": "replay_evt_000050"
+    },
+    {
+      "timestamp": "2026-08-20T16:55:16.024+00:00",
+      "tokens": 198,
+      "role": "assistant",
+      "event_id": "replay_evt_000051"
+    },
+    {
+      "timestamp": "2026-08-20T16:55:16.080+00:00",
+      "tokens": 53,
+      "role": "tool",
+      "event_id": "replay_evt_000052"
+    },
+    {
+      "timestamp": "2026-08-20T16:55:30.116+00:00",
+      "tokens": 113,
+      "role": "assistant",
+      "event_id": "replay_evt_000053"
+    },
+    {
+      "timestamp": "2026-08-20T16:55:30.163+00:00",
+      "tokens": 53,
+      "role": "tool",
+      "event_id": "replay_evt_000054"
+    },
+    {
+      "timestamp": "2026-08-20T16:55:40.474+00:00",
+      "tokens": 116,
+      "role": "assistant",
+      "event_id": "replay_evt_000055"
+    },
+    {
+      "timestamp": "2026-08-20T16:55:40.522+00:00",
+      "tokens": 831,
+      "role": "tool",
+      "event_id": "replay_evt_000056"
+    },
+    {
+      "timestamp": "2026-08-20T16:55:51.777+00:00",
+      "tokens": 118,
+      "role": "assistant",
+      "event_id": "replay_evt_000057"
+    },
+    {
+      "timestamp": "2026-08-20T16:55:51.828+00:00",
+      "tokens": 393,
+      "role": "tool",
+      "event_id": "replay_evt_000058"
+    },
+    {
+      "timestamp": "2026-08-20T16:57:07.875+00:00",
+      "tokens": 1937,
+      "role": "assistant",
+      "event_id": "replay_evt_000059"
+    },
+    {
+      "timestamp": "2026-08-20T16:57:07.933+00:00",
+      "tokens": 55,
+      "role": "tool",
+      "event_id": "replay_evt_000060"
+    },
+    {
+      "timestamp": "2026-08-20T16:59:16.727+00:00",
+      "tokens": 3477,
+      "role": "assistant",
+      "event_id": "replay_evt_000061"
+    },
+    {
+      "timestamp": "2026-08-20T16:59:16.786+00:00",
+      "tokens": 55,
+      "role": "tool",
+      "event_id": "replay_evt_000062"
+    },
+    {
+      "timestamp": "2026-08-20T17:01:16.958+00:00",
+      "tokens": 3477,
+      "role": "assistant",
+      "event_id": "replay_evt_000063"
+    },
+    {
+      "timestamp": "2026-08-20T17:01:17.007+00:00",
+      "tokens": 72,
+      "role": "tool",
+      "event_id": "replay_evt_000064"
+    },
+    {
+      "timestamp": "2026-08-20T17:01:26.214+00:00",
+      "tokens": 83,
+      "role": "assistant",
+      "event_id": "replay_evt_000065"
+    },
+    {
+      "timestamp": "2026-08-20T17:01:26.264+00:00",
+      "tokens": 2584,
+      "role": "tool",
+      "event_id": "replay_evt_000066"
+    },
+    {
+      "timestamp": "2026-08-20T17:01:36.590+00:00",
+      "tokens": 152,
+      "role": "assistant",
+      "event_id": "replay_evt_000067"
+    },
+    {
+      "timestamp": "2026-08-20T17:01:36.645+00:00",
+      "tokens": 2130,
+      "role": "tool",
+      "event_id": "replay_evt_000068"
+    },
+    {
+      "timestamp": "2026-08-20T17:02:12.928+00:00",
+      "tokens": 119,
+      "role": "assistant",
+      "event_id": "replay_evt_000069"
+    },
+    {
+      "timestamp": "2026-08-20T17:02:12.982+00:00",
+      "tokens": 3008,
+      "role": "tool",
+      "event_id": "replay_evt_000070"
+    },
+    {
+      "timestamp": "2026-08-20T17:03:01.590+00:00",
+      "tokens": 937,
+      "role": "assistant",
+      "event_id": "replay_evt_000071"
+    },
+    {
+      "timestamp": "2026-08-20T17:03:01.663+00:00",
+      "tokens": 56,
+      "role": "tool",
+      "event_id": "replay_evt_000072"
+    },
+    {
+      "timestamp": "2026-08-20T17:03:18.369+00:00",
+      "tokens": 69,
+      "role": "assistant",
+      "event_id": "replay_evt_000073"
+    },
+    {
+      "timestamp": "2026-08-20T17:03:18.426+00:00",
+      "tokens": 3042,
+      "role": "tool",
+      "event_id": "replay_evt_000074"
+    },
+    {
+      "timestamp": "2026-08-20T17:04:30.041+00:00",
+      "tokens": 1414,
+      "role": "assistant",
+      "event_id": "replay_evt_000075"
+    },
+    {
+      "timestamp": "2026-08-20T17:04:30.109+00:00",
+      "tokens": 56,
+      "role": "tool",
+      "event_id": "replay_evt_000076"
+    },
+    {
+      "timestamp": "2026-08-20T17:04:50.237+00:00",
+      "tokens": 111,
+      "role": "assistant",
+      "event_id": "replay_evt_000077"
+    },
+    {
+      "timestamp": "2026-08-20T17:04:56.630+00:00",
+      "tokens": 281,
+      "role": "tool",
+      "event_id": "replay_evt_000078"
+    },
+    {
+      "timestamp": "2026-08-20T17:05:17.784+00:00",
+      "tokens": 69,
+      "role": "assistant",
+      "event_id": "replay_evt_000079"
+    },
+    {
+      "timestamp": "2026-08-20T17:05:17.868+00:00",
+      "tokens": 234,
+      "role": "tool",
+      "event_id": "replay_evt_000080"
+    },
+    {
+      "timestamp": "2026-08-20T17:05:28.021+00:00",
+      "tokens": 71,
+      "role": "assistant",
+      "event_id": "replay_evt_000081"
+    },
+    {
+      "timestamp": "2026-08-20T17:05:48.369+00:00",
+      "tokens": 3376,
+      "role": "tool",
+      "event_id": "replay_evt_000082"
+    },
+    {
+      "timestamp": "2026-08-20T17:06:13.054+00:00",
+      "tokens": 585,
+      "role": "assistant",
+      "event_id": "replay_evt_000083"
+    },
+    {
+      "timestamp": "2026-08-20T17:06:13.112+00:00",
+      "tokens": 56,
+      "role": "tool",
+      "event_id": "replay_evt_000084"
+    },
+    {
+      "timestamp": "2026-08-20T17:06:23.113+00:00",
+      "tokens": 69,
+      "role": "assistant",
+      "event_id": "replay_evt_000085"
+    },
+    {
+      "timestamp": "2026-08-20T17:06:23.179+00:00",
+      "tokens": 277,
+      "role": "tool",
+      "event_id": "replay_evt_000086"
+    },
+    {
+      "timestamp": "2026-08-20T17:06:32.193+00:00",
+      "tokens": 104,
+      "role": "assistant",
+      "event_id": "replay_evt_000087"
+    },
+    {
+      "timestamp": "2026-08-20T17:06:32.252+00:00",
+      "tokens": 807,
+      "role": "tool",
+      "event_id": "replay_evt_000088"
+    },
+    {
+      "timestamp": "2026-08-20T17:06:58.105+00:00",
+      "tokens": 147,
+      "role": "assistant",
+      "event_id": "replay_evt_000089"
+    },
+    {
+      "timestamp": "2026-08-20T17:06:58.341+00:00",
+      "tokens": 910,
+      "role": "tool",
+      "event_id": "replay_evt_000090"
+    },
+    {
+      "timestamp": "2026-08-20T17:06:58.341+00:00",
+      "tokens": 788,
+      "role": "tool",
+      "event_id": "replay_evt_000091"
+    },
+    {
+      "timestamp": "2026-08-20T17:07:26.985+00:00",
+      "tokens": 187,
+      "role": "assistant",
+      "event_id": "replay_evt_000092"
+    },
+    {
+      "timestamp": "2026-08-20T17:07:27.341+00:00",
+      "tokens": 1606,
+      "role": "tool",
+      "event_id": "replay_evt_000093"
+    },
+    {
+      "timestamp": "2026-08-20T17:07:27.341+00:00",
+      "tokens": 399,
+      "role": "tool",
+      "event_id": "replay_evt_000094"
+    },
+    {
+      "timestamp": "2026-08-20T17:07:39.102+00:00",
+      "tokens": 178,
+      "role": "assistant",
+      "event_id": "replay_evt_000095"
+    },
+    {
+      "timestamp": "2026-08-20T17:07:39.173+00:00",
+      "tokens": 1769,
+      "role": "tool",
+      "event_id": "replay_evt_000096"
+    },
+    {
+      "timestamp": "2026-08-20T17:07:39.173+00:00",
+      "tokens": 1836,
+      "role": "tool",
+      "event_id": "replay_evt_000097"
+    },
+    {
+      "timestamp": "2026-08-20T17:07:39.173+00:00",
+      "tokens": 1135,
+      "role": "tool",
+      "event_id": "replay_evt_000098"
+    },
+    {
+      "timestamp": "2026-08-20T17:08:09.912+00:00",
+      "tokens": 104,
+      "role": "assistant",
+      "event_id": "replay_evt_000099"
+    },
+    {
+      "timestamp": "2026-08-20T17:08:09.994+00:00",
+      "tokens": 942,
+      "role": "tool",
+      "event_id": "replay_evt_000100"
+    },
+    {
+      "timestamp": "2026-08-20T17:08:36.640+00:00",
+      "tokens": 113,
+      "role": "assistant",
+      "event_id": "replay_evt_000101"
+    },
+    {
+      "timestamp": "2026-08-20T17:08:36.834+00:00",
+      "tokens": 286,
+      "role": "tool",
+      "event_id": "replay_evt_000102"
+    },
+    {
+      "timestamp": "2026-08-20T17:09:11.359+00:00",
+      "tokens": 198,
+      "role": "assistant",
+      "event_id": "replay_evt_000103"
+    },
+    {
+      "timestamp": "2026-08-20T17:09:11.474+00:00",
+      "tokens": 1769,
+      "role": "tool",
+      "event_id": "replay_evt_000104"
+    },
+    {
+      "timestamp": "2026-08-20T17:09:11.474+00:00",
+      "tokens": 1836,
+      "role": "tool",
+      "event_id": "replay_evt_000105"
+    },
+    {
+      "timestamp": "2026-08-20T17:09:11.474+00:00",
+      "tokens": 1135,
+      "role": "tool",
+      "event_id": "replay_evt_000106"
+    },
+    {
+      "timestamp": "2026-08-20T17:09:29.594+00:00",
+      "tokens": 206,
+      "role": "assistant",
+      "event_id": "replay_evt_000107"
+    },
+    {
+      "timestamp": "2026-08-20T17:09:29.671+00:00",
+      "tokens": 788,
+      "role": "tool",
+      "event_id": "replay_evt_000108"
+    },
+    {
+      "timestamp": "2026-08-20T17:09:29.671+00:00",
+      "tokens": 1824,
+      "role": "tool",
+      "event_id": "replay_evt_000109"
+    },
+    {
+      "timestamp": "2026-08-20T17:09:29.671+00:00",
+      "tokens": 1005,
+      "role": "tool",
+      "event_id": "replay_evt_000110"
+    },
+    {
+      "timestamp": "2026-08-20T17:10:03.783+00:00",
+      "tokens": 221,
+      "role": "assistant",
+      "event_id": "replay_evt_000111"
+    },
+    {
+      "timestamp": "2026-08-20T17:10:07.923+00:00",
+      "tokens": 1005,
+      "role": "tool",
+      "event_id": "replay_evt_000112"
+    },
+    {
+      "timestamp": "2026-08-20T17:10:32.945+00:00",
+      "tokens": 161,
+      "role": "assistant",
+      "event_id": "replay_evt_000113"
+    },
+    {
+      "timestamp": "2026-08-20T17:10:33.189+00:00",
+      "tokens": 286,
+      "role": "tool",
+      "event_id": "replay_evt_000114"
+    },
+    {
+      "timestamp": "2026-08-20T17:10:33.189+00:00",
+      "tokens": 788,
+      "role": "tool",
+      "event_id": "replay_evt_000115"
+    },
+    {
+      "timestamp": "2026-08-20T17:10:48.105+00:00",
+      "tokens": 187,
+      "role": "assistant",
+      "event_id": "replay_evt_000116"
+    },
+    {
+      "timestamp": "2026-08-20T17:10:48.537+00:00",
+      "tokens": 1606,
+      "role": "tool",
+      "event_id": "replay_evt_000117"
+    },
+    {
+      "timestamp": "2026-08-20T17:10:48.537+00:00",
+      "tokens": 399,
+      "role": "tool",
+      "event_id": "replay_evt_000118"
+    },
+    {
+      "timestamp": "2026-08-20T17:13:53.737+00:00",
+      "tokens": 210,
+      "role": "assistant",
+      "event_id": "replay_evt_000119"
+    },
+    {
+      "timestamp": "2026-08-20T17:13:54.086+00:00",
+      "tokens": 1769,
+      "role": "tool",
+      "event_id": "replay_evt_000120"
+    },
+    {
+      "timestamp": "2026-08-20T17:13:54.086+00:00",
+      "tokens": 1836,
+      "role": "tool",
+      "event_id": "replay_evt_000121"
+    },
+    {
+      "timestamp": "2026-08-20T17:13:54.086+00:00",
+      "tokens": 582,
+      "role": "tool",
+      "event_id": "replay_evt_000122"
+    },
+    {
+      "timestamp": "2026-08-20T17:14:25.438+00:00",
+      "tokens": 214,
+      "role": "assistant",
+      "event_id": "replay_evt_000123"
+    },
+    {
+      "timestamp": "2026-08-20T17:14:25.521+00:00",
+      "tokens": 831,
+      "role": "tool",
+      "event_id": "replay_evt_000124"
+    },
+    {
+      "timestamp": "2026-08-20T17:14:25.521+00:00",
+      "tokens": 1135,
+      "role": "tool",
+      "event_id": "replay_evt_000125"
+    },
+    {
+      "timestamp": "2026-08-20T17:14:25.521+00:00",
+      "tokens": 1098,
+      "role": "tool",
+      "event_id": "replay_evt_000126"
+    },
+    {
+      "timestamp": "2026-08-20T17:14:45.443+00:00",
+      "tokens": 104,
+      "role": "assistant",
+      "event_id": "replay_evt_000127"
+    },
+    {
+      "timestamp": "2026-08-20T17:14:45.551+00:00",
+      "tokens": 943,
+      "role": "tool",
+      "event_id": "replay_evt_000128"
+    },
+    {
+      "timestamp": "2026-08-20T17:14:59.552+00:00",
+      "tokens": 82,
+      "role": "assistant",
+      "event_id": "replay_evt_000129"
+    },
+    {
+      "timestamp": "2026-08-20T17:15:02.883+00:00",
+      "tokens": 281,
+      "role": "tool",
+      "event_id": "replay_evt_000130"
+    },
+    {
+      "timestamp": "2026-08-20T17:15:35.001+00:00",
+      "tokens": 77,
+      "role": "assistant",
+      "event_id": "replay_evt_000131"
+    },
+    {
+      "timestamp": "2026-08-20T17:15:35.089+00:00",
+      "tokens": 943,
+      "role": "tool",
+      "event_id": "replay_evt_000132"
+    },
+    {
+      "timestamp": "2026-08-20T17:16:00.750+00:00",
+      "tokens": 102,
+      "role": "assistant",
+      "event_id": "replay_evt_000133"
+    },
+    {
+      "timestamp": "2026-08-20T17:16:00.839+00:00",
+      "tokens": 2645,
+      "role": "tool",
+      "event_id": "replay_evt_000134"
+    },
+    {
+      "timestamp": "2026-08-20T17:16:21.692+00:00",
+      "tokens": 65,
+      "role": "assistant",
+      "event_id": "replay_evt_000135"
+    },
+    {
+      "timestamp": "2026-08-20T17:16:21.799+00:00",
+      "tokens": 13502,
+      "role": "tool",
+      "event_id": "replay_evt_000136"
+    },
+    {
+      "timestamp": "2026-08-20T17:17:14.754+00:00",
+      "tokens": 102,
+      "role": "assistant",
+      "event_id": "replay_evt_000137"
+    },
+    {
+      "timestamp": "2026-08-20T17:17:14.849+00:00",
+      "tokens": 2645,
+      "role": "tool",
+      "event_id": "replay_evt_000138"
+    },
+    {
+      "timestamp": "2026-08-20T17:17:54.375+00:00",
+      "tokens": 113,
+      "role": "assistant",
+      "event_id": "replay_evt_000139"
+    },
+    {
+      "timestamp": "2026-08-20T17:17:54.482+00:00",
+      "tokens": 942,
+      "role": "tool",
+      "event_id": "replay_evt_000140"
+    },
+    {
+      "timestamp": "2026-08-20T17:18:21.228+00:00",
+      "tokens": 118,
+      "role": "assistant",
+      "event_id": "replay_evt_000141"
+    },
+    {
+      "timestamp": "2026-08-20T17:18:21.328+00:00",
+      "tokens": 31,
+      "role": "tool",
+      "event_id": "replay_evt_000142"
+    },
+    {
+      "timestamp": "2026-08-20T17:18:46.176+00:00",
+      "tokens": 87,
+      "role": "assistant",
+      "event_id": "replay_evt_000143"
+    },
+    {
+      "timestamp": "2026-08-20T17:19:05.656+00:00",
+      "tokens": 2705,
+      "role": "tool",
+      "event_id": "replay_evt_000144"
+    },
+    {
+      "timestamp": "2026-08-20T17:20:16.874+00:00",
+      "tokens": 630,
+      "role": "assistant",
+      "event_id": "replay_evt_000145"
+    },
+    {
+      "timestamp": "2026-08-20T17:20:17.024+00:00",
+      "tokens": 73,
+      "role": "tool",
+      "event_id": "replay_evt_000146"
+    },
+    {
+      "timestamp": "2026-08-20T17:20:35.114+00:00",
+      "tokens": 69,
+      "role": "assistant",
+      "event_id": "replay_evt_000147"
+    },
+    {
+      "timestamp": "2026-08-20T17:20:35.232+00:00",
+      "tokens": 277,
+      "role": "tool",
+      "event_id": "replay_evt_000148"
+    },
+    {
+      "timestamp": "2026-08-20T17:21:03.109+00:00",
+      "tokens": 206,
+      "role": "assistant",
+      "event_id": "replay_evt_000149"
+    },
+    {
+      "timestamp": "2026-08-20T17:21:03.530+00:00",
+      "tokens": 1769,
+      "role": "tool",
+      "event_id": "replay_evt_000150"
+    },
+    {
+      "timestamp": "2026-08-20T17:21:03.530+00:00",
+      "tokens": 1836,
+      "role": "tool",
+      "event_id": "replay_evt_000151"
+    },
+    {
+      "timestamp": "2026-08-20T17:21:03.530+00:00",
+      "tokens": 582,
+      "role": "tool",
+      "event_id": "replay_evt_000152"
+    },
+    {
+      "timestamp": "2026-08-20T17:21:27.894+00:00",
+      "tokens": 102,
+      "role": "assistant",
+      "event_id": "replay_evt_000153"
+    },
+    {
+      "timestamp": "2026-08-20T17:21:28.018+00:00",
+      "tokens": 943,
+      "role": "tool",
+      "event_id": "replay_evt_000154"
+    },
+    {
+      "timestamp": "2026-08-20T17:22:06.054+00:00",
+      "tokens": 77,
+      "role": "assistant",
+      "event_id": "replay_evt_000155"
+    },
+    {
+      "timestamp": "2026-08-20T17:22:06.169+00:00",
+      "tokens": 880,
+      "role": "tool",
+      "event_id": "replay_evt_000156"
+    },
+    {
+      "timestamp": "2026-08-20T17:22:41.740+00:00",
+      "tokens": 94,
+      "role": "assistant",
+      "event_id": "replay_evt_000157"
+    },
+    {
+      "timestamp": "2026-08-20T17:22:41.909+00:00",
+      "tokens": 880,
+      "role": "tool",
+      "event_id": "replay_evt_000158"
+    },
+    {
+      "timestamp": "2026-08-20T17:23:02.924+00:00",
+      "tokens": 103,
+      "role": "assistant",
+      "event_id": "replay_evt_000159"
+    },
+    {
+      "timestamp": "2026-08-20T17:23:03.081+00:00",
+      "tokens": 1012,
+      "role": "tool",
+      "event_id": "replay_evt_000160"
+    },
+    {
+      "timestamp": "2026-08-20T17:24:25.414+00:00",
+      "tokens": 37,
+      "role": "assistant",
+      "event_id": "replay_evt_000161"
+    },
+    {
+      "timestamp": "2026-08-20T17:24:25.540+00:00",
+      "tokens": 47,
+      "role": "tool",
+      "event_id": "replay_evt_000162"
+    },
+    {
+      "timestamp": "2026-08-20T17:24:46.696+00:00",
+      "tokens": 77,
+      "role": "assistant",
+      "event_id": "replay_evt_000163"
+    },
+    {
+      "timestamp": "2026-08-20T17:24:46.817+00:00",
+      "tokens": 1012,
+      "role": "tool",
+      "event_id": "replay_evt_000164"
+    },
+    {
+      "timestamp": "2026-08-20T17:25:16.155+00:00",
+      "tokens": 165,
+      "role": "assistant",
+      "event_id": "replay_evt_000165"
+    },
+    {
+      "timestamp": "2026-08-20T17:25:16.431+00:00",
+      "tokens": 286,
+      "role": "tool",
+      "event_id": "replay_evt_000166"
+    },
+    {
+      "timestamp": "2026-08-20T17:25:16.431+00:00",
+      "tokens": 788,
+      "role": "tool",
+      "event_id": "replay_evt_000167"
+    },
+    {
+      "timestamp": "2026-08-20T17:25:40.674+00:00",
+      "tokens": 164,
+      "role": "assistant",
+      "event_id": "replay_evt_000168"
+    },
+    {
+      "timestamp": "2026-08-20T17:25:41.108+00:00",
+      "tokens": 1606,
+      "role": "tool",
+      "event_id": "replay_evt_000169"
+    },
+    {
+      "timestamp": "2026-08-20T17:25:41.108+00:00",
+      "tokens": 399,
+      "role": "tool",
+      "event_id": "replay_evt_000170"
+    },
+    {
+      "timestamp": "2026-08-20T17:26:31.692+00:00",
+      "tokens": 117,
+      "role": "assistant",
+      "event_id": "replay_evt_000171"
+    },
+    {
+      "timestamp": "2026-08-20T17:26:31.848+00:00",
+      "tokens": 1098,
+      "role": "tool",
+      "event_id": "replay_evt_000172"
+    },
+    {
+      "timestamp": "2026-08-20T17:27:28.378+00:00",
+      "tokens": 98,
+      "role": "assistant",
+      "event_id": "replay_evt_000173"
+    },
+    {
+      "timestamp": "2026-08-20T17:27:28.519+00:00",
+      "tokens": 899,
+      "role": "tool",
+      "event_id": "replay_evt_000174"
+    },
+    {
+      "timestamp": "2026-08-20T17:28:01.631+00:00",
+      "tokens": 121,
+      "role": "assistant",
+      "event_id": "replay_evt_000175"
+    },
+    {
+      "timestamp": "2026-08-20T17:28:01.765+00:00",
+      "tokens": 1159,
+      "role": "tool",
+      "event_id": "replay_evt_000176"
+    },
+    {
+      "timestamp": "2026-08-20T17:28:25.039+00:00",
+      "tokens": 72,
+      "role": "assistant",
+      "event_id": "replay_evt_000177"
+    },
+    {
+      "timestamp": "2026-08-20T17:28:25.166+00:00",
+      "tokens": 2645,
+      "role": "tool",
+      "event_id": "replay_evt_000178"
+    },
+    {
+      "timestamp": "2026-08-20T17:29:10.461+00:00",
+      "tokens": 67,
+      "role": "assistant",
+      "event_id": "replay_evt_000179"
+    },
+    {
+      "timestamp": "2026-08-20T17:29:10.621+00:00",
+      "tokens": 2057,
+      "role": "tool",
+      "event_id": "replay_evt_000180"
+    },
+    {
+      "timestamp": "2026-08-20T17:30:05.778+00:00",
+      "tokens": 271,
+      "role": "assistant",
+      "event_id": "replay_evt_000181"
+    },
+    {
+      "timestamp": "2026-08-20T17:30:25.601+00:00",
+      "tokens": 2705,
+      "role": "tool",
+      "event_id": "replay_evt_000182"
+    },
+    {
+      "timestamp": "2026-08-20T17:30:55.255+00:00",
+      "tokens": 103,
+      "role": "assistant",
+      "event_id": "replay_evt_000183"
+    },
+    {
+      "timestamp": "2026-08-20T17:30:55.393+00:00",
+      "tokens": 972,
+      "role": "tool",
+      "event_id": "replay_evt_000184"
+    },
+    {
+      "timestamp": "2026-08-20T17:32:14.778+00:00",
+      "tokens": 390,
+      "role": "assistant",
+      "event_id": "replay_evt_000185"
+    },
+    {
+      "timestamp": "2026-08-20T17:32:14.945+00:00",
+      "tokens": 71,
+      "role": "tool",
+      "event_id": "replay_evt_000186"
+    },
+    {
+      "timestamp": "2026-08-20T17:32:53.842+00:00",
+      "tokens": 160,
+      "role": "assistant",
+      "event_id": "replay_evt_000187"
+    },
+    {
+      "timestamp": "2026-08-20T17:32:53.988+00:00",
+      "tokens": 1769,
+      "role": "tool",
+      "event_id": "replay_evt_000188"
+    },
+    {
+      "timestamp": "2026-08-20T17:32:53.988+00:00",
+      "tokens": 1836,
+      "role": "tool",
+      "event_id": "replay_evt_000189"
+    },
+    {
+      "timestamp": "2026-08-20T17:33:22.338+00:00",
+      "tokens": 70,
+      "role": "assistant",
+      "event_id": "replay_evt_000190"
+    },
+    {
+      "timestamp": "2026-08-20T17:33:22.487+00:00",
+      "tokens": 852,
+      "role": "tool",
+      "event_id": "replay_evt_000191"
+    },
+    {
+      "timestamp": "2026-08-20T17:34:03.998+00:00",
+      "tokens": 114,
+      "role": "assistant",
+      "event_id": "replay_evt_000192"
+    },
+    {
+      "timestamp": "2026-08-20T17:34:04.150+00:00",
+      "tokens": 1005,
+      "role": "tool",
+      "event_id": "replay_evt_000193"
+    },
+    {
+      "timestamp": "2026-08-20T17:34:38.421+00:00",
+      "tokens": 70,
+      "role": "assistant",
+      "event_id": "replay_evt_000194"
+    },
+    {
+      "timestamp": "2026-08-20T17:34:38.571+00:00",
+      "tokens": 852,
+      "role": "tool",
+      "event_id": "replay_evt_000195"
+    },
+    {
+      "timestamp": "2026-08-20T17:35:04.949+00:00",
+      "tokens": 109,
+      "role": "assistant",
+      "event_id": "replay_evt_000196"
+    },
+    {
+      "timestamp": "2026-08-20T17:35:05.111+00:00",
+      "tokens": 1005,
+      "role": "tool",
+      "event_id": "replay_evt_000197"
+    },
+    {
+      "timestamp": "2026-08-20T17:35:51.103+00:00",
+      "tokens": 81,
+      "role": "assistant",
+      "event_id": "replay_evt_000198"
+    },
+    {
+      "timestamp": "2026-08-20T17:35:54.008+00:00",
+      "tokens": 281,
+      "role": "tool",
+      "event_id": "replay_evt_000199"
+    }
+  ],
+  "start": "2026-08-20T16:49:05.673+00:00",
+  "end": "2026-08-20T17:35:54.008+00:00",
+  "duration_seconds": 2808.335,
+  "novel_tokens": 166107,
+  "novel_tokens_per_second": 59.14785807248779,
+  "tool_tokens": 138421,
+  "tool_tokens_per_second": 49.28934760276107,
+  "assistant_tokens": 23071,
+  "assistant_tokens_per_second": 8.215188002855784,
+  "peak_60_second_tokens_per_second": 407.28333333333336
+}

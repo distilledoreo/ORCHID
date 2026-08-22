@@ -1,0 +1,56 @@
+{
+  "artifacts": [
+    "REPORT.md",
+    "SUMMARY.json",
+    "CONFIG.json",
+    "CORPUS.json",
+    "latency_samples.jsonl",
+    "latency_summary.json",
+    "quality_results.jsonl",
+    "quality_summary.json"
+  ],
+  "measured": {
+    "largest_corpus": 200,
+    "paired_shadow_minus_off_ms": {
+      "count": 520,
+      "max": 75.484,
+      "mean": 16.684536,
+      "p50": 17.5533,
+      "p95": 21.2942,
+      "p99": 28.5094
+    },
+    "quality": {
+      "designed_match_success_rate": 0.6875,
+      "designed_query_count": 16,
+      "exact_match_success_rate": 1.0,
+      "failure_categories": {
+        "irrelevant_candidates": 1,
+        "no_lexical_overlap_likely_dense": 5,
+        "ranking_issue": 3,
+        "threshold_or_budget_issue": 2
+      },
+      "false_injection_query_rate": 0.076923,
+      "false_positive_candidate_rate": 0.771429,
+      "future_dense_opportunity_rate": 0.0,
+      "irrelevant_query_candidate_rate": 0.2,
+      "lexical_match_success_rate": 0.375,
+      "mrr": 0.495078,
+      "no_match_success_rate": 0.666667,
+      "query_count": 26,
+      "recall_at_1": 0.461538,
+      "recall_at_3": 0.5,
+      "recall_at_5": 0.5,
+      "zero_candidate_rate": 0.192308
+    },
+    "shadow_cold_retrieval_ms": {
+      "count": 520,
+      "max": 16.0,
+      "mean": 1.351923,
+      "p50": 0.0,
+      "p95": 16.0,
+      "p99": 16.0
+    }
+  },
+  "next_capability": "query_and_threshold_audit",
+  "phase": "cold_memory_phase1_baseline"
+}

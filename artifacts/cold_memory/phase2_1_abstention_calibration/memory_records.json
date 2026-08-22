@@ -1,0 +1,902 @@
+[
+  {
+    "activation_score": 0.92,
+    "content": "promote_capsule_cas is the only active-capsule write: it checks lineage and stale_revision before compare-and-swap promotion, leaving compaction_jobs and ACTIVE consistent.",
+    "created_at": "2026-08-20T14:03:11.551+00:00",
+    "id": "mem_cas_promotion",
+    "importance": 0.92,
+    "memory_type": "architecture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.84,
+    "content": "cold_memory_token_budget and context_budget_tokens leave current user instructions, ACTIVE, and the raw tail ahead of would_inject cold memories; Phase 1 allows at most three memories.",
+    "created_at": "2026-08-20T14:03:11.598+00:00",
+    "id": "mem_context_budget",
+    "importance": 0.84,
+    "memory_type": "constraint",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0000: component_0000 uses isolated marker_0000 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.731+00:00",
+    "id": "mem_distractor_0000",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0001: component_0001 uses isolated marker_0001 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.746+00:00",
+    "id": "mem_distractor_0001",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0002: component_0002 uses isolated marker_0002 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.760+00:00",
+    "id": "mem_distractor_0002",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0003: component_0003 uses isolated marker_0003 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.775+00:00",
+    "id": "mem_distractor_0003",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0004: component_0004 uses isolated marker_0004 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.791+00:00",
+    "id": "mem_distractor_0004",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0005: component_0005 uses isolated marker_0005 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.804+00:00",
+    "id": "mem_distractor_0005",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0006: component_0006 uses isolated marker_0006 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.818+00:00",
+    "id": "mem_distractor_0006",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0007: component_0007 uses isolated marker_0007 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.833+00:00",
+    "id": "mem_distractor_0007",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0008: component_0008 uses isolated marker_0008 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.849+00:00",
+    "id": "mem_distractor_0008",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0009: component_0009 uses isolated marker_0009 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.862+00:00",
+    "id": "mem_distractor_0009",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0010: component_0010 uses isolated marker_0010 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.876+00:00",
+    "id": "mem_distractor_0010",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0011: component_0011 uses isolated marker_0011 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.891+00:00",
+    "id": "mem_distractor_0011",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0012: component_0012 uses isolated marker_0012 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.908+00:00",
+    "id": "mem_distractor_0012",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0013: component_0013 uses isolated marker_0013 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.924+00:00",
+    "id": "mem_distractor_0013",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0014: component_0014 uses isolated marker_0014 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.940+00:00",
+    "id": "mem_distractor_0014",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0015: component_0015 uses isolated marker_0015 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.953+00:00",
+    "id": "mem_distractor_0015",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0016: component_0016 uses isolated marker_0016 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.968+00:00",
+    "id": "mem_distractor_0016",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0017: component_0017 uses isolated marker_0017 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.983+00:00",
+    "id": "mem_distractor_0017",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0018: component_0018 uses isolated marker_0018 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:11.998+00:00",
+    "id": "mem_distractor_0018",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0019: component_0019 uses isolated marker_0019 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.013+00:00",
+    "id": "mem_distractor_0019",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0020: component_0020 uses isolated marker_0020 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.028+00:00",
+    "id": "mem_distractor_0020",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0021: component_0021 uses isolated marker_0021 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.041+00:00",
+    "id": "mem_distractor_0021",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0022: component_0022 uses isolated marker_0022 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.056+00:00",
+    "id": "mem_distractor_0022",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0023: component_0023 uses isolated marker_0023 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.079+00:00",
+    "id": "mem_distractor_0023",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0024: component_0024 uses isolated marker_0024 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.095+00:00",
+    "id": "mem_distractor_0024",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0025: component_0025 uses isolated marker_0025 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.108+00:00",
+    "id": "mem_distractor_0025",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0026: component_0026 uses isolated marker_0026 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.123+00:00",
+    "id": "mem_distractor_0026",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0027: component_0027 uses isolated marker_0027 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.137+00:00",
+    "id": "mem_distractor_0027",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0028: component_0028 uses isolated marker_0028 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.153+00:00",
+    "id": "mem_distractor_0028",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0029: component_0029 uses isolated marker_0029 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.169+00:00",
+    "id": "mem_distractor_0029",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0030: component_0030 uses isolated marker_0030 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.183+00:00",
+    "id": "mem_distractor_0030",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0031: component_0031 uses isolated marker_0031 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.197+00:00",
+    "id": "mem_distractor_0031",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0032: component_0032 uses isolated marker_0032 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.211+00:00",
+    "id": "mem_distractor_0032",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0033: component_0033 uses isolated marker_0033 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.227+00:00",
+    "id": "mem_distractor_0033",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0034: component_0034 uses isolated marker_0034 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.242+00:00",
+    "id": "mem_distractor_0034",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0035: component_0035 uses isolated marker_0035 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.257+00:00",
+    "id": "mem_distractor_0035",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0036: component_0036 uses isolated marker_0036 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.271+00:00",
+    "id": "mem_distractor_0036",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0037: component_0037 uses isolated marker_0037 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.297+00:00",
+    "id": "mem_distractor_0037",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0038: component_0038 uses isolated marker_0038 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.312+00:00",
+    "id": "mem_distractor_0038",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0039: component_0039 uses isolated marker_0039 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.326+00:00",
+    "id": "mem_distractor_0039",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0040: component_0040 uses isolated marker_0040 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.343+00:00",
+    "id": "mem_distractor_0040",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0041: component_0041 uses isolated marker_0041 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.356+00:00",
+    "id": "mem_distractor_0041",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0042: component_0042 uses isolated marker_0042 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.370+00:00",
+    "id": "mem_distractor_0042",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0043: component_0043 uses isolated marker_0043 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.383+00:00",
+    "id": "mem_distractor_0043",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0044: component_0044 uses isolated marker_0044 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.404+00:00",
+    "id": "mem_distractor_0044",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0045: component_0045 uses isolated marker_0045 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.420+00:00",
+    "id": "mem_distractor_0045",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0046: component_0046 uses isolated marker_0046 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.434+00:00",
+    "id": "mem_distractor_0046",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0047: component_0047 uses isolated marker_0047 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.448+00:00",
+    "id": "mem_distractor_0047",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0048: component_0048 uses isolated marker_0048 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.463+00:00",
+    "id": "mem_distractor_0048",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0049: component_0049 uses isolated marker_0049 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.478+00:00",
+    "id": "mem_distractor_0049",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0050: component_0050 uses isolated marker_0050 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.493+00:00",
+    "id": "mem_distractor_0050",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0051: component_0051 uses isolated marker_0051 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.508+00:00",
+    "id": "mem_distractor_0051",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0052: component_0052 uses isolated marker_0052 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.522+00:00",
+    "id": "mem_distractor_0052",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0053: component_0053 uses isolated marker_0053 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.536+00:00",
+    "id": "mem_distractor_0053",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0054: component_0054 uses isolated marker_0054 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.553+00:00",
+    "id": "mem_distractor_0054",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0055: component_0055 uses isolated marker_0055 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.566+00:00",
+    "id": "mem_distractor_0055",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0056: component_0056 uses isolated marker_0056 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.583+00:00",
+    "id": "mem_distractor_0056",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0057: component_0057 uses isolated marker_0057 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.597+00:00",
+    "id": "mem_distractor_0057",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0058: component_0058 uses isolated marker_0058 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.611+00:00",
+    "id": "mem_distractor_0058",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0059: component_0059 uses isolated marker_0059 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.625+00:00",
+    "id": "mem_distractor_0059",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0060: component_0060 uses isolated marker_0060 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.640+00:00",
+    "id": "mem_distractor_0060",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0061: component_0061 uses isolated marker_0061 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.654+00:00",
+    "id": "mem_distractor_0061",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0062: component_0062 uses isolated marker_0062 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.668+00:00",
+    "id": "mem_distractor_0062",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0063: component_0063 uses isolated marker_0063 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.684+00:00",
+    "id": "mem_distractor_0063",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0064: component_0064 uses isolated marker_0064 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.698+00:00",
+    "id": "mem_distractor_0064",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0065: component_0065 uses isolated marker_0065 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.712+00:00",
+    "id": "mem_distractor_0065",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0066: component_0066 uses isolated marker_0066 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.727+00:00",
+    "id": "mem_distractor_0066",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0067: component_0067 uses isolated marker_0067 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.742+00:00",
+    "id": "mem_distractor_0067",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0068: component_0068 uses isolated marker_0068 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.756+00:00",
+    "id": "mem_distractor_0068",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0069: component_0069 uses isolated marker_0069 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.769+00:00",
+    "id": "mem_distractor_0069",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0070: component_0070 uses isolated marker_0070 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.785+00:00",
+    "id": "mem_distractor_0070",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0071: component_0071 uses isolated marker_0071 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.798+00:00",
+    "id": "mem_distractor_0071",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0072: component_0072 uses isolated marker_0072 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.813+00:00",
+    "id": "mem_distractor_0072",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0073: component_0073 uses isolated marker_0073 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.826+00:00",
+    "id": "mem_distractor_0073",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0074: component_0074 uses isolated marker_0074 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.842+00:00",
+    "id": "mem_distractor_0074",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0075: component_0075 uses isolated marker_0075 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.857+00:00",
+    "id": "mem_distractor_0075",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0076: component_0076 uses isolated marker_0076 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.870+00:00",
+    "id": "mem_distractor_0076",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0077: component_0077 uses isolated marker_0077 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.885+00:00",
+    "id": "mem_distractor_0077",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0078: component_0078 uses isolated marker_0078 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.899+00:00",
+    "id": "mem_distractor_0078",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0079: component_0079 uses isolated marker_0079 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.913+00:00",
+    "id": "mem_distractor_0079",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0080: component_0080 uses isolated marker_0080 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.930+00:00",
+    "id": "mem_distractor_0080",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0081: component_0081 uses isolated marker_0081 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.943+00:00",
+    "id": "mem_distractor_0081",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0082: component_0082 uses isolated marker_0082 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.959+00:00",
+    "id": "mem_distractor_0082",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0083: component_0083 uses isolated marker_0083 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.974+00:00",
+    "id": "mem_distractor_0083",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0084: component_0084 uses isolated marker_0084 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:12.988+00:00",
+    "id": "mem_distractor_0084",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.2,
+    "content": "Unrelated fixture note 0085: component_0085 uses isolated marker_0085 during a synthetic maintenance run.",
+    "created_at": "2026-08-20T14:03:13.001+00:00",
+    "id": "mem_distractor_0085",
+    "importance": 0.2,
+    "memory_type": "irrelevant_fixture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.7,
+    "content": "Protocol hardening keeps the dynamic per-chunk selector enum; an old test expecting SELECTOR_RESPONSE_FORMAT is not a cold-memory regression.",
+    "created_at": "2026-08-20T14:03:11.715+00:00",
+    "id": "mem_dynamic_schema",
+    "importance": 0.7,
+    "memory_type": "test",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.72,
+    "content": "SQLite FTS5 searches only ACTIVE long_term_memories scoped by project_id and thread_id; provenance remains in memory_evidence.",
+    "created_at": "2026-08-20T14:03:11.703+00:00",
+    "id": "mem_fts_scope",
+    "importance": 0.72,
+    "memory_type": "implementation",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.91,
+    "content": "Retrieved memories are ephemeral assembly context, not events: shadow mode records would_inject candidates but does not insert a COLD RETRIEVED MEMORY message into the outbound hot context.",
+    "created_at": "2026-08-20T14:03:11.673+00:00",
+    "id": "mem_injection_isolation",
+    "importance": 0.91,
+    "memory_type": "invariant",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.95,
+    "content": "The renew_lease path in memory_gateway/db.py must validate lease_until against worker ownership before extending a lease; otherwise an expired worker can renew another worker's job.",
+    "created_at": "2026-08-20T14:03:11.516+00:00",
+    "id": "mem_lease_renewal",
+    "importance": 0.95,
+    "memory_type": "bug",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.78,
+    "content": "Phase 1 builds a deterministic retrieval query from the current user message, latest tool result, ACTIVE content, file paths, and symbol names; no LLM is in the retrieval critical path.",
+    "created_at": "2026-08-20T14:03:11.688+00:00",
+    "id": "mem_model_boundary",
+    "importance": 0.78,
+    "memory_type": "architecture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.94,
+    "content": "RETIRE semantic memories retain memory_evidence links to the immutable event_id history; a semantic row never replaces the authoritative raw evidence.",
+    "created_at": "2026-08-20T14:03:11.582+00:00",
+    "id": "mem_provenance",
+    "importance": 0.94,
+    "memory_type": "invariant",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.9,
+    "content": "The recent raw tail remains protected verbatim context and is assembled independently from the ACTIVE capsule and optional cold retrieval sidecar.",
+    "created_at": "2026-08-20T14:03:11.643+00:00",
+    "id": "mem_raw_tail",
+    "importance": 0.9,
+    "memory_type": "architecture",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.9,
+    "content": "RETIRE persistence occurs only after successful ACTIVE promotion; a cold sidecar write failure cannot turn a valid hot promotion into a failed compaction job.",
+    "created_at": "2026-08-20T14:03:11.657+00:00",
+    "id": "mem_retire_promotion",
+    "importance": 0.9,
+    "memory_type": "lifecycle",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.86,
+    "content": "The selector response contract uses a per-chunk enum in tests/test_openai_adapter.py so selector_chunk_index stays within the current chunk instead of using the old static schema.",
+    "created_at": "2026-08-20T14:03:11.533+00:00",
+    "id": "mem_selector_enum",
+    "importance": 0.86,
+    "memory_type": "protocol",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.82,
+    "content": "SQLite retrieval can raise sqlite3.OperationalError while a writer holds the database; bounded busy_timeout_ms and a fail-open response keep the hot context available.",
+    "created_at": "2026-08-20T14:03:11.567+00:00",
+    "id": "mem_sqlite_lock",
+    "importance": 0.82,
+    "memory_type": "incident",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.88,
+    "content": "The FTS progress_handler enforces a retrieval deadline; a TimeoutError records bounded telemetry and returns no cold context without appending an event or mutating the capsule.",
+    "created_at": "2026-08-20T14:03:11.614+00:00",
+    "id": "mem_timeout_failopen",
+    "importance": 0.88,
+    "memory_type": "operational",
+    "status": "ACTIVE"
+  },
+  {
+    "activation_score": 0.65,
+    "content": "On Windows, taskkill.exe is used for deterministic process cleanup after savedRigSoak imports; profile cleanup is verified before the next real browser run.",
+    "created_at": "2026-08-20T14:03:11.627+00:00",
+    "id": "mem_windows_cleanup",
+    "importance": 0.65,
+    "memory_type": "operational",
+    "status": "ACTIVE"
+  }
+]

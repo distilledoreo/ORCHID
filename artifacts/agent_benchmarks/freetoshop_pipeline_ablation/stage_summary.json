@@ -1,0 +1,9 @@
+{
+  "prior_full_canonicalizer_batches": 4,
+  "note": "Full current-pipeline replay has no completed selector/consolidator stage breakdown because it stopped at canonicalizer batch 2; pilot stage percentages are reported in FINAL_REPORT.md.",
+  "pilot_arm_files": [
+    "ablation/arm_a_current/SUMMARY.json",
+    "ablation/arm_b_no_canonicalizer/SUMMARY.json",
+    "ablation/arm_c_direct/SUMMARY.json"
+  ]
+}

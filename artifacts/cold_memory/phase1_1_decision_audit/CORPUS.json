@@ -1,0 +1,88 @@
+{
+  "anchors": [
+    {
+      "content": "The renew_lease path in memory_gateway/db.py must validate lease_until against worker ownership before extending a lease; otherwise an expired worker can renew another worker's job.",
+      "id": "mem_lease_renewal",
+      "importance": 0.95,
+      "memory_type": "bug"
+    },
+    {
+      "content": "The selector response contract uses a per-chunk enum in tests/test_openai_adapter.py so selector_chunk_index stays within the current chunk instead of using the old static schema.",
+      "id": "mem_selector_enum",
+      "importance": 0.86,
+      "memory_type": "protocol"
+    },
+    {
+      "content": "promote_capsule_cas is the only active-capsule write: it checks lineage and stale_revision before compare-and-swap promotion, leaving compaction_jobs and ACTIVE consistent.",
+      "id": "mem_cas_promotion",
+      "importance": 0.92,
+      "memory_type": "architecture"
+    },
+    {
+      "content": "SQLite retrieval can raise sqlite3.OperationalError while a writer holds the database; bounded busy_timeout_ms and a fail-open response keep the hot context available.",
+      "id": "mem_sqlite_lock",
+      "importance": 0.82,
+      "memory_type": "incident"
+    },
+    {
+      "content": "RETIRE semantic memories retain memory_evidence links to the immutable event_id history; a semantic row never replaces the authoritative raw evidence.",
+      "id": "mem_provenance",
+      "importance": 0.94,
+      "memory_type": "invariant"
+    },
+    {
+      "content": "cold_memory_token_budget and context_budget_tokens leave current user instructions, ACTIVE, and the raw tail ahead of would_inject cold memories; Phase 1 allows at most three memories.",
+      "id": "mem_context_budget",
+      "importance": 0.84,
+      "memory_type": "constraint"
+    },
+    {
+      "content": "The FTS progress_handler enforces a retrieval deadline; a TimeoutError records bounded telemetry and returns no cold context without appending an event or mutating the capsule.",
+      "id": "mem_timeout_failopen",
+      "importance": 0.88,
+      "memory_type": "operational"
+    },
+    {
+      "content": "On Windows, taskkill.exe is used for deterministic process cleanup after savedRigSoak imports; profile cleanup is verified before the next real browser run.",
+      "id": "mem_windows_cleanup",
+      "importance": 0.65,
+      "memory_type": "operational"
+    },
+    {
+      "content": "The recent raw tail remains protected verbatim context and is assembled independently from the ACTIVE capsule and optional cold retrieval sidecar.",
+      "id": "mem_raw_tail",
+      "importance": 0.9,
+      "memory_type": "architecture"
+    },
+    {
+      "content": "RETIRE persistence occurs only after successful ACTIVE promotion; a cold sidecar write failure cannot turn a valid hot promotion into a failed compaction job.",
+      "id": "mem_retire_promotion",
+      "importance": 0.9,
+      "memory_type": "lifecycle"
+    },
+    {
+      "content": "Retrieved memories are ephemeral assembly context, not events: shadow mode records would_inject candidates but does not insert a COLD RETRIEVED MEMORY message into the outbound hot context.",
+      "id": "mem_injection_isolation",
+      "importance": 0.91,
+      "memory_type": "invariant"
+    },
+    {
+      "content": "Phase 1 builds a deterministic retrieval query from the current user message, latest tool result, ACTIVE content, file paths, and symbol names; no LLM is in the retrieval critical path.",
+      "id": "mem_model_boundary",
+      "importance": 0.78,
+      "memory_type": "architecture"
+    },
+    {
+      "content": "SQLite FTS5 searches only ACTIVE long_term_memories scoped by project_id and thread_id; provenance remains in memory_evidence.",
+      "id": "mem_fts_scope",
+      "importance": 0.72,
+      "memory_type": "implementation"
+    },
+    {
+      "content": "Protocol hardening keeps the dynamic per-chunk selector enum; an old test expecting SELECTOR_RESPONSE_FORMAT is not a cold-memory regression.",
+      "id": "mem_dynamic_schema",
+      "importance": 0.7,
+      "memory_type": "test"
+    }
+  ]
+}

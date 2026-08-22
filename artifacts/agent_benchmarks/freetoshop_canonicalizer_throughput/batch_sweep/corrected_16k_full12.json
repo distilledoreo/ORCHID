@@ -1,0 +1,117 @@
+{
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+  "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+  "targets": [
+    16000
+  ],
+  "events_used": 12,
+  "endpoint": "http://127.0.0.1:1234/v1",
+  "model": "qwen3.5-4b@q6_k",
+  "timeout_seconds": 180.0,
+  "max_output_tokens": null,
+  "full_window": true,
+  "results": [
+    {
+      "target_tokens": 16000,
+      "model": "qwen3.5-4b@q6_k",
+      "endpoint": "http://127.0.0.1:1234/v1",
+      "timeout_seconds": 180.0,
+      "max_output_tokens": null,
+      "full_window": true,
+      "source_event_count": 21,
+      "source_tokens": 16155,
+      "batch_count": 2,
+      "wall_ms": 260375.08299999172,
+      "source_tokens_per_second": 62.045107442176075,
+      "status": "SUCCEEDED",
+      "error": null,
+      "batches": [
+        {
+          "batch_index": 0,
+          "target_tokens": 16000,
+          "source_event_count": 20,
+          "source_refs": [
+            "replay_evt_000001",
+            "replay_evt_000002::span::000000",
+            "replay_evt_000002::span::000001",
+            "replay_evt_000002::span::000002",
+            "replay_evt_000002::span::000003",
+            "replay_evt_000002::span::000004",
+            "replay_evt_000003",
+            "replay_evt_000004",
+            "replay_evt_000005",
+            "replay_evt_000006",
+            "replay_evt_000007::span::000000",
+            "replay_evt_000007::span::000001",
+            "replay_evt_000008",
+            "replay_evt_000009",
+            "replay_evt_000010::span::000000",
+            "replay_evt_000010::span::000001",
+            "replay_evt_000010::span::000002",
+            "replay_evt_000011::span::000000",
+            "replay_evt_000011::span::000001",
+            "replay_evt_000011::span::000002"
+          ],
+          "estimated_input_tokens": 14955,
+          "wall_ms": 154714.05470001628,
+          "input_tokens": 18126,
+          "output_tokens": 1055,
+          "ttft_ms": null,
+          "finish_reason": "stop",
+          "status": "SUCCEEDED",
+          "error": null,
+          "timeout": false,
+          "structured_output_valid": true,
+          "request_profile": {
+            "input_payload_chars": 59914,
+            "system_prompt_chars": 420,
+            "response_schema_chars": 921,
+            "request_wrapper_chars": 48,
+            "input_payload_hash": "731fa369cc11772723d4246c0c801323c28683af75b56f8892247a73709208f7",
+            "response_schema_hash": "fecc42b2748effd7f0e0c94af16c0e8d9b2c9d679b6bf792a06354c7c14bbfd0"
+          },
+          "source_payload_estimated_tokens": 14978,
+          "system_prompt_estimated_tokens": 105,
+          "response_schema_estimated_tokens": 230,
+          "wrapper_estimated_tokens": 12,
+          "source_payload_chars": 59914,
+          "prompt_hash": "10c82bcfa5a9ca10160f453c812de17863099e92788b566e3f034b5d8f8780ed",
+          "source_tokens_per_second": 96.6621941942966
+        },
+        {
+          "batch_index": 1,
+          "target_tokens": 16000,
+          "source_event_count": 1,
+          "source_refs": [
+            "replay_evt_000012"
+          ],
+          "estimated_input_tokens": 1200,
+          "wall_ms": 105660.3406999784,
+          "input_tokens": 1934,
+          "output_tokens": 1316,
+          "ttft_ms": null,
+          "finish_reason": "stop",
+          "status": "SUCCEEDED",
+          "error": null,
+          "timeout": false,
+          "structured_output_valid": true,
+          "request_profile": {
+            "input_payload_chars": 4816,
+            "system_prompt_chars": 420,
+            "response_schema_chars": 340,
+            "request_wrapper_chars": 48,
+            "input_payload_hash": "8e6667e4abe06768099cb820d0730a39ce72e5f5ac0febcd2c6fdf8b207fd8d2",
+            "response_schema_hash": "9c149e5a565aee08ebe1431363ac8f80246dbe197773d8621bcd9d4c1eb942ef"
+          },
+          "source_payload_estimated_tokens": 1204,
+          "system_prompt_estimated_tokens": 105,
+          "response_schema_estimated_tokens": 85,
+          "wrapper_estimated_tokens": 12,
+          "source_payload_chars": 4816,
+          "prompt_hash": "f1e7dcd5248cc77306b93d6eaca456f34859bbc2752780bfd5c9f43f2f1a9ce9",
+          "source_tokens_per_second": 11.357146797466699
+        }
+      ]
+    }
+  ]
+}

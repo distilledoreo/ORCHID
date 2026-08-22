@@ -1,0 +1,17 @@
+{
+  "source_db": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_20260820\\orchid-state-actual-2\\memory.db",
+  "source_db_sha256": "a10a03be9b52ab454e61235080bb97ecf66a91b028026ea2f14549f68c6e3f49",
+  "source_event_count": 172,
+  "source_request_count": 86,
+  "source_backend_error_count": 3,
+  "replay_event_count": 199,
+  "request_payload_tokens": 8691344,
+  "unique_logical_event_tokens": 166107,
+  "stored_authoritative_event_tokens": 10607383,
+  "duplicate_prefix_tokens": 7804154,
+  "request_payload_to_unique_amplification": 52.32376721029216,
+  "stored_to_unique_amplification": 63.858735634259844,
+  "assistant_stream_parse_failures": 0,
+  "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+  "normalization": "exact ordered hashes with provider-transient reasoning and JSON argument formatting normalized"
+}

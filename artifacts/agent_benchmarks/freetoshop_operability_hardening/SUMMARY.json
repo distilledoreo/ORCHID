@@ -1,0 +1,122 @@
+{
+  "status": "NOT_READY_FOR_FULL_AB_RERUN",
+  "continuity_tests": "pytest tests/test_operability_hardening.py",
+  "ingestion": {
+    "source_db": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_20260820\\orchid-state-actual-2\\memory.db",
+    "source_db_sha256": "a10a03be9b52ab454e61235080bb97ecf66a91b028026ea2f14549f68c6e3f49",
+    "source_event_count": 172,
+    "source_request_count": 86,
+    "source_backend_error_count": 3,
+    "replay_event_count": 199,
+    "request_payload_tokens": 8691344,
+    "unique_logical_event_tokens": 166107,
+    "stored_authoritative_event_tokens": 10607383,
+    "duplicate_prefix_tokens": 7804154,
+    "request_payload_to_unique_amplification": 52.32376721029216,
+    "stored_to_unique_amplification": 63.858735634259844,
+    "assistant_stream_parse_failures": 0,
+    "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+    "normalization": "exact ordered hashes with provider-transient reasoning and JSON argument formatting normalized"
+  },
+  "throughput_best_structural_control": {
+    "target_source_tokens": 64000,
+    "achieved_batch_tokens": [
+      66458,
+      64486,
+      35163
+    ],
+    "source_tokens_covered": 166107,
+    "jobs_required": 3,
+    "wall_ms": 232.4293999990914,
+    "retired_source_tokens_per_second": 714655.7191157802,
+    "selector_input_tokens": 166107,
+    "selector_output_tokens": 199,
+    "canonicalizer_input_tokens": 166107,
+    "canonicalizer_output_tokens": 1028,
+    "consolidator_input_tokens": 167135,
+    "consolidator_output_tokens": 1094,
+    "internal_model_runs": 9,
+    "provider_calls": 0,
+    "provider_tokens": 0,
+    "qwen_read_amplification": 2.0,
+    "active_capsule_tokens": 311,
+    "all_promotions_correct": true,
+    "semantic_correctness": "not_model_scored; deterministic coverage/provenance control",
+    "batches": [
+      {
+        "job_id": "job_b525974103814784882899cdd5ed2361",
+        "source_tokens": 66458,
+        "snapshot_start_event_id": "replay_evt_000001",
+        "snapshot_end_event_id": "replay_evt_000074",
+        "watermark": "replay_evt_000074",
+        "provenance_valid": true
+      },
+      {
+        "job_id": "job_65d2ce4f66764428ae2955fb67d6eff6",
+        "source_tokens": 64486,
+        "snapshot_start_event_id": "replay_evt_000075",
+        "snapshot_end_event_id": "replay_evt_000144",
+        "watermark": "replay_evt_000144",
+        "provenance_valid": true
+      },
+      {
+        "job_id": "job_0750e7d4e4694839bb5c4b904c63eae9",
+        "source_tokens": 35163,
+        "snapshot_start_event_id": "replay_evt_000145",
+        "snapshot_end_event_id": "replay_evt_000199",
+        "watermark": "replay_evt_000199",
+        "provenance_valid": true
+      }
+    ]
+  },
+  "captured_provider_baseline": {
+    "available": true,
+    "job_id": "job_df20282fc6594352af9b294ca7de6551",
+    "source_tokens": 39293,
+    "wall_seconds": 1232.789,
+    "retired_source_tokens_per_second": 31.87325649401479,
+    "model_runs": 63,
+    "input_tokens": 282179,
+    "output_tokens": 4671,
+    "provider_wall_ms_sum": 1231903.1806001149,
+    "note": "single provider-backed promotion from the failed run; not a stable throughput sample"
+  },
+  "arrival": {
+    "start": "2026-08-20T16:49:05.673+00:00",
+    "end": "2026-08-20T17:35:54.008+00:00",
+    "duration_seconds": 2808.335,
+    "novel_tokens": 166107,
+    "novel_tokens_per_second": 59.14785807248779,
+    "tool_tokens": 138421,
+    "tool_tokens_per_second": 49.28934760276107,
+    "assistant_tokens": 23071,
+    "assistant_tokens_per_second": 8.215188002855784,
+    "peak_60_second_tokens_per_second": 407.28333333333336
+  },
+  "retirement_ratio_against_average_arrival": 0.5388742303221359,
+  "dense_production_injection": 0,
+  "preflight": {
+    "status": "preflight_failed_compaction_provider_timeout",
+    "run_span_seconds": 2600.359,
+    "pi_assistant_message_end": 185,
+    "pi_tool_calls": 122,
+    "stream_succeeded": 61,
+    "stream_failed": 1,
+    "stream_failure_category": "provider_error_frame",
+    "next_requests_after_failure_succeeded": 2,
+    "events": 186,
+    "duplicate_message_hashes": 0,
+    "compaction_jobs": 3,
+    "compaction_failures": 2,
+    "active_promotions": 0,
+    "reason": "canonicalizer timed out twice; no watermark advancement or context collapse",
+    "report": "preflight/REPORT.md"
+  },
+  "tests": {
+    "focused_and_relevant": "67 passed",
+    "full_suite": "142 passed, 1 skipped, 1 pre-existing selector-schema failure",
+    "compileall": "passed",
+    "git_diff_check": "passed"
+  },
+  "recommendation": "NOT_READY_FOR_FULL_AB_RERUN"
+}

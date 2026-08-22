@@ -39,6 +39,7 @@ class OpenAICompatStructuredClient:
     timeout: float = 120.0
     api_key: str | None = None
     last_telemetry: dict[str, Any] | None = field(default=None, init=False)
+    last_request_profile: dict[str, Any] | None = field(default=None, init=False)
     telemetry_recorder: ModelRunRecorder | None = None
     _job_context: ModelCallContext = field(default_factory=ModelCallContext, init=False)
     _call_context: ModelCallContext = field(default_factory=ModelCallContext, init=False)
@@ -143,6 +144,20 @@ class OpenAICompatStructuredClient:
             ],
             **settings,
         }
+        serialized_input = json.dumps(input_payload, ensure_ascii=False, sort_keys=True)
+        serialized_schema = (
+            json.dumps(self.response_format, ensure_ascii=False, sort_keys=True)
+            if self.response_format is not None
+            else ""
+        )
+        self.last_request_profile = {
+            "input_payload_chars": len(serialized_input),
+            "system_prompt_chars": len(self.system_prompt),
+            "response_schema_chars": len(serialized_schema),
+            "request_wrapper_chars": len("INPUT_JSON\n--- BEGIN INPUT ---\n--- END INPUT ---"),
+            "input_payload_hash": input_hash,
+            "response_schema_hash": _output_hash(serialized_schema) if serialized_schema else None,
+        }
         headers = {"content-type": "application/json"}
         if self.api_key:
             headers["authorization"] = f"Bearer {self.api_key}"
@@ -154,21 +169,25 @@ class OpenAICompatStructuredClient:
         finish_reason: str | None = None
         first_token_at: float | None = None
         try:
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
-                if stream:
-                    raw_content, usage, finish_reason, first_token_at = await self._stream(
-                        client, body, headers
-                    )
-                else:
-                    response = await client.post(_endpoint_url(self.endpoint), json=body, headers=headers)
-                    if response.status_code >= 400:
-                        raise ModelTransportError(f"HTTP {response.status_code}: {response.text[:500]}")
-                    payload = response.json()
-                    choice = self._first_choice(payload)
-                    raw_content = self._message_content(choice)
-                    usage = payload.get("usage")
-                    finish_reason = choice.get("finish_reason")
-                    first_token_at = time.perf_counter()
+            async with asyncio.timeout(self.timeout):
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    if stream:
+                        raw_content, usage, finish_reason, first_token_at = await self._stream(
+                            client, body, headers
+                        )
+                    else:
+                        response = await client.post(_endpoint_url(self.endpoint), json=body, headers=headers)
+                        if response.status_code >= 400:
+                            raise ModelTransportError(f"HTTP {response.status_code}: {response.text[:500]}")
+                        payload = response.json()
+                        choice = self._first_choice(payload)
+                        raw_content = self._message_content(choice)
+                        usage = payload.get("usage")
+                        finish_reason = choice.get("finish_reason")
+                        # Non-streaming responses provide no first-token or
+                        # incremental-progress signal. Keep TTFT unknown instead
+                        # of incorrectly reporting the full response latency.
+                        first_token_at = None
             self.check_ownership()
         except ModelTransportError as error:
             self._record_error(
@@ -206,6 +225,22 @@ class OpenAICompatStructuredClient:
                 finish_reason,
             )
             raise
+        except asyncio.TimeoutError as error:
+            self._record_error(
+                started,
+                start_timestamp,
+                settings,
+                input_hash,
+                error,
+                raw_content,
+                usage,
+                finish_reason,
+                error_category="timeout",
+                failure_phase="total_request_deadline",
+            )
+            raise ModelTransportError(
+                f"model request timed out after {self.timeout}s"
+            ) from error
         except httpx.TimeoutException as error:
             self._record_error(
                 started,
@@ -216,6 +251,8 @@ class OpenAICompatStructuredClient:
                 raw_content,
                 usage,
                 finish_reason,
+                error_category="timeout",
+                failure_phase=type(error).__name__,
             )
             raise ModelTransportError(f"model request timed out after {self.timeout}s") from error
         except httpx.HTTPError as error:
@@ -305,6 +342,7 @@ class OpenAICompatStructuredClient:
             "diagnostic_excerpt": None,
             "stream": stream,
             "status": "SUCCEEDED",
+            "request_profile": dict(self.last_request_profile or {}),
         }
         self._persist_telemetry(self.last_telemetry)
         return result
@@ -368,6 +406,8 @@ class OpenAICompatStructuredClient:
         raw_content: str | None = None,
         usage: dict[str, Any] | None = None,
         finish_reason: str | None = None,
+        error_category: str | None = None,
+        failure_phase: str | None = None,
     ) -> None:
         metrics = _usage_metrics(usage)
         self.last_telemetry = {
@@ -391,6 +431,9 @@ class OpenAICompatStructuredClient:
             "stream": bool(settings.get("stream", False)),
             "status": "FAILED",
             "error": str(error),
+            "error_category": error_category,
+            "failure_phase": failure_phase,
+            "request_profile": dict(self.last_request_profile or {}),
         }
         self._persist_telemetry(self.last_telemetry)
 
@@ -415,6 +458,7 @@ class OpenAICompatStructuredClient:
                     "ttft_ms": telemetry.get("ttft_ms"),
                     "stream": telemetry.get("stream"),
                     "transport_attempt": getattr(self, "_transport_attempt", 1),
+                    "request_profile": dict(self.last_request_profile or {}),
                 },
             }
         )

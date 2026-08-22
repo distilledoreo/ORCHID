@@ -1,0 +1,149 @@
+{
+  "timestamp": "2026-08-20T16:39:03.361Z",
+  "elapsed_ms": 15390,
+  "reason": "periodic",
+  "arms": {
+    "arm_a_pi": {
+      "name": "PI_NATIVE",
+      "pid": 27240,
+      "launch_count": 1,
+      "restart_count": 0,
+      "prompts_sent": 1,
+      "continuations_sent": 0,
+      "provider_messages": 1,
+      "tool_calls": 0,
+      "tool_failures": 0,
+      "pi_compactions": 0,
+      "request_responses": 2,
+      "errors": [],
+      "last_usage": {
+        "input": 1480,
+        "output": 20,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "reasoning": 17,
+        "totalTokens": 1500,
+        "cost": {
+          "input": 0.000044399999999999995,
+          "output": 0.0000024,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0.00004679999999999999
+        }
+      },
+      "last_event_types": [
+        "response",
+        "agent_start",
+        "turn_start",
+        "message_start",
+        "message_end",
+        "message_start",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_end",
+        "turn_end",
+        "agent_end",
+        "agent_settled",
+        "response"
+      ],
+      "git": {
+        "cwd": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_20260820\\arm-a-pi",
+        "status": "?? BENCHMARK_GOAL.md\n",
+        "diffStat": "",
+        "head": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa"
+      }
+    },
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "pid": 35508,
+      "launch_count": 1,
+      "restart_count": 0,
+      "prompts_sent": 1,
+      "continuations_sent": 0,
+      "provider_messages": 3,
+      "tool_calls": 0,
+      "tool_failures": 0,
+      "pi_compactions": 0,
+      "request_responses": 2,
+      "errors": [],
+      "last_usage": null,
+      "last_event_types": [
+        "response",
+        "agent_start",
+        "turn_start",
+        "message_start",
+        "message_end",
+        "message_start",
+        "message_end",
+        "turn_end",
+        "agent_end",
+        "auto_retry_start",
+        "agent_start",
+        "turn_start",
+        "message_start",
+        "message_end",
+        "turn_end",
+        "agent_end",
+        "auto_retry_start",
+        "agent_start",
+        "turn_start",
+        "message_start",
+        "message_end",
+        "turn_end",
+        "agent_end",
+        "auto_retry_end",
+        "agent_settled",
+        "response"
+      ],
+      "git": {
+        "cwd": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_20260820\\arm-b-orchid",
+        "status": "?? BENCHMARK_GOAL.md\n",
+        "diffStat": "",
+        "head": "ef22afee503843305c28d47dbf966cd644f52401"
+      },
+      "orchid": {
+        "thread": {
+          "thread_id": "orchid-arm-b",
+          "active_capsule": null,
+          "raw_tail_event_ids": [
+            "evt_1719157c0db94a54952dd20672202f03",
+            "evt_11a2bce002bd402aac3d878f92013f97",
+            "evt_cd81cef9ab07411993acfbf001c9f168",
+            "evt_cf5685ed6bd04e3ebabdaebf5972551c",
+            "evt_c7c02a9ba842442b92609d39d92cfdac",
+            "evt_76223320fc61462793bc6b965b1e3c32"
+          ],
+          "raw_tail_tokens": 4521,
+          "capsule_tokens": 0,
+          "estimated_active_tokens": 4521,
+          "last_snapshot_watermark": null,
+          "jobs": [],
+          "last_promotion": null,
+          "last_failure": null
+        },
+        "jobs": {
+          "jobs": [],
+          "queued_or_running": [],
+          "last_failure": null
+        }
+      }
+    }
+  }
+}

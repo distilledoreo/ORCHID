@@ -8,3 +8,6 @@ data/
 *.db-shm
 *.egg-info/
 *.log
+
+# Local benchmark launchers, logs, and hidden-evaluation helpers.
+benchmark_controller_private/

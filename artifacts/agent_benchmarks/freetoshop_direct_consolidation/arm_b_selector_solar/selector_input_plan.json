@@ -1,0 +1,3170 @@
+{
+  "chunks": [
+    {
+      "chunk_index": 0,
+      "first_sequence": 1,
+      "last_sequence": 1,
+      "parent_event_refs": [
+        "replay_evt_000001"
+      ],
+      "source_chars": 2785,
+      "source_refs": [
+        "replay_evt_000001"
+      ],
+      "source_tokens": 768
+    },
+    {
+      "chunk_index": 1,
+      "first_sequence": 2,
+      "last_sequence": 2,
+      "parent_event_refs": [
+        "replay_evt_000002"
+      ],
+      "source_chars": 3310,
+      "source_refs": [
+        "replay_evt_000002::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 2,
+      "first_sequence": 2,
+      "last_sequence": 2,
+      "parent_event_refs": [
+        "replay_evt_000002"
+      ],
+      "source_chars": 3313,
+      "source_refs": [
+        "replay_evt_000002::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 3,
+      "first_sequence": 2,
+      "last_sequence": 2,
+      "parent_event_refs": [
+        "replay_evt_000002"
+      ],
+      "source_chars": 3311,
+      "source_refs": [
+        "replay_evt_000002::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 4,
+      "first_sequence": 2,
+      "last_sequence": 2,
+      "parent_event_refs": [
+        "replay_evt_000002"
+      ],
+      "source_chars": 3314,
+      "source_refs": [
+        "replay_evt_000002::span::000003"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 5,
+      "first_sequence": 2,
+      "last_sequence": 3,
+      "parent_event_refs": [
+        "replay_evt_000002",
+        "replay_evt_000003"
+      ],
+      "source_chars": 3017,
+      "source_refs": [
+        "replay_evt_000002::span::000004",
+        "replay_evt_000003"
+      ],
+      "source_tokens": 959
+    },
+    {
+      "chunk_index": 6,
+      "first_sequence": 4,
+      "last_sequence": 4,
+      "parent_event_refs": [
+        "replay_evt_000004"
+      ],
+      "source_chars": 4501,
+      "source_refs": [
+        "replay_evt_000004"
+      ],
+      "source_tokens": 1194
+    },
+    {
+      "chunk_index": 7,
+      "first_sequence": 5,
+      "last_sequence": 6,
+      "parent_event_refs": [
+        "replay_evt_000005",
+        "replay_evt_000006"
+      ],
+      "source_chars": 3903,
+      "source_refs": [
+        "replay_evt_000005",
+        "replay_evt_000006"
+      ],
+      "source_tokens": 1122
+    },
+    {
+      "chunk_index": 8,
+      "first_sequence": 7,
+      "last_sequence": 7,
+      "parent_event_refs": [
+        "replay_evt_000007"
+      ],
+      "source_chars": 3276,
+      "source_refs": [
+        "replay_evt_000007::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 9,
+      "first_sequence": 7,
+      "last_sequence": 7,
+      "parent_event_refs": [
+        "replay_evt_000007"
+      ],
+      "source_chars": 3148,
+      "source_refs": [
+        "replay_evt_000007::span::000001"
+      ],
+      "source_tokens": 932
+    },
+    {
+      "chunk_index": 10,
+      "first_sequence": 8,
+      "last_sequence": 9,
+      "parent_event_refs": [
+        "replay_evt_000008",
+        "replay_evt_000009"
+      ],
+      "source_chars": 2389,
+      "source_refs": [
+        "replay_evt_000008",
+        "replay_evt_000009"
+      ],
+      "source_tokens": 728
+    },
+    {
+      "chunk_index": 11,
+      "first_sequence": 10,
+      "last_sequence": 10,
+      "parent_event_refs": [
+        "replay_evt_000010"
+      ],
+      "source_chars": 3249,
+      "source_refs": [
+        "replay_evt_000010::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 12,
+      "first_sequence": 10,
+      "last_sequence": 10,
+      "parent_event_refs": [
+        "replay_evt_000010"
+      ],
+      "source_chars": 3259,
+      "source_refs": [
+        "replay_evt_000010::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 13,
+      "first_sequence": 10,
+      "last_sequence": 10,
+      "parent_event_refs": [
+        "replay_evt_000010"
+      ],
+      "source_chars": 571,
+      "source_refs": [
+        "replay_evt_000010::span::000002"
+      ],
+      "source_tokens": 272
+    },
+    {
+      "chunk_index": 14,
+      "first_sequence": 11,
+      "last_sequence": 11,
+      "parent_event_refs": [
+        "replay_evt_000011"
+      ],
+      "source_chars": 3257,
+      "source_refs": [
+        "replay_evt_000011::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 15,
+      "first_sequence": 11,
+      "last_sequence": 11,
+      "parent_event_refs": [
+        "replay_evt_000011"
+      ],
+      "source_chars": 3256,
+      "source_refs": [
+        "replay_evt_000011::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 16,
+      "first_sequence": 11,
+      "last_sequence": 11,
+      "parent_event_refs": [
+        "replay_evt_000011"
+      ],
+      "source_chars": 834,
+      "source_refs": [
+        "replay_evt_000011::span::000002"
+      ],
+      "source_tokens": 340
+    },
+    {
+      "chunk_index": 17,
+      "first_sequence": 12,
+      "last_sequence": 12,
+      "parent_event_refs": [
+        "replay_evt_000012"
+      ],
+      "source_chars": 4287,
+      "source_refs": [
+        "replay_evt_000012"
+      ],
+      "source_tokens": 1200
+    },
+    {
+      "chunk_index": 18,
+      "first_sequence": 13,
+      "last_sequence": 14,
+      "parent_event_refs": [
+        "replay_evt_000013",
+        "replay_evt_000014"
+      ],
+      "source_chars": 3947,
+      "source_refs": [
+        "replay_evt_000013",
+        "replay_evt_000014"
+      ],
+      "source_tokens": 1135
+    },
+    {
+      "chunk_index": 19,
+      "first_sequence": 15,
+      "last_sequence": 15,
+      "parent_event_refs": [
+        "replay_evt_000015"
+      ],
+      "source_chars": 3223,
+      "source_refs": [
+        "replay_evt_000015"
+      ],
+      "source_tokens": 903
+    },
+    {
+      "chunk_index": 20,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3149,
+      "source_refs": [
+        "replay_evt_000016::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 21,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3202,
+      "source_refs": [
+        "replay_evt_000016::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 22,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3170,
+      "source_refs": [
+        "replay_evt_000016::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 23,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3208,
+      "source_refs": [
+        "replay_evt_000016::span::000003"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 24,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3193,
+      "source_refs": [
+        "replay_evt_000016::span::000004"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 25,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3183,
+      "source_refs": [
+        "replay_evt_000016::span::000005"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 26,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3171,
+      "source_refs": [
+        "replay_evt_000016::span::000006"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 27,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3181,
+      "source_refs": [
+        "replay_evt_000016::span::000007"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 28,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3185,
+      "source_refs": [
+        "replay_evt_000016::span::000008"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 29,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3174,
+      "source_refs": [
+        "replay_evt_000016::span::000009"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 30,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3168,
+      "source_refs": [
+        "replay_evt_000016::span::000010"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 31,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3182,
+      "source_refs": [
+        "replay_evt_000016::span::000011"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 32,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3188,
+      "source_refs": [
+        "replay_evt_000016::span::000012"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 33,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3202,
+      "source_refs": [
+        "replay_evt_000016::span::000013"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 34,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3182,
+      "source_refs": [
+        "replay_evt_000016::span::000014"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 35,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3182,
+      "source_refs": [
+        "replay_evt_000016::span::000015"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 36,
+      "first_sequence": 16,
+      "last_sequence": 16,
+      "parent_event_refs": [
+        "replay_evt_000016"
+      ],
+      "source_chars": 3164,
+      "source_refs": [
+        "replay_evt_000016::span::000016"
+      ],
+      "source_tokens": 956
+    },
+    {
+      "chunk_index": 37,
+      "first_sequence": 17,
+      "last_sequence": 18,
+      "parent_event_refs": [
+        "replay_evt_000017",
+        "replay_evt_000018"
+      ],
+      "source_chars": 2436,
+      "source_refs": [
+        "replay_evt_000017",
+        "replay_evt_000018"
+      ],
+      "source_tokens": 749
+    },
+    {
+      "chunk_index": 38,
+      "first_sequence": 19,
+      "last_sequence": 19,
+      "parent_event_refs": [
+        "replay_evt_000019"
+      ],
+      "source_chars": 4220,
+      "source_refs": [
+        "replay_evt_000019"
+      ],
+      "source_tokens": 1180
+    },
+    {
+      "chunk_index": 39,
+      "first_sequence": 20,
+      "last_sequence": 21,
+      "parent_event_refs": [
+        "replay_evt_000020",
+        "replay_evt_000021"
+      ],
+      "source_chars": 3643,
+      "source_refs": [
+        "replay_evt_000020",
+        "replay_evt_000021"
+      ],
+      "source_tokens": 1083
+    },
+    {
+      "chunk_index": 40,
+      "first_sequence": 22,
+      "last_sequence": 22,
+      "parent_event_refs": [
+        "replay_evt_000022"
+      ],
+      "source_chars": 937,
+      "source_refs": [
+        "replay_evt_000022"
+      ],
+      "source_tokens": 296
+    },
+    {
+      "chunk_index": 41,
+      "first_sequence": 23,
+      "last_sequence": 24,
+      "parent_event_refs": [
+        "replay_evt_000023",
+        "replay_evt_000024"
+      ],
+      "source_chars": 3812,
+      "source_refs": [
+        "replay_evt_000023",
+        "replay_evt_000024"
+      ],
+      "source_tokens": 1103
+    },
+    {
+      "chunk_index": 42,
+      "first_sequence": 25,
+      "last_sequence": 25,
+      "parent_event_refs": [
+        "replay_evt_000025"
+      ],
+      "source_chars": 865,
+      "source_refs": [
+        "replay_evt_000025"
+      ],
+      "source_tokens": 290
+    },
+    {
+      "chunk_index": 43,
+      "first_sequence": 26,
+      "last_sequence": 26,
+      "parent_event_refs": [
+        "replay_evt_000026"
+      ],
+      "source_chars": 3143,
+      "source_refs": [
+        "replay_evt_000026::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 44,
+      "first_sequence": 26,
+      "last_sequence": 26,
+      "parent_event_refs": [
+        "replay_evt_000026"
+      ],
+      "source_chars": 1731,
+      "source_refs": [
+        "replay_evt_000026::span::000001"
+      ],
+      "source_tokens": 583
+    },
+    {
+      "chunk_index": 45,
+      "first_sequence": 27,
+      "last_sequence": 27,
+      "parent_event_refs": [
+        "replay_evt_000027"
+      ],
+      "source_chars": 4304,
+      "source_refs": [
+        "replay_evt_000027"
+      ],
+      "source_tokens": 1200
+    },
+    {
+      "chunk_index": 46,
+      "first_sequence": 28,
+      "last_sequence": 29,
+      "parent_event_refs": [
+        "replay_evt_000028",
+        "replay_evt_000029"
+      ],
+      "source_chars": 1400,
+      "source_refs": [
+        "replay_evt_000028",
+        "replay_evt_000029"
+      ],
+      "source_tokens": 470
+    },
+    {
+      "chunk_index": 47,
+      "first_sequence": 30,
+      "last_sequence": 30,
+      "parent_event_refs": [
+        "replay_evt_000030"
+      ],
+      "source_chars": 3223,
+      "source_refs": [
+        "replay_evt_000030"
+      ],
+      "source_tokens": 903
+    },
+    {
+      "chunk_index": 48,
+      "first_sequence": 31,
+      "last_sequence": 32,
+      "parent_event_refs": [
+        "replay_evt_000031",
+        "replay_evt_000032"
+      ],
+      "source_chars": 2998,
+      "source_refs": [
+        "replay_evt_000031",
+        "replay_evt_000032"
+      ],
+      "source_tokens": 966
+    },
+    {
+      "chunk_index": 49,
+      "first_sequence": 33,
+      "last_sequence": 37,
+      "parent_event_refs": [
+        "replay_evt_000033",
+        "replay_evt_000034",
+        "replay_evt_000035",
+        "replay_evt_000036",
+        "replay_evt_000037"
+      ],
+      "source_chars": 2731,
+      "source_refs": [
+        "replay_evt_000033",
+        "replay_evt_000034",
+        "replay_evt_000035",
+        "replay_evt_000036",
+        "replay_evt_000037"
+      ],
+      "source_tokens": 989
+    },
+    {
+      "chunk_index": 50,
+      "first_sequence": 38,
+      "last_sequence": 38,
+      "parent_event_refs": [
+        "replay_evt_000038"
+      ],
+      "source_chars": 4021,
+      "source_refs": [
+        "replay_evt_000038"
+      ],
+      "source_tokens": 1114
+    },
+    {
+      "chunk_index": 51,
+      "first_sequence": 39,
+      "last_sequence": 41,
+      "parent_event_refs": [
+        "replay_evt_000039",
+        "replay_evt_000040",
+        "replay_evt_000041"
+      ],
+      "source_chars": 1461,
+      "source_refs": [
+        "replay_evt_000039",
+        "replay_evt_000040",
+        "replay_evt_000041"
+      ],
+      "source_tokens": 547
+    },
+    {
+      "chunk_index": 52,
+      "first_sequence": 42,
+      "last_sequence": 42,
+      "parent_event_refs": [
+        "replay_evt_000042"
+      ],
+      "source_chars": 3080,
+      "source_refs": [
+        "replay_evt_000042::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 53,
+      "first_sequence": 42,
+      "last_sequence": 45,
+      "parent_event_refs": [
+        "replay_evt_000042",
+        "replay_evt_000043",
+        "replay_evt_000044",
+        "replay_evt_000045"
+      ],
+      "source_chars": 2674,
+      "source_refs": [
+        "replay_evt_000042::span::000001",
+        "replay_evt_000043",
+        "replay_evt_000044",
+        "replay_evt_000045"
+      ],
+      "source_tokens": 991
+    },
+    {
+      "chunk_index": 54,
+      "first_sequence": 46,
+      "last_sequence": 46,
+      "parent_event_refs": [
+        "replay_evt_000046"
+      ],
+      "source_chars": 3082,
+      "source_refs": [
+        "replay_evt_000046::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 55,
+      "first_sequence": 46,
+      "last_sequence": 47,
+      "parent_event_refs": [
+        "replay_evt_000046",
+        "replay_evt_000047"
+      ],
+      "source_chars": 1797,
+      "source_refs": [
+        "replay_evt_000046::span::000001",
+        "replay_evt_000047"
+      ],
+      "source_tokens": 653
+    },
+    {
+      "chunk_index": 56,
+      "first_sequence": 48,
+      "last_sequence": 49,
+      "parent_event_refs": [
+        "replay_evt_000048",
+        "replay_evt_000049"
+      ],
+      "source_chars": 3309,
+      "source_refs": [
+        "replay_evt_000048",
+        "replay_evt_000049"
+      ],
+      "source_tokens": 985
+    },
+    {
+      "chunk_index": 57,
+      "first_sequence": 50,
+      "last_sequence": 52,
+      "parent_event_refs": [
+        "replay_evt_000050",
+        "replay_evt_000051",
+        "replay_evt_000052"
+      ],
+      "source_chars": 3302,
+      "source_refs": [
+        "replay_evt_000050",
+        "replay_evt_000051",
+        "replay_evt_000052"
+      ],
+      "source_tokens": 1032
+    },
+    {
+      "chunk_index": 58,
+      "first_sequence": 53,
+      "last_sequence": 55,
+      "parent_event_refs": [
+        "replay_evt_000053",
+        "replay_evt_000054",
+        "replay_evt_000055"
+      ],
+      "source_chars": 1129,
+      "source_refs": [
+        "replay_evt_000053",
+        "replay_evt_000054",
+        "replay_evt_000055"
+      ],
+      "source_tokens": 454
+    },
+    {
+      "chunk_index": 59,
+      "first_sequence": 56,
+      "last_sequence": 57,
+      "parent_event_refs": [
+        "replay_evt_000056",
+        "replay_evt_000057"
+      ],
+      "source_chars": 3798,
+      "source_refs": [
+        "replay_evt_000056",
+        "replay_evt_000057"
+      ],
+      "source_tokens": 1108
+    },
+    {
+      "chunk_index": 60,
+      "first_sequence": 58,
+      "last_sequence": 58,
+      "parent_event_refs": [
+        "replay_evt_000058"
+      ],
+      "source_chars": 1574,
+      "source_refs": [
+        "replay_evt_000058"
+      ],
+      "source_tokens": 459
+    },
+    {
+      "chunk_index": 61,
+      "first_sequence": 59,
+      "last_sequence": 59,
+      "parent_event_refs": [
+        "replay_evt_000059"
+      ],
+      "source_chars": 3165,
+      "source_refs": [
+        "replay_evt_000059::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 62,
+      "first_sequence": 59,
+      "last_sequence": 59,
+      "parent_event_refs": [
+        "replay_evt_000059"
+      ],
+      "source_chars": 3195,
+      "source_refs": [
+        "replay_evt_000059::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 63,
+      "first_sequence": 59,
+      "last_sequence": 60,
+      "parent_event_refs": [
+        "replay_evt_000059",
+        "replay_evt_000060"
+      ],
+      "source_chars": 1611,
+      "source_refs": [
+        "replay_evt_000059::span::000002",
+        "replay_evt_000060"
+      ],
+      "source_tokens": 600
+    },
+    {
+      "chunk_index": 64,
+      "first_sequence": 61,
+      "last_sequence": 61,
+      "parent_event_refs": [
+        "replay_evt_000061"
+      ],
+      "source_chars": 3179,
+      "source_refs": [
+        "replay_evt_000061::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 65,
+      "first_sequence": 61,
+      "last_sequence": 61,
+      "parent_event_refs": [
+        "replay_evt_000061"
+      ],
+      "source_chars": 3165,
+      "source_refs": [
+        "replay_evt_000061::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 66,
+      "first_sequence": 61,
+      "last_sequence": 61,
+      "parent_event_refs": [
+        "replay_evt_000061"
+      ],
+      "source_chars": 3163,
+      "source_refs": [
+        "replay_evt_000061::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 67,
+      "first_sequence": 61,
+      "last_sequence": 61,
+      "parent_event_refs": [
+        "replay_evt_000061"
+      ],
+      "source_chars": 3206,
+      "source_refs": [
+        "replay_evt_000061::span::000003"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 68,
+      "first_sequence": 61,
+      "last_sequence": 62,
+      "parent_event_refs": [
+        "replay_evt_000061",
+        "replay_evt_000062"
+      ],
+      "source_chars": 1421,
+      "source_refs": [
+        "replay_evt_000061::span::000004",
+        "replay_evt_000062"
+      ],
+      "source_tokens": 551
+    },
+    {
+      "chunk_index": 69,
+      "first_sequence": 63,
+      "last_sequence": 63,
+      "parent_event_refs": [
+        "replay_evt_000063"
+      ],
+      "source_chars": 3179,
+      "source_refs": [
+        "replay_evt_000063::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 70,
+      "first_sequence": 63,
+      "last_sequence": 63,
+      "parent_event_refs": [
+        "replay_evt_000063"
+      ],
+      "source_chars": 3165,
+      "source_refs": [
+        "replay_evt_000063::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 71,
+      "first_sequence": 63,
+      "last_sequence": 63,
+      "parent_event_refs": [
+        "replay_evt_000063"
+      ],
+      "source_chars": 3163,
+      "source_refs": [
+        "replay_evt_000063::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 72,
+      "first_sequence": 63,
+      "last_sequence": 63,
+      "parent_event_refs": [
+        "replay_evt_000063"
+      ],
+      "source_chars": 3206,
+      "source_refs": [
+        "replay_evt_000063::span::000003"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 73,
+      "first_sequence": 63,
+      "last_sequence": 65,
+      "parent_event_refs": [
+        "replay_evt_000063",
+        "replay_evt_000064",
+        "replay_evt_000065"
+      ],
+      "source_chars": 1824,
+      "source_refs": [
+        "replay_evt_000063::span::000004",
+        "replay_evt_000064",
+        "replay_evt_000065"
+      ],
+      "source_tokens": 711
+    },
+    {
+      "chunk_index": 74,
+      "first_sequence": 66,
+      "last_sequence": 66,
+      "parent_event_refs": [
+        "replay_evt_000066"
+      ],
+      "source_chars": 3203,
+      "source_refs": [
+        "replay_evt_000066::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 75,
+      "first_sequence": 66,
+      "last_sequence": 66,
+      "parent_event_refs": [
+        "replay_evt_000066"
+      ],
+      "source_chars": 3209,
+      "source_refs": [
+        "replay_evt_000066::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 76,
+      "first_sequence": 66,
+      "last_sequence": 66,
+      "parent_event_refs": [
+        "replay_evt_000066"
+      ],
+      "source_chars": 3201,
+      "source_refs": [
+        "replay_evt_000066::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 77,
+      "first_sequence": 66,
+      "last_sequence": 67,
+      "parent_event_refs": [
+        "replay_evt_000066",
+        "replay_evt_000067"
+      ],
+      "source_chars": 1337,
+      "source_refs": [
+        "replay_evt_000066::span::000003",
+        "replay_evt_000067"
+      ],
+      "source_tokens": 532
+    },
+    {
+      "chunk_index": 78,
+      "first_sequence": 68,
+      "last_sequence": 68,
+      "parent_event_refs": [
+        "replay_evt_000068"
+      ],
+      "source_chars": 3151,
+      "source_refs": [
+        "replay_evt_000068::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 79,
+      "first_sequence": 68,
+      "last_sequence": 68,
+      "parent_event_refs": [
+        "replay_evt_000068"
+      ],
+      "source_chars": 3069,
+      "source_refs": [
+        "replay_evt_000068::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 80,
+      "first_sequence": 68,
+      "last_sequence": 69,
+      "parent_event_refs": [
+        "replay_evt_000068",
+        "replay_evt_000069"
+      ],
+      "source_chars": 2779,
+      "source_refs": [
+        "replay_evt_000068::span::000002",
+        "replay_evt_000069"
+      ],
+      "source_tokens": 919
+    },
+    {
+      "chunk_index": 81,
+      "first_sequence": 70,
+      "last_sequence": 70,
+      "parent_event_refs": [
+        "replay_evt_000070"
+      ],
+      "source_chars": 3151,
+      "source_refs": [
+        "replay_evt_000070::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 82,
+      "first_sequence": 70,
+      "last_sequence": 70,
+      "parent_event_refs": [
+        "replay_evt_000070"
+      ],
+      "source_chars": 3069,
+      "source_refs": [
+        "replay_evt_000070::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 83,
+      "first_sequence": 70,
+      "last_sequence": 70,
+      "parent_event_refs": [
+        "replay_evt_000070"
+      ],
+      "source_chars": 3141,
+      "source_refs": [
+        "replay_evt_000070::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 84,
+      "first_sequence": 70,
+      "last_sequence": 70,
+      "parent_event_refs": [
+        "replay_evt_000070"
+      ],
+      "source_chars": 2672,
+      "source_refs": [
+        "replay_evt_000070::span::000003"
+      ],
+      "source_tokens": 852
+    },
+    {
+      "chunk_index": 85,
+      "first_sequence": 71,
+      "last_sequence": 72,
+      "parent_event_refs": [
+        "replay_evt_000071",
+        "replay_evt_000072"
+      ],
+      "source_chars": 3975,
+      "source_refs": [
+        "replay_evt_000071",
+        "replay_evt_000072"
+      ],
+      "source_tokens": 1144
+    },
+    {
+      "chunk_index": 86,
+      "first_sequence": 73,
+      "last_sequence": 74,
+      "parent_event_refs": [
+        "replay_evt_000073",
+        "replay_evt_000074"
+      ],
+      "source_chars": 3438,
+      "source_refs": [
+        "replay_evt_000073",
+        "replay_evt_000074::span::000000"
+      ],
+      "source_tokens": 1087
+    },
+    {
+      "chunk_index": 87,
+      "first_sequence": 74,
+      "last_sequence": 74,
+      "parent_event_refs": [
+        "replay_evt_000074"
+      ],
+      "source_chars": 3065,
+      "source_refs": [
+        "replay_evt_000074::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 88,
+      "first_sequence": 74,
+      "last_sequence": 74,
+      "parent_event_refs": [
+        "replay_evt_000074"
+      ],
+      "source_chars": 3141,
+      "source_refs": [
+        "replay_evt_000074::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 89,
+      "first_sequence": 74,
+      "last_sequence": 74,
+      "parent_event_refs": [
+        "replay_evt_000074"
+      ],
+      "source_chars": 2801,
+      "source_refs": [
+        "replay_evt_000074::span::000003"
+      ],
+      "source_tokens": 886
+    },
+    {
+      "chunk_index": 90,
+      "first_sequence": 75,
+      "last_sequence": 75,
+      "parent_event_refs": [
+        "replay_evt_000075"
+      ],
+      "source_chars": 2921,
+      "source_refs": [
+        "replay_evt_000075::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 91,
+      "first_sequence": 75,
+      "last_sequence": 77,
+      "parent_event_refs": [
+        "replay_evt_000075",
+        "replay_evt_000076",
+        "replay_evt_000077"
+      ],
+      "source_chars": 3410,
+      "source_refs": [
+        "replay_evt_000075::span::000001",
+        "replay_evt_000076",
+        "replay_evt_000077"
+      ],
+      "source_tokens": 1180
+    },
+    {
+      "chunk_index": 92,
+      "first_sequence": 78,
+      "last_sequence": 81,
+      "parent_event_refs": [
+        "replay_evt_000078",
+        "replay_evt_000079",
+        "replay_evt_000080",
+        "replay_evt_000081"
+      ],
+      "source_chars": 2628,
+      "source_refs": [
+        "replay_evt_000078",
+        "replay_evt_000079",
+        "replay_evt_000080",
+        "replay_evt_000081"
+      ],
+      "source_tokens": 899
+    },
+    {
+      "chunk_index": 93,
+      "first_sequence": 82,
+      "last_sequence": 82,
+      "parent_event_refs": [
+        "replay_evt_000082"
+      ],
+      "source_chars": 3127,
+      "source_refs": [
+        "replay_evt_000082::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 94,
+      "first_sequence": 82,
+      "last_sequence": 82,
+      "parent_event_refs": [
+        "replay_evt_000082"
+      ],
+      "source_chars": 3136,
+      "source_refs": [
+        "replay_evt_000082::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 95,
+      "first_sequence": 82,
+      "last_sequence": 82,
+      "parent_event_refs": [
+        "replay_evt_000082"
+      ],
+      "source_chars": 3146,
+      "source_refs": [
+        "replay_evt_000082::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 96,
+      "first_sequence": 82,
+      "last_sequence": 82,
+      "parent_event_refs": [
+        "replay_evt_000082"
+      ],
+      "source_chars": 3133,
+      "source_refs": [
+        "replay_evt_000082::span::000003"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 97,
+      "first_sequence": 82,
+      "last_sequence": 84,
+      "parent_event_refs": [
+        "replay_evt_000082",
+        "replay_evt_000083",
+        "replay_evt_000084"
+      ],
+      "source_chars": 3530,
+      "source_refs": [
+        "replay_evt_000082::span::000004",
+        "replay_evt_000083",
+        "replay_evt_000084"
+      ],
+      "source_tokens": 1165
+    },
+    {
+      "chunk_index": 98,
+      "first_sequence": 85,
+      "last_sequence": 87,
+      "parent_event_refs": [
+        "replay_evt_000085",
+        "replay_evt_000086",
+        "replay_evt_000087"
+      ],
+      "source_chars": 1806,
+      "source_refs": [
+        "replay_evt_000085",
+        "replay_evt_000086",
+        "replay_evt_000087"
+      ],
+      "source_tokens": 632
+    },
+    {
+      "chunk_index": 99,
+      "first_sequence": 88,
+      "last_sequence": 89,
+      "parent_event_refs": [
+        "replay_evt_000088",
+        "replay_evt_000089"
+      ],
+      "source_chars": 3820,
+      "source_refs": [
+        "replay_evt_000088",
+        "replay_evt_000089"
+      ],
+      "source_tokens": 1129
+    },
+    {
+      "chunk_index": 100,
+      "first_sequence": 90,
+      "last_sequence": 90,
+      "parent_event_refs": [
+        "replay_evt_000090"
+      ],
+      "source_chars": 3641,
+      "source_refs": [
+        "replay_evt_000090"
+      ],
+      "source_tokens": 975
+    },
+    {
+      "chunk_index": 101,
+      "first_sequence": 91,
+      "last_sequence": 92,
+      "parent_event_refs": [
+        "replay_evt_000091",
+        "replay_evt_000092"
+      ],
+      "source_chars": 3903,
+      "source_refs": [
+        "replay_evt_000091",
+        "replay_evt_000092"
+      ],
+      "source_tokens": 1122
+    },
+    {
+      "chunk_index": 102,
+      "first_sequence": 93,
+      "last_sequence": 93,
+      "parent_event_refs": [
+        "replay_evt_000093"
+      ],
+      "source_chars": 3274,
+      "source_refs": [
+        "replay_evt_000093::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 103,
+      "first_sequence": 93,
+      "last_sequence": 93,
+      "parent_event_refs": [
+        "replay_evt_000093"
+      ],
+      "source_chars": 3150,
+      "source_refs": [
+        "replay_evt_000093::span::000001"
+      ],
+      "source_tokens": 933
+    },
+    {
+      "chunk_index": 104,
+      "first_sequence": 94,
+      "last_sequence": 95,
+      "parent_event_refs": [
+        "replay_evt_000094",
+        "replay_evt_000095"
+      ],
+      "source_chars": 2313,
+      "source_refs": [
+        "replay_evt_000094",
+        "replay_evt_000095"
+      ],
+      "source_tokens": 710
+    },
+    {
+      "chunk_index": 105,
+      "first_sequence": 96,
+      "last_sequence": 96,
+      "parent_event_refs": [
+        "replay_evt_000096"
+      ],
+      "source_chars": 3249,
+      "source_refs": [
+        "replay_evt_000096::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 106,
+      "first_sequence": 96,
+      "last_sequence": 96,
+      "parent_event_refs": [
+        "replay_evt_000096"
+      ],
+      "source_chars": 3259,
+      "source_refs": [
+        "replay_evt_000096::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 107,
+      "first_sequence": 96,
+      "last_sequence": 96,
+      "parent_event_refs": [
+        "replay_evt_000096"
+      ],
+      "source_chars": 571,
+      "source_refs": [
+        "replay_evt_000096::span::000002"
+      ],
+      "source_tokens": 272
+    },
+    {
+      "chunk_index": 108,
+      "first_sequence": 97,
+      "last_sequence": 97,
+      "parent_event_refs": [
+        "replay_evt_000097"
+      ],
+      "source_chars": 3257,
+      "source_refs": [
+        "replay_evt_000097::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 109,
+      "first_sequence": 97,
+      "last_sequence": 97,
+      "parent_event_refs": [
+        "replay_evt_000097"
+      ],
+      "source_chars": 3256,
+      "source_refs": [
+        "replay_evt_000097::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 110,
+      "first_sequence": 97,
+      "last_sequence": 97,
+      "parent_event_refs": [
+        "replay_evt_000097"
+      ],
+      "source_chars": 834,
+      "source_refs": [
+        "replay_evt_000097::span::000002"
+      ],
+      "source_tokens": 340
+    },
+    {
+      "chunk_index": 111,
+      "first_sequence": 98,
+      "last_sequence": 98,
+      "parent_event_refs": [
+        "replay_evt_000098"
+      ],
+      "source_chars": 3082,
+      "source_refs": [
+        "replay_evt_000098::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 112,
+      "first_sequence": 98,
+      "last_sequence": 99,
+      "parent_event_refs": [
+        "replay_evt_000098",
+        "replay_evt_000099"
+      ],
+      "source_chars": 1875,
+      "source_refs": [
+        "replay_evt_000098::span::000001",
+        "replay_evt_000099"
+      ],
+      "source_tokens": 673
+    },
+    {
+      "chunk_index": 113,
+      "first_sequence": 100,
+      "last_sequence": 100,
+      "parent_event_refs": [
+        "replay_evt_000100"
+      ],
+      "source_chars": 3770,
+      "source_refs": [
+        "replay_evt_000100"
+      ],
+      "source_tokens": 1042
+    },
+    {
+      "chunk_index": 114,
+      "first_sequence": 101,
+      "last_sequence": 103,
+      "parent_event_refs": [
+        "replay_evt_000101",
+        "replay_evt_000102",
+        "replay_evt_000103"
+      ],
+      "source_chars": 2396,
+      "source_refs": [
+        "replay_evt_000101",
+        "replay_evt_000102",
+        "replay_evt_000103"
+      ],
+      "source_tokens": 799
+    },
+    {
+      "chunk_index": 115,
+      "first_sequence": 104,
+      "last_sequence": 104,
+      "parent_event_refs": [
+        "replay_evt_000104"
+      ],
+      "source_chars": 3247,
+      "source_refs": [
+        "replay_evt_000104::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 116,
+      "first_sequence": 104,
+      "last_sequence": 104,
+      "parent_event_refs": [
+        "replay_evt_000104"
+      ],
+      "source_chars": 3257,
+      "source_refs": [
+        "replay_evt_000104::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 117,
+      "first_sequence": 104,
+      "last_sequence": 104,
+      "parent_event_refs": [
+        "replay_evt_000104"
+      ],
+      "source_chars": 575,
+      "source_refs": [
+        "replay_evt_000104::span::000002"
+      ],
+      "source_tokens": 274
+    },
+    {
+      "chunk_index": 118,
+      "first_sequence": 105,
+      "last_sequence": 105,
+      "parent_event_refs": [
+        "replay_evt_000105"
+      ],
+      "source_chars": 3256,
+      "source_refs": [
+        "replay_evt_000105::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 119,
+      "first_sequence": 105,
+      "last_sequence": 105,
+      "parent_event_refs": [
+        "replay_evt_000105"
+      ],
+      "source_chars": 3254,
+      "source_refs": [
+        "replay_evt_000105::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 120,
+      "first_sequence": 105,
+      "last_sequence": 105,
+      "parent_event_refs": [
+        "replay_evt_000105"
+      ],
+      "source_chars": 837,
+      "source_refs": [
+        "replay_evt_000105::span::000002"
+      ],
+      "source_tokens": 341
+    },
+    {
+      "chunk_index": 121,
+      "first_sequence": 106,
+      "last_sequence": 106,
+      "parent_event_refs": [
+        "replay_evt_000106"
+      ],
+      "source_chars": 3080,
+      "source_refs": [
+        "replay_evt_000106::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 122,
+      "first_sequence": 106,
+      "last_sequence": 107,
+      "parent_event_refs": [
+        "replay_evt_000106",
+        "replay_evt_000107"
+      ],
+      "source_chars": 2287,
+      "source_refs": [
+        "replay_evt_000106::span::000001",
+        "replay_evt_000107"
+      ],
+      "source_tokens": 792
+    },
+    {
+      "chunk_index": 123,
+      "first_sequence": 108,
+      "last_sequence": 108,
+      "parent_event_refs": [
+        "replay_evt_000108"
+      ],
+      "source_chars": 3152,
+      "source_refs": [
+        "replay_evt_000108"
+      ],
+      "source_tokens": 863
+    },
+    {
+      "chunk_index": 124,
+      "first_sequence": 109,
+      "last_sequence": 109,
+      "parent_event_refs": [
+        "replay_evt_000109"
+      ],
+      "source_chars": 3261,
+      "source_refs": [
+        "replay_evt_000109::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 125,
+      "first_sequence": 109,
+      "last_sequence": 109,
+      "parent_event_refs": [
+        "replay_evt_000109"
+      ],
+      "source_chars": 3261,
+      "source_refs": [
+        "replay_evt_000109::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 126,
+      "first_sequence": 109,
+      "last_sequence": 109,
+      "parent_event_refs": [
+        "replay_evt_000109"
+      ],
+      "source_chars": 775,
+      "source_refs": [
+        "replay_evt_000109::span::000002"
+      ],
+      "source_tokens": 326
+    },
+    {
+      "chunk_index": 127,
+      "first_sequence": 110,
+      "last_sequence": 110,
+      "parent_event_refs": [
+        "replay_evt_000110"
+      ],
+      "source_chars": 4021,
+      "source_refs": [
+        "replay_evt_000110"
+      ],
+      "source_tokens": 1114
+    },
+    {
+      "chunk_index": 128,
+      "first_sequence": 111,
+      "last_sequence": 111,
+      "parent_event_refs": [
+        "replay_evt_000111"
+      ],
+      "source_chars": 887,
+      "source_refs": [
+        "replay_evt_000111"
+      ],
+      "source_tokens": 282
+    },
+    {
+      "chunk_index": 129,
+      "first_sequence": 112,
+      "last_sequence": 112,
+      "parent_event_refs": [
+        "replay_evt_000112"
+      ],
+      "source_chars": 4021,
+      "source_refs": [
+        "replay_evt_000112"
+      ],
+      "source_tokens": 1114
+    },
+    {
+      "chunk_index": 130,
+      "first_sequence": 113,
+      "last_sequence": 114,
+      "parent_event_refs": [
+        "replay_evt_000113",
+        "replay_evt_000114"
+      ],
+      "source_chars": 1794,
+      "source_refs": [
+        "replay_evt_000113",
+        "replay_evt_000114"
+      ],
+      "source_tokens": 582
+    },
+    {
+      "chunk_index": 131,
+      "first_sequence": 115,
+      "last_sequence": 116,
+      "parent_event_refs": [
+        "replay_evt_000115",
+        "replay_evt_000116"
+      ],
+      "source_chars": 3903,
+      "source_refs": [
+        "replay_evt_000115",
+        "replay_evt_000116"
+      ],
+      "source_tokens": 1123
+    },
+    {
+      "chunk_index": 132,
+      "first_sequence": 117,
+      "last_sequence": 117,
+      "parent_event_refs": [
+        "replay_evt_000117"
+      ],
+      "source_chars": 3272,
+      "source_refs": [
+        "replay_evt_000117::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 133,
+      "first_sequence": 117,
+      "last_sequence": 117,
+      "parent_event_refs": [
+        "replay_evt_000117"
+      ],
+      "source_chars": 3152,
+      "source_refs": [
+        "replay_evt_000117::span::000001"
+      ],
+      "source_tokens": 934
+    },
+    {
+      "chunk_index": 134,
+      "first_sequence": 118,
+      "last_sequence": 119,
+      "parent_event_refs": [
+        "replay_evt_000118",
+        "replay_evt_000119"
+      ],
+      "source_chars": 2439,
+      "source_refs": [
+        "replay_evt_000118",
+        "replay_evt_000119"
+      ],
+      "source_tokens": 746
+    },
+    {
+      "chunk_index": 135,
+      "first_sequence": 120,
+      "last_sequence": 120,
+      "parent_event_refs": [
+        "replay_evt_000120"
+      ],
+      "source_chars": 3247,
+      "source_refs": [
+        "replay_evt_000120::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 136,
+      "first_sequence": 120,
+      "last_sequence": 120,
+      "parent_event_refs": [
+        "replay_evt_000120"
+      ],
+      "source_chars": 3257,
+      "source_refs": [
+        "replay_evt_000120::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 137,
+      "first_sequence": 120,
+      "last_sequence": 120,
+      "parent_event_refs": [
+        "replay_evt_000120"
+      ],
+      "source_chars": 575,
+      "source_refs": [
+        "replay_evt_000120::span::000002"
+      ],
+      "source_tokens": 274
+    },
+    {
+      "chunk_index": 138,
+      "first_sequence": 121,
+      "last_sequence": 121,
+      "parent_event_refs": [
+        "replay_evt_000121"
+      ],
+      "source_chars": 3256,
+      "source_refs": [
+        "replay_evt_000121::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 139,
+      "first_sequence": 121,
+      "last_sequence": 121,
+      "parent_event_refs": [
+        "replay_evt_000121"
+      ],
+      "source_chars": 3254,
+      "source_refs": [
+        "replay_evt_000121::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 140,
+      "first_sequence": 121,
+      "last_sequence": 122,
+      "parent_event_refs": [
+        "replay_evt_000121",
+        "replay_evt_000122"
+      ],
+      "source_chars": 3167,
+      "source_refs": [
+        "replay_evt_000121::span::000002",
+        "replay_evt_000122"
+      ],
+      "source_tokens": 986
+    },
+    {
+      "chunk_index": 141,
+      "first_sequence": 123,
+      "last_sequence": 123,
+      "parent_event_refs": [
+        "replay_evt_000123"
+      ],
+      "source_chars": 856,
+      "source_refs": [
+        "replay_evt_000123"
+      ],
+      "source_tokens": 287
+    },
+    {
+      "chunk_index": 142,
+      "first_sequence": 124,
+      "last_sequence": 124,
+      "parent_event_refs": [
+        "replay_evt_000124"
+      ],
+      "source_chars": 3326,
+      "source_refs": [
+        "replay_evt_000124"
+      ],
+      "source_tokens": 931
+    },
+    {
+      "chunk_index": 143,
+      "first_sequence": 125,
+      "last_sequence": 125,
+      "parent_event_refs": [
+        "replay_evt_000125"
+      ],
+      "source_chars": 3080,
+      "source_refs": [
+        "replay_evt_000125::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 144,
+      "first_sequence": 125,
+      "last_sequence": 125,
+      "parent_event_refs": [
+        "replay_evt_000125"
+      ],
+      "source_chars": 1460,
+      "source_refs": [
+        "replay_evt_000125::span::000001"
+      ],
+      "source_tokens": 510
+    },
+    {
+      "chunk_index": 145,
+      "first_sequence": 126,
+      "last_sequence": 126,
+      "parent_event_refs": [
+        "replay_evt_000126"
+      ],
+      "source_chars": 3159,
+      "source_refs": [
+        "replay_evt_000126::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 146,
+      "first_sequence": 126,
+      "last_sequence": 127,
+      "parent_event_refs": [
+        "replay_evt_000126",
+        "replay_evt_000127"
+      ],
+      "source_chars": 1650,
+      "source_refs": [
+        "replay_evt_000126::span::000001",
+        "replay_evt_000127"
+      ],
+      "source_tokens": 627
+    },
+    {
+      "chunk_index": 147,
+      "first_sequence": 128,
+      "last_sequence": 129,
+      "parent_event_refs": [
+        "replay_evt_000128",
+        "replay_evt_000129"
+      ],
+      "source_chars": 4102,
+      "source_refs": [
+        "replay_evt_000128",
+        "replay_evt_000129"
+      ],
+      "source_tokens": 1183
+    },
+    {
+      "chunk_index": 148,
+      "first_sequence": 130,
+      "last_sequence": 131,
+      "parent_event_refs": [
+        "replay_evt_000130",
+        "replay_evt_000131"
+      ],
+      "source_chars": 1435,
+      "source_refs": [
+        "replay_evt_000130",
+        "replay_evt_000131"
+      ],
+      "source_tokens": 485
+    },
+    {
+      "chunk_index": 149,
+      "first_sequence": 132,
+      "last_sequence": 132,
+      "parent_event_refs": [
+        "replay_evt_000132"
+      ],
+      "source_chars": 3774,
+      "source_refs": [
+        "replay_evt_000132"
+      ],
+      "source_tokens": 1043
+    },
+    {
+      "chunk_index": 150,
+      "first_sequence": 133,
+      "last_sequence": 134,
+      "parent_event_refs": [
+        "replay_evt_000133",
+        "replay_evt_000134"
+      ],
+      "source_chars": 3601,
+      "source_refs": [
+        "replay_evt_000133",
+        "replay_evt_000134::span::000000"
+      ],
+      "source_tokens": 1121
+    },
+    {
+      "chunk_index": 151,
+      "first_sequence": 134,
+      "last_sequence": 134,
+      "parent_event_refs": [
+        "replay_evt_000134"
+      ],
+      "source_chars": 3217,
+      "source_refs": [
+        "replay_evt_000134::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 152,
+      "first_sequence": 134,
+      "last_sequence": 134,
+      "parent_event_refs": [
+        "replay_evt_000134"
+      ],
+      "source_chars": 3195,
+      "source_refs": [
+        "replay_evt_000134::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 153,
+      "first_sequence": 134,
+      "last_sequence": 135,
+      "parent_event_refs": [
+        "replay_evt_000134",
+        "replay_evt_000135"
+      ],
+      "source_chars": 1235,
+      "source_refs": [
+        "replay_evt_000134::span::000003",
+        "replay_evt_000135"
+      ],
+      "source_tokens": 506
+    },
+    {
+      "chunk_index": 154,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3115,
+      "source_refs": [
+        "replay_evt_000136::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 155,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3201,
+      "source_refs": [
+        "replay_evt_000136::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 156,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3155,
+      "source_refs": [
+        "replay_evt_000136::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 157,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3172,
+      "source_refs": [
+        "replay_evt_000136::span::000003"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 158,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3211,
+      "source_refs": [
+        "replay_evt_000136::span::000004"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 159,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3203,
+      "source_refs": [
+        "replay_evt_000136::span::000005"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 160,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3210,
+      "source_refs": [
+        "replay_evt_000136::span::000006"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 161,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3203,
+      "source_refs": [
+        "replay_evt_000136::span::000007"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 162,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3196,
+      "source_refs": [
+        "replay_evt_000136::span::000008"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 163,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3195,
+      "source_refs": [
+        "replay_evt_000136::span::000009"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 164,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3166,
+      "source_refs": [
+        "replay_evt_000136::span::000010"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 165,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3192,
+      "source_refs": [
+        "replay_evt_000136::span::000011"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 166,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3196,
+      "source_refs": [
+        "replay_evt_000136::span::000012"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 167,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3188,
+      "source_refs": [
+        "replay_evt_000136::span::000013"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 168,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3182,
+      "source_refs": [
+        "replay_evt_000136::span::000014"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 169,
+      "first_sequence": 136,
+      "last_sequence": 136,
+      "parent_event_refs": [
+        "replay_evt_000136"
+      ],
+      "source_chars": 3168,
+      "source_refs": [
+        "replay_evt_000136::span::000015"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 170,
+      "first_sequence": 136,
+      "last_sequence": 137,
+      "parent_event_refs": [
+        "replay_evt_000136",
+        "replay_evt_000137"
+      ],
+      "source_chars": 3464,
+      "source_refs": [
+        "replay_evt_000136::span::000016",
+        "replay_evt_000137"
+      ],
+      "source_tokens": 1098
+    },
+    {
+      "chunk_index": 171,
+      "first_sequence": 138,
+      "last_sequence": 138,
+      "parent_event_refs": [
+        "replay_evt_000138"
+      ],
+      "source_chars": 3193,
+      "source_refs": [
+        "replay_evt_000138::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 172,
+      "first_sequence": 138,
+      "last_sequence": 138,
+      "parent_event_refs": [
+        "replay_evt_000138"
+      ],
+      "source_chars": 3217,
+      "source_refs": [
+        "replay_evt_000138::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 173,
+      "first_sequence": 138,
+      "last_sequence": 138,
+      "parent_event_refs": [
+        "replay_evt_000138"
+      ],
+      "source_chars": 3195,
+      "source_refs": [
+        "replay_evt_000138::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 174,
+      "first_sequence": 138,
+      "last_sequence": 139,
+      "parent_event_refs": [
+        "replay_evt_000138",
+        "replay_evt_000139"
+      ],
+      "source_chars": 1427,
+      "source_refs": [
+        "replay_evt_000138::span::000003",
+        "replay_evt_000139"
+      ],
+      "source_tokens": 556
+    },
+    {
+      "chunk_index": 175,
+      "first_sequence": 140,
+      "last_sequence": 140,
+      "parent_event_refs": [
+        "replay_evt_000140"
+      ],
+      "source_chars": 3770,
+      "source_refs": [
+        "replay_evt_000140"
+      ],
+      "source_tokens": 1042
+    },
+    {
+      "chunk_index": 176,
+      "first_sequence": 141,
+      "last_sequence": 143,
+      "parent_event_refs": [
+        "replay_evt_000141",
+        "replay_evt_000142",
+        "replay_evt_000143"
+      ],
+      "source_chars": 948,
+      "source_refs": [
+        "replay_evt_000141",
+        "replay_evt_000142",
+        "replay_evt_000143"
+      ],
+      "source_tokens": 406
+    },
+    {
+      "chunk_index": 177,
+      "first_sequence": 144,
+      "last_sequence": 144,
+      "parent_event_refs": [
+        "replay_evt_000144"
+      ],
+      "source_chars": 3125,
+      "source_refs": [
+        "replay_evt_000144::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 178,
+      "first_sequence": 144,
+      "last_sequence": 144,
+      "parent_event_refs": [
+        "replay_evt_000144"
+      ],
+      "source_chars": 3130,
+      "source_refs": [
+        "replay_evt_000144::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 179,
+      "first_sequence": 144,
+      "last_sequence": 144,
+      "parent_event_refs": [
+        "replay_evt_000144"
+      ],
+      "source_chars": 3142,
+      "source_refs": [
+        "replay_evt_000144::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 180,
+      "first_sequence": 144,
+      "last_sequence": 144,
+      "parent_event_refs": [
+        "replay_evt_000144"
+      ],
+      "source_chars": 1424,
+      "source_refs": [
+        "replay_evt_000144::span::000003"
+      ],
+      "source_tokens": 502
+    },
+    {
+      "chunk_index": 181,
+      "first_sequence": 145,
+      "last_sequence": 147,
+      "parent_event_refs": [
+        "replay_evt_000145",
+        "replay_evt_000146",
+        "replay_evt_000147"
+      ],
+      "source_chars": 3095,
+      "source_refs": [
+        "replay_evt_000145",
+        "replay_evt_000146",
+        "replay_evt_000147"
+      ],
+      "source_tokens": 972
+    },
+    {
+      "chunk_index": 182,
+      "first_sequence": 148,
+      "last_sequence": 149,
+      "parent_event_refs": [
+        "replay_evt_000148",
+        "replay_evt_000149"
+      ],
+      "source_chars": 1935,
+      "source_refs": [
+        "replay_evt_000148",
+        "replay_evt_000149"
+      ],
+      "source_tokens": 625
+    },
+    {
+      "chunk_index": 183,
+      "first_sequence": 150,
+      "last_sequence": 150,
+      "parent_event_refs": [
+        "replay_evt_000150"
+      ],
+      "source_chars": 3247,
+      "source_refs": [
+        "replay_evt_000150::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 184,
+      "first_sequence": 150,
+      "last_sequence": 150,
+      "parent_event_refs": [
+        "replay_evt_000150"
+      ],
+      "source_chars": 3257,
+      "source_refs": [
+        "replay_evt_000150::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 185,
+      "first_sequence": 150,
+      "last_sequence": 150,
+      "parent_event_refs": [
+        "replay_evt_000150"
+      ],
+      "source_chars": 575,
+      "source_refs": [
+        "replay_evt_000150::span::000002"
+      ],
+      "source_tokens": 274
+    },
+    {
+      "chunk_index": 186,
+      "first_sequence": 151,
+      "last_sequence": 151,
+      "parent_event_refs": [
+        "replay_evt_000151"
+      ],
+      "source_chars": 3256,
+      "source_refs": [
+        "replay_evt_000151::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 187,
+      "first_sequence": 151,
+      "last_sequence": 151,
+      "parent_event_refs": [
+        "replay_evt_000151"
+      ],
+      "source_chars": 3254,
+      "source_refs": [
+        "replay_evt_000151::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 188,
+      "first_sequence": 151,
+      "last_sequence": 153,
+      "parent_event_refs": [
+        "replay_evt_000151",
+        "replay_evt_000152",
+        "replay_evt_000153"
+      ],
+      "source_chars": 3577,
+      "source_refs": [
+        "replay_evt_000151::span::000002",
+        "replay_evt_000152",
+        "replay_evt_000153"
+      ],
+      "source_tokens": 1149
+    },
+    {
+      "chunk_index": 189,
+      "first_sequence": 154,
+      "last_sequence": 155,
+      "parent_event_refs": [
+        "replay_evt_000154",
+        "replay_evt_000155"
+      ],
+      "source_chars": 4083,
+      "source_refs": [
+        "replay_evt_000154",
+        "replay_evt_000155"
+      ],
+      "source_tokens": 1180
+    },
+    {
+      "chunk_index": 190,
+      "first_sequence": 156,
+      "last_sequence": 157,
+      "parent_event_refs": [
+        "replay_evt_000156",
+        "replay_evt_000157"
+      ],
+      "source_chars": 3899,
+      "source_refs": [
+        "replay_evt_000156",
+        "replay_evt_000157"
+      ],
+      "source_tokens": 1135
+    },
+    {
+      "chunk_index": 191,
+      "first_sequence": 158,
+      "last_sequence": 159,
+      "parent_event_refs": [
+        "replay_evt_000158",
+        "replay_evt_000159"
+      ],
+      "source_chars": 3935,
+      "source_refs": [
+        "replay_evt_000158",
+        "replay_evt_000159"
+      ],
+      "source_tokens": 1144
+    },
+    {
+      "chunk_index": 192,
+      "first_sequence": 160,
+      "last_sequence": 160,
+      "parent_event_refs": [
+        "replay_evt_000160"
+      ],
+      "source_chars": 4051,
+      "source_refs": [
+        "replay_evt_000160"
+      ],
+      "source_tokens": 1112
+    },
+    {
+      "chunk_index": 193,
+      "first_sequence": 161,
+      "last_sequence": 163,
+      "parent_event_refs": [
+        "replay_evt_000161",
+        "replay_evt_000162",
+        "replay_evt_000163"
+      ],
+      "source_chars": 651,
+      "source_refs": [
+        "replay_evt_000161",
+        "replay_evt_000162",
+        "replay_evt_000163"
+      ],
+      "source_tokens": 330
+    },
+    {
+      "chunk_index": 194,
+      "first_sequence": 164,
+      "last_sequence": 164,
+      "parent_event_refs": [
+        "replay_evt_000164"
+      ],
+      "source_chars": 4051,
+      "source_refs": [
+        "replay_evt_000164"
+      ],
+      "source_tokens": 1112
+    },
+    {
+      "chunk_index": 195,
+      "first_sequence": 165,
+      "last_sequence": 166,
+      "parent_event_refs": [
+        "replay_evt_000165",
+        "replay_evt_000166"
+      ],
+      "source_chars": 1808,
+      "source_refs": [
+        "replay_evt_000165",
+        "replay_evt_000166"
+      ],
+      "source_tokens": 585
+    },
+    {
+      "chunk_index": 196,
+      "first_sequence": 167,
+      "last_sequence": 168,
+      "parent_event_refs": [
+        "replay_evt_000167",
+        "replay_evt_000168"
+      ],
+      "source_chars": 3811,
+      "source_refs": [
+        "replay_evt_000167",
+        "replay_evt_000168"
+      ],
+      "source_tokens": 1100
+    },
+    {
+      "chunk_index": 197,
+      "first_sequence": 169,
+      "last_sequence": 169,
+      "parent_event_refs": [
+        "replay_evt_000169"
+      ],
+      "source_chars": 3272,
+      "source_refs": [
+        "replay_evt_000169::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 198,
+      "first_sequence": 169,
+      "last_sequence": 169,
+      "parent_event_refs": [
+        "replay_evt_000169"
+      ],
+      "source_chars": 3152,
+      "source_refs": [
+        "replay_evt_000169::span::000001"
+      ],
+      "source_tokens": 934
+    },
+    {
+      "chunk_index": 199,
+      "first_sequence": 170,
+      "last_sequence": 171,
+      "parent_event_refs": [
+        "replay_evt_000170",
+        "replay_evt_000171"
+      ],
+      "source_chars": 2067,
+      "source_refs": [
+        "replay_evt_000170",
+        "replay_evt_000171"
+      ],
+      "source_tokens": 635
+    },
+    {
+      "chunk_index": 200,
+      "first_sequence": 172,
+      "last_sequence": 172,
+      "parent_event_refs": [
+        "replay_evt_000172"
+      ],
+      "source_chars": 3159,
+      "source_refs": [
+        "replay_evt_000172::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 201,
+      "first_sequence": 172,
+      "last_sequence": 173,
+      "parent_event_refs": [
+        "replay_evt_000172",
+        "replay_evt_000173"
+      ],
+      "source_chars": 1628,
+      "source_refs": [
+        "replay_evt_000172::span::000001",
+        "replay_evt_000173"
+      ],
+      "source_tokens": 621
+    },
+    {
+      "chunk_index": 202,
+      "first_sequence": 174,
+      "last_sequence": 175,
+      "parent_event_refs": [
+        "replay_evt_000174",
+        "replay_evt_000175"
+      ],
+      "source_chars": 4083,
+      "source_refs": [
+        "replay_evt_000174",
+        "replay_evt_000175"
+      ],
+      "source_tokens": 1181
+    },
+    {
+      "chunk_index": 203,
+      "first_sequence": 176,
+      "last_sequence": 176,
+      "parent_event_refs": [
+        "replay_evt_000176"
+      ],
+      "source_chars": 3201,
+      "source_refs": [
+        "replay_evt_000176::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 204,
+      "first_sequence": 176,
+      "last_sequence": 177,
+      "parent_event_refs": [
+        "replay_evt_000176",
+        "replay_evt_000177"
+      ],
+      "source_chars": 1727,
+      "source_refs": [
+        "replay_evt_000176::span::000001",
+        "replay_evt_000177"
+      ],
+      "source_tokens": 632
+    },
+    {
+      "chunk_index": 205,
+      "first_sequence": 178,
+      "last_sequence": 178,
+      "parent_event_refs": [
+        "replay_evt_000178"
+      ],
+      "source_chars": 3193,
+      "source_refs": [
+        "replay_evt_000178::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 206,
+      "first_sequence": 178,
+      "last_sequence": 178,
+      "parent_event_refs": [
+        "replay_evt_000178"
+      ],
+      "source_chars": 3217,
+      "source_refs": [
+        "replay_evt_000178::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 207,
+      "first_sequence": 178,
+      "last_sequence": 178,
+      "parent_event_refs": [
+        "replay_evt_000178"
+      ],
+      "source_chars": 3195,
+      "source_refs": [
+        "replay_evt_000178::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 208,
+      "first_sequence": 178,
+      "last_sequence": 179,
+      "parent_event_refs": [
+        "replay_evt_000178",
+        "replay_evt_000179"
+      ],
+      "source_chars": 1244,
+      "source_refs": [
+        "replay_evt_000178::span::000003",
+        "replay_evt_000179"
+      ],
+      "source_tokens": 509
+    },
+    {
+      "chunk_index": 209,
+      "first_sequence": 180,
+      "last_sequence": 180,
+      "parent_event_refs": [
+        "replay_evt_000180"
+      ],
+      "source_chars": 3247,
+      "source_refs": [
+        "replay_evt_000180::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 210,
+      "first_sequence": 180,
+      "last_sequence": 180,
+      "parent_event_refs": [
+        "replay_evt_000180"
+      ],
+      "source_chars": 3257,
+      "source_refs": [
+        "replay_evt_000180::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 211,
+      "first_sequence": 180,
+      "last_sequence": 181,
+      "parent_event_refs": [
+        "replay_evt_000180",
+        "replay_evt_000181"
+      ],
+      "source_chars": 2812,
+      "source_refs": [
+        "replay_evt_000180::span::000002",
+        "replay_evt_000181"
+      ],
+      "source_tokens": 905
+    },
+    {
+      "chunk_index": 212,
+      "first_sequence": 182,
+      "last_sequence": 182,
+      "parent_event_refs": [
+        "replay_evt_000182"
+      ],
+      "source_chars": 3125,
+      "source_refs": [
+        "replay_evt_000182::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 213,
+      "first_sequence": 182,
+      "last_sequence": 182,
+      "parent_event_refs": [
+        "replay_evt_000182"
+      ],
+      "source_chars": 3131,
+      "source_refs": [
+        "replay_evt_000182::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 214,
+      "first_sequence": 182,
+      "last_sequence": 182,
+      "parent_event_refs": [
+        "replay_evt_000182"
+      ],
+      "source_chars": 3141,
+      "source_refs": [
+        "replay_evt_000182::span::000002"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 215,
+      "first_sequence": 182,
+      "last_sequence": 183,
+      "parent_event_refs": [
+        "replay_evt_000182",
+        "replay_evt_000183"
+      ],
+      "source_chars": 1838,
+      "source_refs": [
+        "replay_evt_000182::span::000003",
+        "replay_evt_000183"
+      ],
+      "source_tokens": 666
+    },
+    {
+      "chunk_index": 216,
+      "first_sequence": 184,
+      "last_sequence": 184,
+      "parent_event_refs": [
+        "replay_evt_000184"
+      ],
+      "source_chars": 3889,
+      "source_refs": [
+        "replay_evt_000184"
+      ],
+      "source_tokens": 1072
+    },
+    {
+      "chunk_index": 217,
+      "first_sequence": 185,
+      "last_sequence": 187,
+      "parent_event_refs": [
+        "replay_evt_000185",
+        "replay_evt_000186",
+        "replay_evt_000187"
+      ],
+      "source_chars": 2490,
+      "source_refs": [
+        "replay_evt_000185",
+        "replay_evt_000186",
+        "replay_evt_000187"
+      ],
+      "source_tokens": 826
+    },
+    {
+      "chunk_index": 218,
+      "first_sequence": 188,
+      "last_sequence": 188,
+      "parent_event_refs": [
+        "replay_evt_000188"
+      ],
+      "source_chars": 3247,
+      "source_refs": [
+        "replay_evt_000188::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 219,
+      "first_sequence": 188,
+      "last_sequence": 188,
+      "parent_event_refs": [
+        "replay_evt_000188"
+      ],
+      "source_chars": 3257,
+      "source_refs": [
+        "replay_evt_000188::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 220,
+      "first_sequence": 188,
+      "last_sequence": 188,
+      "parent_event_refs": [
+        "replay_evt_000188"
+      ],
+      "source_chars": 575,
+      "source_refs": [
+        "replay_evt_000188::span::000002"
+      ],
+      "source_tokens": 274
+    },
+    {
+      "chunk_index": 221,
+      "first_sequence": 189,
+      "last_sequence": 189,
+      "parent_event_refs": [
+        "replay_evt_000189"
+      ],
+      "source_chars": 3256,
+      "source_refs": [
+        "replay_evt_000189::span::000000"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 222,
+      "first_sequence": 189,
+      "last_sequence": 189,
+      "parent_event_refs": [
+        "replay_evt_000189"
+      ],
+      "source_chars": 3254,
+      "source_refs": [
+        "replay_evt_000189::span::000001"
+      ],
+      "source_tokens": 960
+    },
+    {
+      "chunk_index": 223,
+      "first_sequence": 189,
+      "last_sequence": 190,
+      "parent_event_refs": [
+        "replay_evt_000189",
+        "replay_evt_000190"
+      ],
+      "source_chars": 1119,
+      "source_refs": [
+        "replay_evt_000189::span::000002",
+        "replay_evt_000190"
+      ],
+      "source_tokens": 470
+    },
+    {
+      "chunk_index": 224,
+      "first_sequence": 191,
+      "last_sequence": 192,
+      "parent_event_refs": [
+        "replay_evt_000191",
+        "replay_evt_000192"
+      ],
+      "source_chars": 3870,
+      "source_refs": [
+        "replay_evt_000191",
+        "replay_evt_000192"
+      ],
+      "source_tokens": 1127
+    },
+    {
+      "chunk_index": 225,
+      "first_sequence": 193,
+      "last_sequence": 193,
+      "parent_event_refs": [
+        "replay_evt_000193"
+      ],
+      "source_chars": 4021,
+      "source_refs": [
+        "replay_evt_000193"
+      ],
+      "source_tokens": 1114
+    },
+    {
+      "chunk_index": 226,
+      "first_sequence": 194,
+      "last_sequence": 195,
+      "parent_event_refs": [
+        "replay_evt_000194",
+        "replay_evt_000195"
+      ],
+      "source_chars": 3693,
+      "source_refs": [
+        "replay_evt_000194",
+        "replay_evt_000195"
+      ],
+      "source_tokens": 1082
+    },
+    {
+      "chunk_index": 227,
+      "first_sequence": 196,
+      "last_sequence": 196,
+      "parent_event_refs": [
+        "replay_evt_000196"
+      ],
+      "source_chars": 436,
+      "source_refs": [
+        "replay_evt_000196"
+      ],
+      "source_tokens": 168
+    },
+    {
+      "chunk_index": 228,
+      "first_sequence": 197,
+      "last_sequence": 197,
+      "parent_event_refs": [
+        "replay_evt_000197"
+      ],
+      "source_chars": 4021,
+      "source_refs": [
+        "replay_evt_000197"
+      ],
+      "source_tokens": 1114
+    },
+    {
+      "chunk_index": 229,
+      "first_sequence": 198,
+      "last_sequence": 199,
+      "parent_event_refs": [
+        "replay_evt_000198",
+        "replay_evt_000199"
+      ],
+      "source_chars": 1452,
+      "source_refs": [
+        "replay_evt_000198",
+        "replay_evt_000199"
+      ],
+      "source_tokens": 488
+    }
+  ],
+  "plan_hash": "0df63cd6a0a90a28c8f62e2f5f5614f1711676a08f0b4c4ff80e42db2375b8bf",
+  "policy": "selector input chunks, immutable event/span boundaries, target 1200 estimated payload tokens"
+}

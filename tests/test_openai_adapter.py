@@ -22,10 +22,10 @@ from memory_gateway.openai_adapter import (
 )
 from memory_gateway.structured_client import OpenAICompatStructuredClient
 from memory_gateway.pipeline_adapters import (
-    CANONICALIZER_RESPONSE_FORMAT,
     OpenAICompatCanonicalizerEngine,
     OpenAICompatSelectorEngine,
-    SELECTOR_RESPONSE_FORMAT,
+    canonicalizer_response_format_for_batch,
+    selector_response_format_for_chunk,
 )
 
 
@@ -193,7 +193,9 @@ def test_selector_and_canonicalizer_send_json_schema_response_formats() -> None:
         selector = OpenAICompatSelectorEngine(selector_client)
         with pytest.raises(ModelProtocolError, match="selected_event_ids"):
             asyncio.run(selector.select(events=[event]))
-        assert ScenarioHandler.last_request_body["response_format"] == SELECTOR_RESPONSE_FORMAT
+        assert ScenarioHandler.last_request_body["response_format"] == (
+            selector_response_format_for_chunk([event.id])
+        )
 
     with fake_server("valid") as endpoint:
         canonicalizer_client = OpenAICompatStructuredClient(
@@ -207,7 +209,7 @@ def test_selector_and_canonicalizer_send_json_schema_response_formats() -> None:
             asyncio.run(canonicalizer.canonicalize(events=[event]))
         assert (
             ScenarioHandler.last_request_body["response_format"]
-            == CANONICALIZER_RESPONSE_FORMAT
+            == canonicalizer_response_format_for_batch([event.id])
         )
 
 
