@@ -1,0 +1,82 @@
+{
+  "backend_instance_after": {
+    "config": {
+      "context_checkpoints": 148,
+      "context_length": 32768,
+      "eval_batch_size": 2048,
+      "flash_attention": true,
+      "offload_kv_cache_to_gpu": true,
+      "parallel": 1,
+      "physical_batch_size": 512,
+      "reasoning_budget_message": "",
+      "speculative_draft_max_tokens": 16,
+      "speculative_draft_min_continue_probability": 0.75,
+      "speculative_draft_min_tokens": 0,
+      "speculative_draft_model": "",
+      "speculative_draft_mtp": false,
+      "speculative_draft_simple": false
+    },
+    "id": "orchid-prefix-cache-validation",
+    "remaining_ttl_seconds": 3600
+  },
+  "idle_seconds": 2.0,
+  "metrics": {
+    "calls": 3,
+    "cold_or_regression_calls_gte_5000ms": 3,
+    "decision_hashes": 3,
+    "decode_ms_backend": {
+      "count": 0,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null
+    },
+    "decode_ms_client_observed": {
+      "count": 3,
+      "mean": 1938.6345999955665,
+      "p50": 1936.1956999928225,
+      "p95": 1943.2644799904665,
+      "p99": 1943.892815990257
+    },
+    "errors": 0,
+    "explicit_backend_field_rows": 0,
+    "failed": 0,
+    "first_low_ttft_call_index": null,
+    "low_ttft_calls_lt_1000ms": 0,
+    "prompt_eval_ms_backend": {
+      "count": 0,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null
+    },
+    "queue_wait_ms_backend": {
+      "count": 0,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null
+    },
+    "succeeded": 3,
+    "timeouts": 0,
+    "total_selector_wall_ms": 24681.089899968356,
+    "total_wall_ms": {
+      "count": 3,
+      "mean": 8227.029966656119,
+      "p50": 8149.223699991126,
+      "p95": 8432.510309992358,
+      "p99": 8457.691341992468
+    },
+    "ttft_ms": {
+      "count": 3,
+      "mean": 6288.395366660552,
+      "p50": 6213.027999998303,
+      "p95": 6496.798359989771,
+      "p99": 6522.022391989012
+    },
+    "warmup_wall_ms_to_first_low_ttft": null
+  },
+  "plan_sha256": "fd1a2f332ccee1f894f1408cbdbcaa9369bde6d654c81ca1cd7c2c0fcb9d21e8",
+  "rows": 3,
+  "solar_interruption_run": false
+}
