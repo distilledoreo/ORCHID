@@ -1,0 +1,12 @@
+{
+  "completed_at": "2026-08-22T21:05:50.866+00:00",
+  "config_sha256": "4c4519e2833867c47715b0899696720f5246863468ad2554ed4488cd432c225d",
+  "failed_calls": 0,
+  "no_retries": true,
+  "planned_calls": 32,
+  "sample_sha256": "fa4083f3fc17978cc255cd52e1a305daed4e10b6573b3b43cdc0d4477f227aa4",
+  "source_commit": "297b80e692777ad7c1dbe7b4198cc44bf3dc9f74",
+  "started_at": "2026-08-22T20:59:56.052+00:00",
+  "status": "SUCCEEDED",
+  "succeeded_calls": 32
+}

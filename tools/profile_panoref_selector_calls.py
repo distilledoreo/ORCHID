@@ -561,6 +561,24 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
             row["metrics"]["backend_timing_fields_observed"] for row in rows
         ),
     }
+    ttft_shares = [
+        row["metrics"]["ttft_ms"] / row["metrics"]["total_wall_ms"]
+        for row in rows
+        if row["metrics"].get("ttft_ms") is not None
+        and row["metrics"].get("total_wall_ms")
+    ]
+    result["ttft_share_of_wall"] = {
+        "count": len(ttft_shares),
+        "p50": percentile(ttft_shares, 50),
+        "p95": percentile(ttft_shares, 95),
+        "mean": sum(ttft_shares) / len(ttft_shares) if ttft_shares else None,
+    }
+    result["ttft_dominant_calls"] = sum(
+        row["metrics"].get("ttft_ms") is not None
+        and row["metrics"].get("decode_ms_client_observed") is not None
+        and row["metrics"]["ttft_ms"] > row["metrics"]["decode_ms_client_observed"]
+        for row in rows
+    )
     for name in metric_names:
         values = [
             float(row["metrics"][name])
@@ -622,9 +640,9 @@ Measured {summary['calls_succeeded']} of {summary['calls_planned']} serial calls
 
 {phase_interpretation}
 
-The OpenAI-compatible SSE response exposed `usage` and token arrival only. Its timing fields/headers were absent. There is therefore no measured backend prompt-eval time or queue-wait time in this run, and `input tok/s` is explicitly a TTFT-based upper-bound proxy rather than a backend prefill rate.
+The OpenAI-compatible SSE response exposed `usage` and token arrival only. Its timing fields/headers were absent. There is therefore no measured backend prompt-eval time or queue-wait time in this run, and `input tok/s` is explicitly a TTFT-based lower-bound proxy rather than a backend prefill rate: any unexposed queue or transport time makes the denominator larger.
 
-The measured comparison is between the time to first content and the post-first-content interval. A materially larger TTFT proxy indicates that prompt evaluation plus any unexposed scheduling/transport delay dominates the observed request; a materially larger post-first-content interval indicates decode/output handling dominates. This is a transport microprofile, not a semantic selector benchmark.
+The measured comparison is between the time to first content and the post-first-content interval. TTFT was larger than the post-first-content interval in {summary['ttft_dominant_calls']} of {summary['calls_succeeded']} successful calls, and its median share of total wall was {fmt('ttft_share_of_wall')} (fraction). This is consistent with a pre-first-token/prefill-dominated request, but prompt evaluation cannot be isolated from any unexposed scheduling or transport delay. A materially larger post-first-content interval would instead indicate decode/output handling dominates. This is a transport microprofile, not a semantic selector benchmark.
 
 No prompt, schema, model, chunk size, selector policy, concurrency, or Solar setting was changed. The only profile-specific setting is streaming with usage included, required to observe TTFT.
 """

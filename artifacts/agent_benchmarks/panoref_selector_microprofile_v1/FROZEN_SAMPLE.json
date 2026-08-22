@@ -1,0 +1,646 @@
+{
+  "chunk_indices": [
+    0,
+    5,
+    9,
+    14,
+    19,
+    24,
+    28,
+    33,
+    38,
+    43,
+    47,
+    52,
+    57,
+    62,
+    66,
+    71,
+    76,
+    81,
+    85,
+    90,
+    95,
+    100,
+    104,
+    109,
+    114,
+    119,
+    123,
+    128,
+    133,
+    138,
+    142,
+    147
+  ],
+  "chunks": [
+    {
+      "chunk_index": 0,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_000582::span::000000"
+      ],
+      "historical_input_tokens": 1193,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 8729.65869998734,
+      "parent_event_ids": [
+        "panoref_evt_000582"
+      ],
+      "request_payload_hash": "d6338a2b82639cd099f2411fbedecb69e11caf37d8457d2390113383a1ae3122",
+      "response_schema_hash": "e0e29a8acb441bece3ca5ffb399e090c5c8f318ee482a7c5c9e1f95c58e66bf8"
+    },
+    {
+      "chunk_index": 5,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_000923::span::000001"
+      ],
+      "historical_input_tokens": 1456,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 9556.838999997126,
+      "parent_event_ids": [
+        "panoref_evt_000923"
+      ],
+      "request_payload_hash": "c8ca6fc6efa7d6facab1a0ff39713b22ffef2c207c51fe96831e59609f1c25ce",
+      "response_schema_hash": "455f619b144d370ab5a532eb4901540d1142284801ef80845f94fd71a09f1417"
+    },
+    {
+      "chunk_index": 9,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_000934::span::000000"
+      ],
+      "historical_input_tokens": 2722,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 16947.709100000793,
+      "parent_event_ids": [
+        "panoref_evt_000934"
+      ],
+      "request_payload_hash": "2a0a6220ff8a16db0e9c1e2c62adbf3d2d69dc9d2d86b21a2a1faf7b954aa689",
+      "response_schema_hash": "eeec47d69cd71ca6c9a0671a050d1bb4b4fd13dbdcde0b85b21661a1dd81f106"
+    },
+    {
+      "chunk_index": 14,
+      "estimated_source_tokens": 1177,
+      "event_count": 7,
+      "event_ids": [
+        "panoref_evt_000936",
+        "panoref_evt_000937",
+        "panoref_evt_000938",
+        "panoref_evt_000939",
+        "panoref_evt_000940",
+        "panoref_evt_000941",
+        "panoref_evt_000942"
+      ],
+      "historical_input_tokens": 2493,
+      "historical_output_tokens": 83,
+      "historical_wall_ms": 20150.70339999511,
+      "parent_event_ids": [
+        "panoref_evt_000936",
+        "panoref_evt_000937",
+        "panoref_evt_000938",
+        "panoref_evt_000939",
+        "panoref_evt_000940",
+        "panoref_evt_000941",
+        "panoref_evt_000942"
+      ],
+      "request_payload_hash": "85e1e7efcbe5b1a7f8f866e7236c0976b981dad76db9918889fbf5351f8469f2",
+      "response_schema_hash": "139b10fc7d75fdbace8c5163838afa28bce3a6bef47fe42a326a3d0335410b1c"
+    },
+    {
+      "chunk_index": 19,
+      "estimated_source_tokens": 266,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_000958"
+      ],
+      "historical_input_tokens": 538,
+      "historical_output_tokens": 17,
+      "historical_wall_ms": 4062.117200010107,
+      "parent_event_ids": [
+        "panoref_evt_000958"
+      ],
+      "request_payload_hash": "e0f7d79bd4026d68f97bca85ff2fa5254f56ab6a49c2dc45428a9c8e87dbe7dd",
+      "response_schema_hash": "885f0989e6b0717024d01d69b82fd2975e078625ed3704e0a274259560384f97"
+    },
+    {
+      "chunk_index": 24,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_000961::span::000002"
+      ],
+      "historical_input_tokens": 1368,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 9227.101500000572,
+      "parent_event_ids": [
+        "panoref_evt_000961"
+      ],
+      "request_payload_hash": "3f6665ed8f7d5f7e9443946e3d13d3315770b7aa629b9f60afd1b89a0351e3a4",
+      "response_schema_hash": "5dd8ea1147b760c17093202b841bd925189cc10f17e983f64ce4056e965461ac"
+    },
+    {
+      "chunk_index": 28,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_000961::span::000006"
+      ],
+      "historical_input_tokens": 1643,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 10805.417499999749,
+      "parent_event_ids": [
+        "panoref_evt_000961"
+      ],
+      "request_payload_hash": "dcd2b19d1c1104ad746a84befae9f72cfb7586268c5ed2ec1c027b21a61becd3",
+      "response_schema_hash": "29f1f260e92279addb4da8cef4080726bcd681c37de9590411af4e53acfc11d1"
+    },
+    {
+      "chunk_index": 33,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_000961::span::000011"
+      ],
+      "historical_input_tokens": 1366,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 9165.381600003457,
+      "parent_event_ids": [
+        "panoref_evt_000961"
+      ],
+      "request_payload_hash": "bf3920ddf7bd9cb114fc6b4e9acf5016dc8da77e20b6d9ae9ec1c26708e8499c",
+      "response_schema_hash": "3217e9ba43b8a9f712bc05dfa73aab3767427d2080f2096891faf43b7b19ec17"
+    },
+    {
+      "chunk_index": 38,
+      "estimated_source_tokens": 1136,
+      "event_count": 8,
+      "event_ids": [
+        "panoref_evt_000970",
+        "panoref_evt_000971",
+        "panoref_evt_000972",
+        "panoref_evt_000973",
+        "panoref_evt_000974",
+        "panoref_evt_000975",
+        "panoref_evt_000976",
+        "panoref_evt_000977"
+      ],
+      "historical_input_tokens": 2409,
+      "historical_output_tokens": 17,
+      "historical_wall_ms": 14354.314800002612,
+      "parent_event_ids": [
+        "panoref_evt_000970",
+        "panoref_evt_000971",
+        "panoref_evt_000972",
+        "panoref_evt_000973",
+        "panoref_evt_000974",
+        "panoref_evt_000975",
+        "panoref_evt_000976",
+        "panoref_evt_000977"
+      ],
+      "request_payload_hash": "70884d18cbfad6222b5049f0fbd576e5e64d895204d307fbd7e3b03bac41420f",
+      "response_schema_hash": "862bd3380cc45fe3f8b8acf3d0964090dbfd2813d3efb821fd2d91970e42f530"
+    },
+    {
+      "chunk_index": 43,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_001002::span::000000"
+      ],
+      "historical_input_tokens": 1367,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 9171.520599993528,
+      "parent_event_ids": [
+        "panoref_evt_001002"
+      ],
+      "request_payload_hash": "80bb41da7d28fb37b7edacdfa506cb548f50802117a3e97299a67185a1613b4d",
+      "response_schema_hash": "ae10adbab94af7dd8fffd941b0a08e9f1294c08b8ccba6f87a51597b907dee4c"
+    },
+    {
+      "chunk_index": 47,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_001002::span::000004"
+      ],
+      "historical_input_tokens": 1304,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 8833.911499998067,
+      "parent_event_ids": [
+        "panoref_evt_001002"
+      ],
+      "request_payload_hash": "b03240681bb747e02b756fcf76d83c58c1091f619609d7c54bd30803e6416b17",
+      "response_schema_hash": "656e50f740434f05bf0e3c5a62d7e6a0f994802c6f642f013a5c1a590c365b9a"
+    },
+    {
+      "chunk_index": 52,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_001004::span::000002"
+      ],
+      "historical_input_tokens": 1259,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 8591.138999996474,
+      "parent_event_ids": [
+        "panoref_evt_001004"
+      ],
+      "request_payload_hash": "e1cba05a508ba85b9ddb49c46654946d565aeae4df3d396d904a084a3be11655",
+      "response_schema_hash": "3ae5f72eefe2a95150db4c98837be39d6b3ab92d03a8a3973d1463cf4596dee8"
+    },
+    {
+      "chunk_index": 57,
+      "estimated_source_tokens": 674,
+      "event_count": 2,
+      "event_ids": [
+        "panoref_evt_001004::span::000007",
+        "panoref_evt_001005"
+      ],
+      "historical_input_tokens": 1123,
+      "historical_output_tokens": 37,
+      "historical_wall_ms": 8751.005700003589,
+      "parent_event_ids": [
+        "panoref_evt_001004",
+        "panoref_evt_001005"
+      ],
+      "request_payload_hash": "cecab46cc9dfb00a237e9718bb1df098d6208f21999af1f0aadc00649d25d08d",
+      "response_schema_hash": "425924a28c53fc572abe71282bab2ec8d0e7c12eb3f2734ce609f25e78f165a3"
+    },
+    {
+      "chunk_index": 62,
+      "estimated_source_tokens": 799,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_001006::span::000004"
+      ],
+      "historical_input_tokens": 1231,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 8516.779600002337,
+      "parent_event_ids": [
+        "panoref_evt_001006"
+      ],
+      "request_payload_hash": "629c2b2f00c5fd86d5ee5d6ff76768a1f411bc0fc491a57c6443de006aae292a",
+      "response_schema_hash": "a0507673e3742c076db6068f8f32ff1964f363cd36edc49dd6afc6d02cbe8bb7"
+    },
+    {
+      "chunk_index": 66,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_001007::span::000003"
+      ],
+      "historical_input_tokens": 1281,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 8772.384500000044,
+      "parent_event_ids": [
+        "panoref_evt_001007"
+      ],
+      "request_payload_hash": "cd3fd006d907a32ec32a0b93994e90e5ba2025617a6ca9ef3c152f22703b956e",
+      "response_schema_hash": "2faa2fc4a55500c6186dfb0371d289823f5234f45264f6ed58f6b75313da0096"
+    },
+    {
+      "chunk_index": 71,
+      "estimated_source_tokens": 967,
+      "event_count": 2,
+      "event_ids": [
+        "panoref_evt_001013::span::000001",
+        "panoref_evt_001014"
+      ],
+      "historical_input_tokens": 1478,
+      "historical_output_tokens": 37,
+      "historical_wall_ms": 10698.13289999729,
+      "parent_event_ids": [
+        "panoref_evt_001013",
+        "panoref_evt_001014"
+      ],
+      "request_payload_hash": "b3ddf8b4a65ac607d70a06320e44d390186879d2e18fc16bcf7b0562868cfac2",
+      "response_schema_hash": "804f0016b277927b91632eae1718d8c0cd3f76e39d6f84eefd83d21ea4669faa"
+    },
+    {
+      "chunk_index": 76,
+      "estimated_source_tokens": 1164,
+      "event_count": 3,
+      "event_ids": [
+        "panoref_evt_001022",
+        "panoref_evt_001023",
+        "panoref_evt_001024"
+      ],
+      "historical_input_tokens": 1774,
+      "historical_output_tokens": 39,
+      "historical_wall_ms": 12424.474200000986,
+      "parent_event_ids": [
+        "panoref_evt_001022",
+        "panoref_evt_001023",
+        "panoref_evt_001024"
+      ],
+      "request_payload_hash": "18681597c6b0409dc5ff86a0e39303c6a33fdde4a2f13ca00a0a0abb9d2b6aad",
+      "response_schema_hash": "e713692877e9b8a1530d2cef4802909ac5d195176c12a536cf67849467b18ea0"
+    },
+    {
+      "chunk_index": 81,
+      "estimated_source_tokens": 880,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_001036::span::000001"
+      ],
+      "historical_input_tokens": 1271,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 8804.406700000982,
+      "parent_event_ids": [
+        "panoref_evt_001036"
+      ],
+      "request_payload_hash": "771a8e2f8b95ce251f2c8c0c60b986bfc5fa02f67a9110721c20bf72a1a64243",
+      "response_schema_hash": "522f3d53d655b85a93daf92c12b7ba2f05ab7f42690d2a420526cc56407454f1"
+    },
+    {
+      "chunk_index": 85,
+      "estimated_source_tokens": 1110,
+      "event_count": 7,
+      "event_ids": [
+        "panoref_evt_001043",
+        "panoref_evt_001044",
+        "panoref_evt_001045",
+        "panoref_evt_001046",
+        "panoref_evt_001047",
+        "panoref_evt_001048",
+        "panoref_evt_001049"
+      ],
+      "historical_input_tokens": 2345,
+      "historical_output_tokens": 50,
+      "historical_wall_ms": 16644.15180000651,
+      "parent_event_ids": [
+        "panoref_evt_001043",
+        "panoref_evt_001044",
+        "panoref_evt_001045",
+        "panoref_evt_001046",
+        "panoref_evt_001047",
+        "panoref_evt_001048",
+        "panoref_evt_001049"
+      ],
+      "request_payload_hash": "f0e4e68ecda793dc9a0a04f12db53afd5fa0c5e383ca5a4cfa32068d6c6a4155",
+      "response_schema_hash": "68720ffefcee553c0e19ada715be74bee4d36536aee1649cdff50376545c6093"
+    },
+    {
+      "chunk_index": 90,
+      "estimated_source_tokens": 1140,
+      "event_count": 6,
+      "event_ids": [
+        "panoref_evt_001063",
+        "panoref_evt_001064",
+        "panoref_evt_001065",
+        "panoref_evt_001066",
+        "panoref_evt_001067",
+        "panoref_evt_001068"
+      ],
+      "historical_input_tokens": 2104,
+      "historical_output_tokens": 17,
+      "historical_wall_ms": 12658.979500003625,
+      "parent_event_ids": [
+        "panoref_evt_001063",
+        "panoref_evt_001064",
+        "panoref_evt_001065",
+        "panoref_evt_001066",
+        "panoref_evt_001067",
+        "panoref_evt_001068"
+      ],
+      "request_payload_hash": "0abb2271b211faf5ecf0f5722b726d4063165dad5fb2b6d6e1ae4efdbc78e916",
+      "response_schema_hash": "f0549be1858ed5dc383d8182d77eade25bf7581cb69460cbc9ddf93889a788c3"
+    },
+    {
+      "chunk_index": 95,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_001085::span::000000"
+      ],
+      "historical_input_tokens": 2370,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 14957.679900006042,
+      "parent_event_ids": [
+        "panoref_evt_001085"
+      ],
+      "request_payload_hash": "bf4daafb24988234d9dbb631d9a2ec476ee8afa527ad2cc315bc3e04ac0dbbd9",
+      "response_schema_hash": "984d9abff2ecc22f8596da083e3e9ef48d00f2c1389c60d730f60cd62d5d96da"
+    },
+    {
+      "chunk_index": 100,
+      "estimated_source_tokens": 1068,
+      "event_count": 3,
+      "event_ids": [
+        "panoref_evt_001097",
+        "panoref_evt_001098",
+        "panoref_evt_001099"
+      ],
+      "historical_input_tokens": 1801,
+      "historical_output_tokens": 39,
+      "historical_wall_ms": 12693.281900006696,
+      "parent_event_ids": [
+        "panoref_evt_001097",
+        "panoref_evt_001098",
+        "panoref_evt_001099"
+      ],
+      "request_payload_hash": "646b6a35eeea759d4457c917ecfe597601337324cb61cfe884203cd892977104",
+      "response_schema_hash": "c9de1b0a635725ddf9ede489b17f14ae81aacf9e83423db4b39596ac2c12f833"
+    },
+    {
+      "chunk_index": 104,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_001111::span::000000"
+      ],
+      "historical_input_tokens": 1467,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 9792.717699994682,
+      "parent_event_ids": [
+        "panoref_evt_001111"
+      ],
+      "request_payload_hash": "f23109cdb07aa86603c247b96f8becaf8218f2a819c30ee1946dcee64d3d881b",
+      "response_schema_hash": "4e7772d924948d0e86909d650f1736d104239608d4a1bc05fa6f7a3664fad6a4"
+    },
+    {
+      "chunk_index": 109,
+      "estimated_source_tokens": 1171,
+      "event_count": 2,
+      "event_ids": [
+        "panoref_evt_001112::span::000001",
+        "panoref_evt_001112::span::000002"
+      ],
+      "historical_input_tokens": 1550,
+      "historical_output_tokens": 46,
+      "historical_wall_ms": 11796.558300004108,
+      "parent_event_ids": [
+        "panoref_evt_001112",
+        "panoref_evt_001112"
+      ],
+      "request_payload_hash": "ff4a7f7a692394d267040a10f05be8b317fb195ce85805b506de7dc3f39bf746",
+      "response_schema_hash": "97433a843c3c1a9dd56c386e64298bea439a7a8ea8e9337ae8ab13a406aebc06"
+    },
+    {
+      "chunk_index": 114,
+      "estimated_source_tokens": 968,
+      "event_count": 5,
+      "event_ids": [
+        "panoref_evt_001122",
+        "panoref_evt_001123",
+        "panoref_evt_001124",
+        "panoref_evt_001125",
+        "panoref_evt_001126"
+      ],
+      "historical_input_tokens": 1902,
+      "historical_output_tokens": 61,
+      "historical_wall_ms": 14876.50399999984,
+      "parent_event_ids": [
+        "panoref_evt_001122",
+        "panoref_evt_001123",
+        "panoref_evt_001124",
+        "panoref_evt_001125",
+        "panoref_evt_001126"
+      ],
+      "request_payload_hash": "e268b33aa34b53a6a75bf11842a80d81b64549548c5fb995d0f248e5d01c8955",
+      "response_schema_hash": "ac58b1bb326bb165b3a88d7a8523f5b41d4f11fbf10641e2aab36a027545c8b8"
+    },
+    {
+      "chunk_index": 119,
+      "estimated_source_tokens": 443,
+      "event_count": 2,
+      "event_ids": [
+        "panoref_evt_001142",
+        "panoref_evt_001143"
+      ],
+      "historical_input_tokens": 823,
+      "historical_output_tokens": 28,
+      "historical_wall_ms": 6579.173400008585,
+      "parent_event_ids": [
+        "panoref_evt_001142",
+        "panoref_evt_001143"
+      ],
+      "request_payload_hash": "9611ac1f0edc3b5ace4c03e9d416ef7bc5c977f09afe901be434a4e761a29a1a",
+      "response_schema_hash": "a4dedd8d8f5b501edad3ac6bd6423b94d5a293064fb36e3f831d28ab2144dde2"
+    },
+    {
+      "chunk_index": 123,
+      "estimated_source_tokens": 1160,
+      "event_count": 2,
+      "event_ids": [
+        "panoref_evt_001145",
+        "panoref_evt_001146::span::000000"
+      ],
+      "historical_input_tokens": 1734,
+      "historical_output_tokens": 37,
+      "historical_wall_ms": 12228.610399994068,
+      "parent_event_ids": [
+        "panoref_evt_001145",
+        "panoref_evt_001146"
+      ],
+      "request_payload_hash": "8a255f6f00cd9897c7b2adb83762f71c53bf28b75bd129884e87214fa1691c76",
+      "response_schema_hash": "9cd7ccd63bc60750dec437ae84b54624b717f620c58f5dd0ce0dab53043e1bd2"
+    },
+    {
+      "chunk_index": 128,
+      "estimated_source_tokens": 960,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_001152::span::000002"
+      ],
+      "historical_input_tokens": 2298,
+      "historical_output_tokens": 26,
+      "historical_wall_ms": 14633.819599999697,
+      "parent_event_ids": [
+        "panoref_evt_001152"
+      ],
+      "request_payload_hash": "c09d595b78bdd05330234bd69849effffb406faf61933dd00be963d4ff99f34c",
+      "response_schema_hash": "6ccf883b55525ba529582804363358fea95be13ab7f10cdfdb7f0dd1b7c6219d"
+    },
+    {
+      "chunk_index": 133,
+      "estimated_source_tokens": 1125,
+      "event_count": 5,
+      "event_ids": [
+        "panoref_evt_001167",
+        "panoref_evt_001168",
+        "panoref_evt_001169",
+        "panoref_evt_001170",
+        "panoref_evt_001171"
+      ],
+      "historical_input_tokens": 1981,
+      "historical_output_tokens": 28,
+      "historical_wall_ms": 12860.224900010508,
+      "parent_event_ids": [
+        "panoref_evt_001167",
+        "panoref_evt_001168",
+        "panoref_evt_001169",
+        "panoref_evt_001170",
+        "panoref_evt_001171"
+      ],
+      "request_payload_hash": "6105fa1a32d8382862300b936aa207a6a8e88d4dd4eed20808ce3ba880ceda47",
+      "response_schema_hash": "88f6e2d016bb731cfdb4f86fa3e66dc3f3571cae7792b265fdb5b1c311e425f8"
+    },
+    {
+      "chunk_index": 138,
+      "estimated_source_tokens": 1116,
+      "event_count": 3,
+      "event_ids": [
+        "panoref_evt_001175",
+        "panoref_evt_001176",
+        "panoref_evt_001177"
+      ],
+      "historical_input_tokens": 2138,
+      "historical_output_tokens": 39,
+      "historical_wall_ms": 14699.88149999699,
+      "parent_event_ids": [
+        "panoref_evt_001175",
+        "panoref_evt_001176",
+        "panoref_evt_001177"
+      ],
+      "request_payload_hash": "427653d35fcb8afebeca73d245afde468f569b2a6a05f0a1e44fb7de09ead30e",
+      "response_schema_hash": "beccfdf0f7db3e2615cefc2d1ed2aacafe837da011bc408529e715bbaf2c8d09"
+    },
+    {
+      "chunk_index": 142,
+      "estimated_source_tokens": 878,
+      "event_count": 4,
+      "event_ids": [
+        "panoref_evt_001180",
+        "panoref_evt_001181",
+        "panoref_evt_001182",
+        "panoref_evt_001183"
+      ],
+      "historical_input_tokens": 1688,
+      "historical_output_tokens": 50,
+      "historical_wall_ms": 12891.363599992474,
+      "parent_event_ids": [
+        "panoref_evt_001180",
+        "panoref_evt_001181",
+        "panoref_evt_001182",
+        "panoref_evt_001183"
+      ],
+      "request_payload_hash": "f86b12b6073986b92c19f8719d5cf292b29eca5dfbaa082bfe531ab42abb8897",
+      "response_schema_hash": "7bd47cb40f245f8206cd11fd504c36ffdb24f6763e957f077df8c0d1bf857d33"
+    },
+    {
+      "chunk_index": 147,
+      "estimated_source_tokens": 584,
+      "event_count": 1,
+      "event_ids": [
+        "panoref_evt_001195"
+      ],
+      "historical_input_tokens": 903,
+      "historical_output_tokens": 17,
+      "historical_wall_ms": 6054.4170000066515,
+      "parent_event_ids": [
+        "panoref_evt_001195"
+      ],
+      "request_payload_hash": "8da474bbfa9f9e97904016434bd04b0123969b40f2e229cd7f6cb83f1d7c746c",
+      "response_schema_hash": "a8c23b9a951202b65f813a1bcef1bb656bf92b752135c38c051f8edf548c4467"
+    }
+  ],
+  "full_chunk_plan_sha256": "5a104c60e2a5241707cbd9e343bcbdfa66592e34de38bf9c499d9e7726db6f19",
+  "sample_count": 32,
+  "schema_version": "panoref-selector-microprofile-sample-v1",
+  "selection_policy": "deterministic evenly spaced chunk indices across the frozen replay; no latency, output, or semantic outcome was used"
+}
