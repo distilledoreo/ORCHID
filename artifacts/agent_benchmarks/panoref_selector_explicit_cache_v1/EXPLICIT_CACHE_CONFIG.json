@@ -1,0 +1,12 @@
+{
+  "arm_order": [
+    "BASELINE_CURRENT_32",
+    "EXPLICIT_PREFIX_148"
+  ],
+  "no_concurrency": true,
+  "no_retries": true,
+  "plan_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_explicit_cache_v1\\EXPLICIT_CACHE_PLAN.json",
+  "plan_sha256": "03220544c1fae7b760251c12594ee72cdaf23dc3f0933e12e290f93545d15826",
+  "schema_version": "panoref-selector-explicit-cache-config-v1",
+  "source_commit": "edace6af3c454d2d02e579b2d38e9c54c3905cc1"
+}
