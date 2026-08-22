@@ -1,0 +1,26 @@
+{
+  "apparatus_sha256": "bdc29750268ad788c8998a5640d4822aaa91435eeed66575027212dcf8ef5659",
+  "commit": "5afba2cc0dd34b11a04201c0cf35a3b7a428fd94",
+  "condition": "ARM_B_SELECTOR_SOLAR",
+  "control_adapter_sha256": "ed00faa77c7f26ea34b29ab3e519648ab571c0f7bb5dc6151804c98987adafac",
+  "direct_target_tokens": 12000,
+  "fixture_replay_sha256": "aa0e7326c2514501a8c53a5a2c4669b1512383507989e71403d4e6f00f7eaf07",
+  "generation": {
+    "reasoning_effort": "none",
+    "stream": false,
+    "temperature": 0,
+    "top_p": 1
+  },
+  "no_internal_transport_retry": true,
+  "oracle_checks_sha256": "88d38ad16471cb13ebc23ae75233e9a3a5c59aa9ddec714f1ca63c4739a59980",
+  "oracle_manifest_sha256": "88e37b2803c028bbc50b0ebaf6a1ed62c639a9776a50d4b400b7b14f0a6ef323",
+  "raw_plan_sha256": "5f8960bf2f643742c5b26bf26da9deda485d69e76a7bf079362b76538473766b",
+  "run_id": "repeat_01",
+  "selector_apparatus_sha256": "f3074ae5540f6c5dd50e57e68805fe745ff6dac829931bc41dc29b8721bb8300",
+  "selector_endpoint": "http://127.0.0.1:1234/v1",
+  "selector_model": "qwen3.5-4b@q6_k",
+  "selector_target_tokens": 1200,
+  "solar_endpoint": "https://openrouter.ai/api",
+  "solar_model": "upstage/solar-pro4",
+  "tuning_between_repeats": false
+}
