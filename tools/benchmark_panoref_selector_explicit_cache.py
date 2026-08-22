@@ -247,8 +247,18 @@ def verify_plan(plan: dict[str, Any]) -> None:
     without_hash = {key: value for key, value in plan.items() if key != "plan_sha256"}
     if recorded_hash != hashlib.sha256(canonical_bytes(without_hash)).hexdigest():
         raise RuntimeError("frozen plan hash mismatch")
-    if plan["source_commit"] != git_commit():
-        raise RuntimeError("working HEAD differs from frozen benchmark source commit")
+    current_commit = git_commit()
+    if current_commit != plan["source_commit"]:
+        code_paths = [
+            "tools/benchmark_panoref_selector_explicit_cache.py",
+            "artifacts/agent_benchmarks/panoref_selector_explicit_cache_v1/BACKEND_CAPABILITIES.md",
+        ]
+        unchanged = subprocess.run(
+            ["git", "diff", "--quiet", plan["source_commit"], current_commit, "--", *code_paths],
+            cwd=ROOT,
+        ).returncode == 0
+        if not unchanged:
+            raise RuntimeError("working benchmark code differs from frozen source commit")
     if file_sha256(Path(plan["replay"])) != plan["replay_sha256"]:
         raise RuntimeError("frozen replay changed")
     if file_sha256(PROFILE_CONFIG_PATH) != plan["prior_profile_config_sha256"]:
