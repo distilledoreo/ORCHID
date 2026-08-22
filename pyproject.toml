@@ -16,6 +16,12 @@ dependencies = [
 
 [project.optional-dependencies]
 test = ["pytest>=8.3"]
+experiments = [
+  "huggingface_hub>=0.24",
+  "numpy>=1.26",
+  "onnxruntime>=1.18",
+  "tokenizers>=0.19",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

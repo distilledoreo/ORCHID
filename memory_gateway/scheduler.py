@@ -51,5 +51,9 @@ class CompactionScheduler:
     def maybe_enqueue(self, thread_id: str) -> str | None:
         priority = self.policy.priority_for(self.uncompacted_tokens(thread_id))
         if priority is None:
+            self.store.clear_compaction_dirty_if_idle(thread_id)
             return None
         return queue_snapshot_job(self.store, thread_id, priority=priority)
+
+    def reconcile_after_job(self, thread_id: str) -> str | None:
+        return self.maybe_enqueue(thread_id)

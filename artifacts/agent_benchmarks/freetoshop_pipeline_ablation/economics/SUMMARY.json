@@ -1,0 +1,126 @@
+{
+  "pricing_assumption": {
+    "solar_input_usd_per_million": 0.03,
+    "solar_output_usd_per_million": 0.12
+  },
+  "arms": [
+    {
+      "arm": "ARM_A_CURRENT",
+      "status": "SUCCEEDED",
+      "source_tokens": 13740,
+      "source_tokens_per_second": 65.90511569120709,
+      "local_model": {
+        "calls": 2,
+        "input_tokens": 7840.0,
+        "output_tokens": 933.0,
+        "reasoning_tokens": 0.0,
+        "wall_ms": 118541.88700000031,
+        "timeouts": 0,
+        "failures": 0,
+        "ttft_observed_count": 0
+      },
+      "solar_model": {
+        "calls": 1,
+        "input_tokens": 42704.0,
+        "output_tokens": 323.0,
+        "reasoning_tokens": 0.0,
+        "wall_ms": 8160.006800000701,
+        "timeouts": 0,
+        "failures": 0,
+        "ttft_observed_count": 0
+      },
+      "promotion": {
+        "status": "PROMOTED",
+        "capsule_id": "cap_4405c9015c51461bacca23a6f3cbe32e",
+        "database": "C:\\Users\\disti\\AppData\\Local\\Temp\\orchid_phase3_2_s68sni4o\\memory.db",
+        "ready": true,
+        "promoted": true,
+        "active_tokens": 266,
+        "active_content_hash": "1526868c616c5452e446d891b62e06e2dcdc18594e7036d22c888f739e4a3204"
+      }
+    },
+    {
+      "arm": "ARM_B_NO_CANONICALIZER",
+      "status": "SUCCEEDED",
+      "source_tokens": 13740,
+      "source_tokens_per_second": 133.67127663163322,
+      "local_model": {
+        "calls": 1,
+        "input_tokens": 1923.0,
+        "output_tokens": 17.0,
+        "reasoning_tokens": 0.0,
+        "wall_ms": 1666.6618999997809,
+        "timeouts": 0,
+        "failures": 0,
+        "ttft_observed_count": 0
+      },
+      "solar_model": {
+        "calls": 2,
+        "input_tokens": 22110.0,
+        "output_tokens": 1854.0,
+        "reasoning_tokens": 0.0,
+        "wall_ms": 60996.06110000059,
+        "timeouts": 0,
+        "failures": 0,
+        "ttft_observed_count": 0
+      },
+      "promotion": {
+        "status": "PROMOTED",
+        "capsule_id": "cap_d551736a6c4a4d0f86026f40a35fadfd",
+        "database": "C:\\Users\\disti\\AppData\\Local\\Temp\\orchid_phase3_2_g9sapled\\memory.db",
+        "ready": true,
+        "promoted": true,
+        "active_tokens": 904,
+        "active_content_hash": "ddd8ef50aeb12d29caf1ecbd476d7de2dac59aad22e2dd58c67140fc06391720"
+      }
+    },
+    {
+      "arm": "ARM_C_DIRECT",
+      "status": "FAILED",
+      "source_tokens": 166107,
+      "source_tokens_per_second": null,
+      "local_model": {
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "reasoning_tokens": 0,
+        "wall_ms": 0,
+        "timeouts": 0,
+        "failures": 0,
+        "ttft_observed_count": 0
+      },
+      "solar_model": {
+        "calls": 2,
+        "input_tokens": 20056.0,
+        "output_tokens": 1183.0,
+        "reasoning_tokens": 0.0,
+        "wall_ms": 303893.4623,
+        "timeouts": 1,
+        "failures": 1,
+        "ttft_observed_count": 0
+      },
+      "promotion": {
+        "status": "NOT_REACHED"
+      }
+    },
+    {
+      "arm": "ARM_D_ROLE_AFFINITY",
+      "status": "NOT_RUN",
+      "source_tokens": null,
+      "source_tokens_per_second": null,
+      "local_model": null,
+      "solar_model": null,
+      "promotion": null
+    },
+    {
+      "arm": "ARM_E_PIPELINED",
+      "status": "NOT_RUN",
+      "source_tokens": null,
+      "source_tokens_per_second": null,
+      "local_model": null,
+      "solar_model": null,
+      "promotion": null
+    }
+  ],
+  "note": "Pricing is the frozen benchmark configuration from the prior OpenRouter Solar setup; local compute cost is represented by wall time/tokens and no energy estimate is claimed."
+}

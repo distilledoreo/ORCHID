@@ -1,0 +1,12 @@
+{"generation":0,"checkpoint":"intent-start","check_id":"spot-001","category":"CURRENT_INTENT_PRESERVATION","status":"PASS","missing_all":[],"missing_any":[]}
+{"generation":0,"checkpoint":"intent-start","check_id":"spot-002","category":"CURRENT_INTENT_PRESERVATION","status":"PASS","missing_all":[],"missing_any":[]}
+{"generation":0,"checkpoint":"intent-start","check_id":"spot-003","category":"CURRENT_INTENT_PRESERVATION","status":"FAIL","missing_all":[],"missing_any":["real functionality","real behavior","not decorative"]}
+{"generation":0,"checkpoint":"intent-start","check_id":"spot-004","category":"CONTINUATION_SUFFICIENCY","status":"PASS","missing_all":[],"missing_any":[]}
+{"generation":1,"checkpoint":"intent-start","check_id":"spot-001","category":"CURRENT_INTENT_PRESERVATION","status":"PASS","missing_all":[],"missing_any":[]}
+{"generation":1,"checkpoint":"intent-start","check_id":"spot-002","category":"CURRENT_INTENT_PRESERVATION","status":"PASS","missing_all":[],"missing_any":[]}
+{"generation":1,"checkpoint":"intent-start","check_id":"spot-003","category":"CURRENT_INTENT_PRESERVATION","status":"FAIL","missing_all":[],"missing_any":["real functionality","real behavior","not decorative"]}
+{"generation":1,"checkpoint":"intent-start","check_id":"spot-004","category":"CONTINUATION_SUFFICIENCY","status":"PASS","missing_all":[],"missing_any":[]}
+{"generation":2,"checkpoint":"intent-start","check_id":"spot-001","category":"CURRENT_INTENT_PRESERVATION","status":"PASS","missing_all":[],"missing_any":[]}
+{"generation":2,"checkpoint":"intent-start","check_id":"spot-002","category":"CURRENT_INTENT_PRESERVATION","status":"FAIL","missing_all":["copy-on-write"],"missing_any":[]}
+{"generation":2,"checkpoint":"intent-start","check_id":"spot-003","category":"CURRENT_INTENT_PRESERVATION","status":"FAIL","missing_all":[],"missing_any":["real functionality","real behavior","not decorative"]}
+{"generation":2,"checkpoint":"intent-start","check_id":"spot-004","category":"CONTINUATION_SUFFICIENCY","status":"PASS","missing_all":[],"missing_any":[]}

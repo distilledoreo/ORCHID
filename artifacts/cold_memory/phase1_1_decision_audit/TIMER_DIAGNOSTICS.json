@@ -1,0 +1,9 @@
+{
+  "clock": "time.perf_counter_ns / time.perf_counter",
+  "clock_monotonic": true,
+  "clock_resolution_seconds": 1e-07,
+  "fts_positive_sample_min_ms": 0.1915,
+  "fts_sample_count": 520,
+  "fts_zero_ms_fraction": 0.038462,
+  "fts_zero_ms_samples": 20
+}

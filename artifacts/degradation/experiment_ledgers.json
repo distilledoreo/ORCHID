@@ -1,0 +1,36 @@
+{
+  "untreated_v0_1_x": {
+    "label": "Untreated degradation study",
+    "study": "orchid-endurance-degradation-51-200",
+    "first_semantic_failure_generation": 50,
+    "first_selector_protocol_failure_generation": 63,
+    "ended_at_generation": 63,
+    "end_reason": "PROTOCOL ABORT",
+    "highest_promoted_generation": 62,
+    "immutable_freezes": [
+      "artifacts/gen50_freeze/",
+      "artifacts/gen63_protocol_freeze/"
+    ],
+    "working_db_at_abort": "data/live_endurance_degradation.db",
+    "metrics": "artifacts/degradation/metrics.jsonl"
+  },
+  "protocol_hardened": {
+    "label": "Protocol-hardened continuation",
+    "branch_point_generation": 62,
+    "not_part_of": "untreated v0.1.x degradation run",
+    "hardening": "per-chunk selector JSON Schema enum of exact source IDs",
+    "working_db": "data/live_endurance_protocol_hardened.db",
+    "metrics": "artifacts/degradation/protocol_hardened_metrics.jsonl",
+    "artifact_dir": "artifacts/degradation/protocol_hardened/",
+    "enum_constrained_gen63_replay": "artifacts/degradation/gen63_enum_replay.json",
+    "enum_constrained_gen63_first_call_success": true,
+    "enum_constrained_gen63_raw_response_hash": "16a7734e6c39238ad37ba58b3af3ab8e54794e6329f5c49069fd20977829f104",
+    "enum_constrained_gen63_selected_id_count": 13,
+    "continuation_started": true,
+    "continuation_gen63_promoted": true,
+    "continuation_gen63_capsule_chars": 930,
+    "continuation_gen63_resurrection_count": 15,
+    "highest_generation_reached": 63,
+    "subsequent_selector_protocol_failures": []
+  }
+}

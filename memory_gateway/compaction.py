@@ -4,8 +4,8 @@ import asyncio
 from contextlib import suppress
 import hashlib
 import json
-from dataclasses import dataclass
-from typing import Any, Iterable, Protocol
+from dataclasses import asdict, dataclass
+from typing import Any, Callable, Iterable, Protocol
 
 from .context import estimate_tokens
 from .db import SQLiteStore, canonical_json, content_hash
@@ -268,6 +268,17 @@ class CompactionResult:
     prompt_version: str
     generation_settings: dict[str, Any]
     evidence_source_ids: tuple[str, ...] = ()
+    retire_memories: tuple["RetireMemory", ...] = ()
+
+
+@dataclass(frozen=True)
+class RetireMemory:
+    """A semantic cold-memory object with event provenance."""
+
+    content: str
+    memory_type: str
+    importance: float
+    evidence_event_ids: tuple[str, ...]
 
 
 class CompactionEngine(Protocol):
@@ -372,9 +383,21 @@ def freeze_snapshot(
     )
 
 
-def queue_snapshot_job(store: SQLiteStore, thread_id: str, priority: int = 0) -> str:
+def queue_snapshot_job(store: SQLiteStore, thread_id: str, priority: int = 0) -> str | None:
     snapshot = freeze_snapshot(store, thread_id)
-    return store.create_compaction_job(
+    # Keep the low-level test/maintenance helper compatible with empty
+    # snapshots. Production pressure scheduling already avoids calling this
+    # path when there is no novel history, while lease/recovery callers may
+    # still need a durable empty job to exercise ownership semantics.
+    if snapshot.snapshot_start_event_id is None or snapshot.snapshot_end_event_id is None:
+        return store.create_compaction_job(
+            thread_id=thread_id,
+            base_capsule_id=snapshot.base_capsule_id,
+            snapshot_start_event_id=None,
+            snapshot_end_event_id=None,
+            priority=priority,
+        )
+    return store.request_coalesced_compaction_job(
         thread_id=thread_id,
         base_capsule_id=snapshot.base_capsule_id,
         snapshot_start_event_id=snapshot.snapshot_start_event_id,
@@ -432,6 +455,7 @@ def validate_compaction_result(
         "covered_event_ids": result.covered_event_ids,
         "evidence_event_ids": result.evidence_event_ids,
         "evidence_source_ids": result.evidence_source_ids,
+        "retire_memory_count": len(getattr(result, "retire_memories", ())),
     }
     return capsule_hash, metadata
 
@@ -450,6 +474,7 @@ class CompactionWorker:
         lease_seconds: int = 900,
         renewal_interval_seconds: float = 30.0,
         recover_expired_jobs: bool = False,
+        on_job_finished: Callable[[str], None] | None = None,
     ):
         self.store = store
         self.engine = engine
@@ -457,6 +482,7 @@ class CompactionWorker:
         self.lease_seconds = lease_seconds
         self.renewal_interval_seconds = renewal_interval_seconds
         self.recover_expired_jobs = recover_expired_jobs
+        self.on_job_finished = on_job_finished
 
     def _assert_ownership(self, job: dict[str, Any]) -> None:
         lease_token = job.get("lease_token")
@@ -611,6 +637,20 @@ class CompactionWorker:
                 worker_id=self.worker_id,
                 lease_token=job["lease_token"],
             ):
+                # Cold persistence is deliberately after the hot CAS and
+                # fail-open: a sidecar/index problem must not turn a valid
+                # ACTIVE promotion into a failed compaction.
+                try:
+                    self.store.persist_long_term_memories(
+                        thread_id=snapshot.thread_id,
+                        memories=[
+                            asdict(memory)
+                            for memory in getattr(result, "retire_memories", ())
+                            if isinstance(memory, RetireMemory)
+                        ],
+                    )
+                except Exception:
+                    pass
                 if not self.store.finish_job(
                     job["id"],
                     "PROMOTED",
@@ -658,3 +698,10 @@ class CompactionWorker:
                     thread_id=None,
                     generation=None,
                 )
+            if self.on_job_finished is not None:
+                try:
+                    self.on_job_finished(job["thread_id"])
+                except Exception:
+                    # The dirty state is durable; a callback failure must not
+                    # turn a completed lease into a gateway failure.
+                    pass

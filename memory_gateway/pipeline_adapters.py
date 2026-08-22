@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass, field
 from typing import Any
 
 from .compaction import (
     Capsule,
     Event,
+    RetireMemory,
     SourceItem,
     _hash,
     compute_source_event_hash,
@@ -16,7 +18,7 @@ from .compaction import (
 )
 from .config import RuntimeConfig
 from .context import estimate_tokens
-from .openai_adapter import ModelProtocolError
+from .openai_adapter import ModelProtocolError, ModelTransportError
 from .pipeline import (
     CanonicalizationBatchResult,
     CanonicalizationResult,
@@ -49,6 +51,32 @@ SELECTOR_RESPONSE_FORMAT: dict[str, Any] = {
     },
 }
 
+
+def selector_response_format_for_chunk(allowed_ids: tuple[str, ...] | list[str]) -> dict[str, Any]:
+    """Build a per-chunk selector schema that only permits exact in-chunk source IDs."""
+
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "selector_response_v1",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": list(allowed_ids),
+                        },
+                    },
+                },
+                "required": ["selected_event_ids"],
+                "additionalProperties": False,
+            },
+        },
+    }
+
 CANONICALIZER_RESPONSE_FORMAT: dict[str, Any] = {
     "type": "json_schema",
     "json_schema": {
@@ -69,6 +97,32 @@ CANONICALIZER_RESPONSE_FORMAT: dict[str, Any] = {
     },
 }
 
+
+def canonicalizer_response_format_for_batch(
+    allowed_ids: tuple[str, ...] | list[str],
+) -> dict[str, Any]:
+    """Build a canonicalizer schema that permits only exact supplied source IDs."""
+
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "canonicalizer_response_v1",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "canonical_text": {"type": "string"},
+                    "cited_source_refs": {
+                        "type": "array",
+                        "items": {"type": "string", "enum": list(allowed_ids)},
+                    },
+                },
+                "required": ["canonical_text"],
+                "additionalProperties": False,
+            },
+        },
+    }
+
 CONSOLIDATOR_RESPONSE_FORMAT: dict[str, Any] = {
     "type": "json_schema",
     "json_schema": {
@@ -81,6 +135,28 @@ CONSOLIDATOR_RESPONSE_FORMAT: dict[str, Any] = {
                 "evidence_event_ids": {
                     "type": "array",
                     "items": {"type": "string"},
+                },
+                "retire": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "content": {"type": "string"},
+                            "memory_type": {"type": "string"},
+                            "importance": {"type": "number", "minimum": 0, "maximum": 1},
+                            "evidence_event_ids": {
+                                "type": "array",
+                                "items": {"type": "string"},
+                            },
+                        },
+                        "required": [
+                            "content",
+                            "memory_type",
+                            "importance",
+                            "evidence_event_ids",
+                        ],
+                        "additionalProperties": False,
+                    },
                 },
             },
             "required": ["content", "evidence_event_ids"],
@@ -146,8 +222,15 @@ def _require_exact_response_keys(
     response: Any,
     expected_keys: set[str],
     stage: str,
+    *,
+    optional_keys: set[str] | None = None,
 ) -> None:
-    if not isinstance(response, dict) or set(response) != expected_keys:
+    optional_keys = optional_keys or set()
+    if (
+        not isinstance(response, dict)
+        or not expected_keys.issubset(response)
+        or bool(set(response) - expected_keys - optional_keys)
+    ):
         expected = ", ".join(sorted(expected_keys))
         raise ModelProtocolError(
             f"{stage} response must contain exactly: {expected}"
@@ -210,19 +293,21 @@ class OpenAICompatSelectorEngine:
             source_items = tuple(events)
         chunks = _chunk_events(list(source_items), target_tokens=self.chunk_target_tokens)
         for chunk_index, chunk in enumerate(chunks):
+            chunk_ids = [event.id for event in chunk]
             chunk_payload = {
                 "events": [_event_payload(event) for event in chunk],
-                "event_ids_in_order": [event.id for event in chunk],
-                "source_ids_in_order": [event.id for event in chunk],
+                "event_ids_in_order": chunk_ids,
+                "source_ids_in_order": chunk_ids,
             }
             try:
                 _set_call_context(
                     self.client,
                     stage="selector",
-                    source_refs=tuple(event.id for event in chunk),
+                    source_refs=tuple(chunk_ids),
                     selector_chunk_index=chunk_index,
                 )
                 _check_call_ownership(self.client)
+                self.client.response_format = selector_response_format_for_chunk(chunk_ids)
                 response = await self.client.complete_json(chunk_payload)
                 _check_call_ownership(self.client)
                 _require_exact_response_keys(
@@ -303,6 +388,7 @@ class OpenAICompatCanonicalizerEngine:
         batch_results: list[CanonicalizationBatchResult] = []
         telemetry: list[dict[str, Any]] = []
         for batch_index, batch in enumerate(batches):
+            batch_started = time.perf_counter()
             expected_ids = tuple(event.id for event in batch)
             estimated_tokens = sum(
                 estimate_tokens(json.dumps(_event_payload(event), ensure_ascii=False))
@@ -311,11 +397,16 @@ class OpenAICompatCanonicalizerEngine:
             batch_result: CanonicalizationBatchResult | None = None
             failure: Exception | None = None
             try:
+                if hasattr(self.client, "last_telemetry"):
+                    self.client.last_telemetry = None
                 _set_call_context(
                     self.client,
                     stage="canonicalizer",
                     source_refs=expected_ids,
                     canonicalizer_batch_index=batch_index,
+                )
+                self.client.response_format = canonicalizer_response_format_for_batch(
+                    expected_ids
                 )
                 if estimated_tokens > self.batch_target_tokens:
                     raise ValueError(
@@ -392,6 +483,9 @@ class OpenAICompatCanonicalizerEngine:
                 raise CanonicalizerBatchError(batch_index, error) from error
             finally:
                 batch_record = dict(self.client.last_telemetry or {})
+                request_profile = batch_record.get("request_profile") or {}
+                metadata = batch_record.get("metadata") or {}
+                transport_attempt = metadata.get("transport_attempt", 1)
                 batch_record.update(
                     {
                         "batch_index": batch_index,
@@ -401,6 +495,14 @@ class OpenAICompatCanonicalizerEngine:
                         "batch_estimated_tokens": estimated_tokens,
                         "actual_prompt_tokens": batch_record.get("input_tokens"),
                         "response_hash": batch_record.get("raw_response_hash"),
+                        "batch_wall_ms": (time.perf_counter() - batch_started) * 1000,
+                        "inference_wall_ms": batch_record.get("wall_ms"),
+                        "queue_wait_ms": None,
+                        "retry_count": max(0, int(transport_attempt) - 1),
+                        "structured_output_valid": batch_result is not None,
+                        "timeout": isinstance(failure, ModelTransportError)
+                        and "timed out" in str(failure).lower(),
+                        "request_profile": request_profile,
                     }
                 )
                 if batch_result is not None:
@@ -464,6 +566,7 @@ class OpenAICompatConsolidatorEngine:
                 response,
                 {"content", "evidence_event_ids"},
                 "consolidator",
+                optional_keys={"retire"},
             )
             content = response.get("content")
             evidence_ids = response.get("evidence_event_ids")
@@ -491,12 +594,42 @@ class OpenAICompatConsolidatorEngine:
                     "consolidator returned unknown evidence event ID(s): "
                     + ", ".join(sorted(unknown_ids))
                 )
+            retire_memories: list[RetireMemory] = []
+            raw_retire = response.get("retire", [])
+            if isinstance(raw_retire, list):
+                for item in raw_retire:
+                    if not isinstance(item, dict):
+                        continue
+                    content = item.get("content")
+                    memory_type = item.get("memory_type")
+                    importance = item.get("importance")
+                    retire_evidence = item.get("evidence_event_ids")
+                    if (
+                        not isinstance(content, str)
+                        or not isinstance(memory_type, str)
+                        or not isinstance(importance, (int, float))
+                        or isinstance(importance, bool)
+                        or not 0 <= importance <= 1
+                        or not isinstance(retire_evidence, list)
+                        or not retire_evidence
+                        or not all(isinstance(ref, str) for ref in retire_evidence)
+                    ):
+                        continue
+                    retire_memories.append(
+                        RetireMemory(
+                            content=content,
+                            memory_type=memory_type,
+                            importance=float(importance),
+                            evidence_event_ids=tuple(retire_evidence),
+                        )
+                    )
             return ConsolidationResult(
                 content=content,
                 evidence_event_ids=tuple(evidence_ids),
                 model_identity=self.client.model,
                 prompt_version=self.client.prompt_version,
                 generation_settings=_generation_settings(self.client),
+                retire_memories=tuple(retire_memories),
             )
         except Exception as error:
             _mark_call_failed(self.client, error)
@@ -546,7 +679,9 @@ def build_lossless_engine(
                 "You canonicalize authoritative events for durable memory. Return JSON only with "
                 '{"canonical_text":"...","cited_source_refs":["source-item-id"]}. '
                 "cited_source_refs is optional and may cite a subset of supplied source items, "
-                "but cited IDs must be supplied IDs in source order. Do not invent facts or IDs."
+                "but cited IDs must be the exact supplied item IDs in source order. For a source "
+                "span, cite its complete ID including the ::span:: suffix; never cite its "
+                "parent_event_id. Do not invent facts or IDs."
             ),
             generation_settings=generation_settings,
             timeout=config.model_timeout_seconds,
@@ -562,9 +697,13 @@ def build_lossless_engine(
             prompt_version="consolidator-v1",
             system_prompt=(
                 "You render a durable-memory capsule from an already-approved lossless packet. "
-                "Return JSON only with {'content':'...','evidence_event_ids':['source-item-id']}. "
+                "Return JSON only with {'content':'...','evidence_event_ids':['source-item-id'], "
+                "'retire':[{'content':'...','memory_type':'finding','importance':0.0, "
+                "'evidence_event_ids':['source-item-id']}]}. The optional retire array "
+                "must be [] when there is no durable cold memory to store. "
                 "Preserve conditions, causal relationships, current state, negative knowledge, "
-                "and uncertainty. Cite only authoritative source-item IDs from the input."
+                "and uncertainty. Cite only authoritative source-item IDs from the input. "
+                "Retire only durable semantic memories, not raw excerpts."
             ),
             generation_settings=generation_settings,
             timeout=config.model_timeout_seconds,

@@ -1,0 +1,55 @@
+{
+  "study": "orchid-endurance-degradation-51-200",
+  "first_semantic_failure": {
+    "generation": 50,
+    "verdict": "FAIL",
+    "cause": {
+      "selector": "PASS",
+      "provenance_lineage": "PASS",
+      "awake_recall": "PASS",
+      "capsule_current_facts": "still present",
+      "capsule_no_resurrection": "FAIL",
+      "detail": "obsolete values were being represented as current; superseded current compaction_generation=3,4,5,7,30,35,40; superseded current lease_seconds=30",
+      "residue_count": 10,
+      "capsule_chars": 770
+    },
+    "immutable": true
+  },
+  "first_selector_protocol_failure": {
+    "generation": 63,
+    "verdict": "FAILED",
+    "error": "selector returned ID outside current chunk",
+    "immutable": true
+  },
+  "frozen_db": "artifacts\\gen63_protocol_freeze\\live_endurance_gen63_protocol_failure.db",
+  "active_capsule": {
+    "id": "cap_5a3ac9b22e2a448c977a35d0dde4b886",
+    "base_capsule_id": "cap_bea33a7512d845e382d35e36e0da4c49",
+    "chars": 890,
+    "capsule_hash": "3d7e9dac960b9e3e28ee02695998a09a33b5f347571d2dd75b4e0ad3258809dd",
+    "covered_end_event_id": "evt_e5c27975c3704599860074d2ef1d9fe8"
+  },
+  "failed_job": {
+    "id": "job_198a2f2dd5cf4a6eabc000e326f9f3db",
+    "generation": 63,
+    "status": "FAILED",
+    "error": "selector stage failed: selector returned ID outside current chunk",
+    "base_capsule_id": "cap_5a3ac9b22e2a448c977a35d0dde4b886",
+    "snapshot_start_event_id": "evt_150244a64437499eba03e98d51c10617",
+    "snapshot_end_event_id": "evt_783902ce5fd74b72a2da2a4e9aa25fd4",
+    "attempts": 1
+  },
+  "model_runs": [
+    {
+      "id": "run_b6115614f97e49ffa8467a481277e216",
+      "stage": "selector",
+      "status": "FAILED",
+      "selector_chunk_index": 0,
+      "input_hash": "b9f23cae6c7ed8e07d016aad97481007b2eaaee534f03fc767f6623b8438acd1",
+      "output_hash": null,
+      "raw_response_hash": "282ab34206710dfa2b4d713ba474d5f0910b6df6d3b506ceff478115a16e6f6b",
+      "diagnostic_excerpt": "selector returned ID outside current chunk"
+    }
+  ],
+  "note": "Generation 63 is permanently recorded as the first selector protocol failure. Recovery may later promote this snapshot; this copy is not mutated."
+}

@@ -1,0 +1,24 @@
+{
+  "primary_failure_stage": "S6_recursive_base_capsule_contamination + S4_consolidator_log_synthesis + scorer_substring_collision",
+  "secondary_failure_stages": [
+    "S2_canonicalizer_temporal_semantics_unknown",
+    "S5_validator_semantic_gap"
+  ],
+  "recursive_base_capsule_contamination": true,
+  "temporal_semantics_loss": true,
+  "selector_omission_primary": false,
+  "canonicalizer_primary": null,
+  "consolidator_primary": true,
+  "validator_semantic_gap": true,
+  "natural_gc_observed": false,
+  "current_fact_loss_observed": false,
+  "protocol_failure_observed_hardened_63_200": false,
+  "confidence": "high",
+  "recommended_next_experiment": "Capsule invariant test with fact-key-scoped resurrection scoring; consolidator prompt requiring historical generation references be explicitly marked non-current; optional replay of gen-50 consolidator with frozen input_hash to confirm log-section introduction",
+  "gen200_resurrection_total": 93,
+  "gen200_substring_collision_resurrections_estimated": 93,
+  "gen200_genuine_field_assertion_resurrections_estimated": 0,
+  "lifecycles_traced": 97,
+  "gen50_selector_selected_lease30": false,
+  "gen50_selector_selected_lease900": false
+}

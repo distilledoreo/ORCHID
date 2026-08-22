@@ -1,0 +1,43 @@
+{
+  "benchmark": "FreetoShop Long-Horizon Memory A/B",
+  "status": "terminated_early_arm_specific_failure",
+  "validity": "partial_valid_exploratory",
+  "reason": "ORCHID stopped producing RPC/gateway work after a provider stream error and an accepted follow-up; no manual rescue or restart was used.",
+  "duration_minutes_observed": 90,
+  "solar": {"provider": "OpenRouter", "model": "upstage/solar-pro4"},
+  "arms": {
+    "PI_NATIVE": {
+      "assistant_messages_raw_rpc": 192,
+      "tool_calls": 236,
+      "tool_failures": 24,
+      "native_compactions_observed": 0,
+      "provider_input_tokens_observed": 14706539,
+      "focused_raster_tests": "30/30",
+      "hidden_clone_stamp": "FAIL: Clone stamp button not found"
+    },
+    "ORCHID": {
+      "assistant_messages_raw_rpc": 86,
+      "tool_calls": 114,
+      "tool_failures": 6,
+      "successful_active_promotions": 1,
+      "compaction_jobs_or_generations_created": 85,
+      "provider_input_tokens_observed": 17262397,
+      "focused_raster_tests": "30/30",
+      "cold_retrieval_attempts": 86,
+      "cold_retrieval_no_match": 86,
+      "cold_would_inject": 0,
+      "cold_injected": 0,
+      "hidden_clone_stamp": "FAIL: Clone stamp button not found",
+      "database_bytes": 42766336
+    }
+  },
+  "primary_conclusion": "This run did not establish a completed long-horizon A/B winner. It did establish an ORCHID continuity failure after a provider stream error, while both agents remained below a buildable Clone Stamp milestone.",
+  "next_recommendation": "Fix and preflight provider-error/settled-follow-up continuation recovery, then rerun the paired benchmark from fresh state before tuning retrieval or judging memory quality.",
+  "artifacts": {
+    "report": "FINAL_REPORT.md",
+    "metrics": "post_run_metrics.json",
+    "manifest": "BENCHMARK_MANIFEST.json",
+    "goal": "BENCHMARK_GOAL.md",
+    "hidden_evaluation": "hidden_evaluation/hidden_results.json"
+  }
+}

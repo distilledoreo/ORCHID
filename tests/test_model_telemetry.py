@@ -4,6 +4,7 @@ import asyncio
 import json
 import sqlite3
 import threading
+import time
 from contextlib import contextmanager
 from hashlib import sha256
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -15,7 +16,7 @@ import pytest
 from memory_gateway.compaction import CompactionWorker, Event
 from memory_gateway.config import RuntimeConfig
 from memory_gateway.db import SQLiteStore
-from memory_gateway.openai_adapter import ModelProtocolError
+from memory_gateway.openai_adapter import ModelProtocolError, ModelTransportError
 from memory_gateway.pipeline import build_lossless_packet
 from memory_gateway.pipeline_adapters import (
     OpenAICompatCanonicalizerEngine,
@@ -29,6 +30,7 @@ from memory_gateway.telemetry import TelemetryPersistenceError
 
 class StageHandler(BaseHTTPRequestHandler):
     mode = "valid"
+    delay_seconds = 0.0
     requests: list[dict] = []
 
     def log_message(self, *_args) -> None:
@@ -48,6 +50,8 @@ class StageHandler(BaseHTTPRequestHandler):
             "--- BEGIN INPUT ---\n", 1
         )[1].split("\n--- END INPUT ---", 1)[0]
         input_payload = json.loads(input_json)
+        if type(self).mode == "delay":
+            time.sleep(type(self).delay_seconds)
         first_id = (
             input_payload.get("events", [{}])[0].get("id")
             or input_payload.get("selected_events", [{}])[0].get("id")
@@ -88,12 +92,16 @@ class StageHandler(BaseHTTPRequestHandler):
         self.send_header("content-type", "application/json")
         self.send_header("content-length", str(len(encoded)))
         self.end_headers()
-        self.wfile.write(encoded)
+        try:
+            self.wfile.write(encoded)
+        except (BrokenPipeError, ConnectionAbortedError):
+            return
 
 
 @contextmanager
-def stage_server(mode: str = "valid") -> Iterator[str]:
+def stage_server(mode: str = "valid", delay_seconds: float = 0.0) -> Iterator[str]:
     StageHandler.mode = mode
+    StageHandler.delay_seconds = delay_seconds
     StageHandler.requests = []
     server = ThreadingHTTPServer(("127.0.0.1", 0), StageHandler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -101,6 +109,8 @@ def stage_server(mode: str = "valid") -> Iterator[str]:
     try:
         yield f"http://127.0.0.1:{server.server_port}/v1"
     finally:
+        StageHandler.mode = "valid"
+        StageHandler.delay_seconds = 0.0
         server.shutdown()
         server.server_close()
         thread.join(timeout=2)
@@ -206,6 +216,12 @@ def test_successful_selector_canonicalizer_and_consolidator_runs_persist(
     assert all(row["reasoning_tokens"] == 0 for row in rows)
     assert all(row["raw_response_hash"] for row in rows)
     assert all("Authorization" not in row["metadata_json"] for row in rows)
+    for row in rows:
+        metadata = json.loads(row["metadata_json"])
+        assert metadata["request_profile"]["input_payload_chars"] > 0
+        assert metadata["request_profile"]["system_prompt_chars"] > 0
+        assert metadata["request_profile"]["response_schema_chars"] > 0
+        assert metadata["request_profile"]["input_payload_hash"]
     assert json.loads(rows[0]["source_refs_json"]) == ["event-0", "event-1"]
     assert json.loads(rows[1]["source_refs_json"]) == ["event-0"]
     assert json.loads(rows[2]["source_refs_json"]) == ["event-0"]
@@ -244,6 +260,9 @@ def test_worker_attaches_job_context_to_all_persistent_stage_runs(
         )
         engine = build_lossless_engine(config, telemetry_recorder=store)
         assert engine is not None
+        assert "exact supplied item IDs" in engine.canonicalizer.client.system_prompt
+        assert "complete ID including the ::span:: suffix" in engine.canonicalizer.client.system_prompt
+        assert "never cite its parent_event_id" in engine.canonicalizer.client.system_prompt
         assert (
             asyncio.run(
                 CompactionWorker(store, engine, "telemetry-worker").run_once()
@@ -352,6 +371,26 @@ def test_telemetry_persistence_failure_is_a_model_failure() -> None:
         error.value,
         (TelemetryPersistenceError, OSError, RuntimeError),
     )
+
+
+def test_total_request_deadline_records_timeout_and_next_call_progresses() -> None:
+    with stage_server(mode="delay", delay_seconds=0.2) as endpoint:
+        client = OpenAICompatStructuredClient(
+            endpoint=endpoint,
+            model="model",
+            prompt_version="prompt-v1",
+            system_prompt="Return JSON.",
+            timeout=0.05,
+        )
+        with pytest.raises(ModelTransportError, match="timed out"):
+            asyncio.run(client.complete_json({"events": [{"id": "event-0"}]}))
+        assert client.last_telemetry["error_category"] == "timeout"
+        assert client.last_telemetry["failure_phase"] == "total_request_deadline"
+
+        StageHandler.mode = "valid"
+        client.timeout = 1.0
+        result = asyncio.run(client.complete_json({"events": [{"id": "event-1"}]}))
+        assert result == {}
 
 
 def test_legacy_model_runs_table_migrates_without_losing_rows(

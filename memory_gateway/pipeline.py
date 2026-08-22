@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass
 from hashlib import sha256
 from typing import Any, Callable, Protocol
 
+from .context import estimate_tokens
 from .compaction import (
     Capsule,
     CompactionResult,
     Event,
+    RetireMemory,
     SourceItem,
     _hash,
     compute_input_hash,
@@ -66,6 +69,7 @@ class ConsolidationResult:
     model_identity: str
     prompt_version: str
     generation_settings: dict[str, Any]
+    retire_memories: tuple[RetireMemory, ...] = ()
 
 
 class CanonicalizerBatchError(ModelProtocolError):
@@ -195,6 +199,54 @@ def build_lossless_packet(
     )
 
 
+def _normalize_retire_memories(
+    memories: Any,
+    *,
+    source_item_by_id: dict[str, SourceItem],
+    event_by_id: dict[str, Event],
+) -> tuple[RetireMemory, ...]:
+    """Keep optional RETIRE output best-effort so hot compaction cannot fail."""
+
+    normalized: list[RetireMemory] = []
+    if not isinstance(memories, (tuple, list)):
+        return ()
+    for memory in memories:
+        if not isinstance(memory, RetireMemory):
+            continue
+        content = memory.content.strip()
+        memory_type = memory.memory_type.strip()
+        if not content or not memory_type or not 0 <= memory.importance <= 1:
+            continue
+        refs = tuple(memory.evidence_event_ids)
+        if not refs or len(set(refs)) != len(refs):
+            continue
+        parent_ids: list[str] = []
+        valid = True
+        for source_id in refs:
+            if source_id in source_item_by_id:
+                parent_id = source_item_parent_event_id(source_item_by_id[source_id])
+            elif source_id in event_by_id:
+                parent_id = source_id
+            else:
+                valid = False
+                break
+            if parent_id not in event_by_id:
+                valid = False
+                break
+            if parent_id not in parent_ids:
+                parent_ids.append(parent_id)
+        if valid and parent_ids:
+            normalized.append(
+                RetireMemory(
+                    content=content,
+                    memory_type=memory_type,
+                    importance=float(memory.importance),
+                    evidence_event_ids=tuple(parent_ids),
+                )
+            )
+    return tuple(normalized)
+
+
 class LosslessCompactionEngine:
     """Composes model stages while software owns event retrieval and packet assembly."""
 
@@ -208,6 +260,39 @@ class LosslessCompactionEngine:
         self.canonicalizer = canonicalizer
         self.consolidator = consolidator
         self._ownership_checker: Callable[[], None] | None = None
+        self.last_telemetry: dict[str, Any] | None = None
+
+    @staticmethod
+    def _stage_calls(stage: Any) -> list[dict[str, Any]]:
+        for attribute in ("chunk_telemetry", "batch_telemetry"):
+            value = getattr(stage, attribute, None)
+            if value:
+                return [dict(item) for item in value]
+        client = getattr(stage, "client", None)
+        value = getattr(client, "last_telemetry", None)
+        return [dict(value)] if isinstance(value, dict) else []
+
+    def _record_stage(
+        self,
+        stage_name: str,
+        started: float,
+        stage: Any,
+        *,
+        status: str,
+        error: Exception | None = None,
+    ) -> None:
+        calls = self._stage_calls(stage)
+        stage_record: dict[str, Any] = {
+            "status": status,
+            "wall_ms": (time.perf_counter() - started) * 1000,
+            "call_count": len(calls),
+            "calls": calls,
+        }
+        if error is not None:
+            stage_record["error"] = str(error)
+        if self.last_telemetry is None:
+            self.last_telemetry = {}
+        self.last_telemetry[stage_name] = stage_record
 
     def set_job_context(
         self,
@@ -248,11 +333,25 @@ class LosslessCompactionEngine:
         events: list[Event],
         snapshot_end_event_id: str | None,
     ) -> CompactionResult:
+        total_started = time.perf_counter()
+        self.last_telemetry = {
+            "status": "RUNNING",
+            "source_event_count": len(events),
+            "source_event_ids": tuple(event.id for event in events),
+            "snapshot_end_event_id": snapshot_end_event_id,
+        }
         self._check_ownership()
+        selector_started = time.perf_counter()
         try:
             selection = await self.selector.select(events=events)
         except Exception as error:
+            self._record_stage(
+                "selector", selector_started, self.selector, status="FAILED", error=error
+            )
+            self.last_telemetry["status"] = "FAILED"
+            self.last_telemetry["wall_ms"] = (time.perf_counter() - total_started) * 1000
             raise RuntimeError(f"selector stage failed: {error}") from error
+        self._record_stage("selector", selector_started, self.selector, status="SUCCEEDED")
         selector_budget = getattr(self.selector, "chunk_target_tokens", 1_200)
         selector_context = getattr(self.selector, "selector_context_tokens", 32_768)
         span_safety_margin = getattr(self.selector, "span_safety_margin", 0.8)
@@ -268,6 +367,9 @@ class LosslessCompactionEngine:
             )
         except ValueError:
             source_items = tuple(events)
+        self.last_telemetry["selector_to_canonicalizer_software_ms"] = (
+            time.perf_counter() - selector_started
+        ) * 1000 - self.last_telemetry["selector"]["wall_ms"]
         source_item_by_id = {item.id: item for item in source_items}
         event_by_id = {event.id: event for event in events}
         if len(set(selection.selected_event_ids)) != len(selection.selected_event_ids):
@@ -277,17 +379,42 @@ class LosslessCompactionEngine:
         selected_ids = set(selection.selected_event_ids)
         selected_events = [item for item in source_items if item.id in selected_ids]
         self._check_ownership()
+        canonicalizer_started = time.perf_counter()
         try:
             canonical = await self.canonicalizer.canonicalize(events=selected_events)
         except CanonicalizerBatchError as error:
+            self._record_stage(
+                "canonicalizer",
+                canonicalizer_started,
+                self.canonicalizer,
+                status="FAILED",
+                error=error,
+            )
+            self.last_telemetry["status"] = "FAILED"
+            self.last_telemetry["wall_ms"] = (time.perf_counter() - total_started) * 1000
             raise RuntimeError(
                 f"canonicalizer stage failed at batch {error.batch_index}: {error.error}"
             ) from error
         except Exception as error:
+            self._record_stage(
+                "canonicalizer",
+                canonicalizer_started,
+                self.canonicalizer,
+                status="FAILED",
+                error=error,
+            )
+            self.last_telemetry["status"] = "FAILED"
+            self.last_telemetry["wall_ms"] = (time.perf_counter() - total_started) * 1000
             raise RuntimeError(f"canonicalizer stage failed: {error}") from error
+        self._record_stage(
+            "canonicalizer", canonicalizer_started, self.canonicalizer, status="SUCCEEDED"
+        )
         self._check_ownership()
+        packet_started = time.perf_counter()
         packet = build_lossless_packet(canonical, selected_events)
+        self.last_telemetry["packet_assembly_ms"] = (time.perf_counter() - packet_started) * 1000
         self._check_ownership()
+        consolidator_started = time.perf_counter()
         try:
             consolidation = await self.consolidator.consolidate(
                 base_capsule=base_capsule,
@@ -296,8 +423,21 @@ class LosslessCompactionEngine:
                 packet=packet,
             )
         except Exception as error:
+            self._record_stage(
+                "consolidator",
+                consolidator_started,
+                self.consolidator,
+                status="FAILED",
+                error=error,
+            )
+            self.last_telemetry["status"] = "FAILED"
+            self.last_telemetry["wall_ms"] = (time.perf_counter() - total_started) * 1000
             raise RuntimeError(f"consolidator stage failed: {error}") from error
+        self._record_stage(
+            "consolidator", consolidator_started, self.consolidator, status="SUCCEEDED"
+        )
         self._check_ownership()
+        validation_started = time.perf_counter()
         snapshot_event_ids = tuple(event.id for event in events)
         if len(set(consolidation.evidence_event_ids)) != len(consolidation.evidence_event_ids):
             raise ValueError("consolidator returned duplicate evidence event IDs")
@@ -329,7 +469,12 @@ class LosslessCompactionEngine:
         evidence_event_ids = [
             event.id for event in events if event.id in reported_parent_ids
         ]
-        return CompactionResult(
+        retire_memories = _normalize_retire_memories(
+            consolidation.retire_memories,
+            source_item_by_id=source_item_by_id,
+            event_by_id=event_by_id,
+        )
+        result = CompactionResult(
             content=consolidation.content,
             covered_event_ids=snapshot_event_ids,
             evidence_event_ids=tuple(evidence_event_ids),
@@ -339,4 +484,15 @@ class LosslessCompactionEngine:
             prompt_version=consolidation.prompt_version,
             generation_settings=consolidation.generation_settings,
             evidence_source_ids=tuple(evidence_source_ids),
+            retire_memories=retire_memories,
         )
+        self.last_telemetry["validation_ms"] = (time.perf_counter() - validation_started) * 1000
+        self.last_telemetry["source_tokens"] = sum(
+            estimate_tokens(event.content) for event in events
+        )
+        self.last_telemetry["status"] = "SUCCEEDED"
+        self.last_telemetry["wall_ms"] = (time.perf_counter() - total_started) * 1000
+        self.last_telemetry["source_tokens_per_second"] = self.last_telemetry["source_tokens"] / max(
+            self.last_telemetry["wall_ms"] / 1000, 0.000001
+        )
+        return result

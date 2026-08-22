@@ -1,0 +1,18 @@
+{
+  "candidate_limit": 20,
+  "corpus_sizes": [
+    25,
+    100,
+    200
+  ],
+  "includes_awake_llm": false,
+  "iterations": 20,
+  "max_injected": 3,
+  "minimum_score": 0.35,
+  "project_id": "phase1-project",
+  "thread_id": "phase1-thread",
+  "timeout_ms": 50,
+  "token_budget": 512,
+  "warmup": 5,
+  "warmups_excluded_from_latency_samples": true
+}

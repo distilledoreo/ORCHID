@@ -1,0 +1,40 @@
+{
+  "selector": {
+    "calls": 105,
+    "succeeded": 105,
+    "failed": 0,
+    "wall_ms": 1121614.7093001637,
+    "wall_percent_of_completed_job_wall": 64.89132230535685,
+    "p50_ms": 10008.503799996106,
+    "p95_ms": 20702.747800009092,
+    "input_tokens": 157238,
+    "output_tokens": 5489
+  },
+  "canonicalizer": {
+    "calls": 4,
+    "succeeded": 2,
+    "failed": 2,
+    "wall_ms": 605404.6368999989,
+    "wall_percent_of_completed_job_wall": 35.025848976916265,
+    "p50_ms": 151851.0615999985,
+    "p95_ms": 180031.5910400066,
+    "input_tokens": 22172,
+    "output_tokens": 917
+  },
+  "consolidator": {
+    "calls": 0,
+    "succeeded": 0,
+    "failed": 0,
+    "wall_ms": 0,
+    "wall_percent_of_completed_job_wall": 0.0,
+    "p50_ms": null,
+    "p95_ms": null,
+    "input_tokens": 0,
+    "output_tokens": 0
+  },
+  "software_and_unobserved_ms": 1431.6537998374552,
+  "completed_job_wall_ms": 1728451.0,
+  "completed_job_count": 2,
+  "running_job_count": 1,
+  "profile_scope": "model runs belonging to jobs with started_at and finished_at"
+}

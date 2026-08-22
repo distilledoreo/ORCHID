@@ -1,0 +1,87 @@
+{
+  "study": "orchid-endurance-degradation-51-200",
+  "first_semantic_failure": {
+    "generation": 50,
+    "verdict": "FAIL",
+    "cause": {
+      "selector": "PASS",
+      "provenance_lineage": "PASS",
+      "awake_recall": "PASS",
+      "capsule_current_facts": "still present",
+      "capsule_no_resurrection": "FAIL",
+      "detail": "obsolete values were being represented as current; superseded current compaction_generation=3,4,5,7,30,35,40; superseded current lease_seconds=30",
+      "residue_count": 10,
+      "capsule_chars": 770
+    },
+    "immutable": true
+  },
+  "frozen_db": "artifacts\\gen50_freeze\\live_endurance_gen50_first_failure.db",
+  "capsule": {
+    "id": "cap_29b8e430ff974e538ee3cc9fdacf87ee",
+    "base_capsule_id": "cap_e63f9cc04ea84e049db75e22805c5202",
+    "content": "Project: Orchid Memory Gateway. Owner: Disti. Timezone: America/New_York. Lease Duration: 900 seconds. Database Status: SQLite selected (Postgres rejected). Compaction Generation: Current (50). Promotion Policy: Promote READY descendants with compare-and-swap against the active capsule. Job Recovery Policy: Expired RUNNING jobs restart only if recover_expired_jobs is true. Event Model: Events are append-only; corrections add a new event. Preferences: Coffee order is black coffee; favorite color is teal. Lab Mascot: Okapi. Caching: A coworker mentioned Redis caching, but no decision was made. Additional Log: Protected-tail padding after generation 30 (pads 0 through 7), after generation 35 (pads 0 through 7), and after generation 40 (pads 0 through 7) recorded.",
+    "chars": 770,
+    "source_event_hash": "b118f00b3e220c3537f262f0320db860b1836443ad3204643130bef00bbb0a61",
+    "input_hash": "318b46c828833a37094c71d8c56bef474bc122c413edbfd6455496e357471729",
+    "output_hash": "5659b1682d938ac43de659f49539db394b6db1d7554576c2bb8f25451926f451",
+    "capsule_hash": "bf02aadb69034b1cbc7821c63e4c1da26a4c561d97ad52c549d1d28718104f1b",
+    "covered_start_event_id": "evt_879dc02b1036406fa2a5e0939696db53",
+    "covered_end_event_id": "evt_8caf1685c6734e98a5bfc5cc1ad8ce3f",
+    "snapshot_start_event_id": "evt_879dc02b1036406fa2a5e0939696db53",
+    "snapshot_end_event_id": "evt_8caf1685c6734e98a5bfc5cc1ad8ce3f"
+  },
+  "lineage_depth": 50,
+  "history": {
+    "authoritative_raw_event_count": 666,
+    "authoritative_raw_chars": 54084,
+    "authoritative_raw_tokens": 13157,
+    "covered_watermark_event_id": "evt_8caf1685c6734e98a5bfc5cc1ad8ce3f",
+    "covered_watermark_sequence": 658,
+    "uncompacted_backlog_events": 8,
+    "uncompacted_backlog_chars": 400,
+    "uncompacted_backlog_tokens": 96,
+    "capsule_chars": 770,
+    "capsule_tokens": 192,
+    "compression_ratio_vs_history": 70.23896103896104
+  },
+  "capsule_probes": [
+    {
+      "name": "current_facts_present",
+      "passed": true,
+      "detail": "all still-valid values present in capsule"
+    },
+    {
+      "name": "no_resurrection",
+      "passed": false,
+      "detail": "superseded current compaction_generation=3; superseded current compaction_generation=4; superseded current compaction_generation=5; superseded current compaction_generation=7; superseded current compaction_generation=30; superseded current compaction_generation=35; superseded current compaction_generation=40; superseded current lease_seconds=30"
+    },
+    {
+      "name": "no_invented_state",
+      "passed": true,
+      "detail": "no invented store/cache decision"
+    },
+    {
+      "name": "conditionals_remain_conditional",
+      "passed": true,
+      "detail": "conditional preserved"
+    },
+    {
+      "name": "superseded_residue",
+      "passed": true,
+      "detail": "10 obsolete mentions: superseded:compaction_generation=3, superseded:compaction_generation=4, superseded:compaction_generation=5, superseded:compaction_generation=7, superseded:compaction_generation=9, superseded:compaction_generation=30, superseded:compaction_generation=35, superseded:compaction_generation=40, superseded:lease_seconds=30, rejected:database=Postgres"
+    }
+  ],
+  "residue": [
+    "superseded:compaction_generation=3",
+    "superseded:compaction_generation=4",
+    "superseded:compaction_generation=5",
+    "superseded:compaction_generation=7",
+    "superseded:compaction_generation=9",
+    "superseded:compaction_generation=30",
+    "superseded:compaction_generation=35",
+    "superseded:compaction_generation=40",
+    "superseded:lease_seconds=30",
+    "rejected:database=Postgres"
+  ],
+  "note": "Generation 50 is permanently recorded as the first semantic failure. This copy must not be mutated. Working copies must be separate files."
+}

@@ -1,0 +1,132 @@
+{
+  "generation": 125,
+  "shadow_capsule_id": "shadow_cap_0125_f60ca1fa37a7",
+  "parent_shadow_capsule_id": "shadow_cap_0124_f60ca1fa37a7",
+  "original_capsule_id": "cap_14ef5d0f132348fdb04e55eb43ffe16b",
+  "original_base_capsule_id": "cap_236b9a1eb19d4e2d88f307471197ba8d",
+  "covered_end_event_id": "evt_432a6fec560140598fc71f64c1ce8da9",
+  "canonical_evidence_hash": "94749baa9afa40eae8d0303b17096ee835a9c68ce8f34b7a05df482a28a1accb",
+  "model_input_hash": "01f393af73c866f2ebfe6ceb39787a2444d03b9e43f1fbfdcd3a33ec82b0657e",
+  "raw_response_hash": "139dc69259e99839641b353a59cf2fcf924ce20b8c4d512f921926b7982224bd",
+  "reconstruction_status": "CANONICALIZER_OUTPUT_VERIFIED",
+  "active": {
+    "content": "Project: Orchid Memory Gateway\nOwner: Disti\nTimezone: America/New_York\nLease Duration: 900 seconds\nDatabase Status: SQLite\nEvent Model: Events are append-only; corrections add a new event.\nJob Recovery Policy: Expired RUNNING jobs restart only if recover_expired_jobs is true.\nPromotion Policy: Promote READY descendants with compare-and-swap against the active capsule.\nPreferences: Coffee order is black coffee; favorite color is teal.\nLab Mascot: okapi",
+    "hash": "f60ca1fa37a7e8abf844a2e67f48f0e0c956a59ad30b3e05393a258d2ad4ff1a",
+    "tokens": 113,
+    "evidence_refs": [
+      "base_capsule"
+    ]
+  },
+  "retire": [],
+  "raw_only": [
+    {
+      "description": "Protected tail padding entries after generation 124 (pads 0-7)",
+      "evidence_refs": [
+        "evt_5eed719eceee4dc9bc45ef0ca922434a",
+        "evt_209127458e704df8826fbfd87bfdec3a",
+        "evt_5c4ef14f8f5f40758228ae8d75cb0c1e",
+        "evt_20f3bc640c1645088fb28ec244bb59ef",
+        "evt_55b7962412fc4c709ffcac0934206598",
+        "evt_273dfe7ef2584fdda66f6883d67ea296",
+        "evt_7b7debe8208e4669a7b8deda3ad07ea7",
+        "evt_d70bcfbbd4a24da0b6260366f413c8f2"
+      ],
+      "reason": "Pure mechanical padding without semantic or operational state value."
+    },
+    {
+      "description": "Compaction generation marker 125",
+      "evidence_refs": [
+        "evt_b53acb55d038445ab29b735d49939ecf"
+      ],
+      "reason": "Pure compaction bookkeeping metadata."
+    },
+    {
+      "description": "Filler chatter regarding Redis caching notes 0 to 3 for generation 125",
+      "evidence_refs": [
+        "evt_6476b5594c2044209d7f1204948d52cb",
+        "evt_592b5350d5714d0ea79a035cbeaeb7a3",
+        "evt_e9db68022bfc4d5e879cf9462066fe0e",
+        "evt_432a6fec560140598fc71f64c1ce8da9"
+      ],
+      "reason": "Low-salience operational noise with no decision made."
+    }
+  ],
+  "model_telemetry": {
+    "model": "gemini-3.7-flash",
+    "endpoint": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+    "prompt_version": "residency_shadow_v1",
+    "input_hash": "01f393af73c866f2ebfe6ceb39787a2444d03b9e43f1fbfdcd3a33ec82b0657e",
+    "raw_response_hash": "139dc69259e99839641b353a59cf2fcf924ce20b8c4d512f921926b7982224bd",
+    "input_tokens": 6842,
+    "output_tokens": 752,
+    "reasoning_tokens": 0,
+    "wall_ms": 2481.7393999983324,
+    "finish_reason": "stop",
+    "transport_attempt_count": 1
+  },
+  "validation": {
+    "original_capsule_chars": 2071,
+    "original_capsule_tokens": 517,
+    "shadow_active_chars": 455,
+    "shadow_active_tokens": 113,
+    "original_residue_count": 52,
+    "shadow_residue_count": 2,
+    "original_resurrection_count": 0,
+    "shadow_resurrection_count": 0,
+    "current_fact_loss": false,
+    "current_fact_loss_detail": "",
+    "invented_state": false,
+    "invented_state_detail": "",
+    "original_current_facts_ok": true,
+    "base_capsule_had_log_residue": false,
+    "shadow_active_retains_log_residue": false,
+    "base_capsule_log_evicted_from_active": false,
+    "original_additional_log": {
+      "protected_tail_padding": 1,
+      "filler_chatter": 1,
+      "additional_log_marker": 1,
+      "generation_bookkeeping": 2
+    },
+    "shadow_additional_log": {
+      "protected_tail_padding": 0,
+      "filler_chatter": 0,
+      "additional_log_marker": 0,
+      "generation_bookkeeping": 0
+    }
+  },
+  "metrics": {
+    "generation": 125,
+    "original_capsule_chars": 2071,
+    "original_capsule_tokens": 517,
+    "shadow_active_chars": 455,
+    "shadow_active_tokens": 113,
+    "active_token_delta_vs_previous": 0,
+    "active_token_ratio_vs_original": 0.2186,
+    "cumulative_raw_history_tokens": 32616,
+    "shadow_active_over_raw_history": 0.003465,
+    "original_over_raw_history": 0.015851,
+    "original_residue_count": 52,
+    "shadow_residue_count": 2,
+    "current_fact_loss": false,
+    "semantic_resurrection_count": 0,
+    "invented_state": false,
+    "retire_entry_count": 0,
+    "retire_tokens": 1,
+    "raw_only_entry_count": 3,
+    "raw_only_tokens": 251,
+    "model_input_tokens": 6842,
+    "model_output_tokens": 752,
+    "model_reasoning_tokens": 0,
+    "wall_ms": 2481.7393999983324,
+    "transport_retry_count": 0,
+    "residue_recursive": {
+      "inherited_from_previous_active_markers": 0,
+      "current_active_markers": 0,
+      "shadow_residue_count": 2,
+      "prev_shadow_residue_count": 2,
+      "residue_removed_vs_previous": 0,
+      "newly_introduced_marker_delta": 0,
+      "persistent_low_residue": true
+    }
+  }
+}

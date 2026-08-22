@@ -1,0 +1,20 @@
+{
+  "embedding_dimension": 384,
+  "max_length": 256,
+  "model_id": "sentence-transformers/all-MiniLM-L12-v2",
+  "model_path": "C:\\Users\\disti\\.cache\\huggingface\\hub\\models--sentence-transformers--all-MiniLM-L12-v2\\snapshots\\a50ef00143b4d5391434df20ae11632588ac25be\\onnx\\model.onnx",
+  "model_sha256": "84c56795d395593cbee215e2d635a8f0ad3199ae99f99299c44cf1eaecff3ad4",
+  "pooling": "attention_mask_mean_then_l2_normalize",
+  "revision": "a50ef00143b4d5391434df20ae11632588ac25be",
+  "similarity": "cosine_dot_product",
+  "source": {
+    "model_cache_path": "C:\\Users\\disti\\.cache\\huggingface\\hub\\models--sentence-transformers--all-MiniLM-L12-v2\\snapshots\\a50ef00143b4d5391434df20ae11632588ac25be\\onnx\\model.onnx",
+    "model_sha256": "84c56795d395593cbee215e2d635a8f0ad3199ae99f99299c44cf1eaecff3ad4",
+    "repo_id": "sentence-transformers/all-MiniLM-L12-v2",
+    "revision": "a50ef00143b4d5391434df20ae11632588ac25be",
+    "tokenizer_cache_path": "C:\\Users\\disti\\.cache\\huggingface\\hub\\models--sentence-transformers--all-MiniLM-L12-v2\\snapshots\\a50ef00143b4d5391434df20ae11632588ac25be\\tokenizer.json",
+    "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037"
+  },
+  "tokenizer_path": "C:\\Users\\disti\\.cache\\huggingface\\hub\\models--sentence-transformers--all-MiniLM-L12-v2\\snapshots\\a50ef00143b4d5391434df20ae11632588ac25be\\tokenizer.json",
+  "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037"
+}

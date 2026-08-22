@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-08-22T03:24:50.950536+00:00",
+  "source": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\degradation\\residency_shadow_chained_1_200\\shadow_lineage.jsonl",
+  "raw_only_group_count": 595,
+  "retire_entry_count": 3,
+  "bucket_counts": {
+    "compaction_marker": 191,
+    "filler_chatter": 196,
+    "padding": 199,
+    "unclassified": 9
+  },
+  "arguable_durable_but_cold_groups": 0,
+  "obvious_durable_lesson_groups": 0,
+  "retire_entries": [
+    {
+      "generation": 8,
+      "memory": "Postgres was evaluated and rejected as the database option in favor of SQLite.",
+      "evidence_refs": [
+        "evt_61bd5597f7c64d708f91f007fadba448",
+        "evt_babccddefb784c0bb2636f326678f790"
+      ],
+      "reason": "Architectural rejection decision context that is useful historically but not needed for everyday active configuration."
+    },
+    {
+      "generation": 28,
+      "memory": "Previous lab mascot was red panda before being updated to okapi.",
+      "evidence_refs": [
+        "base_capsule"
+      ],
+      "reason": "Historical fact superseded by current update; may have contextual or historical retrieval value."
+    },
+    {
+      "generation": 40,
+      "memory": "Previous coffee order preference was oat latte before being updated to black coffee.",
+      "evidence_refs": [
+        "base_capsule",
+        "evt_608b6ed90f3547f1a10ecd9c71981bd5"
+      ],
+      "reason": "Historical user preference value replaced by a newer fact."
+    }
+  ],
+  "underlying_evidence_kinds": {
+    "protected_tail_padding_events": 1592,
+    "filler_chatter_events": 800,
+    "compaction_generation_events": 200,
+    "architectural_or_current_facts_other_than_compaction_markers": 0
+  },
+  "designed_cold_history_moments": [
+    {
+      "generation": 8,
+      "topic": "Postgres rejected in favor of SQLite"
+    },
+    {
+      "generation": 28,
+      "topic": "red panda superseded by okapi"
+    },
+    {
+      "generation": 40,
+      "topic": "oat latte superseded by black coffee"
+    }
+  ],
+  "retire_policy_underuse_heuristic_invalid": true,
+  "notes": [
+    "595 RAW_ONLY groups are entirely benchmark padding/churn/bookkeeping.",
+    "3 RETIRE entries correspond to the designed cold-history supersessions.",
+    "retire_entries < generations * 0.05 is not valid evidence of under-retirement."
+  ]
+}

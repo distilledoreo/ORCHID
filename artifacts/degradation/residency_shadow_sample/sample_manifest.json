@@ -1,0 +1,62 @@
+{
+  "prompt_version": "residency_shadow_v1",
+  "prompt_bundle_hash": "124048d4f7475a2ec70141d8483026ee2d77817b93682ee38a65f0dcac89068c",
+  "generations": [
+    {
+      "generation": 1,
+      "reason": "early_clean_baseline_before_log_contamination"
+    },
+    {
+      "generation": 12,
+      "reason": "first_major_capsule_growth_promotion_policy_injection"
+    },
+    {
+      "generation": 25,
+      "reason": "required_checkpoint"
+    },
+    {
+      "generation": 31,
+      "reason": "first_residue_spike_and_legacy_scorer_failure_era"
+    },
+    {
+      "generation": 41,
+      "reason": "first_additional_log_style_growth_770_chars"
+    },
+    {
+      "generation": 50,
+      "reason": "required_checkpoint"
+    },
+    {
+      "generation": 63,
+      "reason": "protocol_hardened_continuation_start_chunk_compaction_13_refs"
+    },
+    {
+      "generation": 75,
+      "reason": "required_checkpoint"
+    },
+    {
+      "generation": 82,
+      "reason": "chunk_compaction_heavy_canonicalizer_batch"
+    },
+    {
+      "generation": 100,
+      "reason": "required_checkpoint"
+    },
+    {
+      "generation": 125,
+      "reason": "required_checkpoint"
+    },
+    {
+      "generation": 150,
+      "reason": "required_checkpoint"
+    },
+    {
+      "generation": 175,
+      "reason": "required_checkpoint"
+    },
+    {
+      "generation": 200,
+      "reason": "required_checkpoint"
+    }
+  ]
+}

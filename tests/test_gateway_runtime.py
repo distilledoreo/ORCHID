@@ -82,6 +82,7 @@ def test_gateway_routes_solar_and_runs_background_compaction(tmp_path: Path) -> 
             urgent_fraction=0.8,
             worker_poll_seconds=0.01,
             model_timeout_seconds=1,
+            cold_memory_mode="shadow",
         )
         app = create_app(config=config, compaction_engine=PerfectCompactionEngine())
 
@@ -118,3 +119,5 @@ def test_gateway_routes_solar_and_runs_background_compaction(tmp_path: Path) -> 
         asyncio.run(run())
         assert BackendHandler.last_model == "upstage/solar-pro4"
         assert BackendHandler.last_authorization == "Bearer backend-test-key"
+        assert app.state.cold_memory_telemetry is not None
+        assert app.state.cold_memory_telemetry.metrics()["flushed_operation_count"] >= 1

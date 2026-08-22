@@ -1,0 +1,22 @@
+{
+  "arm_b": {
+    "effective_selected_source_tok_s": 68.7680800531869,
+    "end_to_end_wall_seconds": 2884.9140450999994,
+    "planned_source_tokens": 202761,
+    "selected_fraction": 0.9784425999082664,
+    "selected_source_tokens": 198390,
+    "selector_calls": 230,
+    "selector_input_tokens": 318794.0,
+    "selector_output_tokens": 6089.0,
+    "selector_wall_seconds": 2115.2439103000015,
+    "solar_input_tokens": 405044.0
+  },
+  "arm_c": {
+    "first_batch_error": "assistant content was not valid JSON",
+    "first_batch_solar_input_tokens": 20056,
+    "full_trace_solar_input_tokens": null,
+    "status": "FAILED"
+  },
+  "conclusion": "Whole-trace selector economics are not identifiable because ARM C failed on its first batch. ARM B's selector cost is measured; no claim that it saves provider work is made beyond the partial observed run.",
+  "status": "PARTIAL_ONLY"
+}

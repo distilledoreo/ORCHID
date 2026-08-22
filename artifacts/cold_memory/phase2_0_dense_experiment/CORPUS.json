@@ -1,0 +1,9 @@
+{
+  "anchor_count": 14,
+  "distractor_count": 86,
+  "memory_count": 100,
+  "project_id": "phase1-project",
+  "source": "tests/cold_memory_phase1_benchmark.py::_corpus",
+  "status_filter": "ACTIVE",
+  "thread_id": "phase1-thread"
+}

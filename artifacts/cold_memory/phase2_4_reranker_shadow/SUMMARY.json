@@ -1,0 +1,405 @@
+{
+  "calibration": {
+    "abstain_count": 0,
+    "accept_count": 29,
+    "accept_precision": 0.2413793103448276,
+    "accept_recall": 0.3181818181818182,
+    "ambiguous_count": 78,
+    "by_category": {
+      "clear_semantic_positive": {
+        "accept_count": 8,
+        "accept_precision": 0.875,
+        "accept_recall": 0.3181818181818182,
+        "false_accept_count": 1,
+        "positive_count": 22,
+        "query_count": 22
+      },
+      "current_irrelevant_negative": {
+        "accept_count": 0,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 0,
+        "positive_count": 0,
+        "query_count": 1
+      },
+      "near_duplicate_negative": {
+        "accept_count": 7,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 7,
+        "positive_count": 0,
+        "query_count": 10
+      },
+      "near_miss_negative": {
+        "accept_count": 3,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 3,
+        "positive_count": 0,
+        "query_count": 14
+      },
+      "no_cold_memory_negative": {
+        "accept_count": 0,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 0,
+        "positive_count": 0,
+        "query_count": 26
+      },
+      "superseded_negative": {
+        "accept_count": 2,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 2,
+        "positive_count": 0,
+        "query_count": 15
+      },
+      "superseded_status_negative": {
+        "accept_count": 5,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 5,
+        "positive_count": 0,
+        "query_count": 5
+      },
+      "wrong_fact_negative": {
+        "accept_count": 4,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 4,
+        "positive_count": 0,
+        "query_count": 14
+      }
+    },
+    "false_accept_count": 22,
+    "false_accept_rate": 0.205607476635514,
+    "name": "reranker_calibration",
+    "negative_count": 85,
+    "positive_count": 22,
+    "query_count": 107
+  },
+  "combined_holdout": {
+    "abstain_count": 2,
+    "accept_count": 196,
+    "accept_precision": 0.23469387755102042,
+    "accept_recall": 0.46,
+    "ambiguous_count": 152,
+    "by_category": {
+      "clear_semantic_positive": {
+        "accept_count": 28,
+        "accept_precision": 0.8214285714285714,
+        "accept_recall": 0.46,
+        "false_accept_count": 5,
+        "positive_count": 50,
+        "query_count": 50
+      },
+      "current_irrelevant_negative": {
+        "accept_count": 18,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 18,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "expanded_near_miss_negative": {
+        "accept_count": 14,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 14,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "expanded_no_cold_memory_negative": {
+        "accept_count": 0,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 0,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "expanded_semantic_positive": {
+        "accept_count": 28,
+        "accept_precision": 0.8214285714285714,
+        "accept_recall": 0.46,
+        "false_accept_count": 5,
+        "positive_count": 50,
+        "query_count": 50
+      },
+      "expanded_wrong_fact_negative": {
+        "accept_count": 19,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 19,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "near_duplicate_negative": {
+        "accept_count": 17,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 17,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "near_miss_negative": {
+        "accept_count": 14,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 14,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "no_cold_memory_negative": {
+        "accept_count": 0,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 0,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "superseded_negative": {
+        "accept_count": 14,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 14,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "superseded_status_negative": {
+        "accept_count": 25,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 25,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "wrong_fact_negative": {
+        "accept_count": 19,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 19,
+        "positive_count": 0,
+        "query_count": 25
+      }
+    },
+    "false_accept_count": 150,
+    "false_accept_rate": 0.42857142857142855,
+    "name": "combined_holdout",
+    "negative_count": 250,
+    "positive_count": 100,
+    "query_count": 350
+  },
+  "config": {
+    "base_corpus_sha256": "1c535234a3374e2b705b3501980151711bd11ee8220b8447db6ec10e0a73be0b",
+    "calibration_count": 196,
+    "calibration_count_added": 20,
+    "dense_fixed": true,
+    "dense_status_eligibility_fixed": true,
+    "expanded_corpus_sha256": "61e28837d2357b1000630dfb1f6e829328db95f86db0ba7db97996fa43376395",
+    "external_guardrail_count": 18,
+    "fts_bypass_rule": "fts_would_inject_ids non-empty",
+    "holdout_count": 350,
+    "holdout_count_added": 50,
+    "hot_path_state_unchanged": true,
+    "iterations": 5,
+    "lexical_bypass_holdout_count": 147,
+    "output_root": "artifacts\\cold_memory\\phase2_4_reranker_shadow",
+    "phase": "2.4",
+    "phase23_root": "artifacts\\cold_memory\\phase2_3_status_eligibility",
+    "production_injection": false,
+    "query_count": 564,
+    "reranker_calibration_evaluated_count": 107,
+    "reranker_holdout_evaluated_count": 203,
+    "reranker_shadow_only": true,
+    "target_accept_precision": 0.99,
+    "top_k": 5,
+    "warmup": 2
+  },
+  "dense_candidate_recall_at_5": 0.81,
+  "hot_path_impact": {
+    "active_mutations_by_reranker": 0,
+    "events_appended_by_reranker": 0,
+    "production_injections": 0,
+    "state_after": {
+      "active_capsule_ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "active_memory_count": 100,
+      "active_memory_ids_sha256": "618a1563d0fe44141a77a120782525573bbadce252c362315564abc87dcee799",
+      "event_count": 105,
+      "event_ids_sha256": "9c5029d0c9e9f99d893a85f65c1d99173948cdee739c51d140be9bb1a11645ef",
+      "memory_content_sha256": "f17ed384e06fbbbb21d5e233026cc552210a512491f495a8f4a3874d747bef78",
+      "status_counts": {
+        "ACTIVE": 100,
+        "DISABLED": 0,
+        "SUPERSEDED": 5
+      }
+    },
+    "state_before": {
+      "active_capsule_ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "active_memory_count": 100,
+      "active_memory_ids_sha256": "618a1563d0fe44141a77a120782525573bbadce252c362315564abc87dcee799",
+      "event_count": 105,
+      "event_ids_sha256": "9c5029d0c9e9f99d893a85f65c1d99173948cdee739c51d140be9bb1a11645ef",
+      "memory_content_sha256": "f17ed384e06fbbbb21d5e233026cc552210a512491f495a8f4a3874d747bef78",
+      "status_counts": {
+        "ACTIVE": 100,
+        "DISABLED": 0,
+        "SUPERSEDED": 5
+      }
+    },
+    "state_unchanged": true
+  },
+  "latency": {
+    "count": 1015,
+    "max": 13.411,
+    "mean": 7.470104,
+    "p50": 7.6425,
+    "p95": 9.3884,
+    "p99": 10.1692
+  },
+  "model": {
+    "dense_model_id": "sentence-transformers/all-MiniLM-L12-v2",
+    "dense_model_sha256": "84c56795d395593cbee215e2d635a8f0ad3199ae99f99299c44cf1eaecff3ad4",
+    "dense_revision": "a50ef00143b4d5391434df20ae11632588ac25be",
+    "dense_tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+    "reranker_max_length": 256,
+    "reranker_model_id": "cross-encoder/ms-marco-MiniLM-L-2-v2",
+    "reranker_model_sha256": "97ae94c94faf17d97398a7af38e44ee0ef326eff99ece940423b187e885eae6a",
+    "reranker_revision": "1b5cd67b15209f24824c50370e0397743aa9b787",
+    "reranker_tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66"
+  },
+  "policy": {
+    "accept_precision": 0.2413793103448276,
+    "accept_recall": 0.3181818181818182,
+    "accepted_count": 29,
+    "false_accept_count": 22,
+    "grid_size": 10815,
+    "policy": {
+      "accept_min_margin": 1.6769371,
+      "accept_min_score": -10.19066906,
+      "ambiguous_min_score": -11.97791004,
+      "name": "phase2_4_calibrated"
+    },
+    "positive_count": 22,
+    "target_met_on_calibration": false,
+    "target_precision": 0.99,
+    "true_accept_count": 7
+  },
+  "primary_metric": {
+    "eligible": false,
+    "holdout_accept_count": 49,
+    "holdout_accept_precision": 0.24489795918367346,
+    "holdout_accept_recall": null,
+    "target_precision": 0.99
+  },
+  "reranker_holdout": {
+    "abstain_count": 2,
+    "accept_count": 49,
+    "accept_precision": 0.24489795918367346,
+    "accept_recall": 0.20689655172413793,
+    "ambiguous_count": 152,
+    "by_category": {
+      "clear_semantic_positive": {
+        "accept_count": 7,
+        "accept_precision": 0.8571428571428571,
+        "accept_recall": 0.20689655172413793,
+        "false_accept_count": 1,
+        "positive_count": 29,
+        "query_count": 29
+      },
+      "current_irrelevant_negative": {
+        "accept_count": 8,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 8,
+        "positive_count": 0,
+        "query_count": 15
+      },
+      "expanded_near_miss_negative": {
+        "accept_count": 1,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 1,
+        "positive_count": 0,
+        "query_count": 12
+      },
+      "expanded_no_cold_memory_negative": {
+        "accept_count": 0,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 0,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "expanded_semantic_positive": {
+        "accept_count": 7,
+        "accept_precision": 0.8571428571428571,
+        "accept_recall": 0.20689655172413793,
+        "false_accept_count": 1,
+        "positive_count": 29,
+        "query_count": 29
+      },
+      "expanded_wrong_fact_negative": {
+        "accept_count": 4,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 4,
+        "positive_count": 0,
+        "query_count": 10
+      },
+      "near_duplicate_negative": {
+        "accept_count": 6,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 6,
+        "positive_count": 0,
+        "query_count": 14
+      },
+      "near_miss_negative": {
+        "accept_count": 1,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 1,
+        "positive_count": 0,
+        "query_count": 12
+      },
+      "no_cold_memory_negative": {
+        "accept_count": 0,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 0,
+        "positive_count": 0,
+        "query_count": 25
+      },
+      "superseded_negative": {
+        "accept_count": 6,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 6,
+        "positive_count": 0,
+        "query_count": 17
+      },
+      "superseded_status_negative": {
+        "accept_count": 5,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 5,
+        "positive_count": 0,
+        "query_count": 5
+      },
+      "wrong_fact_negative": {
+        "accept_count": 4,
+        "accept_precision": 0.0,
+        "accept_recall": 0.0,
+        "false_accept_count": 4,
+        "positive_count": 0,
+        "query_count": 10
+      }
+    },
+    "false_accept_count": 37,
+    "false_accept_rate": 0.18226600985221675,
+    "name": "reranker_holdout",
+    "negative_count": 145,
+    "positive_count": 58,
+    "query_count": 203
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "arm": "ARM_C_DIRECT",
+  "scope": "12-event pilot; not the frozen 199-event replay",
+  "status": "SUCCEEDED",
+  "source_tokens": 13740,
+  "chunks": 2,
+  "solar_calls": 2,
+  "solar_input_tokens": 23038,
+  "solar_output_tokens": 5747,
+  "wall_ms": 118580,
+  "source_tokens_per_second": 115.87096019217844,
+  "timeouts": 0,
+  "failures": 0,
+  "promotion": "PROMOTED",
+  "active_tokens": 4466,
+  "quality": "structural exact-source-reference and promotion checks passed; semantic judge not run"
+}

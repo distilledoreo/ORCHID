@@ -1,0 +1,16 @@
+{
+  "condition": "panoref_bounded_direct_raw_solar_plain_text",
+  "budget": 2000,
+  "repeat": 1,
+  "no_retry_within_run": true,
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_direct_generalization_bounded_v2\\frozen_panoref_replay\\events.jsonl",
+  "raw_plan": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_direct_generalization_bounded_v2\\arm_direct_raw_solar\\batch_plan.json",
+  "oracle": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_direct_generalization_bounded_v2\\semantic_oracle\\deterministic_checks.jsonl",
+  "runner_error": null,
+  "replay_sha256": "aa0e7326c2514501a8c53a5a2c4669b1512383507989e71403d4e6f00f7eaf07",
+  "raw_plan_sha256": "5f8960bf2f643742c5b26bf26da9deda485d69e76a7bf079362b76538473766b",
+  "oracle_sha256": "88d38ad16471cb13ebc23ae75233e9a3a5c59aa9ddec714f1ca63c4739a59980",
+  "oracle_manifest_sha256": "88e37b2803c028bbc50b0ebaf6a1ed62c639a9776a50d4b400b7b14f0a6ef323",
+  "system_prompt_sha256": "7140c156c0599f7f5252af6b584603873288a603ba3a14b2cf9a0ee0d290e14a",
+  "base_system_prompt_sha256": "2bbf1efc4212723633749ae52fba0e19ab96a0a9d6833c831962cb684ff66a35"
+}

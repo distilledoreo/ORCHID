@@ -1,0 +1,202 @@
+{
+  "behavior_equivalence": {
+    "100": {
+      "comparison_count": 260,
+      "mismatch_count": 0,
+      "mismatches": []
+    },
+    "500": {
+      "comparison_count": 260,
+      "mismatch_count": 0,
+      "mismatches": []
+    }
+  },
+  "by_mode_and_corpus": {
+    "buffered:100": {
+      "cold_retrieval_ms": {
+        "count": 260,
+        "max": 9.7584,
+        "mean": 1.778824,
+        "p50": 1.4754,
+        "p95": 2.8863,
+        "p99": 9.0507
+      },
+      "context_assembly_ms": {
+        "count": 260,
+        "max": 29.536,
+        "mean": 12.365686,
+        "p50": 12.2922,
+        "p95": 19.3192,
+        "p99": 25.7474
+      },
+      "corpus_size": 100,
+      "fail_open_count": 0,
+      "mode": "buffered",
+      "retrieval_total_ms": {
+        "count": 260,
+        "max": 9.9077,
+        "mean": 1.920432,
+        "p50": 1.6049,
+        "p95": 3.2676,
+        "p99": 9.2049
+      },
+      "telemetry_ms": {
+        "count": 260,
+        "max": 0.4636,
+        "mean": 0.141514,
+        "p50": 0.1219,
+        "p95": 0.2745,
+        "p99": 0.4317
+      },
+      "timeout_count": 0
+    },
+    "buffered:500": {
+      "cold_retrieval_ms": {
+        "count": 260,
+        "max": 10.279,
+        "mean": 1.784463,
+        "p50": 1.5397,
+        "p95": 3.7915,
+        "p99": 9.5438
+      },
+      "context_assembly_ms": {
+        "count": 260,
+        "max": 125.967,
+        "mean": 19.472632,
+        "p50": 17.0861,
+        "p95": 28.007,
+        "p99": 57.798
+      },
+      "corpus_size": 500,
+      "fail_open_count": 0,
+      "mode": "buffered",
+      "retrieval_total_ms": {
+        "count": 260,
+        "max": 10.3846,
+        "mean": 1.926358,
+        "p50": 1.6704,
+        "p95": 4.1627,
+        "p99": 9.6606
+      },
+      "telemetry_ms": {
+        "count": 260,
+        "max": 0.5836,
+        "mean": 0.141788,
+        "p50": 0.1237,
+        "p95": 0.2241,
+        "p99": 0.4096
+      },
+      "timeout_count": 0
+    },
+    "sync:100": {
+      "cold_retrieval_ms": {
+        "count": 260,
+        "max": 2.8332,
+        "mean": 1.434918,
+        "p50": 1.4295,
+        "p95": 2.1844,
+        "p99": 2.6954
+      },
+      "context_assembly_ms": {
+        "count": 260,
+        "max": 30.5189,
+        "mean": 20.515475,
+        "p50": 21.1994,
+        "p95": 25.3171,
+        "p99": 27.9268
+      },
+      "corpus_size": 100,
+      "fail_open_count": 0,
+      "mode": "sync",
+      "retrieval_total_ms": {
+        "count": 260,
+        "max": 16.3134,
+        "mean": 8.362558,
+        "p50": 9.0712,
+        "p95": 11.7901,
+        "p99": 15.0609
+      },
+      "telemetry_ms": {
+        "count": 260,
+        "max": 15.0857,
+        "mean": 6.92754,
+        "p50": 7.5893,
+        "p95": 10.1247,
+        "p99": 12.9673
+      },
+      "timeout_count": 0
+    },
+    "sync:500": {
+      "cold_retrieval_ms": {
+        "count": 260,
+        "max": 6.3054,
+        "mean": 1.66093,
+        "p50": 1.5399,
+        "p95": 2.7914,
+        "p99": 4.3945
+      },
+      "context_assembly_ms": {
+        "count": 260,
+        "max": 49.1298,
+        "mean": 26.299522,
+        "p50": 26.0246,
+        "p95": 35.482,
+        "p99": 40.8469
+      },
+      "corpus_size": 500,
+      "fail_open_count": 0,
+      "mode": "sync",
+      "retrieval_total_ms": {
+        "count": 260,
+        "max": 18.7334,
+        "mean": 8.829767,
+        "p50": 9.4147,
+        "p95": 12.7299,
+        "p99": 15.9331
+      },
+      "telemetry_ms": {
+        "count": 260,
+        "max": 14.711,
+        "mean": 7.168725,
+        "p50": 7.731,
+        "p95": 10.6059,
+        "p99": 12.428
+      },
+      "timeout_count": 0
+    }
+  },
+  "paired_buffered_minus_sync_ms": {
+    "100": {
+      "count": 260,
+      "max": 11.0188,
+      "mean": -8.149788,
+      "p50": -8.8319,
+      "p95": 1.0679,
+      "p99": 8.1617
+    },
+    "500": {
+      "count": 260,
+      "max": 102.7131,
+      "mean": -6.82689,
+      "p50": -8.9932,
+      "p95": 4.3161,
+      "p99": 31.6987
+    }
+  },
+  "writer_metrics": {
+    "100": {
+      "accepted_count": 612,
+      "dropped_count": 0,
+      "flush_error_count": 0,
+      "flushed_operation_count": 612,
+      "queue_depth": 0
+    },
+    "500": {
+      "accepted_count": 612,
+      "dropped_count": 0,
+      "flush_error_count": 0,
+      "flushed_operation_count": 612,
+      "queue_depth": 0
+    }
+  }
+}

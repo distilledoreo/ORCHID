@@ -1,0 +1,108 @@
+{
+  "phase": "freetoshop_canonicalizer_throughput",
+  "status": "NOT_READY_FOR_FULL_AB_RERUN",
+  "recommendation": "NOT_READY_FOR_FULL_AB_RERUN",
+  "target_source_tokens_per_second": 75,
+  "measured_arrival_source_tokens_per_second": 59.148,
+  "stage_summary": {
+    "selector": {
+      "calls": 105,
+      "succeeded": 105,
+      "failed": 0,
+      "wall_ms": 1121614.7093001637,
+      "wall_percent_of_completed_job_wall": 64.89132230535685,
+      "p50_ms": 10008.503799996106,
+      "p95_ms": 20702.747800009092,
+      "input_tokens": 157238,
+      "output_tokens": 5489
+    },
+    "canonicalizer": {
+      "calls": 4,
+      "succeeded": 2,
+      "failed": 2,
+      "wall_ms": 605404.6368999989,
+      "wall_percent_of_completed_job_wall": 35.025848976916265,
+      "p50_ms": 151851.0615999985,
+      "p95_ms": 180031.5910400066,
+      "input_tokens": 22172,
+      "output_tokens": 917
+    },
+    "consolidator": {
+      "calls": 0,
+      "succeeded": 0,
+      "failed": 0,
+      "wall_ms": 0,
+      "wall_percent_of_completed_job_wall": 0.0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "software_and_unobserved_ms": 1431.6537998374552,
+    "completed_job_wall_ms": 1728451.0,
+    "completed_job_count": 2,
+    "running_job_count": 1,
+    "profile_scope": "model runs belonging to jobs with started_at and finished_at"
+  },
+  "best_complete_correct_zero_timeout_window": {
+    "file": "corrected_12k_full12.json",
+    "target_tokens": 12000,
+    "max_output_tokens": null,
+    "full_window": true,
+    "status": "SUCCEEDED",
+    "source_tokens": 16155,
+    "wall_ms": 227103.07129999273,
+    "source_tokens_per_second": 71.13510137720677,
+    "batch_count": 2,
+    "valid_batch_count": 2,
+    "timeout_count": 0,
+    "structured_failure_count": 0,
+    "batch_latencies_ms": [
+      110305.13789999532,
+      116797.35239999718
+    ],
+    "source_input_tokens": 16155,
+    "model_input_tokens": 20060,
+    "model_output_tokens": 1534
+  },
+  "full_replay": {
+    "status": "MEASURED",
+    "file": "canonicalizer_12k_full199.json",
+    "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+    "events_used": 199,
+    "expanded_source_item_count": 317,
+    "source_tokens_planned": 202761,
+    "batch_target_tokens": 12000,
+    "planned_batch_count": 18,
+    "attempted_batch_count": 3,
+    "successful_valid_batch_count": 2,
+    "timeout_count": 1,
+    "completed_source_tokens": 22993,
+    "attempted_source_tokens": 34799,
+    "completed_valid_batch_wall_ms": 308138.5841,
+    "partial_successful_batch_tokens_per_second": 74.6190226944708,
+    "status_from_harness": "FAILED",
+    "error": "model request timed out after 180.0s",
+    "first_failed_batch": 2,
+    "remaining_unattempted_batch_count": 15,
+    "production_gate": {
+      "zero_unresolved_canonicalizer_timeouts": false,
+      "full_replay_completed": false,
+      "throughput_at_least_75_source_tokens_per_second": false
+    }
+  },
+  "live_preflight": {
+    "status": "NOT_RUN",
+    "reason": "frozen replay failed zero-timeout gate"
+  },
+  "observed_correctness": {
+    "dynamic_exact_source_id_validation": "passed on corrected local batches",
+    "full_replay_semantic_and_promotion_validation": "unavailable after canonicalizer timeout"
+  },
+  "gate": {
+    "zero_unresolved_canonicalizer_timeouts": false,
+    "full_replay_completed": false,
+    "throughput_at_least_75": false,
+    "live_preflight_completed": false
+  }
+}

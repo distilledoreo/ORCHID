@@ -1,0 +1,20 @@
+{
+  "embedding_dimension": 384,
+  "max_length": 256,
+  "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+  "model_path": "artifacts\\cold_memory\\phase2_0_dense_experiment\\model\\model.onnx",
+  "model_sha256": "6fd5d72fe4589f189f8ebc006442dbb529bb7ce38f8082112682524616046452",
+  "pooling": "attention_mask_mean_then_l2_normalize",
+  "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "similarity": "cosine_dot_product",
+  "source": {
+    "repo_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "source_files": {
+      "onnx/model.onnx": "artifacts\\cold_memory\\phase2_0_dense_experiment\\model\\model.onnx",
+      "tokenizer.json": "artifacts\\cold_memory\\phase2_0_dense_experiment\\model\\tokenizer.json"
+    }
+  },
+  "tokenizer_path": "artifacts\\cold_memory\\phase2_0_dense_experiment\\model\\tokenizer.json",
+  "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037"
+}

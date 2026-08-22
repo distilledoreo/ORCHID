@@ -415,11 +415,19 @@ def test_delayed_jobs_preserve_lineage_and_context_continuity(tmp_path: Path) ->
         return v3_result, v4_result
 
     v3_result, v4_result = asyncio.run(race_slow_v3())
-    assert (v3_result, v4_result) == ("STALE", "PROMOTED")
-    assert store.get_job(v3_job)["status"] == "STALE"
+    # New pressure coalesces behind the immutable running snapshot. It does
+    # not create an overlapping v4 job; the dirty watermark is admitted only
+    # after v3 finishes.
+    assert (v3_result, v4_result) == ("PROMOTED", None)
+    assert store.get_job(v3_job)["status"] == "PROMOTED"
+    v3 = store.get_active_capsule("thread")
+    assert v3 is not None
+    v4_job = queue_snapshot_job(store, "thread")
+    assert v4_job is not None and v4_job != v3_job
+    assert asyncio.run(CompactionWorker(store, PerfectCompactionEngine(), "v4-worker").run_once()) == "PROMOTED"
     v4 = store.get_active_capsule("thread")
     assert v4 is not None
-    assert v4["base_capsule_id"] == v2["id"]
+    assert v4["base_capsule_id"] == v3["id"]
 
     append("turn for failed v5")
     v5_job = queue_snapshot_job(store, "thread")

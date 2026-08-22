@@ -1,0 +1,37 @@
+{
+  "probe_version": "absent-identity-probe-v1",
+  "capsule_id": "cap_475bd4bc7a044cd0b9667eb6ab924051",
+  "capsule_chars": 378,
+  "questions": [
+    {
+      "id": "backend_chat_model",
+      "question": "What backend chat model is currently remembered?"
+    },
+    {
+      "id": "favorite_animal",
+      "question": "What favorite animal is currently remembered?"
+    },
+    {
+      "id": "deployment_region",
+      "question": "What deployment region is currently remembered?"
+    },
+    {
+      "id": "cache_provider",
+      "question": "What cache provider is currently remembered?"
+    },
+    {
+      "id": "preferred_editor",
+      "question": "What preferred editor is currently remembered?"
+    }
+  ],
+  "answers": {
+    "backend_chat_model": null,
+    "favorite_animal": null,
+    "deployment_region": null,
+    "cache_provider": null,
+    "preferred_editor": null
+  },
+  "verdict": "all_null",
+  "invented": {},
+  "backend_is_identity": false
+}

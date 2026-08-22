@@ -1,0 +1,12 @@
+{
+  "apparatus": "tools/phase3_3_direct_consolidation.py",
+  "control": "PanoRef selector -> Solar direct consolidation",
+  "fixture_root": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_direct_generalization_bounded_v2",
+  "fresh_output_root": true,
+  "no_internal_transport_retry": true,
+  "oracle_checks_sha256": "88d38ad16471cb13ebc23ae75233e9a3a5c59aa9ddec714f1ca63c4739a59980",
+  "oracle_manifest_sha256": "88e37b2803c028bbc50b0ebaf6a1ed62c639a9776a50d4b400b7b14f0a6ef323",
+  "raw_plan_sha256": "5f8960bf2f643742c5b26bf26da9deda485d69e76a7bf079362b76538473766b",
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_direct_generalization_bounded_v2\\frozen_panoref_replay\\events.jsonl",
+  "replay_sha256": "aa0e7326c2514501a8c53a5a2c4669b1512383507989e71403d4e6f00f7eaf07"
+}

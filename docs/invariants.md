@@ -30,3 +30,7 @@ Workers claim jobs with a lease. Expired `RUNNING` jobs can be reclaimed, and th
 ## Context exhaustion
 
 The scheduler creates jobs before exhaustion. If compaction cannot safely produce a validated candidate, the active capsule and raw events remain unchanged. The HTTP layer must eventually expose a retryable capacity error rather than silently dropping context.
+
+## Cold-memory isolation
+
+`RETIRE` records and their `memory_evidence` are a sidecar to hot memory. They are persisted only after hot promotion, retrieval never mutates `ACTIVE` capsules, and retrieved text is never appended to `events`. Retrieval, indexing, scoring, logging, and injection failures are fail-open: the assembled context must be no worse than the validated hot-memory context.

@@ -1,0 +1,373 @@
+{
+  "arms": [
+    {
+      "capsule_budget_tokens": 1000,
+      "status": "SUCCEEDED",
+      "full_trace_completed": true,
+      "completed_generations": 18,
+      "planned_generations": 18,
+      "source_tokens_retired": 202761,
+      "planned_source_tokens": 202761,
+      "wall_seconds": 651.9761562999992,
+      "retirement_tok_per_second": 310.99450193191103,
+      "margin_vs_arrival": 251.84650193191104,
+      "provider_input_tokens": 315396,
+      "provider_output_tokens": 25470,
+      "timeout_count": 0,
+      "failure_count": 0,
+      "semantic_pass": 160,
+      "semantic_fail": 18,
+      "current_fact_losses": 0,
+      "intent_blocker_continuation_losses": 18,
+      "resurrection_failures": 0,
+      "invention_failures": 0,
+      "capsule_by_generation": [
+        {
+          "generation": 0,
+          "estimated_tokens": 416,
+          "chars": 1665,
+          "base_estimated_tokens": 1
+        },
+        {
+          "generation": 1,
+          "estimated_tokens": 913,
+          "chars": 3654,
+          "base_estimated_tokens": 416
+        },
+        {
+          "generation": 2,
+          "estimated_tokens": 1217,
+          "chars": 4869,
+          "base_estimated_tokens": 913
+        },
+        {
+          "generation": 3,
+          "estimated_tokens": 1314,
+          "chars": 5259,
+          "base_estimated_tokens": 1217
+        },
+        {
+          "generation": 4,
+          "estimated_tokens": 1734,
+          "chars": 6939,
+          "base_estimated_tokens": 1314
+        },
+        {
+          "generation": 5,
+          "estimated_tokens": 1747,
+          "chars": 6989,
+          "base_estimated_tokens": 1734
+        },
+        {
+          "generation": 6,
+          "estimated_tokens": 1799,
+          "chars": 7199,
+          "base_estimated_tokens": 1747
+        },
+        {
+          "generation": 7,
+          "estimated_tokens": 1976,
+          "chars": 7906,
+          "base_estimated_tokens": 1799
+        },
+        {
+          "generation": 8,
+          "estimated_tokens": 1976,
+          "chars": 7906,
+          "base_estimated_tokens": 1976
+        },
+        {
+          "generation": 9,
+          "estimated_tokens": 1976,
+          "chars": 7906,
+          "base_estimated_tokens": 1976
+        },
+        {
+          "generation": 10,
+          "estimated_tokens": 1976,
+          "chars": 7906,
+          "base_estimated_tokens": 1976
+        },
+        {
+          "generation": 11,
+          "estimated_tokens": 1976,
+          "chars": 7906,
+          "base_estimated_tokens": 1976
+        },
+        {
+          "generation": 12,
+          "estimated_tokens": 1976,
+          "chars": 7906,
+          "base_estimated_tokens": 1976
+        },
+        {
+          "generation": 13,
+          "estimated_tokens": 1985,
+          "chars": 7942,
+          "base_estimated_tokens": 1976
+        },
+        {
+          "generation": 14,
+          "estimated_tokens": 1985,
+          "chars": 7942,
+          "base_estimated_tokens": 1985
+        },
+        {
+          "generation": 15,
+          "estimated_tokens": 1985,
+          "chars": 7942,
+          "base_estimated_tokens": 1985
+        },
+        {
+          "generation": 16,
+          "estimated_tokens": 1985,
+          "chars": 7942,
+          "base_estimated_tokens": 1985
+        },
+        {
+          "generation": 17,
+          "estimated_tokens": 1985,
+          "chars": 7942,
+          "base_estimated_tokens": 1985
+        }
+      ],
+      "max_capsule_estimated_tokens": 1985,
+      "final_capsule_estimated_tokens": 1985,
+      "first_to_final_capsule_ratio": 4.771634615384615
+    },
+    {
+      "capsule_budget_tokens": 2000,
+      "status": "SUCCEEDED",
+      "full_trace_completed": true,
+      "completed_generations": 18,
+      "planned_generations": 18,
+      "source_tokens_retired": 202761,
+      "planned_source_tokens": 202761,
+      "wall_seconds": 554.1239086999994,
+      "retirement_tok_per_second": 365.91274409307977,
+      "margin_vs_arrival": 306.76474409307974,
+      "provider_input_tokens": 315093,
+      "provider_output_tokens": 25076,
+      "timeout_count": 0,
+      "failure_count": 0,
+      "semantic_pass": 130,
+      "semantic_fail": 48,
+      "current_fact_losses": 13,
+      "intent_blocker_continuation_losses": 35,
+      "resurrection_failures": 0,
+      "invention_failures": 0,
+      "capsule_by_generation": [
+        {
+          "generation": 0,
+          "estimated_tokens": 1216,
+          "chars": 4866,
+          "base_estimated_tokens": 1
+        },
+        {
+          "generation": 1,
+          "estimated_tokens": 1067,
+          "chars": 4271,
+          "base_estimated_tokens": 1216
+        },
+        {
+          "generation": 2,
+          "estimated_tokens": 1594,
+          "chars": 6379,
+          "base_estimated_tokens": 1067
+        },
+        {
+          "generation": 3,
+          "estimated_tokens": 2753,
+          "chars": 11012,
+          "base_estimated_tokens": 1594
+        },
+        {
+          "generation": 4,
+          "estimated_tokens": 3250,
+          "chars": 13000,
+          "base_estimated_tokens": 2753
+        },
+        {
+          "generation": 5,
+          "estimated_tokens": 1114,
+          "chars": 4457,
+          "base_estimated_tokens": 3250
+        },
+        {
+          "generation": 6,
+          "estimated_tokens": 1205,
+          "chars": 4820,
+          "base_estimated_tokens": 1114
+        },
+        {
+          "generation": 7,
+          "estimated_tokens": 1334,
+          "chars": 5337,
+          "base_estimated_tokens": 1205
+        },
+        {
+          "generation": 8,
+          "estimated_tokens": 1334,
+          "chars": 5337,
+          "base_estimated_tokens": 1334
+        },
+        {
+          "generation": 9,
+          "estimated_tokens": 1334,
+          "chars": 5337,
+          "base_estimated_tokens": 1334
+        },
+        {
+          "generation": 10,
+          "estimated_tokens": 1334,
+          "chars": 5337,
+          "base_estimated_tokens": 1334
+        },
+        {
+          "generation": 11,
+          "estimated_tokens": 1334,
+          "chars": 5337,
+          "base_estimated_tokens": 1334
+        },
+        {
+          "generation": 12,
+          "estimated_tokens": 1679,
+          "chars": 6716,
+          "base_estimated_tokens": 1334
+        },
+        {
+          "generation": 13,
+          "estimated_tokens": 1657,
+          "chars": 6629,
+          "base_estimated_tokens": 1679
+        },
+        {
+          "generation": 14,
+          "estimated_tokens": 1657,
+          "chars": 6629,
+          "base_estimated_tokens": 1657
+        },
+        {
+          "generation": 15,
+          "estimated_tokens": 1657,
+          "chars": 6629,
+          "base_estimated_tokens": 1657
+        },
+        {
+          "generation": 16,
+          "estimated_tokens": 1657,
+          "chars": 6629,
+          "base_estimated_tokens": 1657
+        },
+        {
+          "generation": 17,
+          "estimated_tokens": 1763,
+          "chars": 7054,
+          "base_estimated_tokens": 1657
+        }
+      ],
+      "max_capsule_estimated_tokens": 3250,
+      "final_capsule_estimated_tokens": 1763,
+      "first_to_final_capsule_ratio": 1.4498355263157894
+    },
+    {
+      "capsule_budget_tokens": 4000,
+      "status": "FAILED",
+      "full_trace_completed": false,
+      "completed_generations": 12,
+      "planned_generations": 18,
+      "source_tokens_retired": 139101,
+      "planned_source_tokens": 202761,
+      "wall_seconds": 954.8043486000025,
+      "retirement_tok_per_second": 145.685344022531,
+      "margin_vs_arrival": 86.53734402253102,
+      "provider_input_tokens": 228112,
+      "provider_output_tokens": 39025,
+      "timeout_count": 1,
+      "failure_count": 1,
+      "semantic_pass": 90,
+      "semantic_fail": 12,
+      "current_fact_losses": 0,
+      "intent_blocker_continuation_losses": 12,
+      "resurrection_failures": 0,
+      "invention_failures": 0,
+      "capsule_by_generation": [
+        {
+          "generation": 0,
+          "estimated_tokens": 1636,
+          "chars": 6547,
+          "base_estimated_tokens": 1
+        },
+        {
+          "generation": 1,
+          "estimated_tokens": 3318,
+          "chars": 13273,
+          "base_estimated_tokens": 1636
+        },
+        {
+          "generation": 2,
+          "estimated_tokens": 4013,
+          "chars": 16053,
+          "base_estimated_tokens": 3318
+        },
+        {
+          "generation": 3,
+          "estimated_tokens": 4054,
+          "chars": 16219,
+          "base_estimated_tokens": 4013
+        },
+        {
+          "generation": 4,
+          "estimated_tokens": 3146,
+          "chars": 12587,
+          "base_estimated_tokens": 4054
+        },
+        {
+          "generation": 5,
+          "estimated_tokens": 3073,
+          "chars": 12295,
+          "base_estimated_tokens": 3146
+        },
+        {
+          "generation": 6,
+          "estimated_tokens": 3255,
+          "chars": 13023,
+          "base_estimated_tokens": 3073
+        },
+        {
+          "generation": 7,
+          "estimated_tokens": 3473,
+          "chars": 13895,
+          "base_estimated_tokens": 3255
+        },
+        {
+          "generation": 8,
+          "estimated_tokens": 4124,
+          "chars": 16498,
+          "base_estimated_tokens": 3473
+        },
+        {
+          "generation": 9,
+          "estimated_tokens": 4224,
+          "chars": 16896,
+          "base_estimated_tokens": 4124
+        },
+        {
+          "generation": 10,
+          "estimated_tokens": 4224,
+          "chars": 16896,
+          "base_estimated_tokens": 4224
+        },
+        {
+          "generation": 11,
+          "estimated_tokens": 6993,
+          "chars": 27975,
+          "base_estimated_tokens": 4224
+        }
+      ],
+      "max_capsule_estimated_tokens": 6993,
+      "final_capsule_estimated_tokens": 6993,
+      "first_to_final_capsule_ratio": 4.2744498777506115
+    }
+  ]
+}
