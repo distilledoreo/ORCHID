@@ -1,0 +1,9 @@
+{
+  "run_id": "target_0400_frozen_source_universe",
+  "field": "immutable_source_tokens",
+  "original_value": 447263,
+  "corrected_value": 143670,
+  "reason": "The inline launch wrapper recorded character length under the token field; the frozen source-token count is confirmed by SUMMARY.json and the shared raw-plan accounting.",
+  "benchmark_execution_unchanged": true,
+  "original_benchmark_config_hash": "092fb2f88ccf178bf50f47ea8f80b871ee9eab3cc2a5f351ed889faf25db1c79"
+}

@@ -1,0 +1,25 @@
+{
+  "arm": "ARM_B_SELECTOR_SOLAR",
+  "capsule_generations": 1,
+  "current_fact_losses": 1,
+  "intent_or_blocker_losses": 1,
+  "invention_failures": 0,
+  "promotion": {
+    "active_content_hash": "38904752e9ee082018837d75aa93c38d8b4751e03a992cd0a30c9959c063de9b",
+    "database": "C:\\Users\\disti\\AppData\\Local\\Temp\\orchid_phase3_3_l0olq4yv\\memory.db",
+    "promoted": true,
+    "raw_event_count": 276,
+    "raw_journal_unchanged": true,
+    "ready": true,
+    "status": "PROMOTED",
+    "validation": "PASSED"
+  },
+  "resurrection_failures": 0,
+  "semantic_checks": 5,
+  "semantic_fail": 2,
+  "semantic_pass": 3,
+  "structural_fail": 0,
+  "structural_generations": 1,
+  "structural_ok": true,
+  "structural_pass": 1
+}
