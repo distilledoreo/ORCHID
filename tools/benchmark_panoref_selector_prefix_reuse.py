@@ -732,6 +732,91 @@ def report(
     return summary, "\n".join(lines) + "\n"
 
 
+async def continue_after_a(plan: dict[str, Any]) -> None:
+    """Continue B/C after a harness-only transition failure, without retrying A."""
+    if not RUN_DIR.exists():
+        raise RuntimeError(f"partial run directory does not exist: {RUN_DIR}")
+    telemetry_path = RUN_DIR / "telemetry.jsonl"
+    rows = [
+        json.loads(line)
+        for line in telemetry_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    if len(rows) != EXACT_REPEAT_COUNT or any(
+        row["arm"] != "ARM_A_EXACT_REPEAT" for row in rows
+    ):
+        raise RuntimeError("continuation requires exactly the preserved 12 Arm A rows")
+    if [row["arm_call_index"] for row in rows] != list(range(EXACT_REPEAT_COUNT)):
+        raise RuntimeError("preserved Arm A rows have unexpected call indices")
+
+    profile_config, sample, items = load_profile_inputs()
+    if plan["prior_profile_config_sha256"] != file_sha256(PROFILE_CONFIG_PATH):
+        raise RuntimeError("prior profile config changed after freeze")
+    lookup = build_chunk_lookup(profile_config, items)
+    sample_by_index = {int(row["chunk_index"]): row for row in sample["chunks"]}
+    selected_chunks = [
+        sample_by_index[int(chunk_index)]
+        for chunk_index in plan["arm_b_stable_prefix"]["chunk_indices"]
+    ]
+    global_call_index = len(rows)
+    async with httpx.AsyncClient(timeout=PROFILE_TIMEOUT_SECONDS) as client:
+        for arm_name, prefix_mode in (
+            ("ARM_B_STABLE_PREFIX", "natural"),
+            ("ARM_C_INVALIDATED_PREFIX", "nonce"),
+        ):
+            for arm_call_index, frozen_chunk in enumerate(selected_chunks):
+                chunk = {**lookup[int(frozen_chunk["chunk_index"])]}
+                nonce = arm_call_index + 1 if prefix_mode == "nonce" else None
+                row = await call_selector(
+                    client,
+                    plan=plan,
+                    chunk=chunk,
+                    arm=arm_name,
+                    arm_call_index=arm_call_index,
+                    global_call_index=global_call_index,
+                    prefix_nonce=nonce,
+                    designation=(
+                        "normal_sequential_frozen_chunk"
+                        if prefix_mode == "natural"
+                        else "per_call_prefix_nonce"
+                    ),
+                )
+                rows.append(row)
+                global_call_index += 1
+                with telemetry_path.open("a", encoding="utf-8") as handle:
+                    handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+                print(
+                    f"{arm_name[-1]}/{arm_call_index + 1:02d} "
+                    f"{row['status']} {row['metrics']['total_wall_ms']:.1f}ms"
+                )
+
+    historical = json.loads(HISTORICAL_SUMMARY.read_text(encoding="utf-8"))
+    summary, report_text = report(plan, rows, set(historical["selector"]["selected_ids"]))
+    summary["recovered_after_harness_failure"] = True
+    summary["recovery_execution_commit"] = git_commit()
+    write_json(RUN_DIR / "SUMMARY.json", summary)
+    (RUN_DIR / "REPORT.md").write_text(report_text, encoding="utf-8")
+    previous_meta = json.loads(
+        (RUN_DIR / "RUN_METADATA.json").read_text(encoding="utf-8")
+    )
+    previous_meta.update(
+        {
+            "status": "SUCCEEDED"
+            if all(row["status"] == "SUCCEEDED" for row in rows)
+            else "PARTIAL",
+            "completed_at": utc_now(),
+            "recovered_after_harness_failure": True,
+            "recovery_execution_commit": git_commit(),
+            "calls": len(rows),
+            "succeeded": sum(row["status"] == "SUCCEEDED" for row in rows),
+            "failed": sum(row["status"] == "FAILED" for row in rows),
+        }
+    )
+    write_json(RUN_DIR / "RUN_METADATA.json", previous_meta)
+    print(f"summary: {RUN_DIR / 'SUMMARY.json'}")
+    print(f"report: {RUN_DIR / 'REPORT.md'}")
+
+
 async def run(plan: dict[str, Any]) -> None:
     if RUN_DIR.exists():
         raise RuntimeError(f"run directory already exists: {RUN_DIR}")
@@ -834,20 +919,25 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--freeze-only", action="store_true")
     parser.add_argument("--run", action="store_true")
+    parser.add_argument("--continue-after-a", action="store_true")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    if args.freeze_only == args.run:
-        raise SystemExit("choose exactly one of --freeze-only or --run")
+    selected_modes = sum(bool(value) for value in (args.freeze_only, args.run, args.continue_after_a))
+    if selected_modes != 1:
+        raise SystemExit("choose exactly one of --freeze-only, --run, or --continue-after-a")
     if args.freeze_only:
         freeze()
         return
     if not CONFIG_PATH.exists() or not PLAN_PATH.exists():
         raise SystemExit("run --freeze-only first")
     plan = json.loads(PLAN_PATH.read_text(encoding="utf-8"))
-    asyncio.run(run(plan))
+    if args.continue_after_a:
+        asyncio.run(continue_after_a(plan))
+    else:
+        asyncio.run(run(plan))
 
 
 if __name__ == "__main__":
