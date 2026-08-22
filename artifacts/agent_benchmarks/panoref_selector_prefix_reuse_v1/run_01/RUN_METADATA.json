@@ -1,0 +1,19 @@
+{
+  "arm_order": [
+    "ARM_A_EXACT_REPEAT",
+    "ARM_B_STABLE_PREFIX",
+    "ARM_C_INVALIDATED_PREFIX"
+  ],
+  "calls": 60,
+  "completed_at": "2026-08-22T21:27:17.836+00:00",
+  "failed": 0,
+  "no_concurrency": true,
+  "no_retries": true,
+  "plan_sha256": "a09265b11b1e573ed904982a5b770c58fdaed24bdabf130510eb4f5f31061c43",
+  "recovered_after_harness_failure": true,
+  "recovery_execution_commit": "608439467a532817e6cae8784500325ece8c4fc3",
+  "source_commit": "1925fdbb198936e39554d5f7f22ec82f0777adbf",
+  "started_at": "2026-08-22T21:18:02.183+00:00",
+  "status": "SUCCEEDED",
+  "succeeded": 60
+}

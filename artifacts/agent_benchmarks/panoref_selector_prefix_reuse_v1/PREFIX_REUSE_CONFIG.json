@@ -1,0 +1,14 @@
+{
+  "arm_order": [
+    "ARM_A_EXACT_REPEAT",
+    "ARM_B_STABLE_PREFIX",
+    "ARM_C_INVALIDATED_PREFIX"
+  ],
+  "no_concurrency": true,
+  "no_prompt_restructuring": true,
+  "no_retries": true,
+  "plan_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_prefix_reuse_v1\\FROZEN_PLAN.json",
+  "plan_sha256": "a09265b11b1e573ed904982a5b770c58fdaed24bdabf130510eb4f5f31061c43",
+  "schema_version": "panoref-selector-prefix-reuse-config-v1",
+  "source_commit": "1925fdbb198936e39554d5f7f22ec82f0777adbf"
+}

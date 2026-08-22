@@ -372,6 +372,7 @@ async def call_selector(
     response_status: int | None = None
     response_payload_keys: set[str] = set()
     explicit_cache_fields: list[dict[str, Any]] = []
+    http_cache_headers: list[dict[str, Any]] = []
     backend_prompt_eval_ms: float | None = None
     backend_decode_ms: float | None = None
     backend_queue_wait_ms: float | None = None
@@ -474,8 +475,14 @@ async def call_selector(
         {"name": key, "value": value}
         for key, value in response_headers.items()
         if any(term in key.lower() for term in ("cache", "prefix", "kv_"))
+        and key.lower() != "cache-control"
     ]
     explicit_cache_fields.extend(header_cache_fields)
+    http_cache_headers = [
+        {"name": key, "value": value}
+        for key, value in response_headers.items()
+        if key.lower() == "cache-control"
+    ]
     selected_ids = selected_response.get("selected_event_ids") if selected_response else None
     return {
         "timestamp": utc_now(),
@@ -504,6 +511,7 @@ async def call_selector(
             or "cache" in key.lower()
         },
         "explicit_cache_fields": explicit_cache_fields,
+        "http_cache_headers": http_cache_headers,
         "assistant_content_chars": len(content),
         "assistant_content_sha256": hashlib.sha256(content.encode("utf-8")).hexdigest()
         if content
@@ -542,7 +550,10 @@ def metric_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "succeeded": sum(row["status"] == "SUCCEEDED" for row in rows),
         "failed": sum(row["status"] == "FAILED" for row in rows),
         "timeouts": sum(row.get("error_category") == "timeout" for row in rows),
-        "explicit_cache_field_rows": sum(bool(row["explicit_cache_fields"]) for row in rows),
+        "explicit_backend_cache_field_rows": sum(
+            bool(row["explicit_cache_fields"]) for row in rows
+        ),
+        "http_cache_control_rows": sum(bool(row["http_cache_headers"]) for row in rows),
     }
     for name in metric_names:
         values = [
@@ -608,6 +619,15 @@ def compare_decisions(rows: list[dict[str, Any]], historical_ids: set[str]) -> d
         "arm_b_historical_decision_subset": f"{sum(row in all_historical for row in arm_b)}/{len(arm_b)}",
         "arm_c_historical_decision_subset": f"{sum(row in all_historical for row in arm_c)}/{len(arm_c)}",
         "arm_c_matches_arm_b_by_chunk": f"{c_matches_b}/{len(c_pairs)}",
+        "arm_c_mismatch_details": [
+            {
+                "chunk_index": row["chunk_index"],
+                "stable_selected_event_ids": b_by_chunk[row["chunk_index"]]["selected_event_ids"],
+                "invalidated_selected_event_ids": row["selected_event_ids"],
+            }
+            for row in c_pairs
+            if row["decision_hash"] != b_by_chunk[row["chunk_index"]]["decision_hash"]
+        ],
         "arm_a_distinct_decision_hashes": len({row["decision_hash"] for row in arm_a}),
         "arm_b_distinct_decision_hashes": len({row["decision_hash"] for row in arm_b}),
         "arm_c_distinct_decision_hashes": len({row["decision_hash"] for row in arm_c}),
@@ -644,9 +664,10 @@ def report(
         "exact_repeat_warmed_calls": a_warmed,
         "decision_consistency": decisions,
         "stable_vs_invalidated_ttft_delta_ms_p50": delta,
-        "explicit_cache_evidence_rows": sum(
+        "explicit_backend_cache_evidence_rows": sum(
             bool(row["explicit_cache_fields"]) for row in rows
         ),
+        "http_cache_control_rows": sum(bool(row["http_cache_headers"]) for row in rows),
         "sensitivity": sensitivity,
     }
     def f(value: Any) -> str:
@@ -684,7 +705,7 @@ def report(
             "",
             "## Exact-repeat warm behavior",
             "",
-            f"The first exact-repeat call had TTFT p50 {f(a_first['ttft_ms']['p50'])} ms. The remaining {len(a_rows) - 1} repeated calls had TTFT p50 {f(a_warmed['ttft_ms']['p50'])} ms. The measured delta is {f((a_first['ttft_ms']['p50'] or 0) - (a_warmed['ttft_ms']['p50'] or 0))} ms, first minus warmed.",
+            f"The first exact-repeat call had TTFT p50 {f(a_first['ttft_ms']['p50'])} ms. The remaining {len(a_rows) - 1} repeated calls had TTFT p50 {f(a_warmed['ttft_ms']['p50'])} ms. The measured delta is {f((a_first['ttft_ms']['p50'] or 0) - (a_warmed['ttft_ms']['p50'] or 0))} ms, first minus warmed. This was not a cold-server reset: chunk 76 also appeared in the preceding 32-call microprofile, so the first call here was already conditioned by prior benchmark activity.",
             "",
             "## Stable versus invalidated prefix",
             "",
@@ -692,13 +713,13 @@ def report(
             "",
             "## Explicit backend cache evidence",
             "",
-            f"Explicit cache/prefix fields were present in {summary['explicit_cache_evidence_rows']} of {len(rows)} responses. The OpenAI-compatible SSE responses exposed usage and token arrival, but no cache-hit counter, prompt-cache counter, prompt-eval timing, decode timing, or queue-wait timing.",
+            f"No explicit backend cache/prefix fields were present in {summary['explicit_backend_cache_evidence_rows']} of {len(rows)} responses. All {summary['http_cache_control_rows']} responses carried the ordinary HTTP `Cache-Control: no-cache` header; that is transport metadata, not evidence of an LM Studio prompt-cache hit. The OpenAI-compatible SSE responses exposed usage and token arrival, but no cache-hit counter, prompt-cache counter, prompt-eval timing, decode timing, or queue-wait timing.",
             "",
             "Timing alone is not treated as proof of a cache hit. Arm A/ B/ C timing differences are observations conditioned on the recorded serial call order and backend state; backend cache identity remains unreported by this endpoint.",
             "",
             "## Decision validation",
             "",
-            f"Exact repeats matched the first decision in {decisions['arm_a_exact_repeat_consistent']}. Every successful stable-prefix response was a subset of the historical selector decision set in {decisions['arm_b_historical_decision_subset']}; invalidated-prefix responses were a subset in {decisions['arm_c_historical_decision_subset']}. Paired stable/invalidated decisions matched in {decisions['arm_c_matches_arm_b_by_chunk']}.",
+            f"Exact repeats matched the first decision in {decisions['arm_a_exact_repeat_consistent']}. Every successful stable-prefix response was a subset of the historical selector decision set in {decisions['arm_b_historical_decision_subset']}; invalidated-prefix responses were a subset in {decisions['arm_c_historical_decision_subset']}. Paired stable/invalidated decisions matched in {decisions['arm_c_matches_arm_b_by_chunk']}. The two invalidated-prefix mismatches were retained as semantic observations: {decisions['arm_c_mismatch_details']}.",
             "",
             "## TTFT sensitivity model",
             "",
