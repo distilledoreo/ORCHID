@@ -1,0 +1,13 @@
+{
+  "call_count": 24,
+  "condition_order": [
+    "LM_STUDIO_CURRENT",
+    "LLAMA_CPP_EXPLICIT"
+  ],
+  "no_concurrency": true,
+  "no_retries": true,
+  "plan_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_llama_server_ab_v1\\LLAMA_SERVER_AB_PLAN.json",
+  "plan_sha256": "3be117f6334f6875519269af59523855d1a23a78a1bbd11d5da52d2f615182c5",
+  "schema_version": "panoref-selector-llama-server-ab-config-v1",
+  "source_commit": "78be7ffd157c62bd6fedbb9de166547bb1f43498"
+}

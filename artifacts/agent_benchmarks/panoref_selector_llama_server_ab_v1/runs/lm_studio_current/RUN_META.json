@@ -1,0 +1,35 @@
+{
+  "backend_before": {
+    "health": {
+      "status": 200,
+      "value": {
+        "error": "Unexpected endpoint or method. (GET /health)"
+      }
+    },
+    "metrics": {
+      "parsed": {},
+      "raw": "{\"error\":\"Unexpected endpoint or method. (GET /metrics)\"}",
+      "status": 200
+    },
+    "slots": {
+      "status": 200,
+      "value": {
+        "error": "Unexpected endpoint or method. (GET /slots)"
+      }
+    }
+  },
+  "condition": "LM_STUDIO_CURRENT",
+  "condition_data": {
+    "backend": "LM Studio OpenAI-compatible current path",
+    "endpoint": "http://127.0.0.1:1234/v1",
+    "instance_identifier": "qwen3.5-4b@q6_k",
+    "model": "qwen3.5-4b@q6_k",
+    "observability_endpoint": "http://127.0.0.1:1234"
+  },
+  "no_concurrency": true,
+  "no_retries": true,
+  "plan_sha256": "3be117f6334f6875519269af59523855d1a23a78a1bbd11d5da52d2f615182c5",
+  "schema_version": "panoref-selector-llama-server-ab-run-v1",
+  "source_commit": "78be7ffd157c62bd6fedbb9de166547bb1f43498",
+  "started_at": "2026-08-22T23:43:17.862+00:00"
+}

@@ -1,0 +1,65 @@
+{
+  "call_count": 24,
+  "chunk_plan_sha256": "493d81592ee3d664a87cfa54b61c213946e27f1c2ea192345b01af7329669730",
+  "chunk_target_tokens": 1200,
+  "conditions": {
+    "LLAMA_CPP_EXPLICIT": {
+      "backend": "llama-server explicit serial slot/prompt-cache path",
+      "endpoint": "http://127.0.0.1:18080/v1",
+      "instance_identifier": "llama-server-qwen3.5-4b-q6_k",
+      "launch_flags": [
+        "--ctx-size 32768",
+        "--parallel 1",
+        "--no-cont-batching",
+        "--flash-attn on",
+        "--n-gpu-layers all",
+        "--cache-prompt",
+        "--cache-reuse 256",
+        "--ctx-checkpoints 148",
+        "--cache-ram 8192",
+        "--slot-prompt-similarity 0.1",
+        "--slots",
+        "--metrics"
+      ],
+      "model": "qwen3.5-4b@q6_k",
+      "observability_endpoint": "http://127.0.0.1:18080"
+    },
+    "LM_STUDIO_CURRENT": {
+      "backend": "LM Studio OpenAI-compatible current path",
+      "endpoint": "http://127.0.0.1:1234/v1",
+      "instance_identifier": "qwen3.5-4b@q6_k",
+      "model": "qwen3.5-4b@q6_k",
+      "observability_endpoint": "http://127.0.0.1:1234"
+    }
+  },
+  "created_at": "2026-08-22T23:42:55.845+00:00",
+  "historical_reference": {
+    "selector_ttft_p50_ms": 8416.3,
+    "selector_wall_seconds": 1805.1
+  },
+  "llama_server_binary": "C:/Users/disti/.lmstudio/extensions/backends/llama.cpp-win-x86_64-vulkan-avx2-2.28.2/llama-server.exe",
+  "model_path": "C:/Users/disti/.lmstudio/models/lmstudio-community/Qwen3.5-4B-GGUF/Qwen3.5-4B-Q6_K.gguf",
+  "no_concurrency": true,
+  "no_retries": true,
+  "plan_sha256": "3be117f6334f6875519269af59523855d1a23a78a1bbd11d5da52d2f615182c5",
+  "prior_profile_config": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_microprofile_v1\\PROFILE_CONFIG.json",
+  "prior_profile_config_sha256": "19157d0b9e59859182b512d24f2b26e9bfbba17aea76f49e8cca0246e1d7d4d2",
+  "prior_profile_sample_sha256": "fa4083f3fc17978cc255cd52e1a305daed4e10b6573b3b43cdc0d4477f227aa4",
+  "profile_generation": {
+    "reasoning_effort": "none",
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    },
+    "temperature": 0,
+    "top_p": 1
+  },
+  "prompt_version": "selector-v1",
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_direct_generalization_bounded_v2\\frozen_panoref_replay\\events.jsonl",
+  "replay_sha256": "aa0e7326c2514501a8c53a5a2c4669b1512383507989e71403d4e6f00f7eaf07",
+  "same_model_request_name": "qwen3.5-4b@q6_k",
+  "schema_version": "panoref-selector-llama-server-ab-plan-v1",
+  "source_commit": "78be7ffd157c62bd6fedbb9de166547bb1f43498",
+  "system_prompt": "You select durable-memory source items. Return JSON only with exactly {\"selected_event_ids\":[\"source-item-id\"]}. Select only whole-event or source-span IDs present in the input; do not summarize or rewrite items.",
+  "timeout_seconds": 180.0
+}
