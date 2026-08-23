@@ -15,16 +15,21 @@ import os
 import shutil
 import sqlite3
 import subprocess
+import sys
 import time
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+SCRIPT_ROOT = Path(__file__).resolve().parents[1]
+if str(SCRIPT_ROOT) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_ROOT))
+
 from memory_gateway.compaction import Event, estimate_tokens, expand_source_items, source_item_payload
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = SCRIPT_ROOT
 ARTIFACT = Path(
     os.environ.get(
         "ORCHID_CORRECTED_ARTIFACT",
