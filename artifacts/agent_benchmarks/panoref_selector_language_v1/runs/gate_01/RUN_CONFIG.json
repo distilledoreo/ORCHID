@@ -1,0 +1,15 @@
+{
+  "arm_order": [
+    "A_CANONICAL_ENGLISH",
+    "B_FAITHFUL_CHINESE",
+    "C_DENSE_CHINESE"
+  ],
+  "no_retries": true,
+  "plan_sha256": "485600a1da4cd40317b9a29a80b62e157c6de34334da9ebaccf025eb7e3628c5",
+  "run_id": "gate_01",
+  "schema_version": "panoref-selector-language-run-v1",
+  "scope": "gate",
+  "serial": true,
+  "source_commit": "b09c1b865905e5d806d7ce2413726127e3ad467a",
+  "variant_sha256": "206684c41cdfdf10bb39f2703b33612c26008bfc3cfa673807982b856e7c8685"
+}
