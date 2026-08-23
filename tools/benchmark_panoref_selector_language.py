@@ -332,8 +332,48 @@ def transform_item(item: dict[str, Any], *, client: httpx.Client) -> tuple[dict[
     original = item["content"]
     if item["event_type"] not in ELIGIBLE_EVENT_TYPES:
         return item, {"item_id": item["id"], "event_type": item["event_type"], "status": "UNCHANGED"}
-    faithful, faithful_metrics = translate_one(original, dense=False, client=client)
-    dense, dense_metrics = translate_one(faithful, dense=True, client=client)
+
+    def translate_text_nodes(value: Any, *, dense: bool) -> tuple[Any, list[dict[str, Any]]]:
+        metrics: list[dict[str, Any]] = []
+        if isinstance(value, dict):
+            result = {}
+            for key, child in value.items():
+                if key == "text" and isinstance(child, str):
+                    translated, call_metrics = translate_one(child, dense=dense, client=client)
+                    result[key] = translated
+                    metrics.append(call_metrics)
+                else:
+                    result[key], child_metrics = translate_text_nodes(child, dense=dense)
+                    metrics.extend(child_metrics)
+            return result, metrics
+        if isinstance(value, list):
+            result_list = []
+            for child in value:
+                translated_child, child_metrics = translate_text_nodes(child, dense=dense)
+                result_list.append(translated_child)
+                metrics.extend(child_metrics)
+            return result_list, metrics
+        return value, metrics
+
+    translation_mode = "raw_span"
+    try:
+        parsed = json.loads(original)
+        if "source_kind" not in item:
+            translation_mode = "parsed_text_nodes"
+            faithful_obj, faithful_metrics = translate_text_nodes(parsed, dense=False)
+            dense_obj, dense_metrics = translate_text_nodes(faithful_obj, dense=True)
+            faithful = json.dumps(faithful_obj, ensure_ascii=False)
+            dense = json.dumps(dense_obj, ensure_ascii=False)
+        else:
+            faithful, faithful_call_metrics = translate_one(original, dense=False, client=client)
+            dense, dense_call_metrics = translate_one(faithful, dense=True, client=client)
+            faithful_metrics = [faithful_call_metrics]
+            dense_metrics = [dense_call_metrics]
+    except json.JSONDecodeError:
+        faithful, faithful_call_metrics = translate_one(original, dense=False, client=client)
+        dense, dense_call_metrics = translate_one(faithful, dense=True, client=client)
+        faithful_metrics = [faithful_call_metrics]
+        dense_metrics = [dense_call_metrics]
     return {
         **item,
         "content": faithful,
@@ -341,6 +381,7 @@ def transform_item(item: dict[str, Any], *, client: httpx.Client) -> tuple[dict[
         "item_id": item["id"],
         "event_type": item["event_type"],
         "status": "TRANSLATED",
+        "translation_mode": translation_mode,
         "original_content_sha256": hashlib.sha256(original.encode("utf-8")).hexdigest(),
         "faithful_content_sha256": hashlib.sha256(faithful.encode("utf-8")).hexdigest(),
         "dense_content_sha256": hashlib.sha256(dense.encode("utf-8")).hexdigest(),
