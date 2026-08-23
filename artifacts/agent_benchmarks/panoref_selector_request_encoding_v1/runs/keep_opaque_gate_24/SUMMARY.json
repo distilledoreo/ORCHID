@@ -1,0 +1,228 @@
+{
+  "calls_failed": 0,
+  "calls_planned": 24,
+  "calls_recorded": 24,
+  "calls_succeeded": 24,
+  "completed_at": "2026-08-23T00:11:40.410+00:00",
+  "decision_equivalence": false,
+  "decision_matches": 0,
+  "decision_mismatches": [
+    {
+      "actual": [
+        "panoref_evt_000582::span::000000"
+      ],
+      "chunk_index": 0,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_000924"
+      ],
+      "chunk_index": 6,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_000934::span::000004",
+        "panoref_evt_000935"
+      ],
+      "chunk_index": 13,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_000958"
+      ],
+      "chunk_index": 19,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_000961::span::000004"
+      ],
+      "chunk_index": 26,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_000961::span::000010"
+      ],
+      "chunk_index": 32,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_000970",
+        "panoref_evt_000971",
+        "panoref_evt_000972",
+        "panoref_evt_000973",
+        "panoref_evt_000974",
+        "panoref_evt_000975",
+        "panoref_evt_000976",
+        "panoref_evt_000977"
+      ],
+      "chunk_index": 38,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001002::span::000002"
+      ],
+      "chunk_index": 45,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001004::span::000001"
+      ],
+      "chunk_index": 51,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001006::span::000000"
+      ],
+      "chunk_index": 58,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001007::span::000001"
+      ],
+      "chunk_index": 64,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001013::span::000000"
+      ],
+      "chunk_index": 70,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001025",
+        "panoref_evt_001026"
+      ],
+      "chunk_index": 77,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001041::span::000000"
+      ],
+      "chunk_index": 83,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001059",
+        "panoref_evt_001060",
+        "panoref_evt_001061",
+        "panoref_evt_001062"
+      ],
+      "chunk_index": 89,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001085::span::000001"
+      ],
+      "chunk_index": 96,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001105",
+        "panoref_evt_001106",
+        "panoref_evt_001107"
+      ],
+      "chunk_index": 102,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001112::span::000001",
+        "panoref_evt_001112::span::000002"
+      ],
+      "chunk_index": 109,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001127",
+        "panoref_evt_001128",
+        "panoref_evt_001129",
+        "panoref_evt_001130"
+      ],
+      "chunk_index": 115,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001144::span::000001"
+      ],
+      "chunk_index": 121,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001152::span::000002"
+      ],
+      "chunk_index": 128,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001172",
+        "panoref_evt_001173"
+      ],
+      "chunk_index": 134,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001178::span::000002",
+        "panoref_evt_001179"
+      ],
+      "chunk_index": 141,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001195"
+      ],
+      "chunk_index": 147,
+      "historical": null
+    }
+  ],
+  "decision_total": 24,
+  "decode_ms": {
+    "p50": 1955.8032999921124,
+    "p95": 3832.9145200070343
+  },
+  "failed_rows": [],
+  "full_trace": true,
+  "historical_input_tokens_total": 40529.0,
+  "historical_output_tokens_total": 695.0,
+  "input_tokens_p50": 1482.5,
+  "input_tokens_total": 40529.0,
+  "output_tokens_p50": 26.0,
+  "output_tokens_total": 772.0,
+  "plan_sha256": "ee0e056f215c881640fd6ac3caededac735aecac5fe558cbc057402fccddfd19",
+  "protocol_or_schema_failures": 0,
+  "run_id": "keep_opaque_gate_24",
+  "selector_wall_ms": 276282.35119994497,
+  "source_commit": "a699d6a4af3696dc2992049b2ebbc748493eb3d9",
+  "timeouts": 0,
+  "ttft_ms": {
+    "p50": 7776.399449983728,
+    "p95": 14957.91671998304,
+    "p99": 15259.074766988633
+  },
+  "variant": "KEEP_OPAQUE",
+  "wall_ms": {
+    "p50": 9718.08439999586,
+    "p95": 18414.78360498877
+  }
+}
