@@ -419,11 +419,11 @@ def direct_args(plan: dict[str, Any], cfg: dict[str, Any]) -> list[str]:
         "--metrics",
         "--slots",
     ]
-    if cfg["kv_offload"]:
+    if cfg.get("kv_offload", False):
         args.append("--kv-offload")
-    if cfg["kv_unified"]:
+    if cfg.get("kv_unified", False):
         args.append("--kv-unified")
-    if cfg["load_mode"]:
+    if cfg.get("load_mode"):
         args.extend(["--load-mode", cfg["load_mode"]])
     return args
 
@@ -643,8 +643,12 @@ def report_all(plan: dict[str, Any]) -> None:
     print(f"final report: {OUT_ROOT / 'FINAL_REPORT.md'}")
 
 
-async def run_all(plan: dict[str, Any]) -> None:
-    for name in plan["experiments"]:
+async def run_all(plan: dict[str, Any], names: list[str] | None = None) -> None:
+    selected = names or list(plan["experiments"])
+    unknown = [name for name in selected if name not in plan["experiments"]]
+    if unknown:
+        raise RuntimeError(f"unknown experiments: {unknown}")
+    for name in selected:
         await run_experiment(plan, name)
 
 
@@ -652,13 +656,14 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("freeze")
-    sub.add_parser("run")
+    run_parser = sub.add_parser("run")
+    run_parser.add_argument("--only", nargs="+", default=None)
     sub.add_parser("report")
     args = parser.parse_args()
     if args.command == "freeze":
         freeze()
     elif args.command == "run":
-        asyncio.run(run_all(load_plan()))
+        asyncio.run(run_all(load_plan(), args.only))
     else:
         report_all(load_plan())
 
