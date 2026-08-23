@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "profile": "ci-safe-v1",
+  "scenarios": {
+    "composite-512-12": {
+      "maxMedianMs": 4000,
+      "maxP95Ms": 6000
+    },
+    "brush-2048-diagonal": {
+      "maxMedianMs": 500,
+      "maxP95Ms": 1000
+    },
+    "tiled-sparse-32768-patch": {
+      "maxMedianMs": 25,
+      "maxP95Ms": 75,
+      "maxAllocatedBytes": 262144
+    },
+    "coverage-sparse-32768-patch": {
+      "maxMedianMs": 25,
+      "maxP95Ms": 75,
+      "maxAllocatedBytes": 65536
+    },
+    "document-1024-8-memory": {
+      "maxArrayBufferAmplification": 1.35
+    },
+    "composite-tile-cache-warm-128-4": {
+      "maxMedianMs": 50,
+      "maxP95Ms": 100
+    },
+    "composite-tile-cache-warm-512-8": {
+      "maxMedianMs": 100,
+      "maxP95Ms": 250
+    }
+  }
+}

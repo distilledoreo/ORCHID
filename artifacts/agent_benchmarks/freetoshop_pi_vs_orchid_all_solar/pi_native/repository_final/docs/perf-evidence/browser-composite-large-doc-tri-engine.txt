@@ -1,0 +1,19 @@
+Tri-engine large-document progressive interactive probe
+========================================================
+Test: large document progressive pan and zoom stay within interactive budget
+Fixture: 1024² / 6 layers / viewport 384 / interactiveBudget 50ms
+
+Chromium: PASS (historical probe browser-composite-large-doc-interactive.json:
+  progressive cold ~64 ms, pan cold ~40 ms, warm ~2–3 ms)
+
+Firefox: PASS (playwright project=firefox, 2026-07-16)
+WebKit:  PASS (playwright project=webkit, 2026-07-16)
+
+Command:
+  npx playwright test tests/e2e/composite-performance.spec.ts \
+    --project=firefox --project=webkit --workers=1 \
+    -g "large document progressive"
+
+Progressive seed cancel (skeptic stale L56-63): FIXED
+  shouldCancelWorkerInflight returns false for progressiveViewportOnly frames.
+  App cancel path clears compositeWorkerScheduledDocRef (App.tsx ~2991-2997).

@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "fixture": {
+    "iterations": 16,
+    "cacheBudgetBytes": 3014656,
+    "zoomSteps": 8,
+    "localizedPaintEdits": 4
+  },
+  "startingEvictions": 0,
+  "finalEvictions": 5,
+  "sessionEvictions": 5,
+  "peakAllocatedBytes": 3014656,
+  "finalAllocatedBytes": 3014656,
+  "maxTileCount": 184,
+  "maxUniqueSpatialTileCount": 141,
+  "stayedWithinBudget": true,
+  "workerSettled": true,
+  "samples": [
+    {
+      "iteration": 0,
+      "allocatedBytes": 917504,
+      "tileCount": 56,
+      "uniqueSpatialTileCount": 56,
+      "evictions": 0
+    },
+    {
+      "iteration": 1,
+      "allocatedBytes": 1409024,
+      "tileCount": 86,
+      "uniqueSpatialTileCount": 86,
+      "evictions": 0
+    },
+    {
+      "iteration": 2,
+      "allocatedBytes": 1622016,
+      "tileCount": 99,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 3,
+      "allocatedBytes": 1622016,
+      "tileCount": 99,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 4,
+      "allocatedBytes": 1884160,
+      "tileCount": 115,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 5,
+      "allocatedBytes": 1884160,
+      "tileCount": 115,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 6,
+      "allocatedBytes": 1884160,
+      "tileCount": 115,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 7,
+      "allocatedBytes": 2146304,
+      "tileCount": 131,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 8,
+      "allocatedBytes": 2146304,
+      "tileCount": 131,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 9,
+      "allocatedBytes": 2146304,
+      "tileCount": 131,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 10,
+      "allocatedBytes": 2146304,
+      "tileCount": 131,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 11,
+      "allocatedBytes": 2703360,
+      "tileCount": 165,
+      "uniqueSpatialTileCount": 133,
+      "evictions": 0
+    },
+    {
+      "iteration": 12,
+      "allocatedBytes": 2965504,
+      "tileCount": 181,
+      "uniqueSpatialTileCount": 133,
+      "evictions": 0
+    },
+    {
+      "iteration": 13,
+      "allocatedBytes": 3014656,
+      "tileCount": 184,
+      "uniqueSpatialTileCount": 139,
+      "evictions": 3
+    },
+    {
+      "iteration": 14,
+      "allocatedBytes": 3014656,
+      "tileCount": 184,
+      "uniqueSpatialTileCount": 141,
+      "evictions": 5
+    },
+    {
+      "iteration": 15,
+      "allocatedBytes": 3014656,
+      "tileCount": 184,
+      "uniqueSpatialTileCount": 141,
+      "evictions": 5
+    }
+  ],
+  "runtime": {
+    "browserName": "webkit",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15"
+  }
+}

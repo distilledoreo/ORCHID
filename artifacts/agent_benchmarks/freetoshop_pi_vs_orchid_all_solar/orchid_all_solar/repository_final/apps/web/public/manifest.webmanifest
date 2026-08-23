@@ -1,0 +1,12 @@
+{
+  "name": "FreetoShop Studio",
+  "short_name": "FreetoShop",
+  "description": "A local-first browser image editor.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b100f",
+  "theme_color": "#111918",
+  "icons": [
+    { "src": "/mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "PI_NATIVE": {
+    "arm": "PI_NATIVE",
+    "cwd": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_all_solar_20260823\\arm-a-pi",
+    "commands": {
+      "typecheck": {
+        "exit_code": 0,
+        "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_all_solar\\quality\\pi_native_typecheck.log",
+        "tail": "\n> freetoshop@0.1.0 typecheck\n> tsc -b\n\n"
+      },
+      "build": {
+        "exit_code": 0,
+        "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_all_solar\\quality\\pi_native_build.log",
+        "tail": "\n> freetoshop@0.1.0 build\n> npm run build --workspaces --if-present\n\n\n> @freetoshop/web@0.1.0 build\n> tsc -b && vite build\n\nvite v7.3.6 building client environment for production...\ntransforming...\nâœ“ 100 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                                    0.99 kB â”‚ gzip:   0.52 kB\ndist/assets/index-Cqd63Mnu.js                     31.99 kB\ndist/assets/harfbuzz-CTCWZ5ti.wasm               390.37 kB â”‚ gzip: 162.48 kB\ndist/assets/imageWorker-BSzFWFTB.js              462.49 kB\ndist/assets/index-YcAdp2oN.css                    40.08 kB â”‚ gzip:   8.29 kB\ndist/assets/__vite-browser-external-BIHI7g3E.js    0.03 kB â”‚ gzip:   0.05 kB\ndist/assets/index-BlckwzU5.js                     32.01 kB â”‚ gzip:   9.41 kB\ndist/assets/index-F8eq8Qk8.js                    624.45 kB â”‚ gzip: 178.13 kB\nâœ“ built in 4.13s\n\n> @freetoshop/benchmarks@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/command-history@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/compositor@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/core-document@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/file-codecs@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/filter-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/persistence@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/pixel-storage@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/raster-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/renderer@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/selection-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/text-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/transform-engine@0.1.0 build\n> tsc -b\n\n[plugin vite:resolve] Module \"module\" has been externalized for browser compatibility, imported by \"C:/Users/disti/benchmark_work/freetoshop_pi_vs_orchid_20260820/arm-a-pi/node_modules/harfbuzzjs/dist/harfbuzz.js\". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.\n[plugin vite:resolve] Module \"module\" has been externalized for browser compatibility, imported by \"C:/Users/disti/benchmark_work/freetoshop_pi_vs_orchid_20260820/arm-a-pi/node_modules/harfbuzzjs/dist/harfbuzz.js\". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.\n\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n"
+      }
+    }
+  },
+  "ORCHID_ALL_SOLAR": {
+    "arm": "ORCHID_ALL_SOLAR",
+    "cwd": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_all_solar_20260823\\arm-b-orchid",
+    "commands": {
+      "typecheck": {
+        "exit_code": 1,
+        "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_all_solar\\quality\\orchid_all_solar_typecheck.log",
+        "tail": "\n> freetoshop@0.1.0 typecheck\n> tsc -b\n\napps/web/src/App.tsx(96,3): error TS2305: Module '\"@freetoshop/raster-engine\"' has no exported member 'cloneStampStroke'.\napps/web/src/App.tsx(97,3): error TS2305: Module '\"@freetoshop/raster-engine\"' has no exported member 'createCloneSource'.\napps/web/src/App.tsx(516,50): error TS2304: Cannot find name 'CloneSource'.\napps/web/src/App.tsx(576,11): error TS2304: Cannot find name 'setTaskBarDismissed'.\napps/web/src/App.tsx(3928,14): error TS2304: Cannot find name 'taskBarDismissed'.\napps/web/src/App.tsx(3932,34): error TS2304: Cannot find name 'setTaskBarDismissed'.\n"
+      },
+      "build": {
+        "exit_code": 1,
+        "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_all_solar\\quality\\orchid_all_solar_build.log",
+        "tail": "\n> freetoshop@0.1.0 build\n> npm run build --workspaces --if-present\n\n\n> @freetoshop/web@0.1.0 build\n> tsc -b && vite build\n\nsrc/App.tsx(96,3): error TS2305: Module '\"@freetoshop/raster-engine\"' has no exported member 'cloneStampStroke'.\nsrc/App.tsx(97,3): error TS2305: Module '\"@freetoshop/raster-engine\"' has no exported member 'createCloneSource'.\nsrc/App.tsx(516,50): error TS2304: Cannot find name 'CloneSource'.\nsrc/App.tsx(576,11): error TS2304: Cannot find name 'setTaskBarDismissed'.\nsrc/App.tsx(3928,14): error TS2304: Cannot find name 'taskBarDismissed'.\nsrc/App.tsx(3932,34): error TS2304: Cannot find name 'setTaskBarDismissed'.\n\n> @freetoshop/benchmarks@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/command-history@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/compositor@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/core-document@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/file-codecs@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/filter-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/persistence@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/pixel-storage@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/raster-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/renderer@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/selection-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/text-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/transform-engine@0.1.0 build\n> tsc -b\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 1\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_all_solar_20260823\\arm-b-orchid\\apps\\web\nnpm error workspace @freetoshop/web@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_all_solar_20260823\\arm-b-orchid\\apps\\web\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b && vite build\n\n"
+      }
+    }
+  }
+}

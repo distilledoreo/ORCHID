@@ -1,0 +1,9 @@
+{
+  "arm": "PI_NATIVE",
+  "foreground_provider": "OpenRouter",
+  "foreground_model": "upstage/solar-pro4",
+  "native_compaction": true,
+  "pi_version": "0.84.2",
+  "settings": "historical sealed Pi settings; provider-default temperature",
+  "retry_policy": "historical Pi/runtime policy; no controller rescue"
+}
