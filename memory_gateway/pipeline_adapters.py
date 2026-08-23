@@ -670,26 +670,28 @@ def build_lossless_engine(
         ),
         selector_context_tokens=config.selector_context_tokens,
     )
-    canonicalizer = OpenAICompatCanonicalizerEngine(
-        OpenAICompatStructuredClient(
-            endpoint=config.canonicalizer_url,
-            model=config.canonicalizer_model,
-            prompt_version="canonicalizer-v1",
-            system_prompt=(
-                "You canonicalize authoritative events for durable memory. Return JSON only with "
-                '{"canonical_text":"...","cited_source_refs":["source-item-id"]}. '
-                "cited_source_refs is optional and may cite a subset of supplied source items, "
-                "but cited IDs must be the exact supplied item IDs in source order. For a source "
-                "span, cite its complete ID including the ::span:: suffix; never cite its "
-                "parent_event_id. Do not invent facts or IDs."
+    canonicalizer = None
+    if config.canonicalizer_enabled:
+        canonicalizer = OpenAICompatCanonicalizerEngine(
+            OpenAICompatStructuredClient(
+                endpoint=config.canonicalizer_url,
+                model=config.canonicalizer_model,
+                prompt_version="canonicalizer-v1",
+                system_prompt=(
+                    "You canonicalize authoritative events for durable memory. Return JSON only with "
+                    '{"canonical_text":"...","cited_source_refs":["source-item-id"]}. '
+                    "cited_source_refs is optional and may cite a subset of supplied source items, "
+                    "but cited IDs must be the exact supplied item IDs in source order. For a source "
+                    "span, cite its complete ID including the ::span:: suffix; never cite its "
+                    "parent_event_id. Do not invent facts or IDs."
+                ),
+                generation_settings=generation_settings,
+                timeout=config.model_timeout_seconds,
+                api_key=config.canonicalizer_api_key,
+                telemetry_recorder=telemetry_recorder,
             ),
-            generation_settings=generation_settings,
-            timeout=config.model_timeout_seconds,
-            api_key=config.canonicalizer_api_key,
-            telemetry_recorder=telemetry_recorder,
-        ),
-        batch_target_tokens=config.canonicalizer_input_tokens,
-    )
+            batch_target_tokens=config.canonicalizer_input_tokens,
+        )
     consolidator = OpenAICompatConsolidatorEngine(
         OpenAICompatStructuredClient(
             endpoint=config.consolidator_url,

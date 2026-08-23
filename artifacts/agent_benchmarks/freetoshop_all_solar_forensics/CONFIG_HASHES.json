@@ -1,0 +1,8 @@
+{
+  "current_forensics_commit": "1f25ec9c145a4f114827ff1608c9ebc23db837aa",
+  "current_forensics_tree": "9c4b15e6599c293ef0a2afd7d8e48483d8e6965d",
+  "historical_all_solar_config_sha256": "410c31792296db8feb0fe715c3bbf11e12a235f8607ddc115cff334e473b5cbe",
+  "historical_benchmark_manifest_sha256": "ced513a794ad0eba51dc87e853ef0d62ac65ac83da78fb0ce0efb70c3014bfc1",
+  "historical_source_db_sha256": "9dac3410930e57f69bff4253f913f7ff4756c820c2e63b44fcb441913f539746",
+  "historical_source_repository_commit": "3647e70ab4e5d18e4e9c5107075a2b8d179835d3"
+}

@@ -69,6 +69,7 @@ def create_app(
             background_fraction=runtime.background_fraction,
             urgent_fraction=runtime.urgent_fraction,
         ),
+        source_window_tokens=runtime.compaction_source_window_tokens,
     )
     engine = (
         compaction_engine

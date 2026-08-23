@@ -253,7 +253,7 @@ class LosslessCompactionEngine:
     def __init__(
         self,
         selector: SelectorEngine,
-        canonicalizer: CanonicalizerEngine,
+        canonicalizer: CanonicalizerEngine | None,
         consolidator: ConsolidatorEngine,
     ):
         self.selector = selector
@@ -302,6 +302,8 @@ class LosslessCompactionEngine:
         generation: int | None,
     ) -> None:
         for stage in (self.selector, self.canonicalizer, self.consolidator):
+            if stage is None:
+                continue
             client = getattr(stage, "client", None)
             setter = getattr(client, "set_job_context", None)
             if setter is not None:
@@ -317,6 +319,8 @@ class LosslessCompactionEngine:
     ) -> None:
         self._ownership_checker = checker
         for stage in (self.selector, self.canonicalizer, self.consolidator):
+            if stage is None:
+                continue
             client = getattr(stage, "client", None)
             setter = getattr(client, "set_ownership_checker", None)
             if setter is not None:
@@ -380,35 +384,60 @@ class LosslessCompactionEngine:
         selected_events = [item for item in source_items if item.id in selected_ids]
         self._check_ownership()
         canonicalizer_started = time.perf_counter()
-        try:
-            canonical = await self.canonicalizer.canonicalize(events=selected_events)
-        except CanonicalizerBatchError as error:
-            self._record_stage(
-                "canonicalizer",
-                canonicalizer_started,
-                self.canonicalizer,
-                status="FAILED",
-                error=error,
+        if self.canonicalizer is None:
+            selected_source_ids = tuple(item.id for item in selected_events)
+            selected_source_hash = compute_source_event_hash(None, selected_events)
+            bypass_payload = {
+                "format": "orchid_canonicalizer_bypass_v1",
+                "covered_source_refs": list(selected_source_ids),
+                "selected_source_input_hash": selected_source_hash,
+            }
+            canonical = CanonicalizationResult(
+                canonical_text="",
+                source_event_ids=selected_source_ids,
+                input_hash=selected_source_hash,
+                output_hash=_hash(bypass_payload),
+                model_identity="software",
+                prompt_version="canonicalizer-bypassed-v1",
+                generation_settings={},
             )
-            self.last_telemetry["status"] = "FAILED"
-            self.last_telemetry["wall_ms"] = (time.perf_counter() - total_started) * 1000
-            raise RuntimeError(
-                f"canonicalizer stage failed at batch {error.batch_index}: {error.error}"
-            ) from error
-        except Exception as error:
+            self.last_telemetry["canonicalizer"] = {
+                "status": "BYPASSED",
+                "wall_ms": (time.perf_counter() - canonicalizer_started) * 1000,
+                "call_count": 0,
+                "calls": [],
+                "reason": "selected selector-to-consolidator architecture",
+            }
+        else:
+            try:
+                canonical = await self.canonicalizer.canonicalize(events=selected_events)
+            except CanonicalizerBatchError as error:
+                self._record_stage(
+                    "canonicalizer",
+                    canonicalizer_started,
+                    self.canonicalizer,
+                    status="FAILED",
+                    error=error,
+                )
+                self.last_telemetry["status"] = "FAILED"
+                self.last_telemetry["wall_ms"] = (time.perf_counter() - total_started) * 1000
+                raise RuntimeError(
+                    f"canonicalizer stage failed at batch {error.batch_index}: {error.error}"
+                ) from error
+            except Exception as error:
+                self._record_stage(
+                    "canonicalizer",
+                    canonicalizer_started,
+                    self.canonicalizer,
+                    status="FAILED",
+                    error=error,
+                )
+                self.last_telemetry["status"] = "FAILED"
+                self.last_telemetry["wall_ms"] = (time.perf_counter() - total_started) * 1000
+                raise RuntimeError(f"canonicalizer stage failed: {error}") from error
             self._record_stage(
-                "canonicalizer",
-                canonicalizer_started,
-                self.canonicalizer,
-                status="FAILED",
-                error=error,
+                "canonicalizer", canonicalizer_started, self.canonicalizer, status="SUCCEEDED"
             )
-            self.last_telemetry["status"] = "FAILED"
-            self.last_telemetry["wall_ms"] = (time.perf_counter() - total_started) * 1000
-            raise RuntimeError(f"canonicalizer stage failed: {error}") from error
-        self._record_stage(
-            "canonicalizer", canonicalizer_started, self.canonicalizer, status="SUCCEEDED"
-        )
         self._check_ownership()
         packet_started = time.perf_counter()
         packet = build_lossless_packet(canonical, selected_events)

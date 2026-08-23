@@ -4,7 +4,7 @@ import asyncio
 import hashlib
 from pathlib import Path
 
-from memory_gateway.compaction import CompactionWorker
+from memory_gateway.compaction import CompactionWorker, freeze_snapshot
 from memory_gateway.context import estimate_tokens
 from memory_gateway.db import SQLiteStore
 from memory_gateway.fake_engines import PerfectCompactionEngine
@@ -62,6 +62,33 @@ def test_uncompacted_tokens_include_all_events_without_capsule(tmp_path: Path) -
         ThresholdPolicy(usable_context_tokens=10, background_fraction=0.5),
     )
     assert scheduler.uncompacted_tokens("thread") == 3 + estimate_tokens(second_content)
+
+
+def test_freeze_snapshot_honors_source_window_without_emptying_backlog(
+    tmp_path: Path,
+) -> None:
+    store = make_store(tmp_path)
+    first = store.append_event(
+        project_id="project",
+        thread_id="thread",
+        event_type="user_message",
+        role="user",
+        content="a" * 3_000,
+    )
+    second = store.append_event(
+        project_id="project",
+        thread_id="thread",
+        event_type="assistant_message",
+        role="assistant",
+        content="b" * 3_000,
+    )
+
+    snapshot = freeze_snapshot(store, "thread", source_window_tokens=1_000)
+
+    assert snapshot.snapshot_start_event_id == first["id"]
+    assert snapshot.snapshot_end_event_id == first["id"]
+    assert [event["id"] for event in snapshot.events] == [first["id"]]
+    assert second["id"] not in [event["id"] for event in snapshot.events]
 
 
 def test_uncompacted_tokens_start_after_active_capsule_coverage(tmp_path: Path) -> None:

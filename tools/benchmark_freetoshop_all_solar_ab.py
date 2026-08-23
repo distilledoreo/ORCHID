@@ -25,7 +25,6 @@ import httpx
 
 from memory_gateway.pipeline_adapters import (
     CONSOLIDATOR_RESPONSE_FORMAT,
-    canonicalizer_response_format_for_batch,
     selector_response_format_for_chunk,
 )
 
@@ -136,10 +135,9 @@ def freeze() -> None:
         "foreground_model": "upstage/solar-pro4",
         "selector_provider": "OpenRouter",
         "selector_model": "upstage/solar-pro4",
-        "canonicalizer_provider": "OpenRouter",
-        "canonicalizer_model": "upstage/solar-pro4",
         "consolidator_provider": "OpenRouter",
         "consolidator_model": "upstage/solar-pro4",
+        "canonicalizer_enabled": False,
         "selector_prompt_version": "selector-v1",
         "selector_chunk_target_tokens": 1200,
         "selector_dynamic_exact_id_schema": True,
@@ -156,6 +154,11 @@ def freeze() -> None:
         "cold_memory_token_budget": 512,
         "cold_memory_max_injected": 3,
         "dense_production_injection": False,
+        "compaction_context_tokens": 524288,
+        "compaction_reserved_output_tokens": 8192,
+        "compaction_fixed_overhead_tokens": 4096,
+        "compaction_safety_margin": 0.7,
+        "compaction_request_amplification": 3.0,
     }
     write_json(ARTIFACT / "CONFIG_PI_NATIVE.json", pi_config)
     write_json(ARTIFACT / "CONFIG_ORCHID_ALL_SOLAR.json", orchid_config)
@@ -191,8 +194,8 @@ def freeze() -> None:
                 "model": "orchid/upstage/solar-pro4",
                 "native_compaction": False,
                 "selector_model": "upstage/solar-pro4",
-                "canonicalizer_model": "upstage/solar-pro4",
                 "consolidator_model": "upstage/solar-pro4",
+                "canonicalizer_enabled": False,
             },
         },
         "solar": {
@@ -213,12 +216,14 @@ def freeze() -> None:
             "goal_mode": "disabled_for_both_arms",
         },
         "orchid": {
-            "compaction_model_roles": ["selector", "canonicalizer", "consolidator"],
+            "compaction_model_roles": ["selector", "consolidator"],
+            "canonicalizer_enabled": False,
             "selector_chunk_target_tokens": 1200,
             "selector_exact_id_hardening": True,
             "cold_memory_mode": "inject",
             "dense_production_injection": False,
             "scheduler": "existing coalesced scheduler",
+            "provider_aware_source_window": True,
             "database": "fresh benchmark-only database",
         },
         "run_policy": {
@@ -317,14 +322,6 @@ def preflight() -> None:
                 **common,
                 "messages": [{"role": "system", "content": "Select durable-memory source items. Return JSON only."}, {"role": "user", "content": 'INPUT_JSON\n{"events":[{"id":"evt-1","role":"user","content":"Keep this task fact."}],"event_ids_in_order":["evt-1"],"source_ids_in_order":["evt-1"]}'}],
                 "response_format": selector_response_format_for_chunk(["evt-1"]),
-            },
-        },
-        "canonicalizer_direct": {
-            "url": direct_url,
-            "body": {
-                **common,
-                "messages": [{"role": "system", "content": "Canonicalize the supplied event. Return JSON only."}, {"role": "user", "content": 'INPUT_JSON\n{"events":[{"id":"evt-1","role":"user","content":"Keep this task fact."}]}'}],
-                "response_format": canonicalizer_response_format_for_batch(["evt-1"]),
             },
         },
         "consolidator_direct": {

@@ -108,6 +108,18 @@ class Consolidator:
         )
 
 
+class BypassConsolidator:
+    async def consolidate(self, *, base_capsule, events, snapshot_end_event_id, packet):
+        assert packet.canonical_text == ""
+        return ConsolidationResult(
+            content="selector-to-consolidator capsule",
+            evidence_event_ids=tuple(item.id for item in events),
+            model_identity="fake-consolidator",
+            prompt_version="consolidator-v1",
+            generation_settings={},
+        )
+
+
 class FailingSelector:
     async def select(self, *, events):
         raise RuntimeError("qwen selector unavailable")
@@ -579,6 +591,23 @@ def test_lossless_pipeline_moves_authoritative_data_in_software() -> None:
     assert engine.last_telemetry["canonicalizer"]["status"] == "SUCCEEDED"
     assert engine.last_telemetry["consolidator"]["status"] == "SUCCEEDED"
     assert engine.last_telemetry["validation_ms"] >= 0
+
+
+def test_lossless_pipeline_can_bypass_legacy_canonicalizer() -> None:
+    engine = LosslessCompactionEngine(Selector(), None, BypassConsolidator())
+
+    result = asyncio.run(
+        engine.compact(
+            base_capsule=None,
+            events=[event("event-1", 1), event("event-2", 2)],
+            snapshot_end_event_id="event-2",
+        )
+    )
+
+    assert result.content == "selector-to-consolidator capsule"
+    assert engine.last_telemetry is not None
+    assert engine.last_telemetry["canonicalizer"]["status"] == "BYPASSED"
+    assert engine.last_telemetry["canonicalizer"]["call_count"] == 0
 
 
 def test_concrete_stage_adapters_keep_distinct_output_contracts() -> None:

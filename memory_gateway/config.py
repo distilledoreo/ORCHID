@@ -29,6 +29,16 @@ def _float_env(name: str, default: float) -> float:
     return parsed
 
 
+def _positive_float_env(name: str, default: float) -> float:
+    value = _env(name)
+    if value is None:
+        return default
+    parsed = float(value)
+    if parsed <= 0:
+        raise ValueError(f"{name} must be positive")
+    return parsed
+
+
 def _bool_env(name: str, default: bool) -> bool:
     value = _env(name)
     if value is None:
@@ -74,6 +84,14 @@ class RuntimeConfig:
     cold_memory_telemetry_queue_size: int = 256
     cold_memory_telemetry_batch_size: int = 32
     cold_memory_telemetry_flush_ms: int = 5
+    # The legacy canonicalizer remains enabled by default for compatibility.
+    # The selected selector -> consolidator path can explicitly bypass it.
+    canonicalizer_enabled: bool = True
+    compaction_context_tokens: int = 32_768
+    compaction_reserved_output_tokens: int = 8_192
+    compaction_fixed_overhead_tokens: int = 4_096
+    compaction_safety_margin: float = 0.7
+    compaction_request_amplification: float = 3.0
 
     @classmethod
     def from_env(
@@ -135,6 +153,22 @@ class RuntimeConfig:
             cold_memory_telemetry_flush_ms=_int_env(
                 "ORCHID_COLD_MEMORY_TELEMETRY_FLUSH_MS", 5
             ),
+            canonicalizer_enabled=_bool_env("ORCHID_CANONICALIZER_ENABLED", True),
+            compaction_context_tokens=_int_env(
+                "ORCHID_COMPACTION_CONTEXT_TOKENS", 32_768
+            ),
+            compaction_reserved_output_tokens=_int_env(
+                "ORCHID_COMPACTION_RESERVED_OUTPUT_TOKENS", 8_192
+            ),
+            compaction_fixed_overhead_tokens=_int_env(
+                "ORCHID_COMPACTION_FIXED_OVERHEAD_TOKENS", 4_096
+            ),
+            compaction_safety_margin=_float_env(
+                "ORCHID_COMPACTION_SAFETY_MARGIN", 0.7
+            ),
+            compaction_request_amplification=_positive_float_env(
+                "ORCHID_COMPACTION_REQUEST_AMPLIFICATION", 3.0
+            ),
         )
 
     @property
@@ -142,10 +176,12 @@ class RuntimeConfig:
         return bool(
             self.selector_url
             and self.selector_model
-            and self.canonicalizer_url
-            and self.canonicalizer_model
             and self.consolidator_url
             and self.consolidator_model
+            and (
+                not self.canonicalizer_enabled
+                or (self.canonicalizer_url and self.canonicalizer_model)
+            )
         )
 
     @property
@@ -155,3 +191,27 @@ class RuntimeConfig:
     @property
     def minimum_raw_tail_tokens(self) -> int:
         return min(12_000, self.raw_tail_target_tokens)
+
+    @property
+    def compaction_source_window_tokens(self) -> int:
+        """Safe source-item budget for one semantic compaction generation.
+
+        The request currently carries approved evidence in more than one
+        lossless representation. Keep provider context, output headroom,
+        fixed prompt overhead, and estimator uncertainty separate from the
+        source window so a large backlog is retired over multiple jobs.
+        """
+
+        available = (
+            self.compaction_context_tokens
+            - self.compaction_reserved_output_tokens
+            - self.compaction_fixed_overhead_tokens
+        )
+        return max(
+            1_000,
+            int(
+                max(1, available)
+                * self.compaction_safety_margin
+                / self.compaction_request_amplification
+            ),
+        )

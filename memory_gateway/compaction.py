@@ -54,6 +54,7 @@ class SourceSpan:
 
 
 SourceItem = Event | SourceSpan
+DEFAULT_COMPACTION_SOURCE_WINDOW_TOKENS = 8_000
 
 
 def source_item_payload(item: SourceItem) -> dict[str, Any]:
@@ -333,6 +334,7 @@ def freeze_snapshot(
     *,
     expected_base_capsule_id: str | None = None,
     snapshot_end_event_id: str | None = None,
+    source_window_tokens: int | None = None,
 ) -> CompactionSnapshot:
     active_row = store.get_active_capsule(thread_id)
     active = Capsule.from_row(active_row)
@@ -355,11 +357,40 @@ def freeze_snapshot(
     else:
         snapshot_end_sequence = events[-1]["sequence"] if events else base_end_sequence
 
-    snapshot_events = tuple(
+    candidate_events = [
         event
         for event in events
         if base_end_sequence < event["sequence"] <= snapshot_end_sequence
-    )
+    ]
+    if source_window_tokens is not None:
+        if source_window_tokens <= 0:
+            raise ValueError("source_window_tokens must be positive")
+        base_capsule_tokens = estimate_tokens(active.content) if active else 0
+        effective_source_window_tokens = max(
+            1_000,
+            source_window_tokens - base_capsule_tokens,
+        )
+        bounded_events: list[dict[str, Any]] = []
+        bounded_tokens = 0
+        for event in candidate_events:
+            event_tokens = estimate_tokens(
+                json.dumps(
+                    source_item_payload(Event.from_row(event)),
+                    ensure_ascii=False,
+                )
+            )
+            if (
+                bounded_events
+                and bounded_tokens + event_tokens > effective_source_window_tokens
+            ):
+                break
+            # Include one event even when its provenance envelope is larger
+            # than the target; otherwise a valid watermark could never move.
+            bounded_events.append(event)
+            bounded_tokens += event_tokens
+        snapshot_events = tuple(bounded_events)
+    else:
+        snapshot_events = tuple(candidate_events)
     start_id = snapshot_events[0]["id"] if snapshot_events else None
     end_id = (
         snapshot_events[-1]["id"]
@@ -383,8 +414,18 @@ def freeze_snapshot(
     )
 
 
-def queue_snapshot_job(store: SQLiteStore, thread_id: str, priority: int = 0) -> str | None:
-    snapshot = freeze_snapshot(store, thread_id)
+def queue_snapshot_job(
+    store: SQLiteStore,
+    thread_id: str,
+    priority: int = 0,
+    *,
+    source_window_tokens: int | None = DEFAULT_COMPACTION_SOURCE_WINDOW_TOKENS,
+) -> str | None:
+    snapshot = freeze_snapshot(
+        store,
+        thread_id,
+        source_window_tokens=source_window_tokens,
+    )
     # Keep the low-level test/maintenance helper compatible with empty
     # snapshots. Production pressure scheduling already avoids calling this
     # path when there is no novel history, while lease/recovery callers may

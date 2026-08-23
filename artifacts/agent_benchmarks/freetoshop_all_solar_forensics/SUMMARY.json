@@ -1,0 +1,20 @@
+{
+  "canonicalizer_invoked": true,
+  "canonicalizer_model_runs": 61,
+  "current_forensics_commit": "1f25ec9c145a4f114827ff1608c9ebc23db837aa",
+  "derived_safe_source_window_tokens": 119466,
+  "duplicate_ingestion": false,
+  "fuzzy_provenance_repair": false,
+  "historical_benchmark_commit": "3647e70ab4e5d18e4e9c5107075a2b8d179835d3",
+  "interpretation": "MIXED_IMPLEMENTATION_FAILURES",
+  "offline_replay_failures": 0,
+  "offline_replay_promotions": 10,
+  "offline_replay_provider_calls": 0,
+  "overflow_job_generation": 4,
+  "overflow_provider_context": 524288,
+  "overflow_provider_tokens": 547802,
+  "overflow_raw_source_tokens": 144623,
+  "overflow_role": "consolidator",
+  "overflow_selected_source_items": 245,
+  "source_window_bound_present_in_failed_run": false
+}

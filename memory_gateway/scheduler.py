@@ -25,9 +25,16 @@ class ThresholdPolicy:
 class CompactionScheduler:
     """Creates immutable-watermark jobs without running model inference."""
 
-    def __init__(self, store: SQLiteStore, policy: ThresholdPolicy):
+    def __init__(
+        self,
+        store: SQLiteStore,
+        policy: ThresholdPolicy,
+        *,
+        source_window_tokens: int | None = None,
+    ):
         self.store = store
         self.policy = policy
+        self.source_window_tokens = source_window_tokens
 
     def uncompacted_tokens(self, thread_id: str) -> int:
         active = self.store.get_active_capsule(thread_id)
@@ -53,7 +60,12 @@ class CompactionScheduler:
         if priority is None:
             self.store.clear_compaction_dirty_if_idle(thread_id)
             return None
-        return queue_snapshot_job(self.store, thread_id, priority=priority)
+        return queue_snapshot_job(
+            self.store,
+            thread_id,
+            priority=priority,
+            source_window_tokens=self.source_window_tokens,
+        )
 
     def reconcile_after_job(self, thread_id: str) -> str | None:
         return self.maybe_enqueue(thread_id)
