@@ -1,0 +1,16 @@
+{
+  "condition": "LLAMA_CPP_VULKAN_PARTIAL",
+  "condition_data": {
+    "flash_attn": "on",
+    "kind": "direct_server",
+    "n_gpu_layers": 20,
+    "offload": "direct llama-server Vulkan, 20 layers requested",
+    "port": 18082
+  },
+  "no_retries": true,
+  "plan_sha256": "45a06f9caa36761322f83a258777618706bab8f4010afc52d906f78a2c9db914",
+  "schema_version": "qwen-backend-shootout-run-v1",
+  "serial": true,
+  "source_commit": "3c84632fbf02dd528e78ece3303a06e576a7964f",
+  "started_at": "2026-08-23T03:20:41.856+00:00"
+}

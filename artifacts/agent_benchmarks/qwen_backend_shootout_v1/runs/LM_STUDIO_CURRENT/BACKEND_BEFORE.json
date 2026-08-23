@@ -1,0 +1,19 @@
+{
+  "health": {
+    "status": 200,
+    "value": {
+      "error": "Unexpected endpoint or method. (GET /health)"
+    }
+  },
+  "metrics": {
+    "parsed": {},
+    "raw": "{\"error\":\"Unexpected endpoint or method. (GET /metrics)\"}",
+    "status": 200
+  },
+  "slots": {
+    "status": 200,
+    "value": {
+      "error": "Unexpected endpoint or method. (GET /slots)"
+    }
+  }
+}

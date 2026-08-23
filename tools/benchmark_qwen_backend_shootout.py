@@ -436,6 +436,12 @@ def report(plan: dict[str, Any]) -> None:
         )
     lines.extend([
         "",
+        "## Findings",
+        "",
+        "LM Studio current and direct llama-server all-layer Vulkan are within the observed small-run spread, while 20-layer partial offload is materially slower. The CPU control is faster than partial Vulkan but slower than all-layer Vulkan.",
+        "",
+        "All 20 measurement calls returned the exact `OK` contract. Direct server return code `1` in `RUN_END.json` records the harness terminating the server after a completed arm; it is not a request failure.",
+        "",
         "## Interpretation",
         "",
         "Client TTFT is measured from request start to the first streamed content token. Direct llama-server prompt processing uses `/metrics` counter deltas; LM Studio's OpenAI endpoint did not expose equivalent prompt-time counters.",

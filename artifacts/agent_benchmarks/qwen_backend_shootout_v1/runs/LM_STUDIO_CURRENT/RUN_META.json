@@ -1,0 +1,15 @@
+{
+  "condition": "LM_STUDIO_CURRENT",
+  "condition_data": {
+    "backend": "LM Studio current OpenAI-compatible path; active backend inspected at run start",
+    "endpoint": "http://127.0.0.1:1234/v1",
+    "kind": "existing_endpoint",
+    "offload": "LM Studio-managed current Vulkan configuration"
+  },
+  "no_retries": true,
+  "plan_sha256": "45a06f9caa36761322f83a258777618706bab8f4010afc52d906f78a2c9db914",
+  "schema_version": "qwen-backend-shootout-run-v1",
+  "serial": true,
+  "source_commit": "3c84632fbf02dd528e78ece3303a06e576a7964f",
+  "started_at": "2026-08-23T03:18:53.193+00:00"
+}
