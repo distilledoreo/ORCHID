@@ -328,6 +328,22 @@ def translate_one(text: str, *, dense: bool, client: httpx.Client) -> tuple[str,
     }
 
 
+def translate_text_value(text: str, *, dense: bool, client: httpx.Client) -> tuple[str, list[dict[str, Any]]]:
+    """Translate paragraph-sized prose units to keep preservation prompts bounded."""
+
+    parts = re.split(r"(\n\s*\n)", text)
+    translated_parts: list[str] = []
+    metrics: list[dict[str, Any]] = []
+    for part in parts:
+        if not part or part.isspace():
+            translated_parts.append(part)
+            continue
+        translated, call_metrics = translate_one(part, dense=dense, client=client)
+        translated_parts.append(translated)
+        metrics.append(call_metrics)
+    return "".join(translated_parts), metrics
+
+
 def transform_item(item: dict[str, Any], *, client: httpx.Client) -> tuple[dict[str, Any], dict[str, Any]]:
     original = item["content"]
     if item["event_type"] not in ELIGIBLE_EVENT_TYPES:
@@ -339,9 +355,9 @@ def transform_item(item: dict[str, Any], *, client: httpx.Client) -> tuple[dict[
             result = {}
             for key, child in value.items():
                 if key == "text" and isinstance(child, str):
-                    translated, call_metrics = translate_one(child, dense=dense, client=client)
+                    translated, call_metrics = translate_text_value(child, dense=dense, client=client)
                     result[key] = translated
-                    metrics.append(call_metrics)
+                    metrics.extend(call_metrics)
                 else:
                     result[key], child_metrics = translate_text_nodes(child, dense=dense)
                     metrics.extend(child_metrics)
@@ -406,9 +422,20 @@ def generate(scope: str) -> None:
             unique_items.setdefault(item["id"], item)
     calls: list[dict[str, Any]] = []
     transformed: dict[str, dict[str, Any]] = {}
+    resume_cache: dict[str, dict[str, Any]] = {}
+    for failure_path in sorted(OUT_ROOT.glob(f"TRANSLATION_FAILURE_{scope}_attempt_*.json")):
+        failure = json.loads(failure_path.read_text(encoding="utf-8"))
+        for completed in failure.get("completed_calls", []):
+            if completed.get("status") == "TRANSLATED" and completed.get("faithful_content") and completed.get("dense_content"):
+                resume_cache[completed["item_id"]] = {**completed, "resumed_from": failure_path.name}
     with httpx.Client(timeout=TIMEOUT_SECONDS) as client:
         for position, item in enumerate(unique_items.values(), start=1):
             print(f"translate {position}/{len(unique_items)} {item['id']}", flush=True)
+            resumed = resume_cache.get(item["id"])
+            if resumed is not None:
+                calls.append({"item_id": item["id"], "event_type": item["event_type"], "status": "RESUMED_FROM_FAILED_ATTEMPT", "resumed_from": resumed["resumed_from"], "faithful_content_sha256": resumed["faithful_content_sha256"], "dense_content_sha256": resumed["dense_content_sha256"], "faithful_content": resumed["faithful_content"], "dense_content": resumed["dense_content"], "faithful_metrics": resumed.get("faithful_metrics", []), "dense_metrics": resumed.get("dense_metrics", [])})
+                transformed[item["id"]] = calls[-1]
+                continue
             try:
                 _, audit = transform_item(item, client=client)
                 calls.append(audit)
