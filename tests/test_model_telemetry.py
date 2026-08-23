@@ -54,7 +54,9 @@ class StageHandler(BaseHTTPRequestHandler):
             time.sleep(type(self).delay_seconds)
         first_id = (
             input_payload.get("events", [{}])[0].get("id")
-            or input_payload.get("selected_events", [{}])[0].get("id")
+            or input_payload.get("lossless_packet", {})
+            .get("authoritative_events", [{}])[0]
+            .get("id")
         )
 
         if type(self).mode == "canonicalizer-malformed" and schema_name == "canonicalizer_response_v1":
@@ -201,7 +203,18 @@ def test_successful_selector_canonicalizer_and_consolidator_runs_persist(
             )
         )
 
+        consolidator_request = StageHandler.requests[-1]
+        user_content = consolidator_request["messages"][1]["content"]
+        consolidator_input = json.loads(
+            user_content.split("--- BEGIN INPUT ---\n", 1)[1].split(
+                "\n--- END INPUT ---", 1
+            )[0]
+        )
+
     assert selection.selected_event_ids == ("event-0",)
+    assert "selected_events" not in consolidator_input
+    authoritative = consolidator_input["lossless_packet"]["authoritative_events"]
+    assert [item["id"] for item in authoritative] == ["event-0"]
     rows = store.list_model_runs()
     assert [row["stage"] for row in rows] == [
         "selector",

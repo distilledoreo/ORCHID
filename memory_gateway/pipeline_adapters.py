@@ -552,7 +552,6 @@ class OpenAICompatConsolidatorEngine:
                 {
                     "base_capsule": _capsule_payload(base_capsule),
                     "snapshot_end_event_id": snapshot_end_event_id,
-                    "selected_events": [_event_payload(event) for event in events],
                     "lossless_packet": {
                         "canonical_text": packet.canonical_text,
                         "selected_event_ids": list(packet.selected_event_ids),

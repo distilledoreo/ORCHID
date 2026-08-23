@@ -196,10 +196,9 @@ class RuntimeConfig:
     def compaction_source_window_tokens(self) -> int:
         """Safe source-item budget for one semantic compaction generation.
 
-        The request currently carries approved evidence in more than one
-        lossless representation. Keep provider context, output headroom,
-        fixed prompt overhead, and estimator uncertainty separate from the
-        source window so a large backlog is retired over multiple jobs.
+        Keep provider context, output headroom, fixed prompt overhead, and
+        estimator uncertainty separate from the source window so a large
+        backlog is retired over multiple jobs.
         """
 
         available = (
