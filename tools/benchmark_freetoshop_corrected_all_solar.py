@@ -406,7 +406,15 @@ def verify() -> None:
         checks[f"{arm}_tree"] = prepared[arm]["tree"] == manifest["sealed_arms"][
             manifest_name
         ]["tree"]
-        checks[f"{arm}_clean"] = prepared[arm]["status"] == ""
+        staged_status = {
+            line.strip() for line in prepared[arm]["status"].splitlines() if line.strip()
+        }
+        checks[f"{arm}_sealed_status"] = staged_status <= {"?? BENCHMARK_GOAL.md"}
+        staged_goal = STAGE / ("arm-a-pi" if arm == "pi_native" else "arm-b-orchid") / "BENCHMARK_GOAL.md"
+        checks[f"{arm}_goal_hash"] = (
+            staged_goal.exists()
+            and sha256_file(staged_goal) == manifest["public_goal"]["sha256"]
+        )
     pipeline_text = (ROOT / "memory_gateway/pipeline_adapters.py").read_text(
         encoding="utf-8"
     )
