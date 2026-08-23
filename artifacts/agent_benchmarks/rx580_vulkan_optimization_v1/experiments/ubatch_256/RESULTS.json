@@ -1,0 +1,82 @@
+{
+  "calls_recorded": 4,
+  "config": {
+    "batch_size": 2048,
+    "ctx_size": 8192,
+    "description": "Physical micro-batch size 256",
+    "flash_attn": "on",
+    "n_gpu_layers": 999,
+    "no_cache_prompt": true,
+    "no_cont_batching": true,
+    "parallel": 1,
+    "port": 18104,
+    "repetitions": 3,
+    "threads": 6,
+    "threads_batch": 6,
+    "ubatch_size": 256
+  },
+  "decode_ms": {
+    "count": 3,
+    "mean": 80.24376666677806,
+    "p50": 80.23639998282306,
+    "p95": 80.55968000844587
+  },
+  "description": "Physical micro-batch size 256",
+  "experiment": "ubatch_256",
+  "failures": [],
+  "input_tokens": {
+    "count": 3,
+    "mean": 1518.0,
+    "p50": 1518.0,
+    "p95": 1518.0
+  },
+  "measurement_calls": 3,
+  "prompt_eval_ms": {
+    "count": 3,
+    "mean": 8259.0,
+    "p50": 8256.999999999998,
+    "p95": 8263.3
+  },
+  "prompt_eval_tok_s": {
+    "count": 3,
+    "mean": 183.79952558529175,
+    "p50": 183.84401114206133,
+    "p95": 183.86405227699677
+  },
+  "run_end": {
+    "calls_recorded": 4,
+    "elapsed_wall_seconds": 61.23959499999182,
+    "ended_at": "2026-08-23T03:53:49.192+00:00",
+    "process": {
+      "returncode": 1
+    },
+    "startup_error": null
+  },
+  "schema_version": "rx580-vulkan-experiment-results-v1",
+  "succeeded": 3,
+  "ttft_ms": {
+    "count": 3,
+    "mean": 8346.30270000586,
+    "p50": 8347.914600017248,
+    "p95": 8350.61109001399
+  },
+  "wall_ms": {
+    "count": 3,
+    "mean": 8426.546466672638,
+    "p50": 8428.15100000007,
+    "p95": 8430.544100017869
+  },
+  "warmup_calls": 1,
+  "warmup_prompt_eval_tok_s": {
+    "count": 1,
+    "mean": 183.84401114206128,
+    "p50": 183.84401114206128,
+    "p95": 183.84401114206128
+  },
+  "warmup_ttft_ms": {
+    "count": 1,
+    "mean": 8263.722500007134,
+    "p50": 8263.722500007134,
+    "p95": 8263.722500007134
+  }
+}

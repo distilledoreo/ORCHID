@@ -1,0 +1,102 @@
+{
+  "health": {
+    "status": 200,
+    "value": {
+      "status": "ok"
+    }
+  },
+  "metrics": {
+    "parsed": {
+      "llamacpp:n_busy_slots_per_decode": 1.0,
+      "llamacpp:n_decode_total": 20.0,
+      "llamacpp:n_tokens_max": 1519.0,
+      "llamacpp:predicted_tokens_seconds": 25.4777,
+      "llamacpp:prompt_seconds_total": 33.378,
+      "llamacpp:prompt_tokens_seconds": 181.916,
+      "llamacpp:prompt_tokens_total": 6072.0,
+      "llamacpp:requests_deferred": 0.0,
+      "llamacpp:requests_processing": 0.0,
+      "llamacpp:tokens_predicted_seconds_total": 0.314,
+      "llamacpp:tokens_predicted_total": 8.0
+    },
+    "raw": "# HELP llamacpp:prompt_tokens_total Number of prompt tokens processed.\n# TYPE llamacpp:prompt_tokens_total counter\nllamacpp:prompt_tokens_total 6072\n# HELP llamacpp:prompt_seconds_total Prompt process time\n# TYPE llamacpp:prompt_seconds_total counter\nllamacpp:prompt_seconds_total 33.378\n# HELP llamacpp:tokens_predicted_total Number of generation tokens processed.\n# TYPE llamacpp:tokens_predicted_total counter\nllamacpp:tokens_predicted_total 8\n# HELP llamacpp:tokens_predicted_seconds_total Predict process time\n# TYPE llamacpp:tokens_predicted_seconds_total counter\nllamacpp:tokens_predicted_seconds_total 0.314\n# HELP llamacpp:n_decode_total Total number of llama_decode() calls\n# TYPE llamacpp:n_decode_total counter\nllamacpp:n_decode_total 20\n# HELP llamacpp:n_tokens_max Largest observed n_tokens.\n# TYPE llamacpp:n_tokens_max counter\nllamacpp:n_tokens_max 1519\n# HELP llamacpp:prompt_tokens_seconds Average prompt throughput in tokens/s.\n# TYPE llamacpp:prompt_tokens_seconds gauge\nllamacpp:prompt_tokens_seconds 181.916\n# HELP llamacpp:predicted_tokens_seconds Average generation throughput in tokens/s.\n# TYPE llamacpp:predicted_tokens_seconds gauge\nllamacpp:predicted_tokens_seconds 25.4777\n# HELP llamacpp:requests_processing Number of requests processing.\n# TYPE llamacpp:requests_processing gauge\nllamacpp:requests_processing 0\n# HELP llamacpp:requests_deferred Number of requests deferred.\n# TYPE llamacpp:requests_deferred gauge\nllamacpp:requests_deferred 0\n# HELP llamacpp:n_busy_slots_per_decode Average number of busy slots per llama_decode() call\n# TYPE llamacpp:n_busy_slots_per_decode gauge\nllamacpp:n_busy_slots_per_decode 1\n",
+    "status": 200
+  },
+  "slots": {
+    "status": 200,
+    "value": [
+      {
+        "id": 0,
+        "id_task": 26,
+        "is_processing": false,
+        "n_ctx": 8192,
+        "n_prompt_tokens": 1519,
+        "n_prompt_tokens_cache": 0,
+        "n_prompt_tokens_processed": 1518,
+        "next_token": [
+          {
+            "has_new_line": false,
+            "has_next_token": false,
+            "n_decoded": 2,
+            "n_remain": -1
+          }
+        ],
+        "params": {
+          "adaptive_decay": 0.8999999761581421,
+          "adaptive_target": -1.0,
+          "backend_sampling": false,
+          "chat_format": "peg-native",
+          "dry_allowed_length": 2,
+          "dry_base": 1.75,
+          "dry_multiplier": 0.0,
+          "dry_penalty_last_n": 8192,
+          "dynatemp_exponent": 1.0,
+          "dynatemp_range": 0.0,
+          "frequency_penalty": 0.0,
+          "generation_prompt": "<|im_start|>assistant\n<think>\n\n</think>\n\n",
+          "ignore_eos": false,
+          "lora": [],
+          "max_tokens": -1,
+          "min_keep": 0,
+          "min_p": 0.05000000074505806,
+          "mirostat": 0,
+          "mirostat_eta": 0.10000000149011612,
+          "mirostat_tau": 5.0,
+          "n_discard": 0,
+          "n_keep": 0,
+          "n_predict": -1,
+          "n_probs": 0,
+          "post_sampling_probs": false,
+          "presence_penalty": 0.0,
+          "reasoning_format": "deepseek",
+          "reasoning_in_content": false,
+          "repeat_last_n": 64,
+          "repeat_penalty": 1.0,
+          "samplers": [
+            "penalties",
+            "dry",
+            "top_n_sigma",
+            "top_k",
+            "typ_p",
+            "top_p",
+            "min_p",
+            "xtc",
+            "temperature"
+          ],
+          "seed": 4294967295,
+          "speculative.types": "none",
+          "stream": true,
+          "temperature": 0.0,
+          "timings_per_token": false,
+          "top_k": 40,
+          "top_n_sigma": -1.0,
+          "top_p": 1.0,
+          "typical_p": 1.0,
+          "xtc_probability": 0.0,
+          "xtc_threshold": 0.10000000149011612
+        },
+        "speculative": false
+      }
+    ]
+  }
+}

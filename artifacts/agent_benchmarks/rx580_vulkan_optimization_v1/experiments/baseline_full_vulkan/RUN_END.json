@@ -1,0 +1,9 @@
+{
+  "calls_recorded": 6,
+  "elapsed_wall_seconds": 93.08856260002358,
+  "ended_at": "2026-08-23T03:43:28.670+00:00",
+  "process": {
+    "returncode": 1
+  },
+  "startup_error": null
+}

@@ -637,6 +637,29 @@ def report_all(plan: dict[str, Any]) -> None:
         "The system inventory records RX 580 device identity, Vulkan device selection, VRAM availability, driver/runtime versions, process configuration, and Windows GPU counters. Core clock, memory clock, temperature, and PCIe negotiated width/generation were not exposed by the available read-only interfaces.",
         "",
         "No newer local Vulkan llama.cpp build or llama-bench executable was available; no build toolchain or driver install was added. See `DEFERRED_REBOOT_REQUIRED.md`.",
+        "The earlier harness-stop attempt is preserved under `experiments_ATTEMPT_01/` with its original plan and partial artifacts; it is excluded from the primary comparison.",
+    ])
+    flash = results.get("flash_attention_off")
+    flash_delta = ((flash["prompt_eval_tok_s"]["p50"] / base_tok) - 1) * 100 if flash and flash["prompt_eval_tok_s"]["p50"] else None
+    flash_ttft_delta = ((flash["ttft_ms"]["p50"] / baseline["ttft_ms"]["p50"]) - 1) * 100 if flash and baseline.get("ttft_ms", {}).get("p50") else None
+    lines.extend([
+        "",
+        "## Decision answers",
+        "",
+        "1. Full Vulkan execution is supported by the selected AMD RX 580 Vulkan device, explicit `--n-gpu-layers 999`, successful model load, stable prompt counters, and no fallback/OOM errors. The server logs do not expose a layer-by-layer allocation report, so this is strong operational evidence rather than a claim about an unavailable internal counter.",
+        "2. Vulkan reports 8192 MiB total and about 7402 MiB free at inventory time. During requests the direct process held about 3.96 GiB dedicated GPU memory; Windows also reported about 0.82 GiB non-local usage for that process. No crash or throughput collapse occurred, but the available counters cannot prove that every allocation stayed local to VRAM.",
+        "3. Core/memory clocks and temperature were not exposed by the installed read-only tools. Stable repeated prompt timings show no obvious benchmark instability, but they do not prove absence of thermal or power throttling.",
+        "4. PCIe negotiated generation/width was not exposed; no normality claim is made.",
+        "5. The current driver is not obviously problematic: Vulkan identifies the RX 580 and performs stably. AMD Adrenalin 26.5.2 is deferred for a later maintenance window.",
+        "6. No OS power or GPU preference was changed because the machine is remote and the available control was global Balanced/High-performance selection.",
+        "7. No newer local Vulkan llama.cpp build or usable local build toolchain was available; no replacement was attempted.",
+        f"8. No safe runtime flag produced a useful end-to-end improvement. Flash Attention off measured {flash_delta:.1f}% prompt-counter improvement but changed TTFT by {flash_ttft_delta:.1f}% and is rejected. Batch 4096, context 32768, KV unified, mmap+mlock, and thread variants were effectively tied.",
+        "9. Batch 2048 / ubatch 512 / Flash Attention on is retained as the safe reference. Shader/pipeline warmup was not materially significant after the one warmup; model startup itself remained separate overhead.",
+        "10. Background GPU consumers were visible in Windows counters, but no safe A/B closure test was performed; contention is therefore unquantified.",
+        "11. Best repeatable prompt-counter rate was 194.4 tok/s with Flash Attention off, but the best safe configuration is the baseline at 184.9 tok/s because the faster counter did not improve TTFT.",
+        "12. Further RX 580 tuning is unlikely to justify engineering time without a clock/thermal/PCIe telemetry provider or a newer Vulkan build; prompt reduction remains the higher-confidence optimization axis.",
+        "",
+        "RX580_STACK_ALREADY_NEAR_OPTIMAL",
     ])
     (OUT_ROOT / "FINAL_REPORT.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"summary: {OUT_ROOT / 'SUMMARY.json'}")
