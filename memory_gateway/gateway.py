@@ -19,6 +19,7 @@ from .pipeline_adapters import build_lossless_engine
 from .scheduler import CompactionScheduler, ThresholdPolicy
 from .cold_telemetry import BufferedColdMemoryTelemetry
 from .ingestion import append_novel_messages, parse_assistant_message, parse_stream_message
+from .foreground_telemetry import append_record, finalize_record, substitution_record
 
 
 def create_app(
@@ -176,6 +177,13 @@ def create_app(
             outbound["model"] = runtime.backend_model
         headers = _backend_headers(request, runtime.backend_api_key)
         headers["content-type"] = "application/json"
+        foreground_record = substitution_record(
+            request_id=request_id,
+            thread_id=thread_id,
+            inbound=payload["messages"],
+            snapshot=context,
+            stream=bool(payload.get("stream", False)),
+        )
 
         if payload.get("stream", False):
             stream_run_id = store.create_gateway_stream_run(
@@ -195,6 +203,7 @@ def create_app(
                     thread_id=thread_id,
                     request_id=request_id,
                     stream_run_id=stream_run_id,
+                    foreground_record=foreground_record,
                 ),
                 media_type="text/event-stream",
             )
@@ -206,6 +215,8 @@ def create_app(
                 headers=headers,
             )
         response_text = response.text
+        parsed = _json_or_text(response)
+        append_record(finalize_record(foreground_record, parsed))
         if response.is_success:
             response_message = parse_assistant_message(_json_or_text(response))
             if response_message is not None:
@@ -343,12 +354,14 @@ async def _stream_response(
     thread_id: str,
     request_id: str,
     stream_run_id: str,
+    foreground_record: dict[str, Any] | None = None,
 ):
     chunks: list[bytes] = []
     pending = b""
     saw_done = False
     saw_finish_reason = False
     first_token_at: str | None = None
+    last_usage_payload: dict[str, Any] | None = None
     provider_started_at = _stream_now()
     stream_end_at: str | None = None
     status = "ACCEPTED"
@@ -356,7 +369,7 @@ async def _stream_response(
     error_excerpt: str | None = None
 
     def inspect_line(line: bytes) -> None:
-        nonlocal saw_done, saw_finish_reason, first_token_at
+        nonlocal saw_done, saw_finish_reason, first_token_at, last_usage_payload
         text = line.decode("utf-8", errors="replace").strip()
         if not text or not text.startswith("data:"):
             return
@@ -368,6 +381,10 @@ async def _stream_response(
             payload = json.loads(payload_text)
         except json.JSONDecodeError as error:
             raise ProviderStreamError("malformed_sse_frame", str(error)) from error
+        if not isinstance(payload, dict):
+            return
+        if isinstance(payload.get("usage"), dict):
+            last_usage_payload = payload
         if isinstance(payload.get("error"), dict):
             message = payload["error"].get("message") or "provider error frame"
             raise ProviderStreamError("provider_error_frame", str(message))
@@ -453,6 +470,8 @@ async def _stream_response(
             bytes_forwarded=sum(len(chunk) for chunk in chunks),
             partial_output=int(bool(chunks)),
         )
+        if foreground_record is not None:
+            append_record(finalize_record(foreground_record, last_usage_payload or {}))
     except asyncio.CancelledError:
         status = "CANCELLED"
         failure_category = "client_cancelled"

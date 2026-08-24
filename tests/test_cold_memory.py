@@ -603,7 +603,8 @@ def test_fail_open_timeout_preserves_active_and_hot_context(
 
     assert shadow.messages == baseline.messages
     assert shadow.active_capsule_id == baseline.active_capsule_id == capsule_id
-    assert shadow.raw_tail_event_ids == baseline.raw_tail_event_ids == (event["id"],)
+    assert shadow.raw_tail_event_ids == baseline.raw_tail_event_ids
+    assert event["id"] not in shadow.raw_tail_event_ids
     assert shadow.cold_retrieval is not None
     assert shadow.cold_retrieval.fail_open is True
     assert shadow.cold_retrieval.timed_out is True

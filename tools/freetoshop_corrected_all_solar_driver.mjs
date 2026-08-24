@@ -6,6 +6,13 @@ import path from "node:path";
 import readline from "node:readline";
 import { spawn, execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import {
+  continuationCommand,
+  createContinuationWatchdog,
+  isBusyEvent,
+  isIdleEvent,
+  isTurnStartEvidence,
+} from "./pi_continuation_policy.mjs";
 
 const stage = process.env.ORCHID_CORRECTED_STAGE;
 const artifact = process.env.ORCHID_CORRECTED_ARTIFACT;
@@ -54,6 +61,8 @@ for (const [id, name, model, directoryName, agentName, outputName] of [
     lastUsage: null,
     lastEvents: [],
     stopping: false,
+    agentIdle: true,
+    watchdog: createContinuationWatchdog({ timeoutMs: Number(process.env.BENCHMARK_CONTINUATION_WATCHDOG_MS ?? 30_000) }),
   });
 }
 
@@ -103,12 +112,28 @@ function scheduleContinuation(entry) {
   if (entry.stopping || entry.continuationCount >= maxContinuations) return;
   setTimeout(() => {
     if (entry.stopping || !entry.process || entry.process.exitCode !== null) return;
+    if (entry.watchdog.pending && !entry.watchdog.pending.turnStarted) {
+      const stall = entry.watchdog.check();
+      if (stall.stalled) {
+        entry.errors.push({
+          at: now(),
+          category: "continuation_turn_start_timeout",
+          rpc_type: stall.pending.rpcType,
+          id: stall.pending.id,
+        });
+        entry.watchdog.clear();
+        return;
+      }
+    }
     entry.continuationCount += 1;
-    send(entry, {
-      id: `${entry.id}-follow-${entry.continuationCount}`,
-      type: "follow_up",
+    const command = continuationCommand({
+      agentIdle: entry.agentIdle,
+      id: `${entry.id}-continue-${entry.continuationCount}`,
       message: continuation,
     });
+    if (command.type === "prompt") entry.promptCount += 1;
+    entry.watchdog.start({ rpcType: command.type, id: command.id, arm: entry.id });
+    send(entry, command);
   }, 1200);
 }
 
@@ -116,6 +141,12 @@ function note(entry, event) {
   const type = event?.type ?? "unknown";
   entry.lastEvents.push(type);
   if (entry.lastEvents.length > 40) entry.lastEvents.shift();
+  if (isBusyEvent(type)) entry.agentIdle = false;
+  if (isIdleEvent(type)) entry.agentIdle = true;
+  entry.watchdog.note(type);
+  if (entry.watchdog.pending?.turnStarted && isTurnStartEvidence(type)) {
+    entry.watchdog.clear();
+  }
   if (type === "message_end" && event.message?.role === "assistant") entry.providerMessages += 1;
   if (type === "tool_execution_start") entry.toolCalls += 1;
   if (type === "tool_execution_end" && event.isError) entry.toolFailures += 1;
@@ -149,6 +180,8 @@ function launch(entry) {
   });
   entry.process = child;
   entry.launchCount += 1;
+  entry.agentIdle = true;
+  entry.watchdog.clear();
   const lines = readline.createInterface({ input: child.stdout });
   lines.on("line", (line) => {
     entry.rawLog.write(`${line}\n`);

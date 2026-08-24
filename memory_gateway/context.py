@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import time
 from dataclasses import dataclass, replace
 from typing import Any
@@ -9,13 +10,102 @@ from .cold_memory import (
     ColdMemorySearchResult,
     build_retrieval_query_trace,
 )
-from .db import SQLiteStore, content_hash
+from .db import SQLiteStore, content_hash, _ordered_history_overlap
 from .cold_telemetry import ColdMemoryTelemetrySink
 
 
 def estimate_tokens(text: str) -> int:
     """Conservative dependency-free estimate used only for budgeting."""
     return max(1, len(text) // 4)
+
+
+def _message_tokens(message: dict[str, Any]) -> int:
+    from .ingestion import message_content
+
+    return estimate_tokens(message_content(message))
+
+
+def _event_message_hash(event: dict[str, Any]) -> str | None:
+    raw = event.get("metadata_json") or event.get("metadata") or "{}"
+    if isinstance(raw, dict):
+        metadata = raw
+    else:
+        try:
+            metadata = json.loads(raw)
+        except (TypeError, json.JSONDecodeError):
+            return None
+    digest = metadata.get("message_hash")
+    return digest if isinstance(digest, str) else None
+
+
+def _tool_ids(message: dict[str, Any]) -> set[str]:
+    ids: set[str] = set()
+    call_id = message.get("tool_call_id")
+    if isinstance(call_id, str) and call_id:
+        ids.add(call_id)
+    for call in message.get("tool_calls") or ():
+        if isinstance(call, dict) and isinstance(call.get("id"), str) and call["id"]:
+            ids.add(call["id"])
+    return ids
+
+
+def _protocol_continuity_indices(messages: list[dict[str, Any]], keep: set[int]) -> set[int]:
+    """Keep covered assistant/tool mates required by an uncovered in-flight tool loop."""
+
+    extra: set[int] = set()
+    assistant_for_id: dict[str, int] = {}
+    tools_for_id: dict[str, list[int]] = {}
+    for index, message in enumerate(messages):
+        role = message.get("role")
+        if role == "assistant":
+            for call_id in _tool_ids(message):
+                assistant_for_id[call_id] = index
+        elif role == "tool":
+            for call_id in _tool_ids(message):
+                tools_for_id.setdefault(call_id, []).append(index)
+    changed = True
+    held = set(keep)
+    while changed:
+        changed = False
+        for index in list(held):
+            message = messages[index]
+            role = message.get("role")
+            if role == "tool":
+                for call_id in _tool_ids(message):
+                    assistant_index = assistant_for_id.get(call_id)
+                    if assistant_index is not None and assistant_index not in held:
+                        held.add(assistant_index)
+                        extra.add(assistant_index)
+                        changed = True
+            if role == "assistant":
+                for call_id in _tool_ids(message):
+                    for tool_index in tools_for_id.get(call_id, ()):
+                        if tool_index not in held:
+                            held.add(tool_index)
+                            extra.add(tool_index)
+                            changed = True
+    extra -= keep
+    return extra
+
+
+@dataclass(frozen=True)
+class SubstitutionReport:
+    """Foreground substitution accounting for one assembled request."""
+
+    active: bool
+    inbound_request_messages: int
+    inbound_request_tokens: int
+    suppressed_covered_messages: int
+    suppressed_covered_tokens: int
+    retained_request_messages: int
+    retained_request_tokens: int
+    protocol_continuity_messages: int
+    protocol_continuity_tokens: int
+    active_tokens: int
+    uncovered_tail_tokens: int
+    covered_raw_tokens_forwarded: int
+    final_foreground_tokens: int
+    overlap_policy: str = "none"
 
 
 @dataclass(frozen=True)
@@ -29,6 +119,7 @@ class ContextSnapshot:
     estimated_tokens: int
     messages: list[dict[str, Any]]
     cold_retrieval: ColdMemorySearchResult | None = None
+    substitution: SubstitutionReport | None = None
 
 
 class ContextAssembler:
@@ -58,9 +149,21 @@ class ContextAssembler:
         self.cold_memory_token_budget = cold_memory_token_budget
         self.cold_memory_max_injected = cold_memory_max_injected
         self.cold_memory_telemetry = cold_memory_telemetry
+        # overlap_tokens is retained for constructor compatibility. It must not
+        # pull ACTIVE-covered history back into the foreground tail. Explicit
+        # overlap into compacted history is disabled (policy: none).
+        _ = overlap_tokens
 
-    def _tail(self, thread_id: str) -> list[dict[str, Any]]:
+    def _tail(
+        self,
+        thread_id: str,
+        *,
+        after_sequence: int | None = None,
+        apply_minimum: bool = True,
+    ) -> list[dict[str, Any]]:
         events = self.store.list_events(thread_id)
+        if after_sequence is not None:
+            events = [event for event in events if int(event["sequence"]) > after_sequence]
         selected: list[dict[str, Any]] = []
         total = 0
         target = self.raw_tail_target_tokens
@@ -71,7 +174,13 @@ class ContextAssembler:
             selected.append(event)
             total += event_tokens
         selected.reverse()
-        if total < self.minimum_raw_tail_tokens and len(events) > len(selected):
+        # The historical floor may only grow within the already-eligible window.
+        # After ACTIVE, apply_minimum is false so compacted history cannot return.
+        if (
+            apply_minimum
+            and total < self.minimum_raw_tail_tokens
+            and len(events) > len(selected)
+        ):
             for event in reversed(events[: -len(selected)] if selected else events):
                 selected.insert(0, event)
                 total += event["token_count"] or estimate_tokens(event["content"])
@@ -95,8 +204,27 @@ class ContextAssembler:
         project_id: str | None = None,
     ) -> ContextSnapshot:
         active = self.store.get_active_capsule(thread_id)
-        tail = self._tail(thread_id)
-        messages = list(request_messages)
+        covered_sequence = self._covered_sequence(active)
+        tail = self._tail(
+            thread_id,
+            after_sequence=covered_sequence,
+            apply_minimum=active is None,
+        )
+        inbound = list(request_messages)
+        inbound_tokens = sum(_message_tokens(message) for message in inbound)
+        if active is None:
+            messages = inbound
+            protocol_indices: set[int] = set()
+            suppressed_tokens = 0
+            suppressed_count = 0
+        else:
+            messages, protocol_indices, suppressed_count, suppressed_tokens = (
+                self._substitute_covered_request_messages(
+                    thread_id,
+                    inbound,
+                    covered_sequence=covered_sequence,
+                )
+            )
         prefix: list[dict[str, Any]] = []
         if active:
             prefix.append(
@@ -110,25 +238,39 @@ class ContextAssembler:
                     ),
                 }
             )
-        if tail:
+        tail_for_prefix = tail
+        if active is not None:
+            # Avoid a second copy of uncovered chat that is already forwarded
+            # as protocol messages. Only dump journal events the request omitted.
+            from .ingestion import message_hash
+
+            forwarded_hashes = {message_hash(message) for message in messages}
+            tail_for_prefix = [
+                event
+                for event in tail
+                if _event_message_hash(event) not in forwarded_hashes
+            ]
+        if tail_for_prefix:
             prefix.append(
                 {
                     "role": "system",
                     "content": (
                         "RECENT RAW EVENT TAIL (authoritative verbatim context)\n\n"
-                        + self._render_events(tail)
+                        + self._render_events(tail_for_prefix)
                     ),
                 }
             )
-        request_tokens = sum(
-            estimate_tokens(str(message.get("content", "")))
-            for message in messages
-        )
+        request_tokens = sum(_message_tokens(message) for message in messages)
         capsule_tokens = estimate_tokens(active["content"]) if active else 0
-        tail_tokens = sum(
+        uncovered_tail_tokens = sum(
             event["token_count"] or estimate_tokens(event["content"])
             for event in tail
         )
+        forwarded_tail_tokens = sum(
+            event["token_count"] or estimate_tokens(event["content"])
+            for event in tail_for_prefix
+        )
+        tail_tokens = forwarded_tail_tokens
         cold_result: ColdMemorySearchResult | None = None
         cold_tokens = 0
         if (
@@ -314,17 +456,87 @@ class ContextAssembler:
         system_messages = [message for message in messages if message.get("role") in {"system", "developer"}]
         other_messages = [message for message in messages if message.get("role") not in {"system", "developer"}]
         assembled = system_messages + prefix + other_messages
+        final_tokens = capsule_tokens + forwarded_tail_tokens + request_tokens + cold_tokens
+        protocol_tokens = sum(
+            _message_tokens(inbound[index]) for index in protocol_indices
+        )
+        substitution = SubstitutionReport(
+            active=active is not None,
+            inbound_request_messages=len(inbound),
+            inbound_request_tokens=inbound_tokens,
+            suppressed_covered_messages=suppressed_count,
+            suppressed_covered_tokens=suppressed_tokens,
+            retained_request_messages=len(messages),
+            retained_request_tokens=request_tokens,
+            protocol_continuity_messages=len(protocol_indices),
+            protocol_continuity_tokens=protocol_tokens,
+            active_tokens=capsule_tokens,
+            uncovered_tail_tokens=uncovered_tail_tokens,
+            covered_raw_tokens_forwarded=protocol_tokens,
+            final_foreground_tokens=final_tokens,
+            overlap_policy="none",
+        )
         return ContextSnapshot(
             active_capsule_id=active["id"] if active else None,
             raw_tail_event_ids=tuple(event["id"] for event in tail),
             capsule_tokens=capsule_tokens,
-            raw_tail_tokens=tail_tokens,
+            raw_tail_tokens=uncovered_tail_tokens,
             request_tokens=request_tokens,
             cold_memory_tokens=cold_tokens,
-            estimated_tokens=capsule_tokens + tail_tokens + request_tokens + cold_tokens,
+            estimated_tokens=final_tokens,
             messages=assembled,
             cold_retrieval=cold_result,
+            substitution=substitution,
         )
+
+    def _covered_sequence(self, active: dict[str, Any] | None) -> int | None:
+        if not active or not active.get("covered_end_event_id"):
+            return None
+        covered = self.store.get_event(active["covered_end_event_id"])
+        if covered is None:
+            return None
+        return int(covered["sequence"])
+
+    def _substitute_covered_request_messages(
+        self,
+        thread_id: str,
+        inbound: list[dict[str, Any]],
+        *,
+        covered_sequence: int | None,
+    ) -> tuple[list[dict[str, Any]], set[int], int, int]:
+        from .ingestion import message_hash
+
+        chat_events = [
+            event
+            for event in self.store.list_events(thread_id)
+            if _event_message_hash(event)
+        ]
+        known_hashes = [_event_message_hash(event) or "" for event in chat_events]
+        incoming_hashes = [message_hash(message) for message in inbound]
+        overlap = _ordered_history_overlap(known_hashes, incoming_hashes)
+        aligned_events = chat_events[:overlap]
+        if overlap and incoming_hashes[:overlap] == known_hashes[-overlap:]:
+            aligned_events = chat_events[-overlap:]
+        keep: set[int] = set()
+        covered_indices: set[int] = set()
+        for index, message in enumerate(inbound):
+            event = aligned_events[index] if index < len(aligned_events) else None
+            covered = (
+                event is not None
+                and covered_sequence is not None
+                and int(event["sequence"]) <= covered_sequence
+            )
+            if covered:
+                covered_indices.add(index)
+            else:
+                keep.add(index)
+        protocol_indices = _protocol_continuity_indices(inbound, keep)
+        keep |= protocol_indices
+        dropped = covered_indices - protocol_indices
+        suppressed_count = len(dropped)
+        suppressed_tokens = sum(_message_tokens(inbound[index]) for index in dropped)
+        retained = [inbound[index] for index in sorted(keep)]
+        return retained, protocol_indices, suppressed_count, suppressed_tokens
 
     @staticmethod
     def _render_cold_memories(memories: tuple[Any, ...]) -> str:
