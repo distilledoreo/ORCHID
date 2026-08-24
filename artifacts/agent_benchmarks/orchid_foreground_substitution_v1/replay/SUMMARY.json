@@ -1,0 +1,92 @@
+{
+  "source_run": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_corrected_all_solar",
+  "requests": 57,
+  "promotions_applied": [
+    1,
+    2,
+    3
+  ],
+  "old_mean_foreground_tokens": 144630.5,
+  "new_mean_foreground_tokens": 41945.6,
+  "old_cumulative_foreground_tokens": 8243937,
+  "new_cumulative_foreground_tokens": 2390898,
+  "historical_observed_orchid_cumulative_input": 7864313,
+  "historical_observed_pi_cumulative_input": 1811513,
+  "covered_raw_tokens_forwarded_nonzero_requests": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57
+  ],
+  "offline_gate_non_protocol_covered_raw_forwarded_zero": true,
+  "replay_limitation": "Pi telemetry reconstructed 131 chat messages / 57 turns. Historical watermarks 4-5 end at sequences 169 and 278 because the live gateway ingested additional request/response copies. Those two promotions cannot be applied onto the reconstructed journal.",
+  "collapse_by_generation": [
+    {
+      "generation": 1,
+      "pre_promotion_new_tokens": 126759,
+      "immediate_post_promotion_new_tokens": 93229,
+      "immediate_post_old_tokens": 143851,
+      "percentage_collapse_vs_old": 35.19,
+      "percentage_collapse_vs_pre_new": 26.45
+    },
+    {
+      "generation": 2,
+      "pre_promotion_new_tokens": 109675,
+      "immediate_post_promotion_new_tokens": 36637,
+      "immediate_post_old_tokens": 167613,
+      "percentage_collapse_vs_old": 78.14,
+      "percentage_collapse_vs_pre_new": 66.59
+    },
+    {
+      "generation": 3,
+      "pre_promotion_new_tokens": 39126,
+      "immediate_post_promotion_new_tokens": 6959,
+      "immediate_post_old_tokens": 173415,
+      "percentage_collapse_vs_old": 95.99,
+      "percentage_collapse_vs_pre_new": 82.21
+    }
+  ],
+  "cache_observation": {
+    "active_prefix_stable_across_generation": false,
+    "note": "ACTIVE content changes at each promotion; raw tail and current suffix still grow. No cache redesign."
+  }
+}

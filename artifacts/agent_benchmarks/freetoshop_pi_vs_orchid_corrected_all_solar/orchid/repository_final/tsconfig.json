@@ -1,0 +1,19 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/benchmarks" },
+    { "path": "packages/pixel-storage" },
+    { "path": "packages/core-document" },
+    { "path": "packages/command-history" },
+    { "path": "packages/compositor" },
+    { "path": "packages/renderer" },
+    { "path": "packages/raster-engine" },
+    { "path": "packages/filter-engine" },
+    { "path": "packages/selection-engine" },
+    { "path": "packages/transform-engine" },
+    { "path": "packages/text-engine" },
+    { "path": "packages/file-codecs" },
+    { "path": "packages/persistence" },
+    { "path": "apps/web" }
+  ]
+}

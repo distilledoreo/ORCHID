@@ -1,0 +1,72 @@
+{
+  "benchmark": "Corrected FreetoShop Pi-vs-ORCHID All-Solar A/B",
+  "run_id": "freetoshop_pi_vs_orchid_corrected_all_solar_20260823",
+  "status": "FROZEN",
+  "frozen_at": "2026-08-23T21:51:25.288+00:00",
+  "design": "sealed contemporaneous paired run, n=1",
+  "corrected_base_commit": "98f0b0e5017db5d746257e40668e71ce777925e6",
+  "implementation_commit": "65d630700366515a5c05885bad85bc3bee69799e",
+  "implementation_tree": "bab89f44a9508f3b48b38448da063cc4975c597c",
+  "implementation_file_sha256": {
+    "memory_gateway/compaction.py": "8b5f0aebcdbdc6fe6bd10a0477ad776b2bdfaec7d91ed8e66ad44d522c0ccb40",
+    "memory_gateway/config.py": "9440256a26ff3b89387fe44dffdbd11320e1aaf7eda2c236f8724d1bf1ec683c",
+    "memory_gateway/pipeline.py": "9070e3bad0a651852f6cdc9e8c1ed6d6976a588a520257fc8544b196bcc1f7c7",
+    "memory_gateway/pipeline_adapters.py": "63685bec6bce6ac9d14ef2d0427e0158653492dfc683dfaf997a83de2b3aa6f7",
+    "memory_gateway/scheduler.py": "2daa7a28df8f5ffee9dead6850f1b1991fd53de51f9c141d8623f654312b27c0",
+    "tools/benchmark_freetoshop_corrected_all_solar.py": "8740ff945b6da9bb12793bf0d35d7464bdbfec81ab1af943e8847cefa2d5fd6c",
+    "tools/freetoshop_corrected_all_solar_driver.mjs": "0e8a83472061e4e3dcf116300d61d2a9306e2e9a7e22f3ba6c48d23786de5d5b",
+    "tools/start_freetoshop_corrected_all_solar.ps1": "012723e129daf9795334522190d2c620204e9140ae59a2779c4b1be51500a060"
+  },
+  "historical_source_manifest": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_20260820\\BENCHMARK_MANIFEST.json",
+  "historical_source_manifest_sha256": "316445e4ea13665e389ce798c3e85e32f8b3d8da36a72886ae913ce19d5b7961",
+  "start_commit": "db24908e582c1642a001abd2feca4ec47b1947f8",
+  "start_tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+  "target_commit_controller_private": "71ed699e605ddfcec6f172d529040f39544dcc8f",
+  "target_tree_controller_private": "032d926eeed1bdff5586f9aeb0d063ea6d876284",
+  "public_goal": {
+    "path": "BENCHMARK_GOAL.md",
+    "sha256": "d789f01c840878946c1cd885bcd48dfb4f96b4db2eafb82615dfdd4064290e7e",
+    "byte_identical_between_arms": true
+  },
+  "sealed_arms": {
+    "PI_NATIVE": {
+      "baseline_commit": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa",
+      "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+      "model": "openrouter/upstage/solar-pro4",
+      "native_compaction": true
+    },
+    "ORCHID": {
+      "baseline_commit": "ef22afee503843305c28d47dbf966cd644f52401",
+      "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+      "model": "orchid/upstage/solar-pro4",
+      "native_compaction": false,
+      "selector_model": "upstage/solar-pro4",
+      "consolidator_model": "upstage/solar-pro4",
+      "canonicalizer_enabled": false
+    }
+  },
+  "early_gate": {
+    "required_clean_promotions": 3,
+    "failure_action": "stop both arms and preserve evidence"
+  },
+  "run_policy": {
+    "max_wall_clock_ms_per_arm": 21600000,
+    "checkpoint_interval_ms": 900000,
+    "launch": "paired",
+    "manual_rescue": "forbidden",
+    "controller_restart_limit": 0,
+    "tuning_after_launch": "forbidden",
+    "provider_preflight_calls": 0
+  },
+  "predeclared_stop_conditions": [
+    "ORCHID fails the 3-promotion gate",
+    "unrecoverable continuity stall",
+    "repository corruption",
+    "benchmark leakage",
+    "asymmetric provider outage or throttling",
+    "unrecoverable provider failure",
+    "benchmark process exits unexpectedly"
+  ],
+  "stage": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823",
+  "oracle_root_controller_private": "C:\\Users\\disti\\Documents\\App Development\\FreetoShop"
+}

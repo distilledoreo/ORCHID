@@ -1,0 +1,33 @@
+{
+  "status": "FAIL",
+  "stop_reason": null,
+  "promotions": 0,
+  "post_promotion_turns": null,
+  "foreground_requests": 0,
+  "active_foreground_requests": 0,
+  "idle_prompt_continuations": 0,
+  "follow_up_continuations": 0,
+  "controller_stalls": [],
+  "mean_inbound_estimated_tokens": null,
+  "mean_assembled_estimated_tokens": null,
+  "mean_provider_input_tokens": null,
+  "mean_estimator_vs_provider_ratio": null,
+  "collapse_after_active_changes": [],
+  "non_protocol_covered_raw_forwarded_request_ids": [],
+  "pass_criteria": {
+    "promotions_ge_3": false,
+    "post_promotion_turns_ge_5": false,
+    "non_protocol_covered_raw_forwarded_zero": true,
+    "idle_continuation_used_prompt": false,
+    "no_controller_stall": true,
+    "no_manual_intervention": false,
+    "provider_tokens_present": false,
+    "assembled_tracks_provider": false,
+    "material_collapse_after_promotion": false
+  },
+  "historical_note": {
+    "replay_corrected_orchid_cumulative": 2390898,
+    "historical_pi_cumulative": 1811513,
+    "historical_additive_orchid_cumulative": 7864313
+  }
+}

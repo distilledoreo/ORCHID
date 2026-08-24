@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "size": 512,
+  "iterations": 3,
+  "samples": [
+    {
+      "iteration": 0,
+      "cancelledGeneration": 1,
+      "recoveryGeneration": 2,
+      "verificationGeneration": 3,
+      "candidateInputTransferBytes": 2243328,
+      "recoveryInputTransferBytes": 2243328,
+      "verificationInputTransferBytes": 0,
+      "recoveryFrameBytes": 65536,
+      "staleFramePublished": false,
+      "recoveryExact": true,
+      "durationMs": 512
+    },
+    {
+      "iteration": 1,
+      "cancelledGeneration": 4,
+      "recoveryGeneration": 5,
+      "verificationGeneration": 6,
+      "candidateInputTransferBytes": 262144,
+      "recoveryInputTransferBytes": 2243328,
+      "verificationInputTransferBytes": 0,
+      "recoveryFrameBytes": 65536,
+      "staleFramePublished": false,
+      "recoveryExact": true,
+      "durationMs": 341
+    },
+    {
+      "iteration": 2,
+      "cancelledGeneration": 7,
+      "recoveryGeneration": 8,
+      "verificationGeneration": 9,
+      "candidateInputTransferBytes": 262144,
+      "recoveryInputTransferBytes": 2243328,
+      "verificationInputTransferBytes": 0,
+      "recoveryFrameBytes": 65536,
+      "staleFramePublished": false,
+      "recoveryExact": true,
+      "durationMs": 327
+    }
+  ],
+  "cancellationForcesCleanRecovery": true,
+  "verificationReusesRecoveryResources": true,
+  "localizedCandidatesUseTileDeltas": true,
+  "noStaleFramesPublished": true,
+  "everyRecoveryExact": true,
+  "errorCount": 0,
+  "maxDurationMs": 512
+}

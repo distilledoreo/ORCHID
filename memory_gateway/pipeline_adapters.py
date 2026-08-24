@@ -13,7 +13,6 @@ from .compaction import (
     _hash,
     compute_source_event_hash,
     expand_source_items,
-    source_item_parent_event_id,
     source_item_payload,
 )
 from .config import RuntimeConfig
@@ -164,6 +163,61 @@ CONSOLIDATOR_RESPONSE_FORMAT: dict[str, Any] = {
         },
     },
 }
+
+
+def consolidator_response_format_for_sources(
+    allowed_ids: tuple[str, ...] | list[str],
+) -> dict[str, Any]:
+    """Build a consolidator schema that permits only exact supplied source IDs."""
+
+    citation_items: dict[str, Any] = {"type": "string"}
+    citation_array: dict[str, Any] = {
+        "type": "array",
+        "items": citation_items,
+    }
+    if allowed_ids:
+        citation_items["enum"] = list(allowed_ids)
+    else:
+        citation_array["maxItems"] = 0
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "consolidator_response_v1",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "content": {"type": "string"},
+                    "evidence_event_ids": citation_array,
+                    "retire": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "content": {"type": "string"},
+                                "memory_type": {"type": "string"},
+                                "importance": {
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1,
+                                },
+                                "evidence_event_ids": citation_array,
+                            },
+                            "required": [
+                                "content",
+                                "memory_type",
+                                "importance",
+                                "evidence_event_ids",
+                            ],
+                            "additionalProperties": False,
+                        },
+                    },
+                },
+                "required": ["content", "evidence_event_ids"],
+                "additionalProperties": False,
+            },
+        },
+    }
 
 DEFAULT_CANONICALIZER_INPUT_TOKENS = 8_192
 
@@ -541,13 +595,17 @@ class OpenAICompatConsolidatorEngine:
         snapshot_end_event_id: str | None,
         packet: LosslessPacket,
     ) -> ConsolidationResult:
+        allowed_ids = tuple(item.id for item in events)
         _set_call_context(
             self.client,
             stage="consolidator",
-            source_refs=tuple(item.id for item in events),
+            source_refs=allowed_ids,
         )
         try:
             _check_call_ownership(self.client)
+            self.client.response_format = consolidator_response_format_for_sources(
+                allowed_ids
+            )
             response = await self.client.complete_json(
                 {
                     "base_capsule": _capsule_payload(base_capsule),
@@ -584,10 +642,7 @@ class OpenAICompatConsolidatorEngine:
                 raise ModelProtocolError(
                     "consolidator returned duplicate evidence event IDs"
                 )
-            allowed_ids = {item.id for item in events} | {
-                source_item_parent_event_id(item) for item in events
-            }
-            unknown_ids = set(evidence_ids) - allowed_ids
+            unknown_ids = set(evidence_ids) - set(allowed_ids)
             if unknown_ids:
                 raise ModelProtocolError(
                     "consolidator returned unknown evidence event ID(s): "

@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+    "noUncheckedIndexedAccess": true
+  },
+  "include": ["src", "vite.config.ts"],
+  "references": [
+    { "path": "../../packages/core-document" },
+    { "path": "../../packages/command-history" },
+    { "path": "../../packages/renderer" },
+    { "path": "../../packages/raster-engine" },
+    { "path": "../../packages/filter-engine" },
+    { "path": "../../packages/selection-engine" },
+    { "path": "../../packages/text-engine" },
+    { "path": "../../packages/transform-engine" },
+    { "path": "../../packages/file-codecs" },
+    { "path": "../../packages/persistence" },
+    { "path": "../../packages/pixel-storage" }
+  ]
+}

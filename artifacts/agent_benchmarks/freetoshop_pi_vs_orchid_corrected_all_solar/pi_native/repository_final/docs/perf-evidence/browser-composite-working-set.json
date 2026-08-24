@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "fixture": {
+    "width": 128,
+    "height": 128,
+    "layerCount": 6,
+    "tileSize": 64,
+    "maxBytes": 49152,
+    "iterations": 24
+  },
+  "peakAllocatedBytes": 49152,
+  "finalAllocatedBytes": 49152,
+  "maxTileCount": 3,
+  "totalEvictions": 189,
+  "samples": [
+    {
+      "iteration": 0,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 5,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 1,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 13,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 2,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 21,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 3,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 29,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 4,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 37,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 5,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 45,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 6,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 53,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 7,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 61,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 8,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 69,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 9,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 77,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 10,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 85,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 11,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 93,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 12,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 101,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 13,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 109,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 14,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 117,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 15,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 125,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 16,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 133,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 17,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 141,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 18,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 149,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 19,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 157,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 20,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 165,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 21,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 173,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 22,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 181,
+      "fullyWarm": false
+    },
+    {
+      "iteration": 23,
+      "allocatedBytes": 49152,
+      "tileCount": 3,
+      "evictions": 189,
+      "fullyWarm": false
+    }
+  ],
+  "stayedWithinBudget": true,
+  "boundedGrowth": true,
+  "jsHeap": {
+    "usedJSHeapSizeStart": 10000000,
+    "usedJSHeapSizeEnd": 10000000,
+    "jsHeapSizeLimit": 3760000000
+  },
+  "runtime": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.186 Safari/537.36",
+    "hardwareConcurrency": 16
+  }
+}

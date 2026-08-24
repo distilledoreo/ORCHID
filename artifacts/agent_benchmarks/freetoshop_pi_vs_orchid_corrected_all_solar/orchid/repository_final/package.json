@@ -1,0 +1,45 @@
+{
+  "name": "freetoshop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A local-first, browser-based professional image editor.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "npm@11.7.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "dev": "npm run dev --workspace @freetoshop/web",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:browser-perf": "npm run build --workspace @freetoshop/web && playwright test tests/e2e/composite-performance.spec.ts --project=chromium --workers=1",
+    "test:browser-perf:all": "npm run build --workspace @freetoshop/web && playwright test tests/e2e/composite-performance.spec.ts --project=chromium --project=firefox --project=webkit --workers=1",
+    "test:ui-visual": "npm run build --workspace @freetoshop/web && playwright test tests/e2e/visual-workspace.spec.ts --project=chromium --workers=1",
+    "typecheck": "tsc -b",
+    "format:check": "prettier --check .",
+    "audit": "npm audit --audit-level=high",
+    "benchmark": "npm run benchmark --workspace @freetoshop/benchmarks"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.32.0",
+    "@playwright/test": "1.55.1",
+    "@types/node": "24.1.0",
+    "dejavu-fonts-ttf": "2.37.3",
+    "eslint": "9.32.0",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-react-refresh": "0.4.20",
+    "globals": "16.3.0",
+    "prettier": "3.6.2",
+    "typescript": "5.8.3",
+    "typescript-eslint": "8.38.0",
+    "vitest": "3.2.7"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@freetoshop/benchmarks",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "benchmark": "npm run build && node --expose-gc dist/run.js"
+  },
+  "dependencies": {
+    "@freetoshop/core-document": "0.1.0",
+    "@freetoshop/pixel-storage": "0.1.0",
+    "@freetoshop/raster-engine": "0.1.0",
+    "@freetoshop/renderer": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.1.0",
+    "typescript": "5.8.3"
+  }
+}

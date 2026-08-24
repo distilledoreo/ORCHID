@@ -71,7 +71,7 @@ do {
 } while (-not $listener -and [DateTime]::UtcNow -lt $deadline -and -not $gateway.HasExited)
 if (-not $listener) { throw 'ORCHID preflight gateway did not bind 127.0.0.1:7334' }
 Invoke-RestMethod -Uri "http://127.0.0.1:$port/healthz" -TimeoutSec 10 | Out-Null
-@{ pid = $gateway.Id; started_at = [DateTime]::UtcNow.ToString('o'); database = $database; port = $port } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $artifact 'gateway\PID.json') -Encoding utf8
+@{ pid = $gateway.Id; started_at = [DateTime]::UtcNow.ToString('o'); database = $database; port = $port } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $artifact 'gateway\PID.json') -Encoding utf8NoBOM
 
 Write-Output "stage=$stage"
 Write-Output "artifact=$artifact"

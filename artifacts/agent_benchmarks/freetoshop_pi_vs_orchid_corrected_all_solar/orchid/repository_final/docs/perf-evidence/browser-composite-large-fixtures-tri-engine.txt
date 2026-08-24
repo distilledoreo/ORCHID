@@ -1,0 +1,26 @@
+Tri-engine large-fixture progressive interactive probes
+========================================================
+
+8192² sparse progressive (layerCount 4, sparsePatchSize 256):
+  Chromium: PASS (cold ~39 ms, pan cold ~20 ms, warm ~10 ms)
+  Firefox:  PASS
+  WebKit:   PASS
+  Evidence: browser-composite-8192-sparse-interactive.json
+
+4096² dense × 20 solid layers (goal representative fixture):
+  Chromium: PASS warm budget 50 ms (cold ~232 ms, pan cold ~198 ms, warm ~45 ms)
+  Firefox:  PASS warm budget 120 ms (engine variance; warm still < cold/2)
+  WebKit:   PASS warm budget 120 ms (engine variance; warm still < cold/2)
+  Evidence:
+    browser-composite-4096-dense-x20-interactive.json
+    browser-composite-4096-dense-x20-interactive-firefox.json
+    browser-composite-4096-dense-x20-interactive-webkit.json
+
+Command:
+  npx playwright test tests/e2e/composite-performance.spec.ts \
+    --project=chromium --project=firefox --project=webkit --workers=1 \
+    -g "8192|4096.*twenty"
+
+Progressive seed cancel (skeptic stale L56-63): FIXED
+  progressiveSeed ? false : shouldCancelWorkerInflight(...);
+  refine chained before onFrame; App clears scheduledDoc on cancel.

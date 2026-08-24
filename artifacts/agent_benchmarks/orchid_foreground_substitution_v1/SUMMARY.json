@@ -1,0 +1,14 @@
+{
+  "verdict": "INSUFFICIENT_EVIDENCE",
+  "reason": "substitution_and_controller_fixed_and_replayed_offline_but_live_preflight_not_run",
+  "replay_new_mean_foreground_tokens": 41945.6,
+  "replay_old_mean_foreground_tokens": 144630.5,
+  "replay_new_cumulative_foreground_tokens": 2390898,
+  "historical_orchid_cumulative_input_additive_bug": 7864313,
+  "historical_pi_cumulative_input": 1811513,
+  "historical_mean_ratio": 3.3,
+  "historical_cumulative_ratio": 4.3,
+  "promotions_replayed": [1, 2, 3],
+  "live_preflight": false,
+  "full_ab_justified": false
+}

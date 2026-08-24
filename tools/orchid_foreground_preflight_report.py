@@ -32,6 +32,15 @@ def main() -> int:
     artifact = Path(sys.argv[1] if len(sys.argv) > 1 else ROOT / "artifacts/agent_benchmarks/orchid_foreground_substitution_v1/preflight")
     telemetry = load_jsonl(artifact / "telemetry.jsonl")
     driver = load_json(artifact / "driver_summary.json") if (artifact / "driver_summary.json").exists() else {}
+    checkpoint_paths = sorted((artifact / "controller").glob("checkpoint-*.json"))
+    final_checkpoint = load_json(checkpoint_paths[-1]) if checkpoint_paths else {}
+    orchid_snapshot = driver.get("orchid")
+    orchid_snapshot_source = "driver_summary"
+    if not isinstance(orchid_snapshot, dict) or orchid_snapshot.get("error"):
+        checkpoint_snapshot = final_checkpoint.get("orchid")
+        if isinstance(checkpoint_snapshot, dict) and not checkpoint_snapshot.get("error"):
+            orchid_snapshot = checkpoint_snapshot
+            orchid_snapshot_source = "final_checkpoint"
     rpc = driver.get("rpc_log") or driver.get("rpc_log") or []
     after_active = [row for row in telemetry if row.get("active")]
     provider_aligned = [
@@ -107,14 +116,21 @@ def main() -> int:
     idle_prompts = [item for item in rpc if _is_prompt(item) and str(item.get("id") or "").startswith("preflight-continue")]
     followups = [item for item in rpc if _is_follow_up(item)]
     stalls = [error for error in driver.get("errors") or [] if error.get("category") == "continuation_turn_start_timeout"]
-    jobs = _collect_jobs(driver.get("orchid"))
+    jobs = _collect_jobs(orchid_snapshot)
     unique_jobs = {job.get("id"): job for job in jobs}
     promotions = sum(1 for job in unique_jobs.values() if job.get("status") == "PROMOTED")
-    stop_reason = driver.get("reason") or driver.get("stop_reason")
+    stop_reason = (
+        driver.get("reason")
+        or driver.get("stop_reason")
+        or final_checkpoint.get("reason")
+    )
+    post_promotion_turns = driver.get("post_promotion_turns")
+    if post_promotion_turns is None:
+        post_promotion_turns = final_checkpoint.get("post_promotion_turns")
 
     pass_criteria = {
         "promotions_ge_3": promotions >= 3,
-        "post_promotion_turns_ge_5": int(driver.get("post_promotion_turns") or 0) >= 5,
+        "post_promotion_turns_ge_5": int(post_promotion_turns or 0) >= 5,
         "non_protocol_covered_raw_forwarded_zero": not leak,
         "idle_continuation_used_prompt": bool(idle_prompts),
         "no_controller_stall": not stalls,
@@ -144,8 +160,9 @@ def main() -> int:
     summary = {
         "status": "PASS" if passed and stop_reason == "preflight_gate_satisfied" else "FAIL",
         "stop_reason": stop_reason,
+        "orchid_snapshot_source": orchid_snapshot_source,
         "promotions": promotions,
-        "post_promotion_turns": driver.get("post_promotion_turns"),
+        "post_promotion_turns": post_promotion_turns,
         "foreground_requests": len(telemetry),
         "active_foreground_requests": len(after_active),
         "idle_prompt_continuations": len(idle_prompts),

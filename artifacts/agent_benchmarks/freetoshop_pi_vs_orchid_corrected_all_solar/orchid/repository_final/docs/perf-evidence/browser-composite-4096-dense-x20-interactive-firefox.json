@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "fixture": {
+    "width": 4096,
+    "height": 4096,
+    "layerCount": 20,
+    "tileSize": 64,
+    "viewportWidth": 384,
+    "viewportHeight": 384,
+    "panOffsetX": 1024,
+    "panOffsetY": 512,
+    "interactiveBudgetMs": 120,
+    "fullTileCount": 4096,
+    "sparsePatchSize": null
+  },
+  "coldViewport": {
+    "medianMs": 485,
+    "p95Ms": 485,
+    "samplesMs": [485],
+    "fullyWarm": false,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 36
+  },
+  "warmViewport": {
+    "samplesMs": [114, 115, 125],
+    "medianMs": 115,
+    "p95Ms": 125,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 36
+  },
+  "panCold": {
+    "medianMs": 441,
+    "p95Ms": 441,
+    "samplesMs": [441],
+    "fullyWarm": false,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 72
+  },
+  "panWarm": {
+    "samplesMs": [100, 110, 117],
+    "medianMs": 110,
+    "p95Ms": 117,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 72
+  },
+  "returnHomeWarm": {
+    "samplesMs": [110, 133, 143],
+    "medianMs": 133,
+    "p95Ms": 143,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 72
+  },
+  "mipWarm": {
+    "samplesMs": [26, 26, 27],
+    "medianMs": 26,
+    "p95Ms": 27,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 9,
+    "tileCount": 81,
+    "outputWidth": 2048,
+    "outputHeight": 2048
+  },
+  "warmFasterThanCold": true,
+  "interactiveWarmViewport": true,
+  "interactivePanWarm": true,
+  "progressiveSparseVsFull": true,
+  "runtime": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0",
+    "hardwareConcurrency": 16
+  },
+  "browserName": "firefox",
+  "warmBudgetMs": 120
+}

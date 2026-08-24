@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "fixture": {
+    "width": 256,
+    "height": 256,
+    "layerCount": 8,
+    "tileSize": 64
+  },
+  "mainThreadReferenceMs": 291.1000000089407,
+  "mainThreadWarmOnlyMs": 2.2000000029802322,
+  "warmOnlyReferenceCalls": 0,
+  "workerFrameWaitMs": 405.8999999910593,
+  "workerMatchesReference": true,
+  "planWarmAssembleOnlyWhenCold": true,
+  "longTasksDuringMainReferenceMs": 0,
+  "longTasksDuringWorkerWaitMs": 0,
+  "runtime": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.186 Safari/537.36",
+    "hardwareConcurrency": 16
+  }
+}

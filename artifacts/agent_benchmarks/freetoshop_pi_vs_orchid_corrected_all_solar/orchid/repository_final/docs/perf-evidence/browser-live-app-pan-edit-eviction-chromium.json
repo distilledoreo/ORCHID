@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "fixture": {
+    "iterations": 16,
+    "cacheBudgetBytes": 3014656,
+    "zoomSteps": 8,
+    "localizedPaintEdits": 4
+  },
+  "startingEvictions": 0,
+  "finalEvictions": 37,
+  "sessionEvictions": 37,
+  "peakAllocatedBytes": 3014656,
+  "finalAllocatedBytes": 3014656,
+  "maxTileCount": 184,
+  "maxUniqueSpatialTileCount": 141,
+  "stayedWithinBudget": true,
+  "workerSettled": true,
+  "samples": [
+    {
+      "iteration": 0,
+      "allocatedBytes": 1146880,
+      "tileCount": 70,
+      "uniqueSpatialTileCount": 70,
+      "evictions": 0
+    },
+    {
+      "iteration": 1,
+      "allocatedBytes": 1556480,
+      "tileCount": 95,
+      "uniqueSpatialTileCount": 95,
+      "evictions": 0
+    },
+    {
+      "iteration": 2,
+      "allocatedBytes": 1622016,
+      "tileCount": 99,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 3,
+      "allocatedBytes": 1884160,
+      "tileCount": 115,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 4,
+      "allocatedBytes": 1884160,
+      "tileCount": 115,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 5,
+      "allocatedBytes": 1884160,
+      "tileCount": 115,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 6,
+      "allocatedBytes": 1884160,
+      "tileCount": 115,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 7,
+      "allocatedBytes": 2146304,
+      "tileCount": 131,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 8,
+      "allocatedBytes": 2146304,
+      "tileCount": 131,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 9,
+      "allocatedBytes": 2146304,
+      "tileCount": 131,
+      "uniqueSpatialTileCount": 99,
+      "evictions": 0
+    },
+    {
+      "iteration": 10,
+      "allocatedBytes": 2408448,
+      "tileCount": 147,
+      "uniqueSpatialTileCount": 115,
+      "evictions": 0
+    },
+    {
+      "iteration": 11,
+      "allocatedBytes": 2703360,
+      "tileCount": 165,
+      "uniqueSpatialTileCount": 133,
+      "evictions": 0
+    },
+    {
+      "iteration": 12,
+      "allocatedBytes": 3014656,
+      "tileCount": 184,
+      "uniqueSpatialTileCount": 137,
+      "evictions": 1
+    },
+    {
+      "iteration": 13,
+      "allocatedBytes": 3014656,
+      "tileCount": 184,
+      "uniqueSpatialTileCount": 141,
+      "evictions": 5
+    },
+    {
+      "iteration": 14,
+      "allocatedBytes": 3014656,
+      "tileCount": 184,
+      "uniqueSpatialTileCount": 141,
+      "evictions": 5
+    },
+    {
+      "iteration": 15,
+      "allocatedBytes": 3014656,
+      "tileCount": 184,
+      "uniqueSpatialTileCount": 136,
+      "evictions": 37
+    }
+  ],
+  "runtime": {
+    "browserName": "chromium",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.186 Safari/537.36"
+  }
+}

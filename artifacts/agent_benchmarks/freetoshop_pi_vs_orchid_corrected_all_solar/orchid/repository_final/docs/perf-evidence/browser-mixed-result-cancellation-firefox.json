@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "size": 1024,
+  "samples": [
+    {
+      "threshold": 0.2,
+      "observedProgress": 0.20937499999999998,
+      "inputTransferBytes": 12582912,
+      "rejectedWithAbortError": true,
+      "partialStateCleared": true
+    },
+    {
+      "threshold": 0.5,
+      "observedProgress": 0.5093749999999999,
+      "inputTransferBytes": 12582912,
+      "rejectedWithAbortError": true,
+      "partialStateCleared": true
+    },
+    {
+      "threshold": 0.85,
+      "observedProgress": 0.85625,
+      "inputTransferBytes": 12582912,
+      "rejectedWithAbortError": true,
+      "partialStateCleared": true
+    }
+  ],
+  "thresholdsReached": true,
+  "everyCancellationCleared": true,
+  "everyAttemptReuploaded": true,
+  "recoveryInputTransferBytes": 12582912,
+  "recoveryStreamedTileCount": 96,
+  "recoveryRetainedResourceCount": 6,
+  "recoveryRetainedAllocatedBytes": 12558348,
+  "recoveryExact": true
+}

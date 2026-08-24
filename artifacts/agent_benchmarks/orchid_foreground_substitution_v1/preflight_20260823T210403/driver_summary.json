@@ -1,0 +1,30 @@
+{
+  "started_at": "2026-08-24T01:04:27.483Z",
+  "ended_at": "2026-08-24T01:20:13.638Z",
+  "reason": "preflight_gate_satisfied",
+  "prompt_count": 2,
+  "continuation_count": 1,
+  "provider_messages": 112,
+  "post_promotion_turns": 6,
+  "rpc_log": [
+    {
+      "at": "2026-08-24T01:04:28.018Z",
+      "type": "prompt",
+      "id": "preflight-initial"
+    },
+    {
+      "at": "2026-08-24T01:15:46.575Z",
+      "type": "prompt",
+      "id": "preflight-continue-1"
+    },
+    {
+      "at": "2026-08-24T01:20:09.037Z",
+      "type": "abort",
+      "id": null
+    }
+  ],
+  "errors": [],
+  "orchid": {
+    "error": "fetch failed"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "fixture": {
+    "width": 1024,
+    "height": 1024,
+    "layerCount": 6,
+    "tileSize": 64,
+    "viewportWidth": 384,
+    "viewportHeight": 384,
+    "panOffsetX": 512,
+    "panOffsetY": 256,
+    "interactiveBudgetMs": 50,
+    "fullTileCount": 256,
+    "sparsePatchSize": null
+  },
+  "coldViewport": {
+    "medianMs": 141,
+    "p95Ms": 141,
+    "samplesMs": [141],
+    "fullyWarm": false,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 36
+  },
+  "warmViewport": {
+    "samplesMs": [3, 3.999999999999943, 4, 4, 6.000000000000057],
+    "medianMs": 4,
+    "p95Ms": 6.000000000000057,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 36
+  },
+  "panCold": {
+    "medianMs": 79,
+    "p95Ms": 79,
+    "samplesMs": [79],
+    "fullyWarm": false,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 72
+  },
+  "panWarm": {
+    "samplesMs": [3, 3, 4, 4, 5],
+    "medianMs": 4,
+    "p95Ms": 5,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 72
+  },
+  "returnHomeWarm": {
+    "samplesMs": [2, 3, 3, 3, 4],
+    "medianMs": 3,
+    "p95Ms": 4,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 72
+  },
+  "mipWarm": {
+    "samplesMs": [0, 0, 1, 1, 1],
+    "medianMs": 1,
+    "p95Ms": 1,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 9,
+    "tileCount": 81,
+    "outputWidth": 512,
+    "outputHeight": 512
+  },
+  "warmFasterThanCold": true,
+  "interactiveWarmViewport": true,
+  "interactivePanWarm": true,
+  "progressiveSparseVsFull": true,
+  "runtime": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15",
+    "hardwareConcurrency": 8
+  }
+}

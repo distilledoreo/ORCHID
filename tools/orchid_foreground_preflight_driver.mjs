@@ -54,6 +54,7 @@ const entry = {
 let stopping = false;
 let stopReason = null;
 let postPromotionTurns = 0;
+let stopCompletion = null;
 
 function now() {
   return new Date().toISOString();
@@ -237,21 +238,20 @@ async function checkpoint(reason) {
     path.join(artifact, "controller", `checkpoint-${Date.now()}.json`),
     JSON.stringify(payload, null, 2),
   );
+  return snapshot;
 }
 
-async function stopAll(reason) {
-  if (stopping) return;
+async function finishStop(reason) {
   stopping = true;
   stopReason = reason;
   entry.stopping = true;
   send({ type: "abort" });
   await new Promise((resolve) => setTimeout(resolve, 4000));
-  await checkpoint(reason);
+  const snapshot = await checkpoint(reason);
   terminateOwnedTree(entry.process);
   entry.rawLog.end();
   entry.stderrLog.end();
   stopGateway();
-  const snapshot = await orchidSnapshot();
   fs.writeFileSync(path.join(artifact, "driver_summary.json"), JSON.stringify({
     started_at: new Date(startedAt).toISOString(),
     ended_at: now(),
@@ -264,6 +264,11 @@ async function stopAll(reason) {
     errors: entry.errors,
     orchid: snapshot,
   }, null, 2));
+}
+
+function stopAll(reason) {
+  if (!stopCompletion) stopCompletion = finishStop(reason);
+  return stopCompletion;
 }
 
 launch();
@@ -280,6 +285,7 @@ await new Promise((resolve) => {
     }
   }, 1000);
 });
+if (stopCompletion) await stopCompletion;
 clearInterval(checkpointTimer);
 clearTimeout(deadlineTimer);
 

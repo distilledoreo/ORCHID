@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-08-24T01:04:27.579Z",
+  "elapsed_ms": 101,
+  "reason": "launch",
+  "prompt_count": 0,
+  "continuation_count": 0,
+  "provider_messages": 0,
+  "post_promotion_turns": 0,
+  "last_rpc_type": null,
+  "agent_idle": true,
+  "errors": [],
+  "last_events": [],
+  "orchid": {
+    "thread": {
+      "thread_id": "orchid-preflight",
+      "active_capsule": null,
+      "raw_tail_event_ids": [],
+      "raw_tail_tokens": 0,
+      "capsule_tokens": 0,
+      "estimated_active_tokens": 0,
+      "last_snapshot_watermark": null,
+      "jobs": [],
+      "last_promotion": null,
+      "last_failure": null
+    },
+    "jobs": {
+      "jobs": [],
+      "queued_or_running": [],
+      "last_failure": null
+    }
+  }
+}

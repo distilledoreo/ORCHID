@@ -1,0 +1,41 @@
+{
+  "status": "FAIL",
+  "stop_reason": "wall_clock_limit",
+  "promotions": 1,
+  "post_promotion_turns": 0,
+  "foreground_requests": 135,
+  "active_foreground_requests": 106,
+  "idle_prompt_continuations": 4,
+  "follow_up_continuations": 0,
+  "controller_stalls": [],
+  "mean_inbound_estimated_tokens": 89750.2,
+  "mean_assembled_estimated_tokens": 48785.4,
+  "mean_provider_input_tokens": 46417.7,
+  "mean_estimator_vs_provider_ratio": 0.9404,
+  "collapse_after_active_changes": [
+    {
+      "active_tokens": 54,
+      "inbound_estimated_tokens": 82595,
+      "assembled_estimated_tokens": 26304,
+      "provider_input_tokens": 29703,
+      "collapse_vs_inbound_pct": 68.15
+    }
+  ],
+  "non_protocol_covered_raw_forwarded_request_ids": [],
+  "pass_criteria": {
+    "promotions_ge_3": false,
+    "post_promotion_turns_ge_5": false,
+    "non_protocol_covered_raw_forwarded_zero": true,
+    "idle_continuation_used_prompt": true,
+    "no_controller_stall": true,
+    "no_manual_intervention": true,
+    "provider_tokens_present": true,
+    "assembled_tracks_provider": true,
+    "material_collapse_after_promotion": true
+  },
+  "historical_note": {
+    "replay_corrected_orchid_cumulative": 2390898,
+    "historical_pi_cumulative": 1811513,
+    "historical_additive_orchid_cumulative": 7864313
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "stop_reason": "preflight_gate_satisfied",
+  "orchid_snapshot_source": "final_checkpoint",
+  "promotions": 3,
+  "post_promotion_turns": 6,
+  "foreground_requests": 111,
+  "active_foreground_requests": 87,
+  "idle_prompt_continuations": 1,
+  "follow_up_continuations": 0,
+  "controller_stalls": [],
+  "mean_inbound_estimated_tokens": 90284.7,
+  "mean_assembled_estimated_tokens": 48218.4,
+  "mean_provider_input_tokens": 47752.0,
+  "mean_estimator_vs_provider_ratio": 0.9385,
+  "collapse_after_active_changes": [
+    {
+      "active_tokens": 197,
+      "inbound_estimated_tokens": 67569,
+      "assembled_estimated_tokens": 29991,
+      "provider_input_tokens": 31301,
+      "collapse_vs_inbound_pct": 55.61
+    }
+  ],
+  "non_protocol_covered_raw_forwarded_request_ids": [],
+  "pass_criteria": {
+    "promotions_ge_3": true,
+    "post_promotion_turns_ge_5": true,
+    "non_protocol_covered_raw_forwarded_zero": true,
+    "idle_continuation_used_prompt": true,
+    "no_controller_stall": true,
+    "no_manual_intervention": true,
+    "provider_tokens_present": true,
+    "assembled_tracks_provider": true,
+    "material_collapse_after_promotion": true
+  },
+  "historical_note": {
+    "replay_corrected_orchid_cumulative": 2390898,
+    "historical_pi_cumulative": 1811513,
+    "historical_additive_orchid_cumulative": 7864313
+  }
+}

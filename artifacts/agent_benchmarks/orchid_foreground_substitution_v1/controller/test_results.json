@@ -1,0 +1,8 @@
+{
+  "foreground_substitution": "tests/test_foreground_substitution.py passed",
+  "pi_continuation": "tests/test_pi_continuation_policy.py passed",
+  "invariants": "tests/test_invariants.py included in last full relevant run",
+  "cold_memory_fail_open": "updated expectation: covered-only tail is empty after ACTIVE",
+  "compileall": "python -m compileall -q memory_gateway tools tests",
+  "live_preflight": "not_run"
+}

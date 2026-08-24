@@ -1,0 +1,862 @@
+{
+  "schemaVersion": 1,
+  "fixture": {
+    "iterations": 120,
+    "cacheBudgetBytes": 100663296,
+    "document": "1024x768 shape with drop shadow"
+  },
+  "peakAllocatedBytes": 6291456,
+  "finalAllocatedBytes": 6291456,
+  "maxTileCount": 384,
+  "maxUniqueSpatialTileCount": 192,
+  "totalEvictions": 0,
+  "boundedSecondHalf": true,
+  "workerSettled": true,
+  "heap": null,
+  "samples": [
+    {
+      "iteration": 0,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 1,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 2,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 3,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 4,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 5,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 6,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 7,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 8,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 9,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 10,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 11,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 12,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 13,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 14,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 15,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 16,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 17,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 18,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 19,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 20,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 21,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 22,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 23,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 24,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 25,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 26,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 27,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 28,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 29,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 30,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 31,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 32,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 33,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 34,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 35,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 36,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 37,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 38,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 39,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 40,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 41,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 42,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 43,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 44,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 45,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 46,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 47,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 48,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 49,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 50,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 51,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 52,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 53,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 54,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 55,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 56,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 57,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 58,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 59,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 60,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 61,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 62,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 63,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 64,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 65,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 66,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 67,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 68,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 69,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 70,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 71,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 72,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 73,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 74,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 75,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 76,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 77,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 78,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 79,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 80,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 81,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 82,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 83,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 84,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 85,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 86,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 87,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 88,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 89,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 90,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 91,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 92,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 93,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 94,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 95,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 96,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 97,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 98,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 99,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 100,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 101,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 102,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 103,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 104,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 105,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 106,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 107,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 108,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 109,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 110,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 111,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 112,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 113,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 114,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 115,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 116,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 117,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 118,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    },
+    {
+      "iteration": 119,
+      "allocatedBytes": 6291456,
+      "tileCount": 384,
+      "uniqueSpatialTileCount": 192,
+      "evictions": 0
+    }
+  ],
+  "runtime": {
+    "browserName": "webkit",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15"
+  }
+}

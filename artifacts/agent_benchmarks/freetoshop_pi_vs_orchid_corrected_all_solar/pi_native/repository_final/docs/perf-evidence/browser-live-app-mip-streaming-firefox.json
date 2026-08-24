@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "mipLevel": 2,
+  "documentWidth": 1024,
+  "documentHeight": 768,
+  "frameWidth": 256,
+  "frameHeight": 192,
+  "allocatedBytes": 196608,
+  "maxBytes": 100663296,
+  "workerSettled": true
+}

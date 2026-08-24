@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 
 from memory_gateway.compaction import (
+    Capsule,
     CompactionWorker,
     Event,
     RetireMemory,
@@ -38,6 +39,7 @@ from memory_gateway.pipeline_adapters import (
     OpenAICompatSelectorEngine,
     SELECTOR_RESPONSE_FORMAT,
     canonicalizer_response_format_for_batch,
+    consolidator_response_format_for_sources,
     _chunk_events,
     _event_payload,
     selector_response_format_for_chunk,
@@ -649,7 +651,9 @@ def test_concrete_stage_adapters_keep_distinct_output_contracts() -> None:
     assert canonicalizer_client.response_format["json_schema"]["schema"]["properties"][
         "cited_source_refs"
     ]["items"]["enum"] == ["event-2"]
-    assert consolidator_client.response_format == CONSOLIDATOR_RESPONSE_FORMAT
+    assert consolidator_client.response_format == consolidator_response_format_for_sources(
+        ["event-2"]
+    )
 
 
 def test_canonicalizer_response_format_allows_only_exact_batch_ids() -> None:
@@ -724,6 +728,46 @@ def test_consolidator_accepts_semantic_citation_subset() -> None:
     )
 
     assert result.evidence_event_ids == ("event-2",)
+
+
+def test_consolidator_constrains_citations_to_exact_supplied_source_ids() -> None:
+    oversized = sized_event("oversized", 1, content_length=6_000)
+    source_span = expand_source_items(
+        [oversized],
+        selector_budget_tokens=200,
+        safety_margin=0.8,
+    )[0]
+    base_capsule = Capsule(
+        id="cap-active",
+        thread_id="thread-1",
+        content="prior capsule",
+        capsule_hash=sha256(b"prior capsule").hexdigest(),
+        covered_end_event_id="prior-event",
+    )
+    canonical_result = asyncio.run(
+        Canonicalizer().canonicalize(events=[source_span])
+    )
+    client = StructuredClient(
+        {"content": "rendered", "evidence_event_ids": [source_span.id]}
+    )
+
+    asyncio.run(
+        OpenAICompatConsolidatorEngine(client).consolidate(
+            base_capsule=base_capsule,
+            events=[source_span],
+            snapshot_end_event_id=oversized.id,
+            packet=build_lossless_packet(canonical_result, [source_span]),
+        )
+    )
+
+    schema = client.response_format["json_schema"]["schema"]
+    assert schema["properties"]["evidence_event_ids"]["items"]["enum"] == [
+        source_span.id
+    ]
+    assert schema["properties"]["retire"]["items"]["properties"][
+        "evidence_event_ids"
+    ]["items"]["enum"] == [source_span.id]
+    assert base_capsule.id not in json.dumps(schema)
 
 
 def test_consolidator_accepts_optional_retire_memories() -> None:

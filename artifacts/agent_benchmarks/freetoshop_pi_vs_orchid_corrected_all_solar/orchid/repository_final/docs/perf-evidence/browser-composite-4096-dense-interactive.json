@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "fixture": {
+    "width": 4096,
+    "height": 4096,
+    "layerCount": 2,
+    "tileSize": 64,
+    "viewportWidth": 384,
+    "viewportHeight": 384,
+    "panOffsetX": 1024,
+    "panOffsetY": 512,
+    "interactiveBudgetMs": 50,
+    "fullTileCount": 4096,
+    "sparsePatchSize": null
+  },
+  "coldViewport": {
+    "medianMs": 47,
+    "p95Ms": 47,
+    "samplesMs": [47],
+    "fullyWarm": false,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 36
+  },
+  "warmViewport": {
+    "samplesMs": [6.5999999940395355, 9, 9.799999997019768],
+    "medianMs": 9,
+    "p95Ms": 9.799999997019768,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 36
+  },
+  "panCold": {
+    "medianMs": 27.899999991059303,
+    "p95Ms": 27.899999991059303,
+    "samplesMs": [27.899999991059303],
+    "fullyWarm": false,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 72
+  },
+  "panWarm": {
+    "samplesMs": [5.5, 6.200000002980232, 8.799999997019768],
+    "medianMs": 6.200000002980232,
+    "p95Ms": 8.799999997019768,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 72
+  },
+  "returnHomeWarm": {
+    "samplesMs": [4.799999997019768, 5, 5.100000008940697],
+    "medianMs": 5,
+    "p95Ms": 5.100000008940697,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 36,
+    "tileCount": 72
+  },
+  "mipWarm": {
+    "samplesMs": [1.2000000029802322, 1.5, 1.699999988079071],
+    "medianMs": 1.5,
+    "p95Ms": 1.699999988079071,
+    "fullyWarm": true,
+    "prioritizedViewportTiles": 9,
+    "tileCount": 81,
+    "outputWidth": 2048,
+    "outputHeight": 2048
+  },
+  "warmFasterThanCold": true,
+  "interactiveWarmViewport": true,
+  "interactivePanWarm": true,
+  "progressiveSparseVsFull": true,
+  "runtime": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.186 Safari/537.36",
+    "hardwareConcurrency": 16
+  }
+}

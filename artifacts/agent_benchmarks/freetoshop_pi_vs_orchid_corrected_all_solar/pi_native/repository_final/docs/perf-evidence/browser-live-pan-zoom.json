@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "before": {
+    "panX": 36,
+    "panY": 74,
+    "zoom": 0.83984375,
+    "hits": 192,
+    "misses": 576,
+    "warm": "1"
+  },
+  "afterPan": {
+    "panX": 156,
+    "panY": 154,
+    "zoom": 0.83984375,
+    "hits": 1872,
+    "misses": 576,
+    "warm": "1",
+    "viewportTiles": 180
+  },
+  "afterZoom": {
+    "panX": 156,
+    "panY": 154,
+    "zoom": 0.9238281250000001,
+    "hits": 2026,
+    "misses": 576,
+    "warm": "1",
+    "viewportTiles": 154
+  },
+  "afterFit": {
+    "panX": 36,
+    "panY": 74,
+    "zoom": 0.83984375,
+    "hits": 2218,
+    "misses": 576,
+    "warm": "1",
+    "viewportTiles": 192
+  },
+  "panSettledMs": 209,
+  "zoomSettledMs": 514,
+  "panDelta": {
+    "x": 120,
+    "y": 80
+  },
+  "zoomIncreased": true
+}
