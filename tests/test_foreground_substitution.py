@@ -5,7 +5,7 @@ from pathlib import Path
 
 from memory_gateway.context import ContextAssembler, estimate_tokens
 from memory_gateway.db import SQLiteStore
-from memory_gateway.ingestion import append_novel_messages
+from memory_gateway.ingestion import append_novel_messages, message_hash
 
 
 def _store(tmp_path: Path) -> SQLiteStore:
@@ -273,3 +273,106 @@ def test_estimated_tokens_exclude_suppressed_history(tmp_path: Path) -> None:
     snapshot = _assembler(store, minimum=1).assemble("thread", current)
     assert snapshot.estimated_tokens < snapshot.substitution.inbound_request_tokens
     assert snapshot.substitution.suppressed_covered_tokens > 0
+
+
+def _tool_call(call_id: str, path: str) -> dict:
+    return {
+        "id": call_id,
+        "type": "function",
+        "function": {"name": "read", "arguments": f'{{"path":"{path}"}}'},
+    }
+
+
+def test_sse_and_pi_assistant_resend_share_identity() -> None:
+    reconstructed = {
+        "role": "assistant",
+        "content": "\n\n\n",
+        "tool_calls": [_tool_call("call_1", "a.ts")],
+    }
+    pi_resend = {
+        "role": "assistant",
+        "content": None,
+        "reasoning_content": "I will read a.ts next.",
+        "tool_calls": [_tool_call("call_1", "a.ts")],
+    }
+    assert message_hash(reconstructed) == message_hash(pi_resend)
+
+
+def test_pi_resend_does_not_store_second_assistant_after_sse(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    prefix = [
+        {"role": "developer", "content": "system"},
+        {"role": "user", "content": "work on the repo"},
+    ]
+    reconstructed = {
+        "role": "assistant",
+        "content": "\n\n",
+        "tool_calls": [_tool_call("call_1", "COVERED_TOOL_BLOB")],
+    }
+    _ingest(store, prefix, "r1")
+    _ingest(store, [reconstructed], "r1-response")
+    pi_turn = prefix + [
+        {
+            "role": "assistant",
+            "content": None,
+            "reasoning_content": "explore the tree",
+            "tool_calls": [_tool_call("call_1", "COVERED_TOOL_BLOB")],
+        },
+        {"role": "tool", "tool_call_id": "call_1", "content": "COVERED_TOOL_BLOB " + ("x" * 4000)},
+        {"role": "user", "content": "continue"},
+    ]
+    result = append_novel_messages(
+        store,
+        project_id="project",
+        thread_id="thread",
+        messages=pi_turn,
+        request_id="r2",
+        source="request",
+    )
+    assistants = [event for event in store.list_events("thread") if event["role"] == "assistant"]
+    assert len(assistants) == 1
+    assert result.reused_prefix_count >= 3 or result.skipped_duplicate_count >= 1
+
+
+def test_provider_packet_is_capsule_and_uncovered_tail_not_covered_transcript(
+    tmp_path: Path,
+) -> None:
+    store = _store(tmp_path)
+    bulky = "UNIQUE_COVERED_PAYLOAD " + ("file contents\n" * 200)
+    prefix = [
+        {"role": "developer", "content": "You are pi."},
+        {"role": "user", "content": "implement clone stamp"},
+    ]
+    reconstructed = {
+        "role": "assistant",
+        "content": "\n\n\n",
+        "tool_calls": [_tool_call("call_read", "ARCHITECTURE.md")],
+    }
+    _ingest(store, prefix, "r1")
+    _ingest(store, [reconstructed], "r1-response")
+    live_uncovered = {"role": "user", "content": "now edit raster-engine"}
+    pi_request = prefix + [
+        {
+            "role": "assistant",
+            "content": None,
+            "reasoning_content": "read architecture first",
+            "tool_calls": [_tool_call("call_read", "ARCHITECTURE.md")],
+        },
+        {"role": "tool", "tool_call_id": "call_read", "content": bulky},
+        live_uncovered,
+    ]
+    _ingest(store, pi_request, "r2")
+    events = store.list_events("thread")
+    covered_end = next(event for event in events if event["role"] == "tool")
+    _promote_through(store, covered_end["id"], "architecture already read")
+    snapshot = _assembler(store, minimum=1).assemble("thread", pi_request)
+    serialized = "\n".join(str(message.get("content", "")) for message in snapshot.messages)
+    assert snapshot.substitution is not None
+    assert snapshot.substitution.active is True
+    assert snapshot.substitution.suppressed_covered_tokens > 0
+    assert "UNIQUE_COVERED_PAYLOAD" not in serialized
+    assert "PERSISTENT MEMORY CAPSULE" in serialized
+    assert "architecture already read" in serialized
+    assert "now edit raster-engine" in serialized
+    assert snapshot.estimated_tokens < snapshot.substitution.inbound_request_tokens
+    assert snapshot.substitution.final_foreground_tokens == snapshot.estimated_tokens

@@ -25,14 +25,20 @@ def message_content(message: dict[str, Any]) -> str:
     # an assistant message. Those fields are not a new conversational event;
     # identity is based on the OpenAI message semantics that affect the next
     # request. Tool IDs, names, arguments, role, and content remain exact.
+    # Agnes/Pi use `reasoning_content`; SSE reconstruction often stores a few
+    # whitespace characters where the later resend uses `content: null`.
     transient = {
         "reasoning",
+        "reasoning_content",
         "thinking",
         "redacted_thinking",
         "provider_metadata",
         "metadata",
     }
     identity = {key: value for key, value in message.items() if key not in transient}
+    raw_content = identity.get("content")
+    if raw_content is None or (isinstance(raw_content, str) and raw_content.strip() == ""):
+        identity["content"] = ""
     for field in ("tool_calls",):
         calls = identity.get(field)
         if isinstance(calls, list):
