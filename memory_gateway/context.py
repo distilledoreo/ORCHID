@@ -105,6 +105,8 @@ class SubstitutionReport:
     uncovered_tail_tokens: int
     covered_raw_tokens_forwarded: int
     final_foreground_tokens: int
+    provider_compatibility_messages: int = 0
+    provider_compatibility_tokens: int = 0
     overlap_policy: str = "none"
 
 
@@ -225,6 +227,21 @@ class ContextAssembler:
                     covered_sequence=covered_sequence,
                 )
             )
+        provider_compatibility_messages = 0
+        provider_compatibility_tokens = 0
+        if active is not None and not any(
+            message.get("role") == "user" for message in messages
+        ):
+            compatibility_message = {
+                "role": "user",
+                "content": (
+                    "Resume the current task from the persistent memory capsule "
+                    "and the following live tool-loop messages."
+                ),
+            }
+            messages = [compatibility_message, *messages]
+            provider_compatibility_messages = 1
+            provider_compatibility_tokens = _message_tokens(compatibility_message)
         prefix: list[dict[str, Any]] = []
         if active:
             prefix.append(
@@ -474,6 +491,8 @@ class ContextAssembler:
             uncovered_tail_tokens=uncovered_tail_tokens,
             covered_raw_tokens_forwarded=protocol_tokens,
             final_foreground_tokens=final_tokens,
+            provider_compatibility_messages=provider_compatibility_messages,
+            provider_compatibility_tokens=provider_compatibility_tokens,
             overlap_policy="none",
         )
         return ContextSnapshot(

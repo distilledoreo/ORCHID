@@ -125,6 +125,18 @@ def test_recent_tool_pair_after_active_is_preserved(tmp_path: Path) -> None:
     roles = [message.get("role") for message in snapshot.messages if message.get("role") in {"assistant", "tool"}]
     assert roles[-2:] == ["assistant", "tool"]
     assert snapshot.messages[-1]["content"] == "file body"
+    users = [message for message in snapshot.messages if message.get("role") == "user"]
+    assert users == [
+        {
+            "role": "user",
+            "content": (
+                "Resume the current task from the persistent memory capsule "
+                "and the following live tool-loop messages."
+            ),
+        }
+    ]
+    assert snapshot.substitution.provider_compatibility_messages == 1
+    assert snapshot.substitution.provider_compatibility_tokens > 0
 
 
 def test_old_tool_pair_covered_by_active_is_omitted(tmp_path: Path) -> None:
