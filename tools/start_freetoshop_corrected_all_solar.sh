@@ -33,6 +33,14 @@ load_saved_key() {
   if [[ -z "${BENCHMARK_PROVIDER_API_KEY:-}" && -n "${OPENROUTER_API_KEY:-}" ]]; then
     export BENCHMARK_PROVIDER_API_KEY="$OPENROUTER_API_KEY"
   fi
+  if [[ "${BENCHMARK_MODEL_ID:-}" == "agnes-2.5-pro-beta" ]]; then
+    if [[ "${BENCHMARK_INPUT_USD_PER_MILLION:-0}" == "0" ]]; then
+      export BENCHMARK_INPUT_USD_PER_MILLION="0.10"
+    fi
+    if [[ "${BENCHMARK_OUTPUT_USD_PER_MILLION:-0}" == "0" ]]; then
+      export BENCHMARK_OUTPUT_USD_PER_MILLION="0.30"
+    fi
+  fi
 }
 
 save_provider() {
@@ -145,6 +153,7 @@ check_readiness() {
   else
     echo "model_id=$BENCHMARK_MODEL_ID"
   fi
+  echo "provider_pricing_usd_per_million=input:${BENCHMARK_INPUT_USD_PER_MILLION:-0},output:${BENCHMARK_OUTPUT_USD_PER_MILLION:-0}"
   if "$python_executable" - "$BENCHMARK_SELECTOR_BASE_URL" "$BENCHMARK_SELECTOR_MODEL_ID" <<'PY'
 import json, sys, urllib.request
 try:
