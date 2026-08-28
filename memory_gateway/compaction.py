@@ -372,13 +372,11 @@ def freeze_snapshot(
         )
         bounded_events: list[dict[str, Any]] = []
         bounded_tokens = 0
+        projection_seen: dict[str, int] = {}
+        from .source_projection import projected_source_tokens
+
         for event in candidate_events:
-            event_tokens = estimate_tokens(
-                json.dumps(
-                    source_item_payload(Event.from_row(event)),
-                    ensure_ascii=False,
-                )
-            )
+            event_tokens = projected_source_tokens(event, projection_seen)
             if (
                 bounded_events
                 and bounded_tokens + event_tokens > effective_source_window_tokens
@@ -641,7 +639,11 @@ class CompactionWorker:
                 return "STALE"
 
             base_capsule = Capsule.from_row(active)
-            events = [Event.from_row(event) for event in snapshot.events]
+            from .source_projection import project_compaction_events
+
+            events = project_compaction_events(
+                [Event.from_row(event) for event in snapshot.events]
+            )
             self._assert_ownership(job)
             result = await self._run_owned_compaction(
                 job,

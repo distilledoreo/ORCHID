@@ -700,9 +700,15 @@ class SQLiteStore:
 
             reused = _ordered_history_overlap(known_hashes, incoming_hashes)
             appended: list[dict[str, Any]] = []
+            skipped_duplicate_count = 0
+            known_hash_set = set(known_hashes)
             sequence = int(thread["next_sequence"])
             parent_event_id = known_ids[-1] if known_ids else None
             for index, message in enumerate(messages[reused:], start=reused):
+                digest = incoming_hashes[index]
+                if digest in known_hash_set:
+                    skipped_duplicate_count += 1
+                    continue
                 content = message_content(message)
                 event_id = new_id("evt")
                 event = {
@@ -728,6 +734,7 @@ class SQLiteStore:
                     "parent_event_id": parent_event_id,
                     "request_id": request_id,
                 }
+                known_hash_set.add(digest)
                 connection.execute(
                     """
                     INSERT INTO events(
@@ -754,6 +761,7 @@ class SQLiteStore:
             "reused_prefix_count": reused,
             "known_message_count": len(known_hashes),
             "incoming_message_count": len(messages),
+            "skipped_duplicate_count": skipped_duplicate_count,
             "duplicate_protection": "ordered_canonical_message_hash_overlap",
         }
 

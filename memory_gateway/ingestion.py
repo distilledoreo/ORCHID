@@ -15,6 +15,7 @@ class IngestionResult:
     known_message_count: int
     incoming_message_count: int
     duplicate_protection: str
+    skipped_duplicate_count: int = 0
 
 
 def message_content(message: dict[str, Any]) -> str:
