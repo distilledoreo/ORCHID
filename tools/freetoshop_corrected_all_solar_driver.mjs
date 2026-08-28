@@ -1,6 +1,8 @@
 // Sealed controller for the corrected FreetoShop Pi-vs-ORCHID all-Solar A/B.
-// It launches each arm exactly once, applies identical continuation policy,
-// and stops both arms when the independent three-promotion gate requests it.
+// It launches each selected arm exactly once, applies identical continuation
+// policy, and stops when the independent three-promotion gate requests it.
+// A truncated provider stream is logged; the job stops only after Pi's sealed
+// retry is exhausted. Set BENCHMARK_ARMS=orchid to run the ORCHID arm alone.
 import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
@@ -28,6 +30,17 @@ const maxRuntimeMs = Number(process.env.BENCHMARK_MAX_RUNTIME_MS ?? 6 * 60 * 60 
 const checkpointMs = Number(process.env.BENCHMARK_CHECKPOINT_MS ?? 15 * 60 * 1000);
 const maxContinuations = Number(process.env.BENCHMARK_MAX_CONTINUATIONS ?? 32);
 const gatePollMs = Number(process.env.BENCHMARK_GATE_POLL_MS ?? 5000);
+const enabledArms = new Set(
+  String(process.env.BENCHMARK_ARMS ?? "pi,orchid")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean),
+);
+function armSelected(id) {
+  if (id === "arm_a_pi") return enabledArms.has("pi") || enabledArms.has("pi_native") || enabledArms.has("arm_a_pi");
+  if (id === "arm_b_orchid") return enabledArms.has("orchid") || enabledArms.has("arm_b_orchid");
+  return false;
+}
 const sessionRoot = path.join(stage, "sessions");
 const stopRequestPath = path.join(artifact, "controller", "STOP_REQUEST.json");
 const goal = fs.readFileSync(path.join(artifact, "BENCHMARK_GOAL.md"), "utf8");
@@ -39,7 +52,7 @@ const state = new Map();
 for (const [id, name, model, directoryName, agentName, outputName] of [
   ["arm_a_pi", "PI_NATIVE", `benchmark/${modelId}`, "arm-a-pi", "pi-agent-a", "pi_native"],
   ["arm_b_orchid", "ORCHID", `orchid/${modelId}`, "arm-b-orchid", "pi-agent-b", "orchid"],
-]) {
+].filter(([id]) => armSelected(id))) {
   const output = path.join(artifact, outputName);
   fs.mkdirSync(output, { recursive: true });
   state.set(id, {
@@ -65,8 +78,12 @@ for (const [id, name, model, directoryName, agentName, outputName] of [
     lastEvents: [],
     stopping: false,
     agentIdle: true,
+    providerRetryPending: false,
     watchdog: createContinuationWatchdog({ timeoutMs: Number(process.env.BENCHMARK_CONTINUATION_WATCHDOG_MS ?? 30_000) }),
   });
+}
+if (state.size === 0) {
+  throw new Error("BENCHMARK_ARMS selected no arms");
 }
 
 function now() {
@@ -153,13 +170,29 @@ function note(entry, event) {
   if (type === "message_end" && event.message?.role === "assistant") {
     entry.providerMessages += 1;
     if (event.message.stopReason === "error") {
+      entry.providerRetryPending = true;
       entry.errors.push({
         at: now(),
         category: "provider_response_error",
         error: event.message.errorMessage ?? "unknown provider error",
       });
-      void stopAll(`${entry.id}_provider_response_error`);
+    } else {
+      entry.providerRetryPending = false;
     }
+  }
+  if (type === "auto_retry_start") {
+    entry.providerRetryPending = true;
+  }
+  if (type === "auto_retry_end") {
+    const exhausted = event.success === false;
+    entry.providerRetryPending = false;
+    if (exhausted) {
+      void stopAll(`${entry.id}_provider_retry_exhausted`);
+    }
+  }
+  if (type === "agent_end" && event.willRetry === false && entry.providerRetryPending) {
+    entry.providerRetryPending = false;
+    void stopAll(`${entry.id}_provider_retry_exhausted`);
   }
   if (type === "tool_execution_start") entry.toolCalls += 1;
   if (type === "tool_execution_end" && event.isError) entry.toolFailures += 1;
@@ -265,7 +298,9 @@ async function checkpoint(reason) {
       git: gitSnapshot(entry.cwd),
     };
   }
-  payload.arms.arm_b_orchid.orchid = await orchidSnapshot();
+  if (state.has("arm_b_orchid")) {
+    payload.arms.arm_b_orchid.orchid = await orchidSnapshot();
+  }
   const output = path.join(artifact, "checkpoints", `checkpoint-${Date.now()}.json`);
   fs.writeFileSync(output, JSON.stringify(payload, null, 2));
 }

@@ -220,7 +220,7 @@ def freeze() -> None:
         "native_compaction": True,
         "pi_version": "0.84.2",
         "thinking": "medium",
-        "retry_policy": "sealed Pi policy; controller performs no retry or rescue",
+        "retry_policy": "sealed Pi policy; controller records stream errors and stops only after Pi retry exhaustion",
     }
     orchid_config = {
         "arm": "ORCHID",
@@ -251,7 +251,7 @@ def freeze() -> None:
         "structured_output": True,
         "model_timeout_seconds": 180,
         "cold_memory_mode": "off",
-        "retry_policy": "existing model-client policy; controller performs no retry or rescue",
+        "retry_policy": "existing model-client policy; controller records stream errors and stops only after Pi retry exhaustion",
         "pricing_usd_per_million_tokens": {
             "input": float(os.environ.get("BENCHMARK_INPUT_USD_PER_MILLION", "0")),
             "output": float(os.environ.get("BENCHMARK_OUTPUT_USD_PER_MILLION", "0")),
