@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-from contextlib import suppress
 import hashlib
 import json
+from collections.abc import Callable, Iterable
+from contextlib import suppress
 from dataclasses import asdict, dataclass
-from typing import Any, Callable, Iterable, Protocol
+from typing import Any, Protocol
 
 from .context import estimate_tokens
 from .db import SQLiteStore, canonical_json, content_hash
@@ -25,7 +26,7 @@ class Event:
     role: str | None
 
     @classmethod
-    def from_row(cls, row: dict[str, Any]) -> "Event":
+    def from_row(cls, row: dict[str, Any]) -> Event:
         return cls(
             id=row["id"],
             sequence=int(row["sequence"]),
@@ -232,7 +233,7 @@ class Capsule:
     covered_end_event_id: str | None
 
     @classmethod
-    def from_row(cls, row: dict[str, Any] | None) -> "Capsule | None":
+    def from_row(cls, row: dict[str, Any] | None) -> Capsule | None:
         if row is None:
             return None
         return cls(
@@ -269,7 +270,8 @@ class CompactionResult:
     prompt_version: str
     generation_settings: dict[str, Any]
     evidence_source_ids: tuple[str, ...] = ()
-    retire_memories: tuple["RetireMemory", ...] = ()
+    retire_memories: tuple[RetireMemory, ...] = ()
+    memory_items: tuple[dict[str, Any], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -520,6 +522,12 @@ class CompactionWorker:
         renewal_interval_seconds: float = 30.0,
         recover_expired_jobs: bool = False,
         on_job_finished: Callable[[str], None] | None = None,
+        memory_format: str = "v1",
+        capsule_max_tokens: int = 2_048,
+        capsule_verifier: Any | None = None,
+        publication_min_savings_ratio: float = 1.25,
+        publication_economics_enabled: bool = False,
+        publication_horizon_turns: int = 8,
     ):
         self.store = store
         self.engine = engine
@@ -528,6 +536,12 @@ class CompactionWorker:
         self.renewal_interval_seconds = renewal_interval_seconds
         self.recover_expired_jobs = recover_expired_jobs
         self.on_job_finished = on_job_finished
+        self.memory_format = memory_format
+        self.capsule_max_tokens = capsule_max_tokens
+        self.capsule_verifier = capsule_verifier
+        self.publication_min_savings_ratio = publication_min_savings_ratio
+        self.publication_economics_enabled = publication_economics_enabled
+        self.publication_horizon_turns = publication_horizon_turns
 
     def _assert_ownership(self, job: dict[str, Any]) -> None:
         lease_token = job.get("lease_token")
@@ -659,8 +673,103 @@ class CompactionWorker:
                 lease_lost=lease_lost,
             )
             self._assert_ownership(job)
+            promotion_content = result.content
+            admission_metadata: dict[str, Any] = {}
+            thread_memory_format = self.store.get_thread_memory_format(snapshot.thread_id)
+            if thread_memory_format in {"v2", "v2_shadow"}:
+                from .capsule_admission import admit_capsule_v2
+
+                base_metadata: dict[str, Any] | None = None
+                if active is not None:
+                    try:
+                        base_metadata = json.loads(active.get("model_metadata_json") or "{}")
+                    except (TypeError, json.JSONDecodeError):
+                        base_metadata = {}
+                verifier = self.capsule_verifier
+                if verifier is None:
+                    from .capsule_admission import DeterministicSemanticVerifier
+
+                    verifier = DeterministicSemanticVerifier()
+                admission = await admit_capsule_v2(
+                    result=result,
+                    generation=int(job["generation"]),
+                    events=events,
+                    base_metadata=base_metadata,
+                    allowed_source_ids=frozenset(
+                        str(event["id"]) for event in snapshot.events
+                    ),
+                    max_tokens=self.capsule_max_tokens,
+                    verifier=verifier,
+                    shadow_only=thread_memory_format == "v2_shadow",
+                    require_items=thread_memory_format == "v2",
+                )
+                admission_metadata = admission.metadata
+                if admission.envelope_json:
+                    admission_metadata["envelope_json"] = admission.envelope_json
+                if not admission.ok and thread_memory_format != "v2_shadow":
+                    if not self.store.finish_job(
+                        job["id"],
+                        "FAILED",
+                        admission.error or "FAILED: semantic_rejection",
+                        worker_id=self.worker_id,
+                        lease_token=job["lease_token"],
+                    ):
+                        return "LOST"
+                    return "FAILED"
+                # Shadow admission is observational. A rejected V2 envelope is
+                # retained in metadata for analysis, while the already-valid
+                # legacy result continues through the normal CAS publication
+                # path. Only strict V2 may block publication.
+                promotion_content = admission.rendered_content
+            if promotion_content != result.content:
+                promotion_content_bytes = promotion_content.encode("utf-8")
+                result = CompactionResult(
+                    content=promotion_content,
+                    covered_event_ids=result.covered_event_ids,
+                    evidence_event_ids=result.evidence_event_ids,
+                    input_hash=result.input_hash,
+                    output_hash=hashlib.sha256(promotion_content_bytes).hexdigest(),
+                    model_identity=result.model_identity,
+                    prompt_version=result.prompt_version,
+                    generation_settings=result.generation_settings,
+                    evidence_source_ids=result.evidence_source_ids,
+                    retire_memories=result.retire_memories,
+                    memory_items=result.memory_items,
+                )
             capsule_hash, model_metadata = validate_compaction_result(snapshot, result)
+            if admission_metadata:
+                model_metadata = {**model_metadata, **admission_metadata}
+            compacted_source_tokens = sum(estimate_tokens(event.content) for event in events)
+            promoted_capsule_tokens = estimate_tokens(result.content)
+            from .publication_economics import (
+                cached_prefix_tokens_from_report,
+                economics_to_dict,
+                estimate_publication_economics,
+            )
+
+            cache = self.store.get_thread_prompt_cache(snapshot.thread_id)
+            current_prompt = None
+            if cache and isinstance(cache.get("current_prompt_tokens"), (int, float)):
+                current_prompt = int(cache["current_prompt_tokens"])
+            job_priority = int(job.get("priority") or 0)
+            force_publish = job_priority >= 100
+            economics = estimate_publication_economics(
+                compacted_source_tokens=compacted_source_tokens,
+                promoted_capsule_tokens=promoted_capsule_tokens,
+                min_savings_ratio=self.publication_min_savings_ratio,
+                current_prompt_tokens=current_prompt,
+                recently_cached_prefix_tokens=cached_prefix_tokens_from_report(cache),
+                horizon_turns=self.publication_horizon_turns,
+                urgent=force_publish,
+            )
+            model_metadata["publication_economics"] = economics_to_dict(economics)
+            defer_publication = (
+                self.publication_economics_enabled
+                and not force_publish
+                and not economics.should_publish
+            )
             self._assert_ownership(job)
+            self.store.stale_ready_capsules(snapshot.thread_id)
             candidate_id = self.store.create_capsule(
                 thread_id=snapshot.thread_id,
                 base_capsule_id=snapshot.base_capsule_id,
@@ -674,11 +783,23 @@ class CompactionWorker:
                 covered_start_event_id=snapshot.snapshot_start_event_id,
                 covered_end_event_id=snapshot.snapshot_end_event_id,
                 model_metadata=model_metadata,
+                source_event_ids=tuple(event["id"] for event in snapshot.events),
             )
             self._assert_ownership(job)
             if not self.store.mark_capsule_ready(candidate_id):
                 raise RuntimeError("candidate could not enter READY state")
             self._assert_ownership(job)
+            if defer_publication:
+                model_metadata["publication_deferred"] = True
+                if not self.store.finish_job(
+                    job["id"],
+                    "READY",
+                    "DEFERRED: publication economics",
+                    worker_id=self.worker_id,
+                    lease_token=job["lease_token"],
+                ):
+                    return "LOST"
+                return "DEFERRED"
             if self.store.promote_capsule_cas(
                 snapshot.thread_id,
                 candidate_id,

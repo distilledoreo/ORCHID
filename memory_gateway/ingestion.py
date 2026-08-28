@@ -4,7 +4,6 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
-from .context import estimate_tokens
 from .db import SQLiteStore, canonical_json, content_hash
 
 
@@ -16,6 +15,7 @@ class IngestionResult:
     incoming_message_count: int
     duplicate_protection: str
     skipped_duplicate_count: int = 0
+    reused_prefix_start: int = 0
 
 
 def message_content(message: dict[str, Any]) -> str:
@@ -74,6 +74,29 @@ def _normalize_json_text(value: str) -> str:
 
 def message_hash(message: dict[str, Any]) -> str:
     return content_hash(message_content(message))
+
+
+def event_to_message(event: dict[str, Any]) -> dict[str, Any] | None:
+    """Reconstruct an OpenAI protocol message from a stored chat event."""
+
+    content = event.get("content")
+    role = event.get("role")
+    if not isinstance(content, str):
+        return None
+    try:
+        payload = json.loads(content)
+    except (TypeError, json.JSONDecodeError):
+        if isinstance(role, str) and role:
+            return {"role": role, "content": content}
+        return None
+    if not isinstance(payload, dict):
+        if isinstance(role, str) and role:
+            return {"role": role, "content": content}
+        return None
+    message = dict(payload)
+    if isinstance(role, str) and role:
+        message.setdefault("role", role)
+    return message
 
 
 def message_event_type(role: str | None) -> str:

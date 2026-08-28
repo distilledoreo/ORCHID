@@ -17,6 +17,7 @@ from .db import content_hash
 _PATH_LINE = re.compile(
     r"(^|[\s|])(/[^\s|:]+|[A-Za-z]:\\[^\s|:]+|[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)+)"
 )
+_TRUNCATED_JSON_TEXT_FIELD = re.compile(r'"text"\s*:\s*"((?:\\.|[^"\\])*)', re.DOTALL)
 _SOURCE_HINT = re.compile(
     r"^(import |export |from ['\"]|/\*|// |#include |package |using |func |class |const |let |var |type )",
     re.M,
@@ -25,16 +26,143 @@ _ERROR_LINE = re.compile(
     r"(error TS\d+|Error:|FAIL |Failed |✗|× |Traceback|TypeError|ReferenceError|EADDRINUSE)",
     re.I,
 )
+_UNICODE_ESCAPE = re.compile(r"\\u([0-9a-fA-F]{4})")
+_ANSI_ESCAPE = re.compile(r"\x1b(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+
+
+def _decode_json_string(value: str) -> str:
+    try:
+        return json.loads(f'"{value}"')
+    except json.JSONDecodeError:
+        return (
+            value.replace("\\r\\n", "\n")
+            .replace("\\n", "\n")
+            .replace("\\t", "\t")
+            .replace('\\"', '"')
+            .replace("\\\\", "\\")
+        )
+
+
+def _embedded_text_fields(content: str) -> str | None:
+    """Recover inner text from truncated Pi tool envelopes when JSON parsing fails."""
+
+    # The permissive expression returns complete fields normally and also the
+    # trailing partial field when a source span cuts through a large text
+    # block. Looking for complete fields first loses that final (usually most
+    # informative) block whenever the envelope starts with a short header.
+    matches = _TRUNCATED_JSON_TEXT_FIELD.findall(content)
+    if not matches:
+        return None
+    return "\n".join(_decode_json_string(match) for match in matches)
 
 
 def tool_inner_text(content: str) -> str:
     try:
         payload = json.loads(content)
     except (TypeError, json.JSONDecodeError):
-        return content
-    if isinstance(payload, dict) and isinstance(payload.get("content"), str):
-        return payload["content"]
+        embedded = _embedded_text_fields(content)
+        return embedded if embedded is not None else content
+    if isinstance(payload, dict):
+        inner = payload.get("content")
+        if inner is None:
+            inner = payload.get("output")
+        if isinstance(inner, str):
+            return inner
+        if isinstance(inner, list):
+            parts: list[str] = []
+            for block in inner:
+                if isinstance(block, dict) and isinstance(block.get("text"), str):
+                    parts.append(block["text"])
+                elif isinstance(block, str):
+                    parts.append(block)
+            if parts:
+                return "\n".join(parts)
     return content
+
+
+def normalize_citation_text(text: str) -> str:
+    """Decode literal JSON escape sequences embedded in span slices."""
+
+    normalized = (
+        text.replace("\\r\\n", "\n")
+        .replace("\\n", "\n")
+        .replace("\\t", "\t")
+        .replace('\\"', '"')
+    )
+    while True:
+        decoded = _UNICODE_ESCAPE.sub(
+            lambda match: chr(int(match.group(1), 16)),
+            normalized,
+        )
+        if decoded == normalized:
+            break
+        normalized = decoded
+    return normalized
+
+
+def normalize_citation_match_text(text: str) -> str:
+    """Normalize source and excerpt text for deterministic substring checks."""
+
+    normalized = normalize_citation_text(text)
+    normalized = _ANSI_ESCAPE.sub("", normalized)
+    normalized = (
+        normalized.replace("\u2019", "'")
+        .replace("\u2018", "'")
+        .replace("\u201c", '"')
+        .replace("\u201d", '"')
+        .replace("\u00a0", " ")
+    )
+    return re.sub(r"\s+", " ", normalized).strip()
+
+
+def authoritative_source_text(content: str) -> str:
+    """Return citation-ready source text for CapsuleEnvelopeV2 excerpt checks."""
+
+    return normalize_citation_text(tool_inner_text(content))
+
+
+def resolve_citation_source_id(
+    source_id: str,
+    allowed_source_ids: frozenset[str],
+) -> str | None:
+    """Map bare event ids to authoritative ``::span::`` ids when unambiguous."""
+
+    if source_id in allowed_source_ids:
+        return source_id
+    if "::span::" in source_id:
+        return None
+    matches = sorted(
+        sid for sid in allowed_source_ids if sid.split("::span::", 1)[0] == source_id
+    )
+    if not matches:
+        return None
+    preferred = f"{source_id}::span::000000"
+    if preferred in allowed_source_ids:
+        return preferred
+    if len(matches) == 1:
+        return matches[0]
+    return None
+
+
+def augment_source_text_aliases(sources: dict[str, str]) -> dict[str, str]:
+    """Add bare event-id aliases for authoritative span-backed source text."""
+
+    augmented = dict(sources)
+    by_base: dict[str, list[str]] = {}
+    for sid in sources:
+        base, _, span = sid.partition("::span::")
+        if not span:
+            continue
+        by_base.setdefault(base, []).append(sid)
+    for base, spans in by_base.items():
+        if base in augmented:
+            continue
+        preferred = f"{base}::span::000000"
+        if preferred in augmented:
+            augmented[base] = augmented[preferred]
+        elif len(spans) == 1:
+            augmented[base] = augmented[spans[0]]
+    return augmented
 
 
 def classify_tool_text(text: str) -> str:

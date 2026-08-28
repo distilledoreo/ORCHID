@@ -3,10 +3,10 @@ from __future__ import annotations
 import asyncio
 import json
 import threading
+from collections.abc import Iterator
 from contextlib import contextmanager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Iterator
 
 import httpx
 
@@ -78,6 +78,8 @@ def test_gateway_routes_solar_and_runs_background_compaction(tmp_path: Path) -> 
             consolidator_model=None,
             consolidator_api_key=None,
             context_tokens=10,
+            foreground_target_tokens=1,
+            foreground_hard_limit_tokens=64_000,
             background_fraction=0.5,
             urgent_fraction=0.8,
             worker_poll_seconds=0.01,
@@ -121,3 +123,58 @@ def test_gateway_routes_solar_and_runs_background_compaction(tmp_path: Path) -> 
         assert BackendHandler.last_authorization == "Bearer backend-test-key"
         assert app.state.cold_memory_telemetry is not None
         assert app.state.cold_memory_telemetry.metrics()["flushed_operation_count"] >= 1
+
+
+def test_gateway_returns_503_when_foreground_hard_limit_exceeded(tmp_path: Path) -> None:
+    with backend_server() as backend_url:
+        config = RuntimeConfig(
+            db_path=str(tmp_path / "memory.db"),
+            backend_url=backend_url,
+            backend_api_key=None,
+            backend_model="upstage/solar-pro4",
+            selector_url="http://127.0.0.1:1234/v1",
+            selector_model="qwen3.5-4b@q6_k",
+            selector_api_key=None,
+            canonicalizer_url="http://127.0.0.1:1234/v1",
+            canonicalizer_model="qwen3.5-4b@q6_k",
+            canonicalizer_api_key=None,
+            consolidator_url=None,
+            consolidator_model=None,
+            consolidator_api_key=None,
+            context_tokens=128_000,
+            background_fraction=0.5,
+            urgent_fraction=0.8,
+            worker_poll_seconds=0.01,
+            model_timeout_seconds=1,
+            foreground_hard_limit_tokens=16,
+        )
+        app = create_app(config=config, compaction_engine=PerfectCompactionEngine())
+
+        async def run() -> None:
+            async with app.router.lifespan_context(app):
+                transport = httpx.ASGITransport(app=app)
+                async with httpx.AsyncClient(transport=transport, base_url="http://orchid") as client:
+                    response = await client.post(
+                        "/v1/chat/completions",
+                        headers={
+                            "x-memory-project": "project",
+                            "x-memory-thread": "thread",
+                        },
+                        json={
+                            "messages": [
+                                {
+                                    "role": "user",
+                                    "content": "x" * 400,
+                                }
+                            ],
+                        },
+                    )
+                    assert response.status_code == 503
+                    assert response.headers.get("retry-after") == "60"
+                    body = response.json()
+                    assert body["error"]["type"] == "context_capacity_exceeded"
+                    assert body["error"]["limit_tokens"] == 16
+                    assert body["error"]["estimated_tokens"] > 16
+                    assert body["error"]["job_id"]
+
+        asyncio.run(run())

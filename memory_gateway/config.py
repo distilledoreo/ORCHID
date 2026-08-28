@@ -71,6 +71,12 @@ class RuntimeConfig:
     urgent_fraction: float
     worker_poll_seconds: float
     model_timeout_seconds: float
+    backend_context_limit_tokens: int = 128_000
+    foreground_target_tokens: int = 22_000
+    initial_compaction_threshold_tokens: int = 8_000
+    foreground_hard_limit_tokens: int = 64_000
+    recent_tail_target_tokens: int = 8_000
+    capsule_max_tokens: int = 2_048
     selector_context_tokens: int = 32_768
     canonicalizer_input_tokens: int = 8_192
     lease_seconds: int = 900
@@ -92,6 +98,15 @@ class RuntimeConfig:
     compaction_fixed_overhead_tokens: int = 4_096
     compaction_safety_margin: float = 0.7
     compaction_request_amplification: float = 3.0
+    memory_format: str = "v1"
+    capsule_verification_enabled: bool = True
+    capsule_verification_input_tokens: int = 4_096
+    capsule_verification_output_tokens: int = 512
+    publication_min_savings_ratio: float = 1.25
+    publication_economics_enabled: bool = False
+    publication_horizon_turns: int = 8
+    compaction_forecast_alpha: float = 0.2
+    compaction_forecast_lookahead_turns: float = 3.0
 
     @classmethod
     def from_env(
@@ -99,7 +114,7 @@ class RuntimeConfig:
         *,
         db_path: str | None = None,
         backend_url: str | None = None,
-    ) -> "RuntimeConfig":
+    ) -> RuntimeConfig:
         lease_seconds = _int_env("ORCHID_LEASE_SECONDS", 900)
         lease_renewal_seconds = float(_env("ORCHID_LEASE_RENEWAL_SECONDS", "30"))
         if lease_renewal_seconds <= 0 or lease_renewal_seconds >= lease_seconds:
@@ -110,6 +125,65 @@ class RuntimeConfig:
         cold_memory_mode = (_env("ORCHID_COLD_MEMORY_MODE", "off") or "off").lower()
         if cold_memory_mode not in {"off", "shadow", "inject"}:
             raise ValueError("ORCHID_COLD_MEMORY_MODE must be off, shadow, or inject")
+        legacy_context = _env("ORCHID_CONTEXT_TOKENS")
+        backend_context = _env("ORCHID_BACKEND_CONTEXT_LIMIT_TOKENS")
+        if legacy_context and backend_context and int(legacy_context) != int(backend_context):
+            raise ValueError(
+                "ORCHID_CONTEXT_TOKENS and ORCHID_BACKEND_CONTEXT_LIMIT_TOKENS conflict"
+            )
+        backend_context_limit_tokens = _int_env(
+            "ORCHID_BACKEND_CONTEXT_LIMIT_TOKENS",
+            int(legacy_context) if legacy_context else 128_000,
+        )
+        foreground_target_tokens = _int_env("ORCHID_FOREGROUND_TARGET_TOKENS", 22_000)
+        initial_compaction_threshold_tokens = _int_env(
+            "ORCHID_INITIAL_COMPACTION_THRESHOLD_TOKENS", 8_000
+        )
+        foreground_hard_limit_tokens = _int_env("ORCHID_FOREGROUND_HARD_LIMIT_TOKENS", 64_000)
+        recent_tail_target_tokens = _int_env("ORCHID_RECENT_TAIL_TARGET_TOKENS", 8_000)
+        capsule_max_tokens = _int_env("ORCHID_CAPSULE_MAX_TOKENS", 2_048)
+        capsule_verification_enabled = _bool_env("ORCHID_CAPSULE_VERIFICATION_ENABLED", True)
+        capsule_verification_input_tokens = _int_env(
+            "ORCHID_CAPSULE_VERIFICATION_INPUT_TOKENS", 4_096
+        )
+        capsule_verification_output_tokens = _int_env(
+            "ORCHID_CAPSULE_VERIFICATION_OUTPUT_TOKENS", 512
+        )
+        if foreground_target_tokens > foreground_hard_limit_tokens:
+            raise ValueError(
+                "ORCHID_FOREGROUND_TARGET_TOKENS must not exceed ORCHID_FOREGROUND_HARD_LIMIT_TOKENS"
+            )
+        if not 0 < initial_compaction_threshold_tokens <= foreground_target_tokens:
+            raise ValueError(
+                "ORCHID_INITIAL_COMPACTION_THRESHOLD_TOKENS must be positive and "
+                "must not exceed ORCHID_FOREGROUND_TARGET_TOKENS"
+            )
+        if foreground_hard_limit_tokens > backend_context_limit_tokens:
+            raise ValueError(
+                "ORCHID_FOREGROUND_HARD_LIMIT_TOKENS must not exceed backend context limit"
+            )
+        memory_format = (_env("ORCHID_MEMORY_FORMAT", "v1") or "v1").lower()
+        if memory_format not in {"v1", "v2_shadow", "v2"}:
+            raise ValueError("ORCHID_MEMORY_FORMAT must be v1, v2_shadow, or v2")
+        publication_min_savings_ratio = float(
+            _env("ORCHID_PUBLICATION_MIN_SAVINGS_RATIO", "1.25") or "1.25"
+        )
+        if publication_min_savings_ratio <= 0:
+            raise ValueError("ORCHID_PUBLICATION_MIN_SAVINGS_RATIO must be positive")
+        publication_economics_enabled = _bool_env(
+            "ORCHID_PUBLICATION_ECONOMICS_ENABLED", False
+        )
+        publication_horizon_turns = _int_env("ORCHID_PUBLICATION_HORIZON_TURNS", 8)
+        compaction_forecast_alpha = float(
+            _env("ORCHID_COMPACTION_FORECAST_ALPHA", "0.2") or "0.2"
+        )
+        if not 0 < compaction_forecast_alpha <= 1:
+            raise ValueError("ORCHID_COMPACTION_FORECAST_ALPHA must be between 0 and 1")
+        compaction_forecast_lookahead_turns = float(
+            _env("ORCHID_COMPACTION_FORECAST_LOOKAHEAD_TURNS", "3") or "3"
+        )
+        if compaction_forecast_lookahead_turns <= 0:
+            raise ValueError("ORCHID_COMPACTION_FORECAST_LOOKAHEAD_TURNS must be positive")
         return cls(
             db_path=db_path or _env("ORCHID_DB", "./data/memory.db"),
             backend_url=(backend_url or _env("ORCHID_BACKEND_URL", "http://127.0.0.1:1234")).rstrip("/"),
@@ -124,7 +198,13 @@ class RuntimeConfig:
             consolidator_url=_env("ORCHID_CONSOLIDATOR_URL"),
             consolidator_model=_env("ORCHID_CONSOLIDATOR_MODEL"),
             consolidator_api_key=_env("ORCHID_CONSOLIDATOR_API_KEY"),
-            context_tokens=_int_env("ORCHID_CONTEXT_TOKENS", 32_768),
+            context_tokens=backend_context_limit_tokens,
+            backend_context_limit_tokens=backend_context_limit_tokens,
+            foreground_target_tokens=foreground_target_tokens,
+            initial_compaction_threshold_tokens=initial_compaction_threshold_tokens,
+            foreground_hard_limit_tokens=foreground_hard_limit_tokens,
+            recent_tail_target_tokens=recent_tail_target_tokens,
+            capsule_max_tokens=capsule_max_tokens,
             background_fraction=_float_env("ORCHID_BACKGROUND_FRACTION", 0.65),
             urgent_fraction=_float_env("ORCHID_URGENT_FRACTION", 0.85),
             worker_poll_seconds=float(_env("ORCHID_WORKER_POLL_SECONDS", "0.25")),
@@ -169,6 +249,15 @@ class RuntimeConfig:
             compaction_request_amplification=_positive_float_env(
                 "ORCHID_COMPACTION_REQUEST_AMPLIFICATION", 3.0
             ),
+            memory_format=memory_format,
+            capsule_verification_enabled=capsule_verification_enabled,
+            capsule_verification_input_tokens=capsule_verification_input_tokens,
+            capsule_verification_output_tokens=capsule_verification_output_tokens,
+            publication_min_savings_ratio=publication_min_savings_ratio,
+            publication_economics_enabled=publication_economics_enabled,
+            publication_horizon_turns=publication_horizon_turns,
+            compaction_forecast_alpha=compaction_forecast_alpha,
+            compaction_forecast_lookahead_turns=compaction_forecast_lookahead_turns,
         )
 
     @property
@@ -186,11 +275,11 @@ class RuntimeConfig:
 
     @property
     def raw_tail_target_tokens(self) -> int:
-        return max(1_000, min(16_000, self.context_tokens // 2))
+        return self.recent_tail_target_tokens
 
     @property
     def minimum_raw_tail_tokens(self) -> int:
-        return min(12_000, self.raw_tail_target_tokens)
+        return min(12_000, self.recent_tail_target_tokens)
 
     @property
     def compaction_source_window_tokens(self) -> int:

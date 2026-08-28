@@ -24,24 +24,22 @@ from memory_gateway.context import estimate_tokens
 from memory_gateway.db import SQLiteStore
 from memory_gateway.openai_adapter import ModelProtocolError
 from memory_gateway.pipeline import (
-    CanonicalizerBatchError,
     CanonicalizationResult,
+    CanonicalizerBatchError,
     ConsolidationResult,
     LosslessCompactionEngine,
     SelectionResult,
     build_lossless_packet,
 )
 from memory_gateway.pipeline_adapters import (
-    CANONICALIZER_RESPONSE_FORMAT,
     CONSOLIDATOR_RESPONSE_FORMAT,
     OpenAICompatCanonicalizerEngine,
     OpenAICompatConsolidatorEngine,
     OpenAICompatSelectorEngine,
-    SELECTOR_RESPONSE_FORMAT,
-    canonicalizer_response_format_for_batch,
-    consolidator_response_format_for_sources,
     _chunk_events,
     _event_payload,
+    canonicalizer_response_format_for_batch,
+    consolidator_response_format_for_sources,
     selector_response_format_for_chunk,
 )
 
@@ -708,6 +706,55 @@ def test_consolidator_schema_is_strict_and_requires_both_fields() -> None:
         "required": ["content", "evidence_event_ids"],
         "additionalProperties": False,
     }
+
+
+def test_consolidator_response_format_can_require_memory_items() -> None:
+    schema = consolidator_response_format_for_sources(
+        ["evt_a"],
+        require_memory_items=True,
+    )["json_schema"]["schema"]
+    assert "items" in schema["required"]
+    assert schema["properties"]["items"]["minItems"] == 1
+    excerpt = schema["properties"]["items"]["items"]["properties"]["evidence"][
+        "items"
+    ]["properties"]["excerpt"]
+    assert excerpt == {"type": "string", "minLength": 1, "maxLength": 512}
+
+
+def test_consolidator_receives_the_admission_citation_view() -> None:
+    raw = json.dumps(
+        {
+            "output": [
+                {"text": "Script completed"},
+                {"text": "Exit code: 0\n51 tests passed"},
+            ]
+        }
+    )
+    source = Event(
+        id="event-1",
+        sequence=1,
+        content=raw,
+        content_hash=sha256(raw.encode()).hexdigest(),
+        event_type="tool_result",
+        role="tool",
+    )
+    canonical_result = asyncio.run(Canonicalizer().canonicalize(events=[source]))
+    client = StructuredClient(
+        {"content": "rendered", "evidence_event_ids": ["event-1"]}
+    )
+
+    asyncio.run(
+        OpenAICompatConsolidatorEngine(client).consolidate(
+            base_capsule=None,
+            events=[source],
+            snapshot_end_event_id="event-1",
+            packet=build_lossless_packet(canonical_result, [source]),
+        )
+    )
+
+    event_payload = client.input_payload["lossless_packet"]["authoritative_events"][0]
+    assert "content" not in event_payload
+    assert event_payload["citation_text"] == "Script completed\nExit code: 0\n51 tests passed"
 
 
 def test_consolidator_accepts_semantic_citation_subset() -> None:

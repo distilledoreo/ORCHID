@@ -2,7 +2,9 @@ from memory_gateway.compaction import Event, compute_input_hash, freeze_snapshot
 from memory_gateway.db import SQLiteStore, content_hash
 from memory_gateway.ingestion import append_novel_messages
 from memory_gateway.source_projection import (
+    authoritative_source_text,
     classify_tool_text,
+    normalize_citation_match_text,
     project_compaction_events,
     project_tool_content,
     tool_inner_text,
@@ -109,6 +111,51 @@ def test_ingestion_skips_resent_tool_history_when_prefix_does_not_match(tmp_path
 def test_inner_text_unwraps_pi_tool_envelope() -> None:
     payload = '{"content":"hello file","role":"tool","tool_call_id":"x"}'
     assert tool_inner_text(payload) == "hello file"
+
+
+def test_inner_text_unwraps_pi_text_blocks() -> None:
+    payload = '{"content":[{"text":"line one\\nline two"}]}'
+    assert tool_inner_text(payload) == "line one\nline two"
+
+
+def test_inner_text_unwraps_tool_output_blocks() -> None:
+    payload = '{"output":[{"text":"Script completed"},{"text":"Exit code: 0\\n51 passed"}]}'
+    assert tool_inner_text(payload) == "Script completed\nExit code: 0\n51 passed"
+
+
+def test_normalize_citation_text_decodes_literal_json_escapes() -> None:
+    raw = '{"content":[{"text":"Algorithm: 8/10\\n\\nCorrectness: 7.5/10"}]}'
+    excerpt = "Algorithm: 8/10\n\nCorrectness: 7.5/10"
+    assert excerpt in authoritative_source_text(raw)
+
+
+def test_tool_inner_text_recovers_truncated_pi_envelope() -> None:
+    raw = '{"content":[{"text":"Algorithm architecture for normal graybox sets: 8/10\\n\\nCorrectness'
+    inner = tool_inner_text(raw)
+    assert inner.startswith("Algorithm architecture for normal graybox sets: 8/10")
+    assert "{" not in inner[:40]
+
+
+def test_tool_inner_text_keeps_trailing_truncated_block_after_header() -> None:
+    raw = (
+        '{"output":[{"text":"Script completed\\n"},'
+        '{"text":"Exit code: 0\\nTests 51 passed'
+    )
+    inner = tool_inner_text(raw)
+    assert inner == "Script completed\n\nExit code: 0\nTests 51 passed"
+
+
+def test_normalize_citation_match_text_collapses_whitespace_and_unicode_quotes() -> None:
+    source = "Use actual geometry clearance, not object AABBs:\n\ncandidate valid =\n    camera"
+    excerpt = "Use actual geometry clearance, not object AABBs: candidate valid = camera"
+    assert normalize_citation_match_text(excerpt) in normalize_citation_match_text(source)
+    assert normalize_citation_match_text("object\u2019s box") == normalize_citation_match_text("object's box")
+
+
+def test_normalize_citation_match_text_strips_ansi_and_decodes_unicode_escapes() -> None:
+    source = "\x1b[32m✓\x1b[39m tests/uiFidelity.test.ts"
+    excerpt = "\\u001b[32m✓\\u001b[39m tests/uiFidelity.test.ts"
+    assert normalize_citation_match_text(excerpt) in normalize_citation_match_text(source)
 
 
 def test_freeze_input_hash_matches_projected_events(tmp_path) -> None:

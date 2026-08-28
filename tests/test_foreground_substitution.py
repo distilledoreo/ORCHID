@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
-from memory_gateway.context import ContextAssembler, estimate_tokens
+from memory_gateway.context import ContextAssembler, capsule_context_message
 from memory_gateway.db import SQLiteStore
 from memory_gateway.ingestion import append_novel_messages, message_hash
 
@@ -70,7 +70,34 @@ def test_no_active_still_assembles_raw_conversation(tmp_path: Path) -> None:
     assert "hello" in user_contents
 
 
-def test_active_suppresses_covered_user_assistant_history(tmp_path: Path) -> None:
+def test_no_active_forwards_each_ingested_message_once(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    messages = [
+        {"role": "developer", "content": "EXACT_CONTROL_MARKER"},
+        {"role": "user", "content": "EXACT_ROOT_MARKER"},
+    ]
+    _ingest(store, messages)
+
+    snapshot = _assembler(store, minimum=1).assemble("thread", messages)
+    serialized = "\n".join(str(message.get("content", "")) for message in snapshot.messages)
+
+    assert serialized.count("EXACT_CONTROL_MARKER") == 1
+    assert serialized.count("EXACT_ROOT_MARKER") == 1
+    assert not any(
+        str(message.get("content", "")).startswith("RECENT RAW EVENT TAIL")
+        for message in snapshot.messages
+    )
+
+
+def test_capsule_provider_message_excludes_cache_busting_storage_ids() -> None:
+    first = capsule_context_message("## Constraint\n- keep selector")
+    second = capsule_context_message("## Constraint\n- keep selector")
+    assert first == second
+    assert "capsule_id=" not in first["content"]
+    assert "covered_through=" not in first["content"]
+
+
+def test_active_suppresses_covered_assistant_but_preserves_root_task(tmp_path: Path) -> None:
     store = _store(tmp_path)
     history = [
         {"role": "user", "content": "old question"},
@@ -82,7 +109,7 @@ def test_active_suppresses_covered_user_assistant_history(tmp_path: Path) -> Non
     _promote_through(store, events[1]["id"], "old Q/A summarized")
     snapshot = _assembler(store, minimum=1).assemble("thread", history)
     forwarded = [message.get("content") for message in snapshot.messages]
-    assert "old question" not in forwarded
+    assert forwarded.count("old question") == 1
     assert "old answer" not in forwarded
     assert "new question" in forwarded
     assert snapshot.substitution.suppressed_covered_messages == 2
@@ -99,6 +126,47 @@ def test_new_user_message_after_active_is_preserved_verbatim(tmp_path: Path) -> 
     snapshot = _assembler(store, minimum=1).assemble("thread", current)
     assert any(message.get("content") == "exact new instruction" for message in snapshot.messages)
     assert snapshot.substitution.suppressed_covered_messages == 1
+
+
+def test_active_preserves_control_root_and_fresh_user_exactly_once(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    covered = [
+        {"role": "developer", "content": "AUTHORITATIVE_CONTROL_MARKER"},
+        {"role": "user", "content": "AUTHORITATIVE_ROOT_MARKER"},
+        {"role": "assistant", "content": "covered response"},
+    ]
+    _ingest(store, covered, "r1")
+    _promote_through(store, store.list_events("thread")[-1]["id"])
+    current = covered + [{"role": "user", "content": "FRESH_USER_MARKER"}]
+    _ingest(store, current, "r2")
+
+    snapshot = _assembler(store, minimum=1).assemble("thread", current)
+    serialized = "\n".join(str(message.get("content", "")) for message in snapshot.messages)
+
+    assert serialized.count("AUTHORITATIVE_CONTROL_MARKER") == 1
+    assert serialized.count("AUTHORITATIVE_ROOT_MARKER") == 1
+    assert serialized.count("FRESH_USER_MARKER") == 1
+    assert [message.get("role") for message in snapshot.messages].count("developer") == 1
+
+
+def test_active_preserves_new_occurrence_identical_to_root_task(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    root = {"role": "user", "content": "repeat this exact instruction"}
+    _ingest(store, [root], "r1")
+    _promote_through(store, store.list_events("thread")[-1]["id"])
+    current = [root, dict(root)]
+    _ingest(store, current, "r2")
+
+    snapshot = _assembler(store, minimum=1).assemble("thread", current)
+    matching_users = [
+        message
+        for message in snapshot.messages
+        if message.get("role") == "user"
+        and message.get("content") == "repeat this exact instruction"
+    ]
+
+    assert len(matching_users) == 2
+    assert sum("orchid_root_task_event_id" in (message.get("metadata") or {}) for message in matching_users) == 1
 
 
 def test_recent_tool_pair_after_active_is_preserved(tmp_path: Path) -> None:
@@ -126,17 +194,8 @@ def test_recent_tool_pair_after_active_is_preserved(tmp_path: Path) -> None:
     assert roles[-2:] == ["assistant", "tool"]
     assert snapshot.messages[-1]["content"] == "file body"
     users = [message for message in snapshot.messages if message.get("role") == "user"]
-    assert users == [
-        {
-            "role": "user",
-            "content": (
-                "Resume the current task from the persistent memory capsule "
-                "and the following live tool-loop messages."
-            ),
-        }
-    ]
-    assert snapshot.substitution.provider_compatibility_messages == 1
-    assert snapshot.substitution.provider_compatibility_tokens > 0
+    assert users == [{"role": "user", "content": "start", "metadata": {"orchid_root_task_event_id": store.get_root_task_event("thread")["id"]}}]
+    assert snapshot.substitution.provider_compatibility_messages == 0
 
 
 def test_old_tool_pair_covered_by_active_is_omitted(tmp_path: Path) -> None:
@@ -209,7 +268,7 @@ def test_repeated_identical_text_as_new_event_is_not_dropped(tmp_path: Path) -> 
     _ingest(store, repeated, "r2")
     snapshot = _assembler(store, minimum=1).assemble("thread", repeated)
     user_messages = [message for message in snapshot.messages if message.get("role") == "user"]
-    assert sum(1 for message in user_messages if message.get("content") == "same text") == 1
+    assert sum(1 for message in user_messages if message.get("content") == "same text") == 2
     assert snapshot.substitution.retained_request_messages >= 1
 
 
@@ -227,7 +286,7 @@ def test_stream_failure_follow_up_preserves_current_continuation_state(tmp_path:
     contents = [message.get("content") for message in snapshot.messages]
     assert "continue from the failed stream" in contents
     assert "partial before disconnect" in contents
-    assert "old" not in contents
+    assert contents.count("old") == 1
 
 
 def test_tail_below_historical_floor_does_not_pull_covered_history(tmp_path: Path) -> None:
@@ -259,16 +318,19 @@ def test_no_duplicate_representation_of_covered_events(tmp_path: Path) -> None:
     _promote_through(store, events[1]["id"], "summary of the first exchange")
     snapshot = _assembler(store, minimum=1).assemble("thread", history)
     serialized = "\n".join(str(message.get("content", "")) for message in snapshot.messages)
-    assert "UNIQUE_MARKER_123" not in serialized
+    assert serialized.count("UNIQUE_MARKER_123") == 1
     assert snapshot.substitution.covered_raw_tokens_forwarded == 0
 
 
 def test_estimated_tokens_exclude_suppressed_history(tmp_path: Path) -> None:
     store = _store(tmp_path)
-    bulky = [{"role": "user", "content": "b" * 8000}]
-    _ingest(store, bulky, "r1")
+    covered = [
+        {"role": "user", "content": "small root task"},
+        {"role": "assistant", "content": "b" * 8000},
+    ]
+    _ingest(store, covered, "r1")
     _promote_through(store, store.list_events("thread")[-1]["id"], "short")
-    current = bulky + [{"role": "user", "content": "now"}]
+    current = covered + [{"role": "user", "content": "now"}]
     _ingest(store, current, "r2")
     snapshot = _assembler(store, minimum=1).assemble("thread", current)
     assert snapshot.estimated_tokens < snapshot.substitution.inbound_request_tokens
@@ -371,8 +433,86 @@ def test_provider_packet_is_capsule_and_uncovered_tail_not_covered_transcript(
     assert snapshot.substitution.active is True
     assert snapshot.substitution.suppressed_covered_tokens > 0
     assert "UNIQUE_COVERED_PAYLOAD" not in serialized
-    assert "PERSISTENT MEMORY CAPSULE" in serialized
+    assert "DERIVED FACTUAL MEMORY" in serialized
     assert "architecture already read" in serialized
     assert "now edit raster-engine" in serialized
     assert snapshot.estimated_tokens < snapshot.substitution.inbound_request_tokens
     assert snapshot.substitution.final_foreground_tokens == snapshot.estimated_tokens
+
+
+def test_tail_for_prefix_keeps_distinct_event_with_same_content_hash(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    first = [{"role": "user", "content": "same text"}]
+    _ingest(store, first, "r1")
+    _promote_through(store, store.list_events("thread")[-1]["id"])
+    live = first + [
+        {"role": "user", "content": "same text"},
+        {
+            "role": "assistant",
+            "content": None,
+            "tool_calls": [
+                {
+                    "id": "call_live",
+                    "type": "function",
+                    "function": {"name": "read", "arguments": "{}"},
+                }
+            ],
+        },
+        {"role": "tool", "tool_call_id": "call_live", "content": "live tool body"},
+    ]
+    _ingest(store, live, "r2")
+    events = store.list_events("thread")
+    repeated_event_id = events[1]["id"]
+    snapshot = _assembler(store, minimum=1).assemble(
+        "thread",
+        live[-2:],
+    )
+    assert repeated_event_id in snapshot.raw_tail_event_ids
+    tail_blocks = [
+        str(message.get("content", ""))
+        for message in snapshot.messages
+        if str(message.get("content", "")).startswith("RECENT RAW EVENT TAIL")
+    ]
+    assert len(tail_blocks) == 1
+    assert repeated_event_id in tail_blocks[0]
+    rendered = "\n".join(str(message.get("content", "")) for message in snapshot.messages)
+    assert "live tool body" in rendered
+
+
+def test_stable_prefix_precedes_volatile_raw_tail(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    covered = [
+        {"role": "developer", "content": "CONTROL"},
+        {"role": "user", "content": "ROOT_TASK"},
+        {"role": "assistant", "content": "covered"},
+    ]
+    _ingest(store, covered, "r1")
+    _promote_through(store, store.list_events("thread")[-1]["id"], "capsule facts")
+    store.append_event(
+        project_id="project",
+        thread_id="thread",
+        event_type="tool_result",
+        role="tool",
+        content="uncovered sidecar",
+    )
+    current = covered + [{"role": "user", "content": "FRESH"}]
+    _ingest(store, current, "r2")
+    snapshot = _assembler(store, minimum=1).assemble("thread", current)
+    kinds: list[str] = []
+    for message in snapshot.messages:
+        content = str(message.get("content") or "")
+        if message.get("role") == "developer":
+            kinds.append("developer")
+        elif content.startswith("DERIVED FACTUAL MEMORY"):
+            kinds.append("capsule")
+        elif message.get("metadata", {}).get("orchid_root_task_event_id"):
+            kinds.append("root_task")
+        elif content.startswith("RECENT RAW EVENT TAIL"):
+            kinds.append("raw_tail")
+        elif message.get("role") == "user" and "FRESH" in content:
+            kinds.append("conversation")
+    assert kinds == ["developer", "capsule", "root_task", "raw_tail", "conversation"]
+    assert snapshot.prompt_cache is not None
+    persisted = store.get_thread_prompt_cache("thread")
+    assert persisted is not None
+    assert persisted["block_hashes"]["capsule"] == snapshot.prompt_cache.block_hashes["capsule"]

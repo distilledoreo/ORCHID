@@ -2,24 +2,31 @@ from __future__ import annotations
 
 import asyncio
 import json
+import time
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
-from typing import Any, AsyncIterator
+from datetime import UTC, datetime
+from typing import Any
 
 import httpx
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
+from .cold_memory import CALIBRATED_RANKING_POLICY, FTS5ColdMemoryRetriever
+from .cold_telemetry import BufferedColdMemoryTelemetry
 from .compaction import CompactionEngine, CompactionWorker
 from .config import RuntimeConfig
 from .context import ContextAssembler
-from .cold_memory import CALIBRATED_RANKING_POLICY, FTS5ColdMemoryRetriever
 from .db import SQLiteStore, new_id
+from .foreground_telemetry import (
+    append_record,
+    finalize_record,
+    record_provider_latency,
+    substitution_record,
+)
+from .ingestion import append_novel_messages, parse_assistant_message, parse_stream_message
 from .pipeline_adapters import build_lossless_engine
 from .scheduler import CompactionScheduler, ThresholdPolicy
-from .cold_telemetry import BufferedColdMemoryTelemetry
-from .ingestion import append_novel_messages, parse_assistant_message, parse_stream_message
-from .foreground_telemetry import append_record, finalize_record, substitution_record
 
 
 def create_app(
@@ -57,6 +64,7 @@ def create_app(
         raw_tail_target_tokens=runtime.raw_tail_target_tokens,
         minimum_raw_tail_tokens=runtime.minimum_raw_tail_tokens,
         context_budget_tokens=runtime.context_tokens,
+        foreground_hard_limit_tokens=runtime.foreground_hard_limit_tokens,
         cold_memory_provider=cold_memory_provider,
         cold_memory_mode=runtime.cold_memory_mode,
         cold_memory_token_budget=runtime.cold_memory_token_budget,
@@ -66,17 +74,29 @@ def create_app(
     scheduler = CompactionScheduler(
         store,
         ThresholdPolicy(
-            usable_context_tokens=runtime.context_tokens,
-            background_fraction=runtime.background_fraction,
-            urgent_fraction=runtime.urgent_fraction,
+            usable_context_tokens=runtime.foreground_hard_limit_tokens,
+            background_threshold_tokens=runtime.foreground_target_tokens,
+            bootstrap_threshold_tokens=min(
+                runtime.initial_compaction_threshold_tokens,
+                runtime.foreground_target_tokens,
+            ),
+            urgent_threshold_tokens=runtime.foreground_hard_limit_tokens,
+            predictive_lookahead_turns=runtime.compaction_forecast_lookahead_turns,
         ),
         source_window_tokens=runtime.compaction_source_window_tokens,
+        forecast_alpha=runtime.compaction_forecast_alpha,
+        publication_min_savings_ratio=runtime.publication_min_savings_ratio,
+        publication_economics_enabled=runtime.publication_economics_enabled,
+        publication_horizon_turns=runtime.publication_horizon_turns,
     )
     engine = (
         compaction_engine
         if compaction_engine is not None
         else build_lossless_engine(runtime, telemetry_recorder=store)
     )
+    from .capsule_admission import build_capsule_verifier
+
+    capsule_verifier = build_capsule_verifier(runtime, telemetry_recorder=store)
     worker = (
         CompactionWorker(
             store,
@@ -86,6 +106,12 @@ def create_app(
             renewal_interval_seconds=runtime.lease_renewal_seconds,
             recover_expired_jobs=runtime.recover_expired_jobs,
             on_job_finished=scheduler.reconcile_after_job,
+            memory_format=runtime.memory_format,
+            capsule_max_tokens=runtime.capsule_max_tokens,
+            capsule_verifier=capsule_verifier,
+            publication_min_savings_ratio=runtime.publication_min_savings_ratio,
+            publication_economics_enabled=runtime.publication_economics_enabled,
+            publication_horizon_turns=runtime.publication_horizon_turns,
         )
         if engine
         else None
@@ -157,7 +183,11 @@ def create_app(
         project_id = request.headers.get("x-memory-project", "default")
         thread_id = request.headers.get("x-memory-thread", "default")
         request_id = request.headers.get("x-request-id", new_id("req"))
-        store.ensure_project_and_thread(project_id, thread_id)
+        store.ensure_project_and_thread(
+            project_id,
+            thread_id,
+            memory_format=runtime.memory_format,
+        )
         append_novel_messages(
             store,
             project_id=project_id,
@@ -171,6 +201,21 @@ def create_app(
             payload["messages"],
             project_id=project_id,
         )
+        if context.hard_limit_exceeded:
+            job_id = scheduler.enqueue_urgent(thread_id)
+            return JSONResponse(
+                status_code=503,
+                headers={"Retry-After": "60"},
+                content={
+                    "error": {
+                        "type": "context_capacity_exceeded",
+                        "message": "foreground context exceeds hard limit",
+                        "estimated_tokens": context.estimated_tokens,
+                        "limit_tokens": runtime.foreground_hard_limit_tokens,
+                        "job_id": job_id,
+                    }
+                },
+            )
         outbound = dict(payload)
         outbound["messages"] = context.messages
         if runtime.backend_model:
@@ -208,6 +253,7 @@ def create_app(
                 media_type="text/event-stream",
             )
 
+        provider_started_perf = time.perf_counter()
         async with httpx.AsyncClient(timeout=None) as client:
             response = await client.post(
                 f"{backend}/v1/chat/completions",
@@ -216,6 +262,11 @@ def create_app(
             )
         response_text = response.text
         parsed = _json_or_text(response)
+        record_provider_latency(
+            foreground_record,
+            provider_wall_ms=(time.perf_counter() - provider_started_perf) * 1_000,
+            success=response.is_success,
+        )
         append_record(finalize_record(foreground_record, parsed))
         if response.is_success:
             response_message = parse_assistant_message(_json_or_text(response))
@@ -361,15 +412,17 @@ async def _stream_response(
     saw_done = False
     saw_finish_reason = False
     first_token_at: str | None = None
+    first_token_perf: float | None = None
     last_usage_payload: dict[str, Any] | None = None
     provider_started_at = _stream_now()
+    provider_started_perf = time.perf_counter()
     stream_end_at: str | None = None
     status = "ACCEPTED"
     failure_category: str | None = None
     error_excerpt: str | None = None
 
     def inspect_line(line: bytes) -> None:
-        nonlocal saw_done, saw_finish_reason, first_token_at, last_usage_payload
+        nonlocal saw_done, saw_finish_reason, first_token_at, first_token_perf, last_usage_payload
         text = line.decode("utf-8", errors="replace").strip()
         if not text or not text.startswith("data:"):
             return
@@ -403,6 +456,7 @@ async def _stream_response(
         )
         if has_token and first_token_at is None:
             first_token_at = _stream_now()
+            first_token_perf = time.perf_counter()
 
     try:
         store.update_gateway_stream_run(
@@ -471,6 +525,17 @@ async def _stream_response(
             partial_output=int(bool(chunks)),
         )
         if foreground_record is not None:
+            provider_ended_perf = time.perf_counter()
+            record_provider_latency(
+                foreground_record,
+                provider_wall_ms=(provider_ended_perf - provider_started_perf) * 1_000,
+                time_to_first_event_ms=(
+                    (first_token_perf - provider_started_perf) * 1_000
+                    if first_token_perf is not None
+                    else None
+                ),
+                success=True,
+            )
             append_record(finalize_record(foreground_record, last_usage_payload or {}))
     except asyncio.CancelledError:
         status = "CANCELLED"
@@ -572,7 +637,7 @@ class ProviderStreamError(RuntimeError):
 
 
 def _stream_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def _synthetic_stream_error(request_id: str, category: str, message: str) -> bytes:

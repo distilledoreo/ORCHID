@@ -5,11 +5,11 @@ import json
 import sqlite3
 import time
 import uuid
+from collections.abc import Iterator
 from contextlib import contextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterator
-
+from typing import Any
 
 SCHEMA = """
 PRAGMA foreign_keys = ON;
@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS threads (
     next_sequence INTEGER NOT NULL DEFAULT 1,
     compaction_dirty INTEGER NOT NULL DEFAULT 0,
     compaction_dirty_priority INTEGER NOT NULL DEFAULT 0,
+    memory_format TEXT NOT NULL DEFAULT 'v1',
     created_at TEXT NOT NULL
 );
 
@@ -269,7 +270,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS long_term_memories_fts USING fts5(
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def new_id(prefix: str) -> str:
@@ -285,17 +286,36 @@ def content_hash(content: str) -> str:
 
 
 def _ordered_history_overlap(known: list[str], incoming: list[str]) -> int:
-    """Find the reusable ordered prefix or suffix of a resent history."""
+    """Return the length of the reusable ordered overlap in ``incoming``."""
+    _, length = _ordered_history_overlap_span(known, incoming)
+    return length
+
+
+def _ordered_history_overlap_span(known: list[str], incoming: list[str]) -> tuple[int, int]:
+    """Return ``(start_index, length)`` of reused history inside ``incoming``.
+
+  The reusable region is the longest contiguous block in ``incoming`` that
+  exactly matches either the prefix of ``known`` or a suffix of ``known``.
+  This covers standard Pi history resends and prepended control messages
+  without global content-hash suppression.
+    """
     if not incoming or not known:
-        return 0
+        return (0, 0)
     maximum = min(len(known), len(incoming))
-    for count in range(maximum, -1, -1):
-        if incoming[:count] == known[:count]:
-            return count
     for count in range(maximum, 0, -1):
-        if incoming[:count] == known[-count:]:
-            return count
-    return 0
+        if incoming[:count] == known[:count]:
+            return (0, count)
+    best_start = 0
+    best_count = 0
+    for count in range(maximum, 0, -1):
+        known_suffix = known[-count:]
+        for start in range(0, len(incoming) - count + 1):
+            if incoming[start : start + count] != known_suffix:
+                continue
+            if count > best_count or (count == best_count and start > best_start):
+                best_start = start
+                best_count = count
+    return (best_start, best_count)
 
 
 class SQLiteStore:
@@ -378,6 +398,22 @@ class SQLiteStore:
             connection.execute(
                 "ALTER TABLE threads ADD COLUMN compaction_dirty_priority INTEGER NOT NULL DEFAULT 0"
             )
+        if "root_task_event_id" not in columns:
+            connection.execute("ALTER TABLE threads ADD COLUMN root_task_event_id TEXT")
+        if "memory_format" not in columns:
+            connection.execute(
+                "ALTER TABLE threads ADD COLUMN memory_format TEXT NOT NULL DEFAULT 'v1'"
+            )
+        if "ingestion_rate_ewma" not in columns:
+            connection.execute(
+                "ALTER TABLE threads ADD COLUMN ingestion_rate_ewma REAL NOT NULL DEFAULT 0"
+            )
+        if "last_uncompacted_tokens" not in columns:
+            connection.execute(
+                "ALTER TABLE threads ADD COLUMN last_uncompacted_tokens INTEGER NOT NULL DEFAULT 0"
+            )
+        if "last_prompt_cache_json" not in columns:
+            connection.execute("ALTER TABLE threads ADD COLUMN last_prompt_cache_json TEXT")
 
     @staticmethod
     def _migrate_compaction_jobs(connection: sqlite3.Connection) -> None:
@@ -565,14 +601,29 @@ class SQLiteStore:
                 (project_id, name or project_id, utc_now()),
             )
 
-    def create_thread(self, thread_id: str, project_id: str) -> None:
+    def create_thread(
+        self,
+        thread_id: str,
+        project_id: str,
+        *,
+        memory_format: str = "v1",
+    ) -> None:
         with self.transaction(immediate=True) as connection:
             connection.execute(
-                "INSERT INTO threads(id, project_id, created_at) VALUES (?, ?, ?)",
-                (thread_id, project_id, utc_now()),
+                """
+                INSERT INTO threads(id, project_id, memory_format, created_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                (thread_id, project_id, memory_format, utc_now()),
             )
 
-    def ensure_project_and_thread(self, project_id: str, thread_id: str) -> None:
+    def ensure_project_and_thread(
+        self,
+        project_id: str,
+        thread_id: str,
+        *,
+        memory_format: str = "v1",
+    ) -> None:
         with self.transaction(immediate=True) as connection:
             connection.execute(
                 "INSERT OR IGNORE INTO projects(id, name, created_at) VALUES (?, ?, ?)",
@@ -580,11 +631,122 @@ class SQLiteStore:
             )
             connection.execute(
                 """
-                INSERT OR IGNORE INTO threads(id, project_id, created_at)
-                VALUES (?, ?, ?)
+                INSERT OR IGNORE INTO threads(id, project_id, memory_format, created_at)
+                VALUES (?, ?, ?, ?)
                 """,
-                (thread_id, project_id, utc_now()),
+                (thread_id, project_id, memory_format, utc_now()),
             )
+
+    def get_thread_memory_format(self, thread_id: str) -> str:
+        with self.connect() as connection:
+            row = connection.execute(
+                "SELECT memory_format FROM threads WHERE id = ?",
+                (thread_id,),
+            ).fetchone()
+        if row is None:
+            return "v1"
+        return str(row["memory_format"] or "v1")
+
+    def get_thread_compaction_forecast(self, thread_id: str) -> tuple[float, int]:
+        with self.connect() as connection:
+            row = connection.execute(
+                """
+                SELECT ingestion_rate_ewma, last_uncompacted_tokens
+                FROM threads
+                WHERE id = ?
+                """,
+                (thread_id,),
+            ).fetchone()
+        if row is None:
+            return 0.0, 0
+        return float(row["ingestion_rate_ewma"] or 0.0), int(row["last_uncompacted_tokens"] or 0)
+
+    def update_thread_compaction_forecast(
+        self,
+        thread_id: str,
+        uncompacted_tokens: int,
+        *,
+        alpha: float = 0.2,
+    ) -> tuple[float, int]:
+        from .compaction_forecast import CompactionForecast
+
+        rate_ewma, last_tokens = self.get_thread_compaction_forecast(thread_id)
+        forecast = CompactionForecast(
+            rate_ewma=rate_ewma,
+            last_uncompacted_tokens=last_tokens,
+        ).observe(uncompacted_tokens, alpha=alpha)
+        with self.transaction(immediate=True) as connection:
+            connection.execute(
+                """
+                UPDATE threads
+                SET ingestion_rate_ewma = ?, last_uncompacted_tokens = ?
+                WHERE id = ?
+                """,
+                (forecast.rate_ewma, forecast.last_uncompacted_tokens, thread_id),
+            )
+        return forecast.rate_ewma, forecast.last_uncompacted_tokens
+
+    def record_thread_prompt_cache(self, thread_id: str, payload: dict[str, Any]) -> None:
+        with self.transaction(immediate=True) as connection:
+            connection.execute(
+                """
+                UPDATE threads
+                SET last_prompt_cache_json = ?
+                WHERE id = ?
+                """,
+                (canonical_json(payload), thread_id),
+            )
+
+    def get_thread_prompt_cache(self, thread_id: str) -> dict[str, Any] | None:
+        with self.connect() as connection:
+            row = connection.execute(
+                "SELECT last_prompt_cache_json FROM threads WHERE id = ?",
+                (thread_id,),
+            ).fetchone()
+        raw = None if row is None else row["last_prompt_cache_json"]
+        if not raw:
+            return None
+        try:
+            payload = json.loads(raw)
+        except (TypeError, json.JSONDecodeError):
+            return None
+        return payload if isinstance(payload, dict) else None
+
+    def get_latest_ready_capsule(self, thread_id: str) -> dict[str, Any] | None:
+        with self.connect() as connection:
+            row = connection.execute(
+                """
+                SELECT *
+                FROM capsules
+                WHERE thread_id = ? AND state = 'READY'
+                ORDER BY created_at DESC
+                LIMIT 1
+                """,
+                (thread_id,),
+            ).fetchone()
+        return dict(row) if row else None
+
+    def stale_ready_capsules(self, thread_id: str, *, except_capsule_id: str | None = None) -> int:
+        with self.transaction(immediate=True) as connection:
+            if except_capsule_id:
+                result = connection.execute(
+                    """
+                    UPDATE capsules
+                    SET state = 'STALE'
+                    WHERE thread_id = ? AND state = 'READY' AND id != ?
+                    """,
+                    (thread_id, except_capsule_id),
+                )
+            else:
+                result = connection.execute(
+                    """
+                    UPDATE capsules
+                    SET state = 'STALE'
+                    WHERE thread_id = ? AND state = 'READY'
+                    """,
+                    (thread_id,),
+                )
+            return int(result.rowcount)
 
     def append_event(
         self,
@@ -664,8 +826,8 @@ class SQLiteStore:
         overlap; it never performs fuzzy or semantic deduplication.  Repeated
         text at a new position therefore remains a new event.
         """
-        from .ingestion import message_content, message_event_type, message_hash
         from .context import estimate_tokens
+        from .ingestion import message_content, message_event_type, message_hash
 
         incoming_hashes = [message_hash(message) for message in messages]
         with self.transaction(immediate=True) as connection:
@@ -698,17 +860,16 @@ class SQLiteStore:
                     known_hashes.append(digest)
                     known_ids.append(str(row["id"]))
 
-            reused = _ordered_history_overlap(known_hashes, incoming_hashes)
+            reused_start, reused = _ordered_history_overlap_span(known_hashes, incoming_hashes)
             appended: list[dict[str, Any]] = []
             skipped_duplicate_count = 0
-            known_hash_set = set(known_hashes)
             sequence = int(thread["next_sequence"])
             parent_event_id = known_ids[-1] if known_ids else None
-            for index, message in enumerate(messages[reused:], start=reused):
-                digest = incoming_hashes[index]
-                if digest in known_hash_set:
+            for index, message in enumerate(messages):
+                if reused_start <= index < reused_start + reused:
                     skipped_duplicate_count += 1
                     continue
+                digest = incoming_hashes[index]
                 content = message_content(message)
                 event_id = new_id("evt")
                 event = {
@@ -725,7 +886,8 @@ class SQLiteStore:
                             "ingest_kind": "chat_message",
                             "source": source,
                             "message_index": index,
-                            "message_hash": incoming_hashes[index],
+                            "message_hash": digest,
+                            "request_id": request_id,
                         }
                     ),
                     "content_hash": content_hash(content),
@@ -734,7 +896,6 @@ class SQLiteStore:
                     "parent_event_id": parent_event_id,
                     "request_id": request_id,
                 }
-                known_hash_set.add(digest)
                 connection.execute(
                     """
                     INSERT INTO events(
@@ -749,6 +910,15 @@ class SQLiteStore:
                     """,
                     event,
                 )
+                if message.get("role") == "user":
+                    connection.execute(
+                        """
+                        UPDATE threads
+                        SET root_task_event_id = ?
+                        WHERE id = ? AND root_task_event_id IS NULL
+                        """,
+                        (event_id, thread_id),
+                    )
                 appended.append(event)
                 parent_event_id = event_id
                 sequence += 1
@@ -759,6 +929,7 @@ class SQLiteStore:
         return {
             "appended_events": tuple(appended),
             "reused_prefix_count": reused,
+            "reused_prefix_start": reused_start,
             "known_message_count": len(known_hashes),
             "incoming_message_count": len(messages),
             "skipped_duplicate_count": skipped_duplicate_count,
@@ -866,6 +1037,16 @@ class SQLiteStore:
         with self.connect() as connection:
             row = connection.execute("SELECT * FROM events WHERE id = ?", (event_id,)).fetchone()
         return dict(row) if row else None
+
+    def get_root_task_event(self, thread_id: str) -> dict[str, Any] | None:
+        with self.connect() as connection:
+            row = connection.execute(
+                "SELECT root_task_event_id FROM threads WHERE id = ?",
+                (thread_id,),
+            ).fetchone()
+        if row is None or not row["root_task_event_id"]:
+            return None
+        return self.get_event(str(row["root_task_event_id"]))
 
     def get_active_capsule(self, thread_id: str) -> dict[str, Any] | None:
         with self.connect() as connection:
@@ -1417,6 +1598,78 @@ class SQLiteStore:
             ).fetchall()
         return [dict(row) for row in rows]
 
+    def _capsule_source_event_ids(
+        self,
+        connection: sqlite3.Connection,
+        *,
+        thread_id: str,
+        covered_start_event_id: str | None,
+        covered_end_event_id: str | None,
+    ) -> tuple[str, ...]:
+        if not covered_start_event_id or not covered_end_event_id:
+            return ()
+        start = connection.execute(
+            "SELECT sequence FROM events WHERE id = ? AND thread_id = ?",
+            (covered_start_event_id, thread_id),
+        ).fetchone()
+        end = connection.execute(
+            "SELECT sequence FROM events WHERE id = ? AND thread_id = ?",
+            (covered_end_event_id, thread_id),
+        ).fetchone()
+        if start is None or end is None:
+            return ()
+        low = min(int(start["sequence"]), int(end["sequence"]))
+        high = max(int(start["sequence"]), int(end["sequence"]))
+        rows = connection.execute(
+            """
+            SELECT id
+            FROM events
+            WHERE thread_id = ? AND sequence BETWEEN ? AND ?
+            ORDER BY sequence
+            """,
+            (thread_id, low, high),
+        ).fetchall()
+        return tuple(str(row["id"]) for row in rows)
+
+    def replace_capsule_sources(
+        self,
+        capsule_id: str,
+        *,
+        event_ids: tuple[str, ...],
+    ) -> None:
+        with self.transaction(immediate=True) as connection:
+            capsule = connection.execute(
+                "SELECT id FROM capsules WHERE id = ?",
+                (capsule_id,),
+            ).fetchone()
+            if capsule is None:
+                raise ValueError("capsule does not exist")
+            connection.execute(
+                "DELETE FROM capsule_sources WHERE capsule_id = ?",
+                (capsule_id,),
+            )
+            for position, event_id in enumerate(event_ids):
+                connection.execute(
+                    """
+                    INSERT INTO capsule_sources(capsule_id, event_id, position)
+                    VALUES (?, ?, ?)
+                    """,
+                    (capsule_id, event_id, position),
+                )
+
+    def list_capsule_sources(self, capsule_id: str) -> list[dict[str, Any]]:
+        with self.connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT capsule_id, event_id, position
+                FROM capsule_sources
+                WHERE capsule_id = ?
+                ORDER BY position
+                """,
+                (capsule_id,),
+            ).fetchall()
+        return [dict(row) for row in rows]
+
     def create_capsule(
         self,
         *,
@@ -1434,6 +1687,7 @@ class SQLiteStore:
         model_metadata: dict[str, Any] | None = None,
         state: str = "GENERATED",
         capsule_id: str | None = None,
+        source_event_ids: tuple[str, ...] | None = None,
     ) -> str:
         capsule_id = capsule_id or new_id("cap")
         with self.transaction(immediate=True) as connection:
@@ -1475,10 +1729,39 @@ class SQLiteStore:
                     utc_now(),
                 ),
             )
+            resolved_source_ids = source_event_ids
+            if resolved_source_ids is None:
+                resolved_source_ids = self._capsule_source_event_ids(
+                    connection,
+                    thread_id=thread_id,
+                    covered_start_event_id=covered_start_event_id,
+                    covered_end_event_id=covered_end_event_id,
+                )
+            for position, event_id in enumerate(resolved_source_ids):
+                connection.execute(
+                    """
+                    INSERT INTO capsule_sources(capsule_id, event_id, position)
+                    VALUES (?, ?, ?)
+                    """,
+                    (capsule_id, event_id, position),
+                )
         return capsule_id
 
     def mark_capsule_ready(self, capsule_id: str) -> bool:
         with self.transaction(immediate=True) as connection:
+            capsule = connection.execute(
+                "SELECT covered_end_event_id FROM capsules WHERE id = ?",
+                (capsule_id,),
+            ).fetchone()
+            if capsule is None:
+                return False
+            if capsule["covered_end_event_id"]:
+                source_count = connection.execute(
+                    "SELECT COUNT(*) AS count FROM capsule_sources WHERE capsule_id = ?",
+                    (capsule_id,),
+                ).fetchone()
+                if source_count is None or int(source_count["count"]) == 0:
+                    return False
             result = connection.execute(
                 """
                 UPDATE capsules
@@ -1842,8 +2125,8 @@ class SQLiteStore:
             if row is None:
                 return None
             lease_until = datetime.fromtimestamp(
-                datetime.now(timezone.utc).timestamp() + lease_seconds,
-                tz=timezone.utc,
+                datetime.now(UTC).timestamp() + lease_seconds,
+                tz=UTC,
             ).isoformat(timespec="milliseconds")
             lease_token = uuid.uuid4().hex
             connection.execute(
@@ -1872,8 +2155,8 @@ class SQLiteStore:
         with self.transaction(immediate=True) as connection:
             now = utc_now()
             lease_until = datetime.fromtimestamp(
-                datetime.now(timezone.utc).timestamp() + lease_seconds,
-                tz=timezone.utc,
+                datetime.now(UTC).timestamp() + lease_seconds,
+                tz=UTC,
             ).isoformat(timespec="milliseconds")
             result = connection.execute(
                 """

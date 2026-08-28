@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import json
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from hashlib import sha256
-from typing import Any, Callable, Protocol
+from typing import Any, Protocol
 
-from .context import estimate_tokens
 from .compaction import (
     Capsule,
     CompactionResult,
@@ -20,6 +20,7 @@ from .compaction import (
     source_item_parent_event_id,
     source_item_payload,
 )
+from .context import estimate_tokens
 from .openai_adapter import ModelProtocolError
 
 
@@ -70,6 +71,7 @@ class ConsolidationResult:
     prompt_version: str
     generation_settings: dict[str, Any]
     retire_memories: tuple[RetireMemory, ...] = ()
+    memory_items: tuple[dict[str, Any], ...] = ()
 
 
 class CanonicalizerBatchError(ModelProtocolError):
@@ -481,11 +483,7 @@ class LosslessCompactionEngine:
             if event.id in reported_evidence_ids and event.id not in source_item_ids
         )
         for source_id in consolidation.evidence_event_ids:
-            if source_id in source_item_by_id:
-                item = source_item_by_id[source_id]
-            elif source_id in event_by_id:
-                item = event_by_id[source_id]
-            else:
+            if source_id not in source_item_by_id and source_id not in event_by_id:
                 raise ValueError("consolidator returned an unknown evidence event ID")
         reported_parent_ids = {
             source_item_parent_event_id(
@@ -514,6 +512,7 @@ class LosslessCompactionEngine:
             generation_settings=consolidation.generation_settings,
             evidence_source_ids=tuple(evidence_source_ids),
             retire_memories=retire_memories,
+            memory_items=consolidation.memory_items,
         )
         self.last_telemetry["validation_ms"] = (time.perf_counter() - validation_started) * 1000
         self.last_telemetry["source_tokens"] = sum(

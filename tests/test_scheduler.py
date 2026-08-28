@@ -64,6 +64,31 @@ def test_uncompacted_tokens_include_all_events_without_capsule(tmp_path: Path) -
     assert scheduler.uncompacted_tokens("thread") == 3 + estimate_tokens(second_content)
 
 
+def test_bootstrap_threshold_starts_first_capsule_early_then_restores_steady_state(
+    tmp_path: Path,
+) -> None:
+    _ = tmp_path
+    policy = ThresholdPolicy(
+        usable_context_tokens=100,
+        background_threshold_tokens=22,
+        bootstrap_threshold_tokens=8,
+    )
+    assert policy.priority_for(8, bootstrap=True) == 50
+    assert policy.priority_for(8, bootstrap=False) is None
+    assert policy.priority_for(22, bootstrap=False) == 50
+
+
+def test_projected_tokens_can_raise_priority_before_current_threshold() -> None:
+    policy = ThresholdPolicy(
+        usable_context_tokens=64_000,
+        background_threshold_tokens=22_000,
+        urgent_threshold_tokens=64_000,
+    )
+    assert policy.priority_for(10_000, projected_tokens=22_000) == 50
+    assert policy.priority_for(10_000, projected_tokens=52_000) == 100
+    assert policy.priority_for(10_000, projected_tokens=10_000) is None
+
+
 def test_freeze_snapshot_honors_source_window_without_emptying_backlog(
     tmp_path: Path,
 ) -> None:

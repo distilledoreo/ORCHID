@@ -23,13 +23,13 @@ from .pipeline import (
     CanonicalizationResult,
     CanonicalizerBatchError,
     ConsolidationResult,
-    LosslessPacket,
     LosslessCompactionEngine,
+    LosslessPacket,
     SelectionResult,
     build_canonicalization_result,
 )
+from .source_projection import authoritative_source_text
 from .structured_client import OpenAICompatStructuredClient
-
 
 SELECTOR_RESPONSE_FORMAT: dict[str, Any] = {
     "type": "json_schema",
@@ -167,6 +167,8 @@ CONSOLIDATOR_RESPONSE_FORMAT: dict[str, Any] = {
 
 def consolidator_response_format_for_sources(
     allowed_ids: tuple[str, ...] | list[str],
+    *,
+    require_memory_items: bool = False,
 ) -> dict[str, Any]:
     """Build a consolidator schema that permits only exact supplied source IDs."""
 
@@ -179,6 +181,60 @@ def consolidator_response_format_for_sources(
         citation_items["enum"] = list(allowed_ids)
     else:
         citation_array["maxItems"] = 0
+    evidence_entry = {
+        "type": "object",
+        "properties": {
+            "source_id": citation_items,
+            "excerpt": {"type": "string", "minLength": 1, "maxLength": 512},
+        },
+        "required": ["source_id", "excerpt"],
+        "additionalProperties": False,
+    }
+    memory_item = {
+        "type": "object",
+        "properties": {
+            "kind": {
+                "type": "string",
+                "enum": sorted(
+                    {
+                        "constraint",
+                        "decision",
+                        "state",
+                        "artifact",
+                        "completed",
+                        "failure",
+                        "blocker",
+                        "next_action",
+                    }
+                ),
+            },
+            "status": {
+                "type": "string",
+                "enum": ["active", "resolved", "superseded"],
+            },
+            "text": {"type": "string"},
+            "evidence": {
+                "type": "array",
+                "items": evidence_entry,
+                "minItems": 1,
+            },
+            "supersedes_item_ids": {
+                "type": "array",
+                "items": {"type": "string"},
+            },
+        },
+        "required": ["kind", "status", "text", "evidence"],
+        "additionalProperties": False,
+    }
+    items_schema: dict[str, Any] = {
+        "type": "array",
+        "items": memory_item,
+    }
+    if require_memory_items:
+        items_schema["minItems"] = 1
+    required_fields = ["content", "evidence_event_ids"]
+    if require_memory_items:
+        required_fields.append("items")
     return {
         "type": "json_schema",
         "json_schema": {
@@ -189,6 +245,7 @@ def consolidator_response_format_for_sources(
                 "properties": {
                     "content": {"type": "string"},
                     "evidence_event_ids": citation_array,
+                    "items": items_schema,
                     "retire": {
                         "type": "array",
                         "items": {
@@ -213,7 +270,7 @@ def consolidator_response_format_for_sources(
                         },
                     },
                 },
-                "required": ["content", "evidence_event_ids"],
+                "required": required_fields,
                 "additionalProperties": False,
             },
         },
@@ -224,6 +281,20 @@ DEFAULT_CANONICALIZER_INPUT_TOKENS = 8_192
 
 def _event_payload(event: SourceItem) -> dict[str, Any]:
     return source_item_payload(event)
+
+
+def _consolidator_source_payload(event: dict[str, Any]) -> dict[str, Any]:
+    """Expose the exact citation surface used later by V2 admission.
+
+    Selector inputs remain byte-for-byte unchanged. Only the consolidator view
+    replaces nested/escaped protocol content with its deterministic,
+    citation-ready text, reducing prompt noise and eliminating quote/view
+    mismatches.
+    """
+
+    payload = {key: value for key, value in event.items() if key != "content"}
+    payload["citation_text"] = authoritative_source_text(str(event.get("content") or ""))
+    return payload
 
 
 def _capsule_payload(capsule: Capsule | None) -> dict[str, Any] | None:
@@ -583,6 +654,7 @@ class OpenAICompatCanonicalizerEngine:
 @dataclass
 class OpenAICompatConsolidatorEngine:
     client: OpenAICompatStructuredClient
+    require_memory_items: bool = False
 
     def __post_init__(self) -> None:
         self.client.response_format = CONSOLIDATOR_RESPONSE_FORMAT
@@ -604,7 +676,8 @@ class OpenAICompatConsolidatorEngine:
         try:
             _check_call_ownership(self.client)
             self.client.response_format = consolidator_response_format_for_sources(
-                allowed_ids
+                allowed_ids,
+                require_memory_items=self.require_memory_items,
             )
             response = await self.client.complete_json(
                 {
@@ -613,7 +686,10 @@ class OpenAICompatConsolidatorEngine:
                     "lossless_packet": {
                         "canonical_text": packet.canonical_text,
                         "selected_event_ids": list(packet.selected_event_ids),
-                        "authoritative_events": list(packet.authoritative_events),
+                        "authoritative_events": [
+                            _consolidator_source_payload(event)
+                            for event in packet.authoritative_events
+                        ],
                         "packet_hash": packet.packet_hash,
                     },
                 }
@@ -623,7 +699,7 @@ class OpenAICompatConsolidatorEngine:
                 response,
                 {"content", "evidence_event_ids"},
                 "consolidator",
-                optional_keys={"retire"},
+                optional_keys={"retire", "items"},
             )
             content = response.get("content")
             evidence_ids = response.get("evidence_event_ids")
@@ -677,6 +753,12 @@ class OpenAICompatConsolidatorEngine:
                             evidence_event_ids=tuple(retire_evidence),
                         )
                     )
+            memory_items: list[dict[str, Any]] = []
+            raw_items = response.get("items", [])
+            if isinstance(raw_items, list):
+                for item in raw_items:
+                    if isinstance(item, dict):
+                        memory_items.append(dict(item))
             return ConsolidationResult(
                 content=content,
                 evidence_event_ids=tuple(evidence_ids),
@@ -684,6 +766,7 @@ class OpenAICompatConsolidatorEngine:
                 prompt_version=self.client.prompt_version,
                 generation_settings=_generation_settings(self.client),
                 retire_memories=tuple(retire_memories),
+                memory_items=tuple(memory_items),
             )
         except Exception as error:
             _mark_call_failed(self.client, error)
@@ -746,25 +829,47 @@ def build_lossless_engine(
             ),
             batch_target_tokens=config.canonicalizer_input_tokens,
         )
+    consolidator_prompt = (
+        "You render a durable-memory capsule from an already-approved lossless packet. "
+        "Return JSON only with {'content':'...','evidence_event_ids':['source-item-id'], "
+        "'retire':[{'content':'...','memory_type':'finding','importance':0.0, "
+        "'evidence_event_ids':['source-item-id']}]}. The optional retire array "
+        "must be [] when there is no durable cold memory to store. "
+        "Preserve conditions, causal relationships, current state, negative knowledge, "
+        "and uncertainty. Cite only authoritative source-item IDs from the input. "
+        "Retire only durable semantic memories, not raw excerpts."
+    )
+    if config.memory_format in {"v2", "v2_shadow"}:
+        consolidator_prompt += (
+            " Also return 'items':[{'kind':'state|decision|constraint|blocker|next_action|"
+            "artifact|completed|failure','status':'active|resolved|superseded','text':'...',"
+            "'evidence':[{'source_id':'source-item-id','excerpt':'exact substring'}],"
+            "'supersedes_item_ids':['mem_id']}] where every excerpt must be copied "
+            "verbatim from lossless_packet.authoritative_events[].citation_text for the cited "
+            "source_id without paraphrasing, summarizing, reformatting, normalizing "
+            "whitespace, or using ellipsis (...). Prefer one complete line or the shortest "
+            "contiguous substring that proves the claim; excerpts cannot exceed 512 characters. "
+            "Use multiple shorter evidence entries "
+            "instead of one truncated excerpt. Every active fact must be evidence-backed. "
+            "Every evidence.source_id must exactly match an id in "
+            "lossless_packet.authoritative_events for this request only; never cite "
+            "parent_event_id or IDs from other packets."
+        )
     consolidator = OpenAICompatConsolidatorEngine(
         OpenAICompatStructuredClient(
             endpoint=config.consolidator_url,
             model=config.consolidator_model or "",
-            prompt_version="consolidator-v1",
-            system_prompt=(
-                "You render a durable-memory capsule from an already-approved lossless packet. "
-                "Return JSON only with {'content':'...','evidence_event_ids':['source-item-id'], "
-                "'retire':[{'content':'...','memory_type':'finding','importance':0.0, "
-                "'evidence_event_ids':['source-item-id']}]}. The optional retire array "
-                "must be [] when there is no durable cold memory to store. "
-                "Preserve conditions, causal relationships, current state, negative knowledge, "
-                "and uncertainty. Cite only authoritative source-item IDs from the input. "
-                "Retire only durable semantic memories, not raw excerpts."
+            prompt_version=(
+                "consolidator-v3-citation-view"
+                if config.memory_format in {"v2", "v2_shadow"}
+                else "consolidator-v1"
             ),
+            system_prompt=consolidator_prompt,
             generation_settings=generation_settings,
             timeout=config.model_timeout_seconds,
             api_key=config.consolidator_api_key,
             telemetry_recorder=telemetry_recorder,
-        )
+        ),
+        require_memory_items=config.memory_format in {"v2", "v2_shadow"},
     )
     return LosslessCompactionEngine(selector, canonicalizer, consolidator)
