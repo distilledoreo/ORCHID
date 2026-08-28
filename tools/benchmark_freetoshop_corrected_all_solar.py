@@ -71,6 +71,12 @@ PROVIDER_BASE_URL = os.environ.get(
     "BENCHMARK_PROVIDER_BASE_URL", "https://openrouter.ai/api/v1"
 ).rstrip("/")
 MODEL_ID = os.environ.get("BENCHMARK_MODEL_ID", "upstage/solar-pro4")
+SELECTOR_BASE_URL = os.environ.get(
+    "BENCHMARK_SELECTOR_BASE_URL", "http://127.0.0.1:1234/v1"
+).rstrip("/")
+SELECTOR_MODEL_ID = os.environ.get(
+    "BENCHMARK_SELECTOR_MODEL_ID", "qwen3.5-4b@q6_k"
+)
 PROVIDER_CONTEXT_TOKENS = int(os.environ.get("BENCHMARK_CONTEXT_TOKENS", "524288"))
 RESERVED_OUTPUT_TOKENS = 8_192
 FIXED_OVERHEAD_TOKENS = 4_096
@@ -222,13 +228,14 @@ def freeze() -> None:
         "foreground_model": MODEL_ID,
         "pipeline": [
             "bounded_immutable_source_window",
-            "solar_selector",
+            "local_qwen_selector",
             "software_owned_semantic_packet",
             "solar_consolidator",
             "validation",
             "active_cas_promotion",
         ],
-        "selector_model": MODEL_ID,
+        "selector_provider": SELECTOR_BASE_URL,
+        "selector_model": SELECTOR_MODEL_ID,
         "consolidator_model": MODEL_ID,
         "canonicalizer_enabled": False,
         "source_window_tokens": SOURCE_WINDOW_TOKENS,
@@ -242,7 +249,7 @@ def freeze() -> None:
         "top_p": 1,
         "reasoning_effort": "none",
         "structured_output": True,
-        "model_timeout_seconds": 120,
+        "model_timeout_seconds": 180,
         "cold_memory_mode": "off",
         "retry_policy": "existing model-client policy; controller performs no retry or rescue",
         "pricing_usd_per_million_tokens": {
@@ -265,6 +272,7 @@ def freeze() -> None:
         "memory_gateway/pipeline_adapters.py",
         "memory_gateway/scheduler.py",
         "tools/benchmark_freetoshop_corrected_all_solar.py",
+        "tools/finalize_freetoshop_corrected_all_solar.py",
         "tools/freetoshop_corrected_all_solar_driver.mjs",
         "tools/pi_continuation_policy.mjs",
         "tools/recover_freetoshop_benchmark_inputs.py",
@@ -275,7 +283,7 @@ def freeze() -> None:
         relative: sha256_file(ROOT / relative) for relative in implementation_files
     }
     manifest = {
-        "benchmark": "Corrected FreetoShop Pi-vs-ORCHID All-Solar A/B",
+        "benchmark": "Corrected FreetoShop Pi-vs-ORCHID Hybrid A/B",
         "run_id": RUN_ID,
         "status": "FROZEN",
         "frozen_at": now(),
@@ -314,7 +322,8 @@ def freeze() -> None:
                 "tree": input_snapshots["ORCHID"]["tree"],
                 "model": f"orchid/{MODEL_ID}",
                 "native_compaction": False,
-                "selector_model": MODEL_ID,
+                "selector_provider": SELECTOR_BASE_URL,
+                "selector_model": SELECTOR_MODEL_ID,
                 "consolidator_model": MODEL_ID,
                 "canonicalizer_enabled": False,
             },
@@ -560,6 +569,12 @@ def verify() -> None:
     checks["provider_model"] = MODEL_ID == load_json(
         ARTIFACT / "CONFIG_ORCHID.json"
     )["foreground_model"]
+    checks["selector_base_url"] = SELECTOR_BASE_URL == load_json(
+        ARTIFACT / "CONFIG_ORCHID.json"
+    )["selector_provider"]
+    checks["selector_model"] = SELECTOR_MODEL_ID == load_json(
+        ARTIFACT / "CONFIG_ORCHID.json"
+    )["selector_model"]
     checks["provider_context_tokens"] = PROVIDER_CONTEXT_TOKENS == load_json(
         ARTIFACT / "CONFIG_ORCHID.json"
     )["provider_context_tokens"]

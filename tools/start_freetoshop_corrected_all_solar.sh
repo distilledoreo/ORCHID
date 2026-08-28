@@ -10,6 +10,9 @@ pi_executable="${PI_EXECUTABLE:-$root/.benchmark-tools/node_modules/.bin/pi}"
 last_run_env="$root/.benchmark-last-run.env"
 key_file="${ORCHID_BENCHMARK_KEY_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/orchid/benchmark.env}"
 command_name="${1:-check}"
+export BENCHMARK_SELECTOR_BASE_URL="${BENCHMARK_SELECTOR_BASE_URL:-http://127.0.0.1:1234/v1}"
+export BENCHMARK_SELECTOR_MODEL_ID="${BENCHMARK_SELECTOR_MODEL_ID:-qwen3.5-4b@q6_k}"
+export BENCHMARK_SELECTOR_API_KEY="${BENCHMARK_SELECTOR_API_KEY:-lm-studio}"
 
 load_recovered_inputs() {
   local recovered_root="$root/../benchmark_recovered_inputs/freetoshop_20260820_recovered_v2"
@@ -95,6 +98,8 @@ require_environment() {
   : "${BENCHMARK_PROVIDER_BASE_URL:?Run setup-provider to save the provider base URL}"
   : "${BENCHMARK_MODEL_ID:?Run setup-provider to save the model ID}"
   : "${BENCHMARK_CONTEXT_TOKENS:?Run setup-provider to save the context window}"
+  : "${BENCHMARK_SELECTOR_BASE_URL:?Set the local selector base URL}"
+  : "${BENCHMARK_SELECTOR_MODEL_ID:?Set the local selector model ID}"
   require_file "$FREETOSHOP_HISTORICAL_STAGE/arm-a-pi/.git"
   require_file "$FREETOSHOP_HISTORICAL_STAGE/arm-b-orchid/.git"
   require_file "$FREETOSHOP_HISTORICAL_STAGE/pi-agent-a"
@@ -107,6 +112,15 @@ require_environment() {
     echo "Pi must be exactly 0.84.2" >&2
     return 1
   }
+  "$python_executable" - "$BENCHMARK_SELECTOR_BASE_URL" "$BENCHMARK_SELECTOR_MODEL_ID" <<'PY'
+import json, sys, urllib.request
+url = sys.argv[1].rstrip("/") + "/models"
+with urllib.request.urlopen(url, timeout=10) as response:
+    models = json.load(response)
+available = {item.get("id") for item in models.get("data", [])}
+if sys.argv[2] not in available:
+    raise SystemExit(f"local selector model is not available at {url}")
+PY
 }
 
 check_readiness() {
@@ -130,6 +144,21 @@ check_readiness() {
     failed=1
   else
     echo "model_id=$BENCHMARK_MODEL_ID"
+  fi
+  if "$python_executable" - "$BENCHMARK_SELECTOR_BASE_URL" "$BENCHMARK_SELECTOR_MODEL_ID" <<'PY'
+import json, sys, urllib.request
+try:
+    with urllib.request.urlopen(sys.argv[1].rstrip("/") + "/models", timeout=5) as response:
+        available = {item.get("id") for item in json.load(response).get("data", [])}
+except Exception:
+    raise SystemExit(1)
+raise SystemExit(0 if sys.argv[2] in available else 1)
+PY
+  then
+    echo "selector=$BENCHMARK_SELECTOR_MODEL_ID@$BENCHMARK_SELECTOR_BASE_URL"
+  else
+    echo "selector=missing_or_unavailable"
+    failed=1
   fi
   if [[ -z "${FREETOSHOP_HISTORICAL_STAGE:-}" ]]; then
     echo "FREETOSHOP_HISTORICAL_STAGE=missing"
@@ -165,7 +194,7 @@ check_readiness() {
 select_run_paths() {
   local stamp
   stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-  export ORCHID_CORRECTED_RUN_ID="${ORCHID_CORRECTED_RUN_ID:-freetoshop_pi_vs_orchid_corrected_all_solar_rerun_$stamp}"
+  export ORCHID_CORRECTED_RUN_ID="${ORCHID_CORRECTED_RUN_ID:-freetoshop_pi_vs_orchid_corrected_hybrid_rerun_$stamp}"
   export ORCHID_CORRECTED_ARTIFACT="${ORCHID_CORRECTED_ARTIFACT:-$root/artifacts/agent_benchmarks/$ORCHID_CORRECTED_RUN_ID}"
   export ORCHID_CORRECTED_STAGE="${ORCHID_CORRECTED_STAGE:-${ORCHID_BENCHMARK_WORK_ROOT:-$root/../benchmark_work}/$ORCHID_CORRECTED_RUN_ID}"
   export PYTHON_EXECUTABLE="$python_executable"
@@ -223,9 +252,9 @@ PY
   export ORCHID_BACKEND_URL="$BENCHMARK_PROVIDER_BASE_URL"
   export ORCHID_BACKEND_API_KEY="$BENCHMARK_PROVIDER_API_KEY"
   export ORCHID_BACKEND_MODEL="$BENCHMARK_MODEL_ID"
-  export ORCHID_SELECTOR_URL="$BENCHMARK_PROVIDER_BASE_URL"
-  export ORCHID_SELECTOR_API_KEY="$BENCHMARK_PROVIDER_API_KEY"
-  export ORCHID_SELECTOR_MODEL="$BENCHMARK_MODEL_ID"
+  export ORCHID_SELECTOR_URL="$BENCHMARK_SELECTOR_BASE_URL"
+  export ORCHID_SELECTOR_API_KEY="$BENCHMARK_SELECTOR_API_KEY"
+  export ORCHID_SELECTOR_MODEL="$BENCHMARK_SELECTOR_MODEL_ID"
   export ORCHID_CANONICALIZER_ENABLED="0"
   export ORCHID_CONSOLIDATOR_URL="$BENCHMARK_PROVIDER_BASE_URL"
   export ORCHID_CONSOLIDATOR_API_KEY="$BENCHMARK_PROVIDER_API_KEY"
@@ -236,7 +265,7 @@ PY
   export ORCHID_COMPACTION_SAFETY_MARGIN="0.7"
   export ORCHID_COMPACTION_REQUEST_AMPLIFICATION="3.0"
   export ORCHID_COLD_MEMORY_MODE="off"
-  export ORCHID_MODEL_TIMEOUT_SECONDS="120"
+  export ORCHID_MODEL_TIMEOUT_SECONDS="180"
 
   "$python_executable" -m uvicorn memory_gateway.gateway:app --host 127.0.0.1 --port "$port" \
     >"$log_dir/stdout.log" 2>"$log_dir/stderr.log" &

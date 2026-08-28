@@ -1,4 +1,4 @@
-"""Collect post-run evidence for the corrected FreetoShop all-Solar A/B."""
+"""Collect post-run evidence for the corrected FreetoShop hybrid A/B."""
 
 from __future__ import annotations
 
@@ -498,12 +498,13 @@ def collect() -> None:
         },
     )
 
-    memory_input = sum(
-        int(row.get("input_tokens") or 0) for row in database.get("model_runs_by_stage", [])
-    )
-    memory_output = sum(
-        int(row.get("output_tokens") or 0) for row in database.get("model_runs_by_stage", [])
-    )
+    paid_memory_stages = [
+        row
+        for row in database.get("model_runs_by_stage", [])
+        if row.get("stage") != "selector"
+    ]
+    memory_input = sum(int(row.get("input_tokens") or 0) for row in paid_memory_stages)
+    memory_output = sum(int(row.get("output_tokens") or 0) for row in paid_memory_stages)
     memory_cost = (
         memory_input * PRICING_USD_PER_MILLION["input"]
         + memory_output * PRICING_USD_PER_MILLION["output"]
@@ -511,6 +512,7 @@ def collect() -> None:
     economics = {
         "provider": os.environ.get("BENCHMARK_PROVIDER_BASE_URL", "unknown"),
         "pricing_usd_per_million_tokens": PRICING_USD_PER_MILLION,
+        "local_selector_cost_usd": 0,
         "counting_rule": pi_rpc["counting_rule"],
         "pi_foreground": {
             key: pi_rpc[key]
