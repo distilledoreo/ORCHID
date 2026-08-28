@@ -17,6 +17,9 @@ import {
 const stage = process.env.ORCHID_CORRECTED_STAGE;
 const artifact = process.env.ORCHID_CORRECTED_ARTIFACT;
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const piExecutable = process.env.PI_EXECUTABLE ?? (process.platform === "win32" ? "pi.cmd" : "pi");
+const pythonExecutable = process.env.PYTHON_EXECUTABLE ?? (process.platform === "win32" ? "python" : "python3");
+const modelId = process.env.BENCHMARK_MODEL_ID ?? "upstage/solar-pro4";
 if (!stage || !artifact) {
   throw new Error("ORCHID_CORRECTED_STAGE and ORCHID_CORRECTED_ARTIFACT are required");
 }
@@ -34,8 +37,8 @@ const startedAt = Date.now();
 fs.mkdirSync(sessionRoot, { recursive: true });
 const state = new Map();
 for (const [id, name, model, directoryName, agentName, outputName] of [
-  ["arm_a_pi", "PI_NATIVE", "openrouter/upstage/solar-pro4", "arm-a-pi", "pi-agent-a", "pi_native"],
-  ["arm_b_orchid", "ORCHID", "orchid/upstage/solar-pro4", "arm-b-orchid", "pi-agent-b", "orchid"],
+  ["arm_a_pi", "PI_NATIVE", `benchmark/${modelId}`, "arm-a-pi", "pi-agent-a", "pi_native"],
+  ["arm_b_orchid", "ORCHID", `orchid/${modelId}`, "arm-b-orchid", "pi-agent-b", "orchid"],
 ]) {
   const output = path.join(artifact, outputName);
   fs.mkdirSync(output, { recursive: true });
@@ -171,10 +174,10 @@ function launch(entry) {
     "--no-prompt-templates",
     "--no-context-files",
   ];
-  const child = spawn("pi.cmd", arguments_, {
+  const child = spawn(piExecutable, arguments_, {
     cwd: entry.cwd,
     env: { ...process.env, PI_CODING_AGENT_DIR: entry.piAgentDir },
-    shell: true,
+    shell: process.platform === "win32",
     windowsHide: true,
     stdio: ["pipe", "pipe", "pipe"],
   });
@@ -219,7 +222,7 @@ function launchMonitor() {
   const stderr = fs.createWriteStream(path.join(artifact, "controller", "monitor.stderr.log"), { flags: "a" });
   const stdout = fs.createWriteStream(path.join(artifact, "controller", "monitor.stdout.log"), { flags: "a" });
   monitorProcess = spawn(
-    "python",
+    pythonExecutable,
     [path.join("tools", "benchmark_freetoshop_corrected_all_solar.py"), "monitor", "--interval-seconds", "5"],
     { cwd: root, env: process.env, windowsHide: true },
   );
@@ -260,7 +263,11 @@ async function checkpoint(reason) {
 function terminateOwnedTree(child) {
   if (!child || child.exitCode !== null || !child.pid) return;
   try {
-    execFileSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true });
+    if (process.platform === "win32") {
+      execFileSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true });
+    } else {
+      child.kill("SIGTERM");
+    }
   } catch {
     // The process may have exited after the check.
   }
@@ -272,7 +279,11 @@ function stopGateway() {
   try {
     const gatewayPid = Number(JSON.parse(fs.readFileSync(pidPath, "utf8")).pid);
     if (Number.isInteger(gatewayPid) && gatewayPid > 0) {
-      execFileSync("taskkill.exe", ["/PID", String(gatewayPid), "/T", "/F"], { windowsHide: true });
+      if (process.platform === "win32") {
+        execFileSync("taskkill.exe", ["/PID", String(gatewayPid), "/T", "/F"], { windowsHide: true });
+      } else {
+        process.kill(gatewayPid, "SIGTERM");
+      }
     }
   } catch {
     // Exact owned gateway may already have exited.

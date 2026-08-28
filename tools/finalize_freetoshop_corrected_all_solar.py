@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import sqlite3
 import subprocess
@@ -33,9 +34,15 @@ from tools.benchmark_freetoshop_corrected_all_solar import (
 )
 
 
-PRICING_USD_PER_MILLION = {"input": 0.03, "output": 0.12}
+PRICING_USD_PER_MILLION = {
+    "input": float(os.environ.get("BENCHMARK_INPUT_USD_PER_MILLION", "0")),
+    "output": float(os.environ.get("BENCHMARK_OUTPUT_USD_PER_MILLION", "0")),
+}
 HIDDEN_TEST_NAME = (
     "paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence"
+)
+NPM_EXECUTABLE = os.environ.get(
+    "NPM_EXECUTABLE", "npm.cmd" if os.name == "nt" else "npm"
 )
 
 
@@ -219,7 +226,7 @@ def run_validation(arm: str, path: Path) -> dict[str, Any]:
         started = time.perf_counter()
         try:
             completed = subprocess.run(
-                ["npm.cmd", "run", command_name],
+                [NPM_EXECUTABLE, "run", command_name],
                 cwd=path,
                 capture_output=True,
                 text=True,
@@ -267,7 +274,7 @@ def run_hidden_evaluator() -> dict[str, Any]:
         try:
             completed = subprocess.run(
                 [
-                    "npm.cmd",
+                    NPM_EXECUTABLE,
                     "exec",
                     "--",
                     "playwright",
@@ -502,7 +509,7 @@ def collect() -> None:
         + memory_output * PRICING_USD_PER_MILLION["output"]
     ) / 1_000_000
     economics = {
-        "provider": "OpenRouter",
+        "provider": os.environ.get("BENCHMARK_PROVIDER_BASE_URL", "unknown"),
         "pricing_usd_per_million_tokens": PRICING_USD_PER_MILLION,
         "counting_rule": pi_rpc["counting_rule"],
         "pi_foreground": {

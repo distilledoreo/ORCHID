@@ -39,17 +39,25 @@ ARTIFACT = Path(
         ),
     )
 )
+RUN_ID = os.environ.get("ORCHID_CORRECTED_RUN_ID", ARTIFACT.name)
 STAGE = Path(
     os.environ.get(
         "ORCHID_CORRECTED_STAGE",
-        r"C:\Users\disti\benchmark_work\freetoshop_pi_vs_orchid_corrected_all_solar_20260823",
+        (
+            rf"C:\Users\disti\benchmark_work\{RUN_ID}"
+            if os.name == "nt"
+            else str(ROOT.parent / "benchmark_work" / RUN_ID)
+        ),
     )
 )
 HISTORICAL_ARTIFACT = (
     ROOT / "artifacts/agent_benchmarks/freetoshop_pi_vs_orchid_20260820"
 )
 HISTORICAL_STAGE = Path(
-    r"C:\Users\disti\benchmark_work\freetoshop_pi_vs_orchid_20260820"
+    os.environ.get(
+        "FREETOSHOP_HISTORICAL_STAGE",
+        r"C:\Users\disti\benchmark_work\freetoshop_pi_vs_orchid_20260820",
+    )
 )
 ORACLE_ROOT = Path(
     os.environ.get(
@@ -59,9 +67,26 @@ ORACLE_ROOT = Path(
 )
 DB_PATH = STAGE / "orchid-state" / "memory.db"
 THREAD_ID = "orchid-arm-b"
-SOURCE_WINDOW_TOKENS = 119_466
-PROVIDER_CONTEXT_TOKENS = 524_288
+PROVIDER_BASE_URL = os.environ.get(
+    "BENCHMARK_PROVIDER_BASE_URL", "https://openrouter.ai/api/v1"
+).rstrip("/")
+MODEL_ID = os.environ.get("BENCHMARK_MODEL_ID", "upstage/solar-pro4")
+PROVIDER_CONTEXT_TOKENS = int(os.environ.get("BENCHMARK_CONTEXT_TOKENS", "524288"))
+RESERVED_OUTPUT_TOKENS = 8_192
+FIXED_OVERHEAD_TOKENS = 4_096
+SAFETY_MARGIN = 0.7
+REQUEST_AMPLIFICATION = 3.0
+if PROVIDER_CONTEXT_TOKENS <= RESERVED_OUTPUT_TOKENS + FIXED_OVERHEAD_TOKENS:
+    raise ValueError(
+        "BENCHMARK_CONTEXT_TOKENS must exceed reserved output plus fixed overhead"
+    )
+SOURCE_WINDOW_TOKENS = int(
+    max(1, PROVIDER_CONTEXT_TOKENS - RESERVED_OUTPUT_TOKENS - FIXED_OVERHEAD_TOKENS)
+    * SAFETY_MARGIN
+    / REQUEST_AMPLIFICATION
+)
 CORRECTED_BASE_COMMIT = "98f0b0e5017db5d746257e40668e71ce777925e6"
+PI_EXECUTABLE = os.environ.get("PI_EXECUTABLE", "pi.cmd" if os.name == "nt" else "pi")
 
 
 def now() -> str:
@@ -111,8 +136,10 @@ def git_snapshot(path: Path) -> dict[str, Any]:
 
 
 def _user_api_key_available() -> bool:
-    if os.environ.get("OPENROUTER_API_KEY"):
+    if os.environ.get("BENCHMARK_PROVIDER_API_KEY") or os.environ.get("OPENROUTER_API_KEY"):
         return True
+    if os.name != "nt":
+        return False
     command = (
         "[Environment]::GetEnvironmentVariable('OPENROUTER_API_KEY','User')"
     )
@@ -139,9 +166,31 @@ def freeze() -> None:
     if not historical_manifest_path.exists() or not goal_path.exists():
         raise SystemExit("historical sealed FreetoShop manifest/goal is unavailable")
     historical = load_json(historical_manifest_path)
+    expected_start_tree = historical["canonical_source_fingerprint"]["start_tree"]
+    input_snapshots = {
+        "PI_NATIVE": git_snapshot(HISTORICAL_STAGE / "arm-a-pi"),
+        "ORCHID": git_snapshot(HISTORICAL_STAGE / "arm-b-orchid"),
+    }
+    for name, snapshot in input_snapshots.items():
+        if snapshot["tree"] != expected_start_tree or snapshot["status"]:
+            raise SystemExit(
+                f"{name} historical input is not the clean sealed source tree"
+            )
     oracle_head = run_git(ORACLE_ROOT, "rev-parse", "HEAD")
-    if oracle_head != historical["target_commit"]:
-        raise SystemExit("hidden evaluator checkout is not at the frozen target commit")
+    oracle_tree = run_git(ORACLE_ROOT, "rev-parse", "HEAD^{tree}")
+    oracle_source = ORACLE_ROOT / "tests/e2e/editor.spec.ts"
+    retained_hidden = load_json(
+        ROOT
+        / "artifacts/agent_benchmarks/freetoshop_pi_vs_orchid_corrected_all_solar/quality/hidden_eval.json"
+    )
+    if not oracle_source.exists() or sha256_file(oracle_source) != retained_hidden["source_sha256"]:
+        raise SystemExit("hidden evaluator source does not match the retained sealed hash")
+    recovery_path = HISTORICAL_STAGE / "RECOVERY_MANIFEST.json"
+    recovery = load_json(recovery_path) if recovery_path.exists() else None
+    if oracle_head != historical["target_commit"] and not recovery:
+        raise SystemExit(
+            "hidden evaluator is reconstructed but no recovery manifest is present"
+        )
 
     for relative in (
         "pi_native",
@@ -160,8 +209,8 @@ def freeze() -> None:
 
     pi_config = {
         "arm": "PI_NATIVE",
-        "foreground_provider": "OpenRouter",
-        "foreground_model": "upstage/solar-pro4",
+        "foreground_provider": PROVIDER_BASE_URL,
+        "foreground_model": MODEL_ID,
         "native_compaction": True,
         "pi_version": "0.84.2",
         "thinking": "medium",
@@ -169,8 +218,8 @@ def freeze() -> None:
     }
     orchid_config = {
         "arm": "ORCHID",
-        "foreground_provider": "OpenRouter",
-        "foreground_model": "upstage/solar-pro4",
+        "foreground_provider": PROVIDER_BASE_URL,
+        "foreground_model": MODEL_ID,
         "pipeline": [
             "bounded_immutable_source_window",
             "solar_selector",
@@ -179,15 +228,15 @@ def freeze() -> None:
             "validation",
             "active_cas_promotion",
         ],
-        "selector_model": "upstage/solar-pro4",
-        "consolidator_model": "upstage/solar-pro4",
+        "selector_model": MODEL_ID,
+        "consolidator_model": MODEL_ID,
         "canonicalizer_enabled": False,
         "source_window_tokens": SOURCE_WINDOW_TOKENS,
         "provider_context_tokens": PROVIDER_CONTEXT_TOKENS,
-        "reserved_output_tokens": 8_192,
-        "fixed_overhead_tokens": 4_096,
-        "safety_margin": 0.7,
-        "request_amplification": 3.0,
+        "reserved_output_tokens": RESERVED_OUTPUT_TOKENS,
+        "fixed_overhead_tokens": FIXED_OVERHEAD_TOKENS,
+        "safety_margin": SAFETY_MARGIN,
+        "request_amplification": REQUEST_AMPLIFICATION,
         "selector_chunk_target_tokens": 1_200,
         "temperature": 0,
         "top_p": 1,
@@ -196,6 +245,10 @@ def freeze() -> None:
         "model_timeout_seconds": 120,
         "cold_memory_mode": "off",
         "retry_policy": "existing model-client policy; controller performs no retry or rescue",
+        "pricing_usd_per_million_tokens": {
+            "input": float(os.environ.get("BENCHMARK_INPUT_USD_PER_MILLION", "0")),
+            "output": float(os.environ.get("BENCHMARK_OUTPUT_USD_PER_MILLION", "0")),
+        },
     }
     write_json(ARTIFACT / "CONFIG_PI_NATIVE.json", pi_config)
     write_json(ARTIFACT / "CONFIG_ORCHID.json", orchid_config)
@@ -205,19 +258,25 @@ def freeze() -> None:
     implementation_files = [
         "memory_gateway/compaction.py",
         "memory_gateway/config.py",
+        "memory_gateway/context.py",
+        "memory_gateway/foreground_telemetry.py",
+        "memory_gateway/gateway.py",
         "memory_gateway/pipeline.py",
         "memory_gateway/pipeline_adapters.py",
         "memory_gateway/scheduler.py",
         "tools/benchmark_freetoshop_corrected_all_solar.py",
         "tools/freetoshop_corrected_all_solar_driver.mjs",
+        "tools/pi_continuation_policy.mjs",
+        "tools/recover_freetoshop_benchmark_inputs.py",
         "tools/start_freetoshop_corrected_all_solar.ps1",
+        "tools/start_freetoshop_corrected_all_solar.sh",
     ]
     implementation_hashes = {
         relative: sha256_file(ROOT / relative) for relative in implementation_files
     }
     manifest = {
         "benchmark": "Corrected FreetoShop Pi-vs-ORCHID All-Solar A/B",
-        "run_id": "freetoshop_pi_vs_orchid_corrected_all_solar_20260823",
+        "run_id": RUN_ID,
         "status": "FROZEN",
         "frozen_at": now(),
         "design": "sealed contemporaneous paired run, n=1",
@@ -227,10 +286,15 @@ def freeze() -> None:
         "implementation_file_sha256": implementation_hashes,
         "historical_source_manifest": str(historical_manifest_path),
         "historical_source_manifest_sha256": sha256_file(historical_manifest_path),
-        "start_commit": historical["start_commit"],
-        "start_tree": historical["canonical_source_fingerprint"]["start_tree"],
-        "target_commit_controller_private": historical["target_commit"],
-        "target_tree_controller_private": historical["canonical_source_fingerprint"]["target_tree"],
+        "start_commit": input_snapshots["PI_NATIVE"]["head"],
+        "start_tree": expected_start_tree,
+        "original_start_commit": historical["start_commit"],
+        "target_commit_controller_private": oracle_head,
+        "target_tree_controller_private": oracle_tree,
+        "original_target_commit_controller_private": historical["target_commit"],
+        "original_target_tree_controller_private": historical["canonical_source_fingerprint"]["target_tree"],
+        "input_recovery": recovery,
+        "hidden_evaluator_sha256": retained_hidden["source_sha256"],
         "public_goal": {
             "path": "BENCHMARK_GOAL.md",
             "sha256": hashlib.sha256(goal_bytes).hexdigest(),
@@ -238,18 +302,20 @@ def freeze() -> None:
         },
         "sealed_arms": {
             "PI_NATIVE": {
-                "baseline_commit": historical["sealed_arms"]["arm_a_pi"]["baseline_commit"],
-                "tree": historical["sealed_arms"]["arm_a_pi"]["tree"],
-                "model": "openrouter/upstage/solar-pro4",
+                "baseline_commit": input_snapshots["PI_NATIVE"]["head"],
+                "original_baseline_commit": historical["sealed_arms"]["arm_a_pi"]["baseline_commit"],
+                "tree": input_snapshots["PI_NATIVE"]["tree"],
+                "model": f"benchmark/{MODEL_ID}",
                 "native_compaction": True,
             },
             "ORCHID": {
-                "baseline_commit": historical["sealed_arms"]["arm_b_orchid"]["baseline_commit"],
-                "tree": historical["sealed_arms"]["arm_b_orchid"]["tree"],
-                "model": "orchid/upstage/solar-pro4",
+                "baseline_commit": input_snapshots["ORCHID"]["head"],
+                "original_baseline_commit": historical["sealed_arms"]["arm_b_orchid"]["baseline_commit"],
+                "tree": input_snapshots["ORCHID"]["tree"],
+                "model": f"orchid/{MODEL_ID}",
                 "native_compaction": False,
-                "selector_model": "upstage/solar-pro4",
-                "consolidator_model": "upstage/solar-pro4",
+                "selector_model": MODEL_ID,
+                "consolidator_model": MODEL_ID,
                 "canonicalizer_enabled": False,
             },
         },
@@ -305,6 +371,44 @@ def freeze() -> None:
     print(json.dumps({"artifact": str(ARTIFACT), "stage": str(STAGE)}, indent=2))
 
 
+def configure_pi_agent_models(path: Path, *, orchid_proxy: bool) -> None:
+    """Bind a copied sealed Pi agent config to the selected benchmark provider."""
+
+    models_path = path / "models.json"
+    payload = load_json(models_path)
+    existing_providers = payload.get("providers") or {}
+    if not existing_providers:
+        raise SystemExit(f"Pi model configuration has no provider: {models_path}")
+    existing_provider = next(iter(existing_providers.values()))
+    existing_models = existing_provider.get("models") or []
+    if not existing_models:
+        raise SystemExit(f"Pi model configuration has no model: {models_path}")
+    provider_id = "orchid" if orchid_proxy else "benchmark"
+    provider = {
+        **existing_provider,
+        "name": "ORCHID local proxy" if orchid_proxy else "Sealed benchmark provider",
+        "baseUrl": "http://127.0.0.1:7332/v1" if orchid_proxy else PROVIDER_BASE_URL,
+        "apiKey": "$BENCHMARK_PROVIDER_API_KEY",
+        "models": [
+            {
+                **existing_models[0],
+                "id": MODEL_ID,
+                "name": MODEL_ID,
+                "contextWindow": PROVIDER_CONTEXT_TOKENS,
+                "maxTokens": RESERVED_OUTPUT_TOKENS,
+                "cost": {
+                    "input": float(os.environ.get("BENCHMARK_INPUT_USD_PER_MILLION", "0")),
+                    "output": float(os.environ.get("BENCHMARK_OUTPUT_USD_PER_MILLION", "0")),
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                },
+            }
+        ],
+    }
+    payload["providers"] = {provider_id: provider}
+    write_json(models_path, payload)
+
+
 def prepare() -> None:
     manifest = load_json(ARTIFACT / "BENCHMARK_MANIFEST.json")
     if STAGE.exists():
@@ -324,6 +428,8 @@ def prepare() -> None:
     shutil.copytree(sources["arm-b-orchid"], STAGE / "arm-b-orchid", ignore=ignored)
     shutil.copytree(sources["pi-agent-a"], STAGE / "pi-agent-a")
     shutil.copytree(sources["pi-agent-b"], STAGE / "pi-agent-b")
+    configure_pi_agent_models(STAGE / "pi-agent-a", orchid_proxy=False)
+    configure_pi_agent_models(STAGE / "pi-agent-b", orchid_proxy=True)
 
     for arm_name, manifest_name in (
         ("arm-a-pi", "PI_NATIVE"),
@@ -356,7 +462,7 @@ def prepare() -> None:
             (ARTIFACT / "BENCHMARK_GOAL.md").read_bytes()
         )
         historical_modules = HISTORICAL_STAGE / arm_name / "node_modules"
-        if historical_modules.exists():
+        if historical_modules.exists() and os.name == "nt":
             subprocess.run(
                 [
                     "cmd",
@@ -369,6 +475,10 @@ def prepare() -> None:
                 check=True,
                 capture_output=True,
                 text=True,
+            )
+        elif historical_modules.exists():
+            (arm / "node_modules").symlink_to(
+                historical_modules.resolve(), target_is_directory=True
             )
     for name in ("sessions", "orchid-state"):
         (STAGE / name).mkdir()
@@ -437,8 +547,18 @@ def verify() -> None:
     )
     checks["fresh_database"] = not DB_PATH.exists()
     checks["api_key_available_without_disclosure"] = _user_api_key_available()
+    checks["provider_base_url"] = PROVIDER_BASE_URL == load_json(
+        ARTIFACT / "CONFIG_ORCHID.json"
+    )["foreground_provider"]
+    checks["provider_model"] = MODEL_ID == load_json(
+        ARTIFACT / "CONFIG_ORCHID.json"
+    )["foreground_model"]
+    checks["provider_context_tokens"] = PROVIDER_CONTEXT_TOKENS == load_json(
+        ARTIFACT / "CONFIG_ORCHID.json"
+    )["provider_context_tokens"]
     checks["pi_version"] = (
-        subprocess.check_output(["pi.cmd", "--version"], text=True).strip() == "0.84.2"
+        subprocess.check_output([PI_EXECUTABLE, "--version"], text=True).strip()
+        == "0.84.2"
     )
     result = {
         "verified_at": now(),
