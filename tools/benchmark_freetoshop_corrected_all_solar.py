@@ -480,6 +480,13 @@ def prepare() -> None:
             (arm / "node_modules").symlink_to(
                 historical_modules.resolve(), target_is_directory=True
             )
+            exclude_path = arm / ".git/info/exclude"
+            exclude_text = exclude_path.read_text(encoding="utf-8")
+            if "node_modules" not in exclude_text.splitlines():
+                exclude_path.write_text(
+                    exclude_text.rstrip("\n") + "\nnode_modules\n",
+                    encoding="utf-8",
+                )
     for name in ("sessions", "orchid-state"):
         (STAGE / name).mkdir()
     write_json(
