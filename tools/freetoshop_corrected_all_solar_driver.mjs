@@ -150,7 +150,17 @@ function note(entry, event) {
   if (entry.watchdog.pending?.turnStarted && isTurnStartEvidence(type)) {
     entry.watchdog.clear();
   }
-  if (type === "message_end" && event.message?.role === "assistant") entry.providerMessages += 1;
+  if (type === "message_end" && event.message?.role === "assistant") {
+    entry.providerMessages += 1;
+    if (event.message.stopReason === "error") {
+      entry.errors.push({
+        at: now(),
+        category: "provider_response_error",
+        error: event.message.errorMessage ?? "unknown provider error",
+      });
+      void stopAll(`${entry.id}_provider_response_error`);
+    }
+  }
   if (type === "tool_execution_start") entry.toolCalls += 1;
   if (type === "tool_execution_end" && event.isError) entry.toolFailures += 1;
   if (type === "compaction_end") entry.piCompactions += 1;

@@ -236,6 +236,8 @@ start_gateway() {
   local database="$ORCHID_CORRECTED_STAGE/orchid-state/memory.db"
   local log_dir="$ORCHID_CORRECTED_ARTIFACT/gateway"
   local port="${ORCHID_BENCHMARK_PORT:-7332}"
+  local backend_url="${BENCHMARK_PROVIDER_BASE_URL%/}"
+  backend_url="${backend_url%/v1}"
   mkdir -p "$log_dir"
   [[ ! -e "$database" ]] || {
     echo "Refusing to reuse benchmark database: $database" >&2
@@ -249,7 +251,7 @@ with socket.socket() as sock:
         raise SystemExit(f"Refusing to reuse occupied benchmark port {port}")
 PY
   export ORCHID_DB="$database"
-  export ORCHID_BACKEND_URL="$BENCHMARK_PROVIDER_BASE_URL"
+  export ORCHID_BACKEND_URL="$backend_url"
   export ORCHID_BACKEND_API_KEY="$BENCHMARK_PROVIDER_API_KEY"
   export ORCHID_BACKEND_MODEL="$BENCHMARK_MODEL_ID"
   export ORCHID_SELECTOR_URL="$BENCHMARK_SELECTOR_BASE_URL"
