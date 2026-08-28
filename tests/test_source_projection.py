@@ -1,4 +1,4 @@
-from memory_gateway.compaction import Event
+from memory_gateway.compaction import Event, compute_input_hash, freeze_snapshot
 from memory_gateway.db import SQLiteStore, content_hash
 from memory_gateway.ingestion import append_novel_messages
 from memory_gateway.source_projection import (
@@ -109,3 +109,28 @@ def test_ingestion_skips_resent_tool_history_when_prefix_does_not_match(tmp_path
 def test_inner_text_unwraps_pi_tool_envelope() -> None:
     payload = '{"content":"hello file","role":"tool","tool_call_id":"x"}'
     assert tool_inner_text(payload) == "hello file"
+
+
+def test_freeze_input_hash_matches_projected_events(tmp_path) -> None:
+    store = SQLiteStore(tmp_path / "memory.db")
+    store.create_project("project")
+    store.create_thread("thread", "project")
+    source = "import { Layer } from './types.js';\n" + ("export type X = number;\n" * 80)
+    payload = __import__("json").dumps(
+        {"content": source, "role": "tool", "tool_call_id": "call_1"}
+    )
+    store.append_event(
+        project_id="project",
+        thread_id="thread",
+        event_type="tool_result",
+        role="tool",
+        content=payload,
+    )
+    snapshot = freeze_snapshot(store, "thread")
+    projected = project_compaction_events(
+        [Event.from_row(event) for event in snapshot.events]
+    )
+    assert snapshot.input_hash == compute_input_hash(
+        None, projected, snapshot.snapshot_end_event_id
+    )
+    assert projected[0].content.startswith("TOOL_READ_STUB")

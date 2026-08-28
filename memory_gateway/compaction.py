@@ -397,7 +397,13 @@ def freeze_snapshot(
         if active
         else None
     )
-    event_objects = tuple(Event.from_row(event) for event in snapshot_events)
+    from .source_projection import project_compaction_events
+
+    event_objects = tuple(
+        project_compaction_events(
+            [Event.from_row(event) for event in snapshot_events]
+        )
+    )
     source_event_hash = compute_source_event_hash(active, event_objects)
     input_hash = compute_input_hash(active, event_objects, end_id)
     return CompactionSnapshot(
