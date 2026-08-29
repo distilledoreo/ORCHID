@@ -7,9 +7,9 @@ embedding, fusion, reranking, context assembly, or injection.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
-from typing import Any, Iterable, Literal
-
+from collections.abc import Iterable
+from dataclasses import dataclass
+from typing import Any, Literal
 
 DecisionState = Literal["ACCEPT", "AMBIGUOUS", "ABSTAIN"]
 

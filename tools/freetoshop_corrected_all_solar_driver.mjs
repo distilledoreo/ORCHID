@@ -11,9 +11,11 @@ import { fileURLToPath } from "node:url";
 import {
   continuationCommand,
   createContinuationWatchdog,
+  gateNeedsPostFinalExtension,
   isBusyEvent,
   isIdleEvent,
   isTurnStartEvidence,
+  postGateContinuation,
 } from "./pi_continuation_policy.mjs";
 
 const stage = process.env.ORCHID_CORRECTED_STAGE;
@@ -43,6 +45,7 @@ function armSelected(id) {
 }
 const sessionRoot = path.join(stage, "sessions");
 const stopRequestPath = path.join(artifact, "controller", "STOP_REQUEST.json");
+const gateStatusPath = path.join(artifact, "memory_transitions", "GATE_STATUS.json");
 const goal = fs.readFileSync(path.join(artifact, "BENCHMARK_GOAL.md"), "utf8");
 const continuation = "Continue working through BENCHMARK_GOAL.md from the current repository state. Choose the next incomplete milestone, implement it, validate it, and do not ask for confirmation.";
 const startedAt = Date.now();
@@ -64,6 +67,7 @@ for (const [id, name, model, directoryName, agentName, outputName] of [
     sessionDir: path.join(sessionRoot, id),
     process: null,
     rawLog: fs.createWriteStream(path.join(output, "telemetry.jsonl"), { flags: "a" }),
+    foregroundLog: fs.createWriteStream(path.join(output, "foreground_requests.jsonl"), { flags: "a" }),
     stderrLog: fs.createWriteStream(path.join(output, "stderr.log"), { flags: "a" }),
     launchCount: 0,
     promptCount: 0,
@@ -79,6 +83,8 @@ for (const [id, name, model, directoryName, agentName, outputName] of [
     stopping: false,
     agentIdle: true,
     providerRetryPending: false,
+    activeProviderRequest: null,
+    providerRequestSequence: 0,
     watchdog: createContinuationWatchdog({ timeoutMs: Number(process.env.BENCHMARK_CONTINUATION_WATCHDOG_MS ?? 30_000) }),
   });
 }
@@ -99,6 +105,23 @@ function gitSnapshot(cwd) {
   } catch (error) {
     return { error: String(error?.message ?? error) };
   }
+}
+
+function readGateStatus() {
+  try {
+    if (!fs.existsSync(gateStatusPath)) return null;
+    return JSON.parse(fs.readFileSync(gateStatusPath, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
+function continuationMessageFor(entry) {
+  const gate = readGateStatus();
+  if (gateNeedsPostFinalExtension(gate)) {
+    return postGateContinuation;
+  }
+  return continuation;
 }
 
 async function orchidSnapshot() {
@@ -149,7 +172,7 @@ function scheduleContinuation(entry) {
     const command = continuationCommand({
       agentIdle: entry.agentIdle,
       id: `${entry.id}-continue-${entry.continuationCount}`,
-      message: continuation,
+      message: continuationMessageFor(entry),
     });
     if (command.type === "prompt") entry.promptCount += 1;
     entry.watchdog.start({ rpcType: command.type, id: command.id, arm: entry.id });
@@ -158,6 +181,7 @@ function scheduleContinuation(entry) {
 }
 
 function note(entry, event) {
+  const observedAtMs = Date.now();
   const type = event?.type ?? "unknown";
   entry.lastEvents.push(type);
   if (entry.lastEvents.length > 40) entry.lastEvents.shift();
@@ -167,7 +191,38 @@ function note(entry, event) {
   if (entry.watchdog.pending?.turnStarted && isTurnStartEvidence(type)) {
     entry.watchdog.clear();
   }
+  if (type === "message_start" && event.message?.role === "assistant") {
+    entry.providerRequestSequence += 1;
+    entry.activeProviderRequest = {
+      schema_version: "orchid.direct_foreground_latency.v1",
+      arm: entry.name,
+      sequence: entry.providerRequestSequence,
+      provider_message_timestamp_ms: event.message?.timestamp ?? null,
+      started_at_ms: observedAtMs,
+      first_stream_event_at_ms: null,
+    };
+  }
+  if (
+    type === "message_update"
+    && entry.activeProviderRequest
+    && entry.activeProviderRequest.first_stream_event_at_ms === null
+  ) {
+    entry.activeProviderRequest.first_stream_event_at_ms = observedAtMs;
+  }
   if (type === "message_end" && event.message?.role === "assistant") {
+    const request = entry.activeProviderRequest;
+    if (request) {
+      const firstEventAt = request.first_stream_event_at_ms;
+      entry.foregroundLog.write(`${JSON.stringify({
+        ...request,
+        ended_at_ms: observedAtMs,
+        provider_wall_ms: observedAtMs - request.started_at_ms,
+        time_to_first_event_ms: firstEventAt === null ? null : firstEventAt - request.started_at_ms,
+        stop_reason: event.message?.stopReason ?? null,
+        success: event.message?.stopReason !== "error",
+      })}\n`);
+      entry.activeProviderRequest = null;
+    }
     entry.providerMessages += 1;
     if (event.message.stopReason === "error") {
       entry.providerRetryPending = true;
@@ -200,6 +255,30 @@ function note(entry, event) {
   if (type === "response") entry.requestResponses += 1;
   if (type === "message_update") entry.lastUsage = usageFrom(event.usage) ?? entry.lastUsage;
   if (type === "agent_settled") scheduleContinuation(entry);
+}
+
+const sequentialArms = process.env.BENCHMARK_SEQUENTIAL_ARMS === "1";
+const activeArmPath = path.join(artifact, "hardware", "active_arm.txt");
+const launchOrder = sequentialArms
+  ? [...state.values()].sort((left, right) => Number(right.id === "arm_b_orchid") - Number(left.id === "arm_b_orchid"))
+  : [...state.values()];
+let sequentialIndex = 0;
+let orchidElapsedMs = null;
+let matchedPiTimer = null;
+let finishingArm = false;
+let gateConsumed = false;
+
+function writeActiveArm(name) {
+  fs.mkdirSync(path.join(artifact, "hardware"), { recursive: true });
+  fs.writeFileSync(activeArmPath, `${name}\n`);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function currentSequentialEntry() {
+  return launchOrder[sequentialIndex] ?? null;
 }
 
 let stopping = false;
@@ -249,7 +328,7 @@ function launch(entry) {
   child.on("close", (code, signal) => {
     lines.close();
     entry.process = null;
-    if (!stopping) {
+    if (!stopping && !entry.stopping) {
       entry.errors.push({ at: now(), category: "unexpected_process_close", code, signal });
       void stopAll(`${entry.id}_unexpected_process_exit`);
     }
@@ -335,9 +414,50 @@ function stopGateway() {
   }
 }
 
+async function finishSequentialArm(reason) {
+  if (finishingArm || stopping) return;
+  const entry = currentSequentialEntry();
+  if (!entry) {
+    await stopAll(reason);
+    return;
+  }
+  finishingArm = true;
+  entry.stopping = true;
+  send(entry, { type: "abort" });
+  await sleep(5000);
+  terminateOwnedTree(entry.process);
+  entry.process = null;
+  const elapsed = Date.now() - (entry.armStartedAt ?? startedAt);
+  if (entry.id === "arm_b_orchid") orchidElapsedMs = elapsed;
+  sequentialIndex += 1;
+  finishingArm = false;
+  const next = currentSequentialEntry();
+  if (!next) {
+    await stopAll(reason);
+    return;
+  }
+  next.armStartedAt = Date.now();
+  writeActiveArm(next.name);
+  launch(next);
+  if (next.id === "arm_a_pi" && orchidElapsedMs != null) {
+    matchedPiTimer = setTimeout(() => {
+      void requestStop("matched_orchid_duration");
+    }, orchidElapsedMs);
+  }
+}
+
+async function requestStop(reason) {
+  if (sequentialArms && !stopping && currentSequentialEntry()) {
+    await finishSequentialArm(reason);
+    return;
+  }
+  await stopAll(reason);
+}
+
 async function stopAll(reason) {
   if (stopping) return;
   stopping = true;
+  if (matchedPiTimer) clearTimeout(matchedPiTimer);
   for (const entry of state.values()) {
     entry.stopping = true;
     send(entry, { type: "abort" });
@@ -347,6 +467,7 @@ async function stopAll(reason) {
   for (const entry of state.values()) {
     terminateOwnedTree(entry.process);
     entry.rawLog.end();
+    entry.foregroundLog.end();
     entry.stderrLog.end();
   }
   if (monitorProcess?.exitCode === null) monitorProcess.kill();
@@ -356,6 +477,8 @@ async function stopAll(reason) {
     ended_at: now(),
     reason,
     max_runtime_ms: maxRuntimeMs,
+    sequential_arms: sequentialArms,
+    orchid_elapsed_ms: orchidElapsedMs,
     arms: {},
   };
   for (const entry of state.values()) {
@@ -377,14 +500,23 @@ async function stopAll(reason) {
 }
 
 launchMonitor();
-for (const entry of state.values()) launch(entry);
+if (sequentialArms) {
+  const first = launchOrder[0];
+  first.armStartedAt = Date.now();
+  writeActiveArm(first.name);
+  launch(first);
+} else {
+  writeActiveArm("SHARED");
+  for (const entry of launchOrder) launch(entry);
+}
 await checkpoint("launch");
 const checkpointTimer = setInterval(() => void checkpoint("periodic"), checkpointMs);
 const gateTimer = setInterval(() => {
-  if (!fs.existsSync(stopRequestPath)) return;
+  if (!fs.existsSync(stopRequestPath) || gateConsumed) return;
   try {
     const request = JSON.parse(fs.readFileSync(stopRequestPath, "utf8"));
-    void stopAll(request.reason ?? "gate_stop_request");
+    gateConsumed = true;
+    void requestStop(request.reason ?? "gate_stop_request");
   } catch (error) {
     void stopAll(`invalid_gate_stop_request_${String(error)}`);
   }

@@ -1,0 +1,53 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 2,
+  "accepted": 0,
+  "rejected": 2,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 1,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "consolidator returned no memory items"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Joint mode discards individually mediocre but complementary origins prematurely by ranking single origins only.",
+      "envelope_json": null
+    },
+    {
+      "generation": 6,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "consolidator returned no memory items"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Secondary projector is gated by projectedUseSecondary==1 AND secondaryValid>0.5; single-projector output is never mixed with fallback unless blend mode permits.",
+      "envelope_json": null
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 1,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "consolidator returned no memory items"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 6,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "consolidator returned no memory items"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 2,
+  "mode": "live",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

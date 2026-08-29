@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 63,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "Test suite verifies floor triangle index building, memory bounds (indices >100k, packed bytes <3MB), acceleration raycasting, and projection coverage optimization in both fixed-first and joint-pair modes. Fixed mode uses origin [2.5, 1.6, 2.5]; both modes produce 256 samples, >2 candidates, finite origins, origin separation >=4, and reachableCoverage >= combinedCoverage.",
+      "envelope_json": "{\"generation\":63,\"items\":[{\"evidence\":[{\"excerpt\":\"expect(indices.length / 3).toBeGreaterThan(100_000);\",\"source_id\":\"panoref_evt_001006::span::000004\"},{\"excerpt\":\"expect(packedBytes).toBeLessThan(3_000_000);\",\"source_id\":\"panoref_evt_001006::span::000004\"},{\"excerpt\":\"expect(acceleration.distanceToGeometry([11, 1.6, 11])).toBeCloseTo(1.6, 3);\",\"source_id\":\"panoref_evt_001006::span::000004\"},{\"excerpt\":\"const fixed = optimizeProjectionCoverage({ mode: 'fixed-first', scene, firstOrigin: [2.5, 1.6, 2.5], options });\",\"source_id\":\"panoref_evt_001006::span::000004\"},{\"excerpt\":\"const joint = optimizeProjectionCoverage({ mode: 'joint-pair', scene, options });\",\"source_id\":\"panoref_evt_001006::span::000004\"},{\"excerpt\":\"expect(result.sampleCount).toBe(256);\",\"source_id\":\"panoref_evt_001006::span::000004\"},{\"excerpt\":\"expect(Math.hypot(\\\\n        result.originA[0] - result.originB[0],\\\\n        result.originA[1] - result.originB[1],\\\\n        result.originA[2] - result.originB[2],\\\\n      )).toBeGreaterThanOrEqual(4);\",\"source_id\":\"panoref_evt_001006::span::000004\"}],\"id\":\"mem_cd0915464f7872f3b7e956eb\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Floor geometry test: indices > 100k triangles, packed memory < 3MB; acceleration distance test uses reference point [11, 1.6, 11]; projection coverage tested in fixed-first (firstOrigin [2.5, 1.6, 2.5]) and joint-pair modes with 256 samples, >2 candidates, finite origins, and minimum origin separation of 4.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

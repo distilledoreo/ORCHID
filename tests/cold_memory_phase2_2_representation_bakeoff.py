@@ -52,8 +52,7 @@ try:
         _state_fingerprint,
         _summary,
     )
-    from tests.cold_memory_phase2_dense_experiment import MODEL_REVISION
-    from tests.cold_memory_phase2_dense_experiment import _NoopTelemetry
+    from tests.cold_memory_phase2_dense_experiment import MODEL_REVISION, _NoopTelemetry
 except ModuleNotFoundError:
     from cold_memory_phase1_benchmark import (  # type: ignore
         PROJECT_ID,
@@ -69,8 +68,9 @@ except ModuleNotFoundError:
         _state_fingerprint,
         _summary,
     )
-    from cold_memory_phase2_dense_experiment import MODEL_REVISION  # type: ignore
-    from cold_memory_phase2_dense_experiment import _NoopTelemetry  # type: ignore
+    from cold_memory_phase2_dense_experiment import (
+        _NoopTelemetry,  # type: ignore
+    )
 
 
 DEFAULT_OUTPUT = Path("artifacts/cold_memory/phase2_2_representation_bakeoff")

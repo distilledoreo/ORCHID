@@ -33,8 +33,7 @@ from memory_gateway.compaction import (
 )
 from memory_gateway.context import estimate_tokens
 from memory_gateway.openai_adapter import _endpoint_url
-from memory_gateway.pipeline_adapters import _chunk_events, _event_payload
-
+from memory_gateway.pipeline_adapters import _event_payload
 
 REPLAY = ROOT / (
     "artifacts/agent_benchmarks/freetoshop_operability_hardening/"

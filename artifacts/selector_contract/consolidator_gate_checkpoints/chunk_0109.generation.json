@@ -1,0 +1,54 @@
+{
+  "generation": 110,
+  "content": "In the layout-and-workflow E2E test, floor region min/max inputs now set floorRegionTouchedRef.current=true and call invalidateAnalysis() on change instead of only updating state. The patch was applied via exec tool to update e2e/layout-and-workflow.spec.ts and related source.",
+  "events": [
+    {
+      "id": "panoref_evt_001112::span::000001",
+      "sequence": 1112,
+      "content": "   setStatus('idle');\\\\n-              setResult(undefined);\\\\n+              invalidateAnalysis();\\\\n@@\\\\n                 <Field label={`${axis} minimum`}>\\\\n                   <TextInput\\\\n-                  type=\\\\\\\"number\\\\\\\"\\\\n-                  step=\\\\\\\"0.1\\\\\\\"\\\\n-                  disabled={status === 'running'}\\\\n+                    type=\\\\\\\"number\\\\\\\"\\\\n+                    step=\\\\\\\"0.1\\\\\\\"\\\\n+                    disabled={status === 'running'}\\\\n                     value={floorRegion.min[axisIndex]}\\\\n-                    onChange={(event) => setFloorRegion((current) => {\\\\n-                      const min = [...current.min] as Vec3;\\\\n-                      min[axisIndex] = Number(event.target.value);\\\\n-                      return { ...current, min };\\\\n-                    })}\\\\n+                    onChange={(event) => {\\\\n+                      floorRegionTouchedRef.current = true;\\\\n+                      setFloorRegion((current) => {\\\\n+                        const min = [...current.min] as Vec3;\\\\n+                        min[axisIndex] = Number(event.target.value);\\\\n+                        return { ...current, min };\\\\n+                      });\\\\n+                      invalidateAnalysis();\\\\n+                    }}\\\\n@@\\\\n                 <Field label={`${axis} maximum`}>\\\\n                   <TextInput\\\\n-                  type=\\\\\\\"number\\\\\\\"\\\\n-                  step=\\\\\\\"0.1\\\\\\\"\\\\n-                  disabled={status === 'running'}\\\\n+                    type=\\\\\\\"number\\\\\\\"\\\\n+                    step=\\\\\\\"0.1\\\\\\\"\\\\n+                    disabled={status === 'running'}\\\\n                     value={floorRegion.max[axisIndex]}\\\\n-                    onChange={(event) => setFloorRegion((current) => {\\\\n-                      const max = [...current.max] as Vec3;\\\\n-                      max[axisIndex] = Number(event.target.value);\\\\n-                      return { ...current, max };\\\\n-                    })}\\\\n+                    onChange={(event) => {\\\\n+                      floorRegionTouchedRef.current = true;\\\\n+                      setFloorRegion((current) => {\\\\n+                        const max = [...current.max] as Vec3;\\\\n+                        max[axisIndex] = Number(event.target.value);\\\\n+                        return { ...current, max };\\\\n+                      });\\\\n+                      invalidateAnalysis();\\\\n+                    }}\\\\n*** Update File: C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\\\\\\e2e\\\\\\\\layout-and-workflow.spec.ts\\\\n@@\\\\n     await expect(result).toBeVisible({ timeout: 90_000 });\\\\n     await expect(floorRegionToggle).toBeEnabled();\\\\n@@\\\\n     await expect(page.locator('[data-coverage-capture-plan]')).toContainText('Existing panorama origins are never rewritten');\\\\n     await expect(page.locator('[data-coverage-apply-pair]')).toHaveCount(0);\\\\n+\\\\n+    await drawer.locator('[data-coverage-floor-min=\\\\\\\"x\\\\\\\"]').fill('-4');\\\\n+    await expect(result).toHaveCount(0);\\\\n+    await expect(page.locator('[data-coverage-apply-capture]')).toHaveCount",
+      "content_hash": "7c61e8eb3631dce103085b702fcce2996e62144014be79f6bc2531fc9726e6ab",
+      "event_type": "custom_tool_call",
+      "role": "assistant"
+    },
+    {
+      "id": "panoref_evt_001112::span::000002",
+      "sequence": 1112,
+      "content": "(0);\\\\n \\\\n     if (testInfo.project.name === 'desktop-chromium') {\\\\n*** End Patch\\\";\\ntext(await tools.apply_patch(patch));\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+      "content_hash": "5a3c12ddbd7e3f936cb88bb96a6f46ad2409a09c7b9040d05331b73028db3031",
+      "event_type": "custom_tool_call",
+      "role": "assistant"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "\"onChange={(event) => {\\n                      floorRegionTouchedRef.current = true;\\n                      setFloorRegion((current) => {\\n                        const min = [...current.min] as Vec3;\\n                        min[axisIndex] = Number(event.target.value);\\n                        return { ...current, min };\\n                      });\\n                      invalidateAnalysis();\\n                    }}\"",
+          "source_id": "panoref_evt_001112::span::000001"
+        },
+        {
+          "excerpt": "\"*** End Patch\\\";\\ntext(await tools.apply_patch(patch));\"",
+          "source_id": "panoref_evt_001112::span::000002"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "text": "Floor region input handlers now mark the region as touched and invalidate analysis on change"
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "\"\\n+    await drawer.locator('[data-coverage-floor-min=\\\\\\\"x\\\\\\\"]').fill('-4');\\n+    await expect(result).toHaveCount(0);\\n+    await expect(page.locator('[data-coverage-apply-capture]')).toHaveCount\"",
+          "source_id": "panoref_evt_001112::span::000001"
+        }
+      ],
+      "kind": "next_action",
+      "status": "active",
+      "text": "Continue extending the layout-and-workflow E2E test by completing the coverage-apply-capture expectation after filling floor minimum x"
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_001112::span::000001",
+    "panoref_evt_001112::span::000002"
+  ]
+}

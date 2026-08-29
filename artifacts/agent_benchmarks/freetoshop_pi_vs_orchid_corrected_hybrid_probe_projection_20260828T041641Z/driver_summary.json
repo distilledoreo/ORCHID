@@ -1,0 +1,40 @@
+{
+  "started_at": "2026-08-28T04:16:51.029Z",
+  "ended_at": "2026-08-28T04:21:16.267Z",
+  "reason": "orchid_failed_three_clean_promotion_gate",
+  "max_runtime_ms": 1200000,
+  "arms": {
+    "arm_a_pi": {
+      "name": "PI_NATIVE",
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 0,
+      "provider_messages": 11,
+      "tool_calls": 30,
+      "tool_failures": 0,
+      "pi_native_compactions": 0,
+      "request_responses": 2,
+      "errors": [],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": "?? BENCHMARK_GOAL.md\n"
+      }
+    },
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 0,
+      "provider_messages": 20,
+      "tool_calls": 75,
+      "tool_failures": 0,
+      "pi_native_compactions": 0,
+      "request_responses": 2,
+      "errors": [],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": "?? BENCHMARK_GOAL.md\n"
+      }
+    }
+  }
+}

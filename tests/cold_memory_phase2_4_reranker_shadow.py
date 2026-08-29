@@ -28,6 +28,7 @@ from memory_gateway.cold_memory import (  # noqa: E402
     FTS5ColdMemoryRetriever,
     build_retrieval_query_trace,
 )
+from memory_gateway.db import SQLiteStore  # noqa: E402
 from memory_gateway.dense_experiment import (  # noqa: E402
     DenseMemoryIndex,
     OnnxTextEmbedder,
@@ -38,14 +39,17 @@ from memory_gateway.dense_reranker import (  # noqa: E402
     apply_reranker_policy,
     calibrate_reranker_policy,
 )
-from memory_gateway.db import SQLiteStore  # noqa: E402
 
 try:
     from tests.cold_memory_phase1_benchmark import PROJECT_ID, THREAD_ID, _write_jsonl  # noqa: E402
     from tests.cold_memory_phase2_3_status_eligibility import _state  # noqa: E402
     from tests.cold_memory_phase2_dense_experiment import _NoopTelemetry  # noqa: E402
 except ModuleNotFoundError:
-    from cold_memory_phase1_benchmark import PROJECT_ID, THREAD_ID, _write_jsonl  # type: ignore  # noqa: E402
+    from cold_memory_phase1_benchmark import (  # type: ignore  # noqa: E402
+        PROJECT_ID,
+        THREAD_ID,
+        _write_jsonl,
+    )
     from cold_memory_phase2_3_status_eligibility import _state  # type: ignore  # noqa: E402
     from cold_memory_phase2_dense_experiment import _NoopTelemetry  # type: ignore  # noqa: E402
 

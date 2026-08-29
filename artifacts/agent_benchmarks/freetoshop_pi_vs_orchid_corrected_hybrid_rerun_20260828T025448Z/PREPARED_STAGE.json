@@ -1,0 +1,16 @@
+{
+  "prepared_at": "2026-08-28T02:54:50.755+00:00",
+  "stage": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/../benchmark_work/freetoshop_pi_vs_orchid_corrected_hybrid_rerun_20260828T025448Z",
+  "pi_native": {
+    "path": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/../benchmark_work/freetoshop_pi_vs_orchid_corrected_hybrid_rerun_20260828T025448Z/arm-a-pi",
+    "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+    "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+    "status": "?? BENCHMARK_GOAL.md"
+  },
+  "orchid": {
+    "path": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/../benchmark_work/freetoshop_pi_vs_orchid_corrected_hybrid_rerun_20260828T025448Z/arm-b-orchid",
+    "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+    "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+    "status": "?? BENCHMARK_GOAL.md"
+  }
+}

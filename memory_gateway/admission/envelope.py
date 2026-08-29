@@ -103,28 +103,6 @@ def _excerpt_in_source(excerpt: str, source_text: str) -> bool:
     return False
 
 
-def _excerpt_in_allowed_sources(
-    excerpt: str,
-    sources: dict[str, str],
-    *,
-    preferred_source_ids: tuple[str, ...] = (),
-    allowed_source_ids: frozenset[str] | None = None,
-) -> bool:
-    ordered_ids: list[str] = []
-    for source_id in preferred_source_ids:
-        if source_id in sources and source_id not in ordered_ids:
-            ordered_ids.append(source_id)
-    if allowed_source_ids is not None:
-        for source_id in sorted(allowed_source_ids):
-            if source_id in sources and source_id not in ordered_ids:
-                ordered_ids.append(source_id)
-    else:
-        for source_id in sources:
-            if source_id not in ordered_ids:
-                ordered_ids.append(source_id)
-    return any(_excerpt_in_source(excerpt, sources[source_id]) for source_id in ordered_ids)
-
-
 def _text_grounded_in_evidence(
     text: str,
     evidence: tuple[MemoryEvidence, ...],
@@ -342,12 +320,7 @@ def validate_envelope(
                     f"missing authoritative source for {evidence.source_id!r}"
                 )
                 continue
-            if not _excerpt_in_allowed_sources(
-                evidence.excerpt,
-                sources,
-                preferred_source_ids=(resolved_source_id,),
-                allowed_source_ids=allowed_source_ids,
-            ):
+            if not _excerpt_in_source(evidence.excerpt, source_text):
                 violations.append(
                     f"excerpt not found in source {evidence.source_id!r} for item {item.id}"
                 )

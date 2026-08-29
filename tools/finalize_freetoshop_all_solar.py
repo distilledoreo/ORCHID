@@ -12,7 +12,6 @@ import shutil
 import sqlite3
 import subprocess
 from collections import Counter
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 

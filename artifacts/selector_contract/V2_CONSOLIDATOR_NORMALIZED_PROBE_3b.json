@@ -1,0 +1,116 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 3,
+  "accepted": 1,
+  "rejected": 2,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 1,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "The normal graybox algorithm has a real implementation (8/10 architecture, 7.5/10 correctness) but is not production-ready (4/10 complex sets readiness). The implementation correctly uses deterministic surface sampling, joint-pair evaluation, and a shared coarse-to-fine engine. However, two blockers remain: imported sets can produce zero legal candidates because the extractor stores entire object AABBs as obstacles (rejecting interior points), and the geometry representation will not scale to heavy imports.",
+      "envelope_json": "{\"generation\":1,\"items\":[{\"evidence\":[{\"excerpt\":\"Algorithm architecture for normal graybox sets: 8/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Correctness of the two search modes: 7.5/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Readiness for complex imported sets: 4/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Imported sets can produce zero legal candidates\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Use actual geometry clearance, not object AABBs\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_c0c439b9b6755847008a5b71\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Implementation blocker: imported sets produce zero legal candidates due to AABB-based obstacle rejection; fix requires actual geometry clearance rather than object bounding boxes.\"},{\"evidence\":[{\"excerpt\":\"The geometry representation will not scale to heavy imports\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_d23debeb01e6275d83dcf836\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Scalability blocker: current triangle expansion will not scale to heavy imports.\"},{\"evidence\":[{\"excerpt\":\"The tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_35561d280f41e660c94d63f5\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 6,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_d23debeb01e6275d83dcf836",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_35561d280f41e660c94d63f5",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The GLSL shader code implements a secondary panoramic projection sample. When projectedUseSecondary is active, it calculates the direction from the projected secondary origin to the world position, applies inverse pano yaw rotation, converts to equirectangular UV coordinates (with x wrapped via fract and y clamped to [0,1]), and samples the projectedSecondaryPanoMap texture multiplied by projectedExposure. The secondary sample is blended with the primary using a power-4 winner-takes-most weighting based on quality, visibility, and mode-specific dominance factors.",
+      "envelope_json": "{\"generation\":6,\"items\":[{\"evidence\":[{\"excerpt\":\"Algorithm architecture for normal graybox sets: 8/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Correctness of the two search modes: 7.5/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Readiness for complex imported sets: 4/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Imported sets can produce zero legal candidates\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Use actual geometry clearance, not object AABBs\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_c0c439b9b6755847008a5b71\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Implementation blocker: imported sets produce zero legal candidates due to AABB-based obstacle rejection; fix requires actual geometry clearance rather than object bounding boxes.\"},{\"evidence\":[{\"excerpt\":\"The geometry representation will not scale to heavy imports\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_d23debeb01e6275d83dcf836\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Scalability blocker: current triangle expansion will not scale to heavy imports.\"},{\"evidence\":[{\"excerpt\":\"The tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_35561d280f41e660c94d63f5\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes.\"},{\"evidence\":[{\"excerpt\":\"vec3 offset = vProjectedWorldPos - projectedSecondaryOrigin;\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"vec2 panoUv = equirectUvFromDirection(direction);\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"secondarySample = panoSample.rgb * projectedExposure;\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float primaryWeight = pow(primaryScore, 4.0);\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_c8c8f22505f605834e4ebe49\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Secondary pano sampling uses projectedSecondaryOrigin, applyInversePanoYaw, equirectUvFromDirection, and projectedSecondaryPanoMap with exposure scaling and power-4 blend weighting.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 10,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_d23debeb01e6275d83dcf836",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_35561d280f41e660c94d63f5",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "item mem_f62598b420db62336875acb5 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Unit tests completed successfully in project continuity-stage@0.0.0 (path: C:/Users/disti/.t3/worktrees/PanoRef/t3code-aefd2138) using vitest v3.2.6. All 185 tests across 14 test files passed with exit code 0. Total wall time was 43.7 seconds. Tests covered UI fidelity, model asset store, scene objects, camera move cubemap, human mannequin model, transform gizmo, render output, package export, shot thumbnail component, sandbox, project workflow, build clipboard, projector occlusion, build editor store, and model import.",
+      "envelope_json": "{\"generation\":10,\"items\":[{\"evidence\":[{\"excerpt\":\"Algorithm architecture for normal graybox sets: 8/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Correctness of the two search modes: 7.5/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Readiness for complex imported sets: 4/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Imported sets can produce zero legal candidates\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Use actual geometry clearance, not object AABBs\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_c0c439b9b6755847008a5b71\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Implementation blocker: imported sets produce zero legal candidates due to AABB-based obstacle rejection; fix requires actual geometry clearance rather than object bounding boxes.\"},{\"evidence\":[{\"excerpt\":\"The geometry representation will not scale to heavy imports\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_d23debeb01e6275d83dcf836\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Scalability blocker: current triangle expansion will not scale to heavy imports.\"},{\"evidence\":[{\"excerpt\":\"The tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_35561d280f41e660c94d63f5\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes.\"},{\"evidence\":[{\"excerpt\":\"Exit code: 0\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_f62598b420db62336875acb5\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"All unit tests passed successfully (185 tests, 14 files)\"},{\"evidence\":[{\"excerpt\":\"Wall time: 43.7 seconds\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_48ce111d79783cdf66de7933\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"Test execution completed in 43.7 seconds\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 6,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_d23debeb01e6275d83dcf836",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_35561d280f41e660c94d63f5",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 10,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_c0c439b9b6755847008a5b71",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_d23debeb01e6275d83dcf836",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "unknown source id 'panoref_evt_000582::span::000000' for item mem_35561d280f41e660c94d63f5",
+        "missing authoritative source for 'panoref_evt_000582::span::000000'",
+        "item mem_f62598b420db62336875acb5 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 3,
+  "mode": "live",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

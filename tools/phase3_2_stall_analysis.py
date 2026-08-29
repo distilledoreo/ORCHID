@@ -11,8 +11,6 @@ import argparse
 import asyncio
 import hashlib
 import json
-import os
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -23,6 +21,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from memory_gateway.compaction import Event, SourceItem, expand_source_items
+from memory_gateway.context import estimate_tokens
 from memory_gateway.pipeline_adapters import (
     _chunk_events,
     _event_payload,
@@ -30,8 +29,6 @@ from memory_gateway.pipeline_adapters import (
     selector_response_format_for_chunk,
 )
 from memory_gateway.structured_client import OpenAICompatStructuredClient
-from memory_gateway.context import estimate_tokens
-
 
 DEFAULT_REPLAY = ROOT / (
     "artifacts/agent_benchmarks/freetoshop_operability_hardening/"

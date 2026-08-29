@@ -1,0 +1,71 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 10,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_0afa553273d768953dcab224",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_55ba83eae59f1de790957f0a",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_d7d6f918cc281ae1bb8ce770",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_77b264a002f5930b344d7692",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_28bcb61dcd9aed2b82cba3af",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_e3fe77f9917f4ec49e3f0133",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_19ec353426d4188d3552b0ad",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_901c23ef667b47bf685c5486",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_562fb94971460e9896149411",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_408a57ab9987dc13fc2f7e06",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_ccffba6b19a428ba49250edf",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_586a04a6910d83d412bffc81",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_70cd025caa79ce7971fb8cac",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_cea4aa56c06ea7bea7ef2cf8",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_3f661b3a00755ef4a28d5854",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_87800b5dcdc237060537b675",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_162cf2f8f0ef46a1a0c53100"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The test suite for continuity-stage (v3.2.6) completed successfully with exit code 0 in 43.7 seconds, covering all 17 test files (184 total tests passing), including uiFidelity (40), modelAssetStore (5), sceneObjects (4), cameraMoveCubemap (5), humanMannequinModel (3), transformGizmo (12), renderOutput (11), packageExport (4), shotThumbnailComponent (2), sandbox (16), projectWorkflow (25), buildClipboard (7), projectorOcclusion (31), buildEditorStore (4), and modelImport (17).",
+      "envelope_json": "{\"generation\":10,\"items\":[{\"evidence\":[{\"excerpt\":\"Exit code: 0\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_0afa553273d768953dcab224\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"The continuous-stage test suite executed successfully with exit code 0.\"},{\"evidence\":[{\"excerpt\":\"Wall time: 43.7 seconds\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_55ba83eae59f1de790957f0a\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"The test suite completion took 43.7 seconds.\"},{\"evidence\":[{\"excerpt\":\"tests/uiFidelity.test.ts (40 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_d7d6f918cc281ae1bb8ce770\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"40 tests passed in tests/uiFidelity.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/modelAssetStore.test.ts (5 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_77b264a002f5930b344d7692\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"5 tests passed in tests/modelAssetStore.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/sceneObjects.test.ts (4 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_28bcb61dcd9aed2b82cba3af\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"4 tests passed in tests/sceneObjects.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/cameraMoveCubemap.test.ts (5 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_e3fe77f9917f4ec49e3f0133\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"5 tests passed in tests/cameraMoveCubemap.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/humanMannequinModel.test.ts (3 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_19ec353426d4188d3552b0ad\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"3 tests passed in tests/humanMannequinModel.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/transformGizmo.test.ts (12 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_901c23ef667b47bf685c5486\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"12 tests passed in tests/transformGizmo.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/renderOutput.test.ts (11 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_562fb94971460e9896149411\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"11 tests passed in tests/renderOutput.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/packageExport.test.ts (4 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_408a57ab9987dc13fc2f7e06\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"4 tests passed in tests/packageExport.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/shotThumbnailComponent.test.tsx (2 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_ccffba6b19a428ba49250edf\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"2 tests passed in tests/shotThumbnailComponent.test.tsx.\"},{\"evidence\":[{\"excerpt\":\"tests/sandbox.test.ts (16 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_586a04a6910d83d412bffc81\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"16 tests passed in tests/sandbox.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/projectWorkflow.test.ts (25 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_70cd025caa79ce7971fb8cac\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"25 tests passed in tests/projectWorkflow.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/buildClipboard.test.ts (7 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_cea4aa56c06ea7bea7ef2cf8\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"7 tests passed in tests/buildClipboard.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/projectorOcclusion.test.ts (31 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_3f661b3a00755ef4a28d5854\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"31 tests passed in tests/projectorOcclusion.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/buildEditorStore.test.ts (4 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_87800b5dcdc237060537b675\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"4 tests passed in tests/buildEditorStore.test.ts.\"},{\"evidence\":[{\"excerpt\":\"tests/modelImport.test.ts (17 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_162cf2f8f0ef46a1a0c53100\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"17 tests passed in tests/modelImport.test.ts.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 10,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_0afa553273d768953dcab224",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_55ba83eae59f1de790957f0a",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_d7d6f918cc281ae1bb8ce770",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_77b264a002f5930b344d7692",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_28bcb61dcd9aed2b82cba3af",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_e3fe77f9917f4ec49e3f0133",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_19ec353426d4188d3552b0ad",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_901c23ef667b47bf685c5486",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_562fb94971460e9896149411",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_408a57ab9987dc13fc2f7e06",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_ccffba6b19a428ba49250edf",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_586a04a6910d83d412bffc81",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_70cd025caa79ce7971fb8cac",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_cea4aa56c06ea7bea7ef2cf8",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_3f661b3a00755ef4a28d5854",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_87800b5dcdc237060537b675",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_162cf2f8f0ef46a1a0c53100"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

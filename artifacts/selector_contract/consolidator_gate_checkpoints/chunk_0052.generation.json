@@ -1,0 +1,67 @@
+{
+  "generation": 53,
+  "content": "Rendered component displays joint-pair coverage metrics with combined coverage (accent), overlap, A-only, B-only, usable origins, reachable upper bound, reachable efficiency, and estimated remaining surface. Includes origin labels, candidate count, fine sample count, elapsed time, and apply-capture button for origin A.",
+  "events": [
+    {
+      "id": "panoref_evt_001004::span::000002",
+      "sequence": 1004,
+      "content": "r\\n            {statusMessage}\\r\\n          </p>\\r\\n        )}\\r\\n\\r\\n        {result && (\\r\\n          <div\\r\\n            className=\\\"space-y-3\\\"\\r\\n            data-coverage-result\\r\\n            data-coverage-origin-a={result.originA.join(',')}\\r\\n            data-coverage-origin-b={result.originB.join(',')}\\r\\n          >\\r\\n            <div className=\\\"grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg border border-subtle bg-surface-raised p-2 tabular-nums\\\">\\r\\n              <span className=\\\"text-secondary\\\">Origin A usable</span><strong className=\\\"text-right text-primary\\\">{percent(result.originACoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">Origin B usable</span><strong className=\\\"text-right text-primary\\\">{percent(result.originBCoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">A only</span><strong className=\\\"text-right text-primary\\\">{percent(result.originAOnlyCoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">B only</span><strong className=\\\"text-right text-primary\\\">{percent(result.originBOnlyCoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">Overlap</span><strong className=\\\"text-right text-primary\\\">{percent(result.overlapCoverage)}</strong>\\r\\n              <span className=\\\"font-semibold text-primary\\\">Combined</span><strong className=\\\"text-right text-[var(--accent)]\\\">{percent(result.combinedCoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">Reachable upper bound</span><strong className=\\\"text-right text-primary\\\">{percent(result.reachableCoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">Reachable captured</span><strong className=\\\"text-right text-primary\\\">{percent(result.reachableEfficiency)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">Estimated remaining</span><strong className=\\\"text-right text-primary\\\">{percent(result.estimatedRemainingSurface)}</strong>\\r\\n            </div>\\r\\n\\r\\n            <div className=\\\"space-y-1 rounded-lg border border-subtle px-2 py-1.5 font-mono text-[10px] text-secondary\\\">\\r\\n              <div><span className=\\\"font-sans font-semibold text-primary\\\">A</span> {originLabel(result.originA)}</div>\\r\\n              <div><span className=\\\"font-sans font-semibold text-primary\\\">B</span> {originLabel(result.originB)}</div>\\r\\n              <div className=\\\"font-sans text-muted\\\">\\r\\n                {result.candidateCount} candidates · {result.sampleCount.toLocaleString()} fine samples · {(result.elapsedMilliseconds / 1000).toFixed(1)}s\\r\\n              </div>\\r\\n            </div>\\r\\n\\r\\n            <div className=\\\"flex flex-col gap-2\\\">\\r\\n              {onSetCaptureOrigin && mode === 'joint-pair' && (\\r\\n                <button\\r\\n                  type=\\\"button\\\"\\r\\n                  onClick={() => onSetCaptureOrigin(result.originA)}\\r\\n                  className=\\\"rounded-lg border border-subtle px-3 py-2 font-semibold text-primary transition hover:border-[var(--accent)] hover:text-[var(--accent)]\\\"\\r\\n                  data-coverage-apply-capture-a\\r\\n                >\\r\\n   ",
+      "content_hash": "432cd8241b507e6268ec0385303857ae09d0623c7089af8ad62cafd21f767603",
+      "event_type": "custom_tool_call_output",
+      "role": "tool"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "<strong className=\"text-right text-[var(--accent)]\">{percent(result.combinedCoverage)}</strong>",
+          "source_id": "panoref_evt_001004::span::000002"
+        },
+        {
+          "excerpt": "<span className=\"text-secondary\">Overlap</span><strong className=\"text-right text-primary\">{percent(result.overlapCoverage)}</strong>",
+          "source_id": "panoref_evt_001004::span::000002"
+        },
+        {
+          "excerpt": "<span className=\"text-secondary\">Estimated remaining</span><strong className=\"text-right text-primary\">{percent(result.estimatedRemainingSurface)}</strong>",
+          "source_id": "panoref_evt_001004::span::000002"
+        },
+        {
+          "excerpt": "data-coverage-origin-a={result.originA.join(',')}",
+          "source_id": "panoref_evt_001004::span::000002"
+        },
+        {
+          "excerpt": "data-coverage-origin-b={result.originB.join(',')}",
+          "source_id": "panoref_evt_001004::span::000002"
+        },
+        {
+          "excerpt": "<span className=\"text-secondary\">Reachable upper bound</span><strong className=\"text-right text-primary\">{percent(result.reachableCoverage)}</strong>",
+          "source_id": "panoref_evt_001004::span::000002"
+        },
+        {
+          "excerpt": "onSetCaptureOrigin && mode === 'joint-pair'",
+          "source_id": "panoref_evt_001004::span::000002"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Joint-pair coverage rendering shows combined, overlap, estimated remaining, reachable bounds, and per-origin stats with apply-capture A action."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "<button type=\"button\" onClick={() => onSetCaptureOrigin(result.originA)} data-coverage-apply-capture-a",
+          "source_id": "panoref_evt_001004::span::000002"
+        }
+      ],
+      "kind": "next_action",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Apply capture from origin A available when onSetCaptureOrigin prop is provided in joint-pair mode."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_001004::span::000002"
+  ]
+}

@@ -17,11 +17,10 @@ import argparse
 import asyncio
 import hashlib
 import json
-import math
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -39,16 +38,19 @@ from memory_gateway.pipeline_adapters import (
 from tools.phase3_2_pipeline_ablation import load_events, source_items
 from tools.profile_panoref_selector_calls import (
     CHUNK_TARGET,
-    CONFIG_PATH as PROFILE_CONFIG_PATH,
     HISTORICAL_SUMMARY,
-    SAMPLE_PATH as PROFILE_SAMPLE_PATH,
     _chunk_events,
     endpoint_url,
     extract_metric,
     header_metric,
     percentile,
 )
-
+from tools.profile_panoref_selector_calls import (
+    CONFIG_PATH as PROFILE_CONFIG_PATH,
+)
+from tools.profile_panoref_selector_calls import (
+    SAMPLE_PATH as PROFILE_SAMPLE_PATH,
+)
 
 OUT_ROOT = ROOT / "artifacts/agent_benchmarks/panoref_selector_prefix_reuse_v1"
 CONFIG_PATH = OUT_ROOT / "PREFIX_REUSE_CONFIG.json"
@@ -94,7 +96,7 @@ def git_commit() -> str:
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def write_json(path: Path, value: Any) -> None:

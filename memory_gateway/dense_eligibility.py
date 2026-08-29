@@ -13,7 +13,6 @@ from typing import Any, Literal
 
 from memory_gateway.dense_experiment import DenseMemoryCandidate
 
-
 DenseSearchMode = Literal["implicit", "explicit"]
 IMPLICIT_DENSE_STATUSES = frozenset({"ACTIVE"})
 EXPLICIT_DENSE_STATUSES = frozenset({"ACTIVE", "SUPERSEDED"})

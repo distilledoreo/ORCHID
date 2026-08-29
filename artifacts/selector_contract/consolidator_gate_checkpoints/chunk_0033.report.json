@@ -1,0 +1,43 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 34,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000961::span::000011' for item mem_7c0ac68b90f39f619dd5ec88",
+        "excerpt not found in source 'panoref_evt_000961::span::000011' for item mem_7c0ac68b90f39f619dd5ec88",
+        "excerpt not found in source 'panoref_evt_000961::span::000011' for item mem_7c0ac68b90f39f619dd5ec88"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Automation script executed scene import, render reference, and coverage optimizer steps. Import phase completed with timing measured; dialog interactions handled extreme/import confirmation and close actions. Reference workflow included clicking 'Render 360 Reference', waiting for graybox/re-render prompt, dismissing overlays, switching to Reference workspace tab, and optionally using attached reference with start-checking action. Coverage optimizer was triggered via Reference Settings dialog; result or failure status was awaited with 1,800,000ms timeout. If failed, error thrown with message from failed locator. Post-optimization, heap metrics (usedJSHeapSize, totalJSHeapSize, jsHeapSizeLimit) were captured from performance.memory if available. Report object includes ok flag, model path/bytes, importMilliseconds, optimizationMilliseconds, totalMilliseconds, importReport, and analysisText.",
+      "envelope_json": "{\"generation\":34,\"items\":[{\"evidence\":[{\"excerpt\":\"analysis.waitFor({ state: 'visible', timeout: 900_000 })\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await extreme.fill('IMPORT')\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await dialog.getByRole('button', { name: /Import (heavy|extreme) scene/i }).click()\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await success.waitFor({ state: 'visible', timeout: 1_800_000 })\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const importFinishedAt = Date.now();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const importReport = await success.innerText();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const analysisText = await analysis.isVisible().catch(() => false) ? await analysis.innerText() : undefined;\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await dialog.getByText('Close', { exact: true }).last().click();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const renderReference = page.getByRole('button', { name: /Render 360 Reference/i });\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await renderReference.click();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await page.getByRole('button', { name: /Download Graybox|Re-render after scene changes/i }).first().waitFor({ state: 'visible', timeout: 900_000 });\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await dismissOverlays();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await workspaceTab('Reference').click();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await page.waitForTimeout(1_000);\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const useAttached = page.getByRole('button', { name: /Use Attached Reference/i });\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"if (await useAttached.isVisible().catch(() => false)) { await useAttached.click(); }\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const startChecking = page.getByRole('button', { name: 'Start checking', exact: true };\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await startChecking.waitFor({ state: 'visible', timeout: 10_000 }).catch(() => undefined);\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"if (await startChecking.isVisible().catch(() => false)) await startChecking.click();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await page.getByRole('button', { name: 'More', exact: true }).click();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const drawer = page.getByRole('dialog', { name: 'Reference Settings' });\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await drawer.locator('[data-coverage-optimizer] summary').click();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"optimizationStartedAt = Date.now();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await drawer.locator('[data-coverage-analyze]').click();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const result = drawer.locator('[data-coverage-result]');\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const failed = drawer.locator('[data-coverage-status=\\\"failed\\\"]');\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"await Promise.race([result.waitFor({ state: 'visible', timeout: 1_800_000 }), failed.waitFor({ state: 'visible', timeout: 1_800_000 })]);\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"if (await failed.isVisible().catch(() => false)) throw new Error(`Coverage optimizer failed: ${await failed.innerText()}`);\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const optimizationFinishedAt = Date.now();\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const heap = await page.evaluate(() => { const memory = performance.memory; return memory ? { usedJSHeapSize: memory.usedJSHeapSize, totalJSHeapSize: memory.totalJSHeapSize, jsHeapSizeLimit: memory.jsHeapSizeLimit } : undefined; });\",\"source_id\":\"panoref_evt_000961::span::000011\"},{\"excerpt\":\"const report = { ok: pageErrors.length === 0, model: { path: path.resolve(modelPath), bytes: model.size }, importMilliseconds: importFinishedAt - importStartedAt, optimizationMilliseconds: optimizationFinishedAt - optimizationStartedAt, totalMilliseconds: Date.now() - startedAt, importReport, analysisText, originA: (await resu\",\"source_id\":\"panoref_evt_000961::span::000011\"}],\"id\":\"mem_7c0ac68b90f39f619dd5ec88\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Panoref automation completed import, render reference, and coverage optimization with timing and heap reporting.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 34,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000961::span::000011' for item mem_7c0ac68b90f39f619dd5ec88",
+        "excerpt not found in source 'panoref_evt_000961::span::000011' for item mem_7c0ac68b90f39f619dd5ec88",
+        "excerpt not found in source 'panoref_evt_000961::span::000011' for item mem_7c0ac68b90f39f619dd5ec88"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

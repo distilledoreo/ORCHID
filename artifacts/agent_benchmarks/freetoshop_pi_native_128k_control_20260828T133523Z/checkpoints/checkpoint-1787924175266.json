@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-08-28T13:36:15.256Z",
+  "elapsed_ms": 47039,
+  "reason": "controller_terminate",
+  "arms": {
+    "arm_a_pi": {
+      "name": "PI_NATIVE",
+      "pid": 820691,
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 0,
+      "provider_messages": 4,
+      "tool_calls": 10,
+      "tool_failures": 0,
+      "pi_native_compactions": 0,
+      "request_responses": 2,
+      "errors": [],
+      "last_usage": {
+        "input": 12829,
+        "output": 345,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "reasoning": 30,
+        "totalTokens": 13174,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "last_events": [
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_end",
+        "tool_execution_start",
+        "tool_execution_start",
+        "tool_execution_start",
+        "tool_execution_start",
+        "tool_execution_update",
+        "tool_execution_update",
+        "tool_execution_update",
+        "tool_execution_update",
+        "tool_execution_update",
+        "tool_execution_update",
+        "tool_execution_update",
+        "tool_execution_end",
+        "tool_execution_end",
+        "tool_execution_end",
+        "tool_execution_update",
+        "tool_execution_end",
+        "message_start",
+        "message_end",
+        "message_start",
+        "message_end",
+        "message_start",
+        "message_end",
+        "message_start",
+        "message_end",
+        "turn_end",
+        "turn_start",
+        "message_start",
+        "message_end",
+        "turn_end",
+        "agent_end",
+        "agent_settled",
+        "response"
+      ],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": "?? BENCHMARK_GOAL.md\n"
+      }
+    }
+  }
+}

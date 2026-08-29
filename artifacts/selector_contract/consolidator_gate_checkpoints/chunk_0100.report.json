@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 101,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "Script completed in 1.2 seconds; exit code 0. The stale-result race was fixed, tested on desktop and phone, committed, and pushed. The optimizer now locks the region toggle and every bound field until its current job finishes, then unlocks them. I'm beginning adversarial audit round three against commit `4153429`.",
+      "envelope_json": "{\"generation\":101,\"items\":[{\"evidence\":[{\"excerpt\":\"Script completed\\\\nWall time 1.2 seconds\\\\nOutput:\",\"source_id\":\"panoref_evt_001097\"},{\"excerpt\":\"Exit code: 0\\\\nWall time: 1.2 seconds\",\"source_id\":\"panoref_evt_001097\"}],\"id\":\"mem_74e7a90069e323d04e7ac29a\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Tool execution completed with exit code 0 in 1.2 seconds\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

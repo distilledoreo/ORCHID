@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import asyncio
 import json
-import sqlite3
 import threading
 import time
+from collections.abc import Iterator
 from contextlib import contextmanager
 from hashlib import sha256
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Iterator
 
 import pytest
 
@@ -63,7 +62,10 @@ class StageHandler(BaseHTTPRequestHandler):
             content = "not-json"
         elif type(self).mode == "consolidator-malformed" and schema_name == "consolidator_response_v1":
             content = "not-json"
-        elif type(self).mode == "selector-invalid":
+        elif type(self).mode == "selector-invalid" or (
+            type(self).mode == "selector-invalid-after-first"
+            and len(type(self).requests) == 2
+        ):
             content = json.dumps({"selected_event_ids": ["missing"]})
         elif schema_name == "selector_response_v1":
             content = json.dumps({"selected_event_ids": [first_id]})
@@ -472,3 +474,197 @@ def test_legacy_model_runs_table_migrates_without_losing_rows(
     assert rows[0]["stage"] == "selector"
     assert rows[0]["thread_id"] == "thread"
     assert rows[0]["generation"] == 1
+
+
+def test_selector_exact_retry_skips_http_and_records_cache_hit(tmp_path: Path) -> None:
+    store, job_id = make_store(tmp_path)
+    events = fixture_events()
+    with stage_server() as endpoint:
+        first = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job_id)
+        )
+        first_result = asyncio.run(first.select(events=events))
+        live_requests = len(StageHandler.requests)
+        assert live_requests >= 1
+
+        second = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job_id)
+        )
+        second_result = asyncio.run(second.select(events=events))
+
+    assert second_result.selected_event_ids == first_result.selected_event_ids
+    assert len(StageHandler.requests) == live_requests
+    cached_rows = [
+        row
+        for row in store.list_model_runs()
+        if row["stage"] == "selector"
+        and json.loads(row["metadata_json"]).get("cache_hit")
+    ]
+    assert cached_rows
+    assert all(row["input_tokens"] == 0 and row["output_tokens"] == 0 for row in cached_rows)
+    assert all(row["finish_reason"] == "cache_hit" for row in cached_rows)
+
+
+def test_selector_restart_reuses_completed_chunks_and_only_retries_unfinished_chunk(
+    tmp_path: Path,
+) -> None:
+    store, job_id = make_store(tmp_path)
+    events = fixture_events()
+    with stage_server(mode="selector-invalid-after-first") as endpoint:
+        first = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job_id),
+            chunk_target_tokens=1,
+        )
+        with pytest.raises(ModelProtocolError):
+            asyncio.run(first.select(events=events))
+        assert len(StageHandler.requests) == 2
+
+        StageHandler.mode = "valid"
+        restarted = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job_id),
+            chunk_target_tokens=1,
+        )
+        result = asyncio.run(restarted.select(events=events))
+
+    assert result.selected_event_ids == ("event-0", "event-1")
+    # The validated first chunk survived the engine restart. Only the failed
+    # second chunk incurred another HTTP request.
+    assert len(StageHandler.requests) == 3
+    assert restarted.chunk_telemetry[0]["cache_hit"] is True
+    assert restarted.chunk_telemetry[1]["cache_hit"] is False
+
+
+def test_stage_result_cache_read_failure_blocks_paid_model_call() -> None:
+    class FailingCacheRecorder:
+        def lookup_stage_result(self, **_identity: object) -> dict | None:
+            raise RuntimeError("cache database unavailable")
+
+        def record_model_run(self, _record: dict) -> str:
+            raise AssertionError("model call must not start")
+
+    client = OpenAICompatStructuredClient(
+        endpoint="http://127.0.0.1:9/v1",
+        model="selector-model",
+        prompt_version="selector-prompt-v1",
+        system_prompt="Return JSON.",
+        telemetry_recorder=FailingCacheRecorder(),
+    )
+    client.set_call_context(stage="selector", source_refs=("event-0",))
+
+    with pytest.raises(TelemetryPersistenceError, match="read validated"):
+        asyncio.run(client.complete_json({"events": [{"id": "event-0"}]}))
+
+
+def test_stage_result_cache_write_failure_rejects_validated_stage_result(
+    tmp_path: Path,
+) -> None:
+    class FailingCacheStore(SQLiteStore):
+        def store_stage_result(self, **_payload: object) -> None:
+            raise RuntimeError("cache database unavailable")
+
+    store = FailingCacheStore(tmp_path / "memory.db")
+    store.create_project("project")
+    store.create_thread("thread", "project")
+    job_id = store.create_compaction_job(
+        thread_id="thread",
+        base_capsule_id=None,
+        snapshot_start_event_id=None,
+        snapshot_end_event_id=None,
+    )
+    with stage_server() as endpoint:
+        selector = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job_id)
+        )
+        with pytest.raises(TelemetryPersistenceError, match="persist validated"):
+            asyncio.run(selector.select(events=fixture_events()))
+
+    runs = store.list_model_runs(job_id=job_id)
+    assert len(runs) == 1
+    assert runs[0]["status"] == "FAILED"
+
+
+def test_canonicalizer_exact_retry_skips_http(tmp_path: Path) -> None:
+    store, job_id = make_store(tmp_path)
+    events = fixture_events()[:1]
+    with stage_server() as endpoint:
+        first = OpenAICompatCanonicalizerEngine(
+            stage_client(endpoint, store, "canonicalizer-model", job_id)
+        )
+        first_result = asyncio.run(first.canonicalize(events=events))
+        live_requests = len(StageHandler.requests)
+        second = OpenAICompatCanonicalizerEngine(
+            stage_client(endpoint, store, "canonicalizer-model", job_id)
+        )
+        second_result = asyncio.run(second.canonicalize(events=events))
+    assert second_result.canonical_text == first_result.canonical_text
+    assert len(StageHandler.requests) == live_requests
+    cached_rows = [
+        row
+        for row in store.list_model_runs()
+        if row["stage"] == "canonicalizer"
+        and json.loads(row["metadata_json"]).get("cache_hit")
+    ]
+    assert cached_rows
+
+
+def test_selector_protocol_failure_is_not_cached(tmp_path: Path) -> None:
+    store, job_id = make_store(tmp_path)
+    events = fixture_events()
+    with stage_server(mode="selector-invalid") as endpoint:
+        client = stage_client(endpoint, store, "selector-model", job_id)
+        with pytest.raises(ModelProtocolError):
+            asyncio.run(OpenAICompatSelectorEngine(client).select(events=events))
+        failed_requests = len(StageHandler.requests)
+        StageHandler.mode = "valid"
+        recovered = asyncio.run(
+            OpenAICompatSelectorEngine(
+                stage_client(endpoint, store, "selector-model", job_id)
+            ).select(events=events)
+        )
+    assert recovered.selected_event_ids
+    assert len(StageHandler.requests) > failed_requests
+
+
+def test_consolidator_exact_retry_skips_http(tmp_path: Path) -> None:
+    store, job_id = make_store(tmp_path)
+    events = fixture_events()[:1]
+    with stage_server() as endpoint:
+        canonical = asyncio.run(
+            OpenAICompatCanonicalizerEngine(
+                stage_client(endpoint, store, "canonicalizer-model", job_id)
+            ).canonicalize(events=events)
+        )
+        packet = build_lossless_packet(canonical, events)
+        first = OpenAICompatConsolidatorEngine(
+            stage_client(endpoint, store, "consolidator-model", job_id)
+        )
+        first_result = asyncio.run(
+            first.consolidate(
+                base_capsule=None,
+                events=events,
+                snapshot_end_event_id=events[0].id,
+                packet=packet,
+            )
+        )
+        live_requests = len(StageHandler.requests)
+        second = OpenAICompatConsolidatorEngine(
+            stage_client(endpoint, store, "consolidator-model", job_id)
+        )
+        second_result = asyncio.run(
+            second.consolidate(
+                base_capsule=None,
+                events=events,
+                snapshot_end_event_id=events[0].id,
+                packet=packet,
+            )
+        )
+    assert second_result.content == first_result.content
+    assert second_result.evidence_event_ids == first_result.evidence_event_ids
+    assert len(StageHandler.requests) == live_requests
+    cached_rows = [
+        row
+        for row in store.list_model_runs()
+        if row["stage"] == "consolidator"
+        and json.loads(row["metadata_json"]).get("cache_hit")
+    ]
+    assert cached_rows

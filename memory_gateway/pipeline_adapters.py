@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import time
 from dataclasses import dataclass, field
 from typing import Any
@@ -30,6 +31,13 @@ from .pipeline import (
 )
 from .source_projection import authoritative_source_text
 from .structured_client import OpenAICompatStructuredClient
+
+PATCH_CONTEXT_MAX_RECORDS = 16
+PATCH_CONTEXT_TEXT_LIMIT = 320
+_RECORD_TOKEN = re.compile(r"[A-Za-z0-9_./:-]{3,}")
+_PINNED_RECORD_KINDS = frozenset(
+    {"constraint", "decision", "blocker", "next_action"}
+)
 
 SELECTOR_RESPONSE_FORMAT: dict[str, Any] = {
     "type": "json_schema",
@@ -284,29 +292,175 @@ def _event_payload(event: SourceItem) -> dict[str, Any]:
 
 
 def _consolidator_source_payload(event: dict[str, Any]) -> dict[str, Any]:
-    """Expose the exact citation surface used later by V2 admission.
+    """Expose only the citation surface used later by admission.
 
-    Selector inputs remain byte-for-byte unchanged. Only the consolidator view
-    replaces nested/escaped protocol content with its deterministic,
-    citation-ready text, reducing prompt noise and eliminating quote/view
-    mismatches.
+    Selector inputs remain byte-for-byte unchanged. Span envelope fields and
+    raw content are omitted so the consolidator does not re-pay parent hashes,
+    offsets, or nested protocol dumps.
     """
 
-    payload = {key: value for key, value in event.items() if key != "content"}
-    payload["citation_text"] = authoritative_source_text(str(event.get("content") or ""))
+    raw_content = event.get("content")
+    if not isinstance(raw_content, str) or not raw_content:
+        raw_content = str(event.get("citation_text") or "")
+    payload: dict[str, Any] = {
+        "id": event.get("id"),
+        "citation_text": authoritative_source_text(raw_content),
+    }
+    event_type = event.get("event_type")
+    role = event.get("role")
+    if isinstance(event_type, str) and event_type:
+        payload["event_type"] = event_type
+    if isinstance(role, str) and role:
+        payload["role"] = role
     return payload
 
 
-def _capsule_payload(capsule: Capsule | None) -> dict[str, Any] | None:
+def _capsule_payload(
+    capsule: Capsule | None,
+    *,
+    include_content: bool = True,
+) -> dict[str, Any] | None:
     if capsule is None:
         return None
-    return {
+    payload = {
         "id": capsule.id,
         "thread_id": capsule.thread_id,
-        "content": capsule.content,
         "capsule_hash": capsule.capsule_hash,
         "covered_end_event_id": capsule.covered_end_event_id,
     }
+    if include_content:
+        payload["content"] = capsule.content
+    return payload
+
+
+def compose_incremental_content(
+    *,
+    model_content: str,
+    settled_items: list[dict[str, Any]],
+    patch_items: list[dict[str, Any]] | tuple[dict[str, Any], ...] = (),
+) -> str:
+    """Keep already-accepted item text without asking the model to rewrite it."""
+
+    superseded_ids = {
+        item_id
+        for item in patch_items
+        for item_id in item.get("supersedes_item_ids") or ()
+        if isinstance(item_id, str)
+    }
+    carried: list[str] = []
+    seen: set[str] = set()
+    for item in settled_items:
+        if item.get("id") in superseded_ids:
+            continue
+        text = str(item.get("text") or "").strip()
+        if not text or text in seen:
+            continue
+        seen.add(text)
+        carried.append(text)
+    body = model_content.strip()
+    missing = [text for text in carried if text not in body]
+    if not missing:
+        return model_content
+    if not body:
+        return "\n\n".join(missing)
+    return "\n\n".join([*missing, body])
+
+
+def settled_items_for_new_sources(
+    items: tuple[dict[str, Any], ...] | list[dict[str, Any]],
+    new_source_ids: tuple[str, ...] | list[str],
+) -> list[dict[str, Any]]:
+    """Carry evidence-backed items whose sources are outside the new window."""
+
+    new_ids = set(new_source_ids)
+    settled: list[dict[str, Any]] = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        evidence = item.get("evidence") or []
+        if not isinstance(evidence, list):
+            continue
+        source_ids = {
+            entry.get("source_id")
+            for entry in evidence
+            if isinstance(entry, dict) and isinstance(entry.get("source_id"), str)
+        }
+        if source_ids and source_ids.isdisjoint(new_ids):
+            settled.append(dict(item))
+    return settled
+
+
+def _record_tokens(text: str) -> frozenset[str]:
+    return frozenset(token.lower() for token in _RECORD_TOKEN.findall(text))
+
+
+def base_record_context_for_packet(
+    items: tuple[dict[str, Any], ...] | list[dict[str, Any]],
+    packet: LosslessPacket,
+    *,
+    max_records: int = PATCH_CONTEXT_MAX_RECORDS,
+    text_limit: int = PATCH_CONTEXT_TEXT_LIMIT,
+) -> list[dict[str, Any]]:
+    """Return bounded prior-record context for a delta-only consolidation call.
+
+    Full prior evidence and capsule prose stay out of the request. Potentially
+    affected records expose only stable identity and compact semantic state so
+    the model can emit a superseding patch when new evidence changes them.
+    """
+
+    if max_records <= 0:
+        return []
+    source_text = "\n".join(
+        [
+            packet.canonical_text,
+            *(
+                str(event.get("content") or event.get("citation_text") or "")
+                for event in packet.authoritative_events
+            ),
+        ]
+    )
+    query_tokens = _record_tokens(source_text)
+    ranked: list[tuple[int, int, int, dict[str, Any]]] = []
+    for index, item in enumerate(items):
+        if not isinstance(item, dict) or item.get("status") == "superseded":
+            continue
+        item_id = item.get("id")
+        text = item.get("text")
+        kind = item.get("kind")
+        status = item.get("status")
+        if not all(isinstance(value, str) and value for value in (item_id, text, kind)):
+            continue
+        if not isinstance(status, str) or not status:
+            continue
+        overlap = len(_record_tokens(text) & query_tokens)
+        pinned = int(kind in _PINNED_RECORD_KINDS and status == "active")
+        if overlap == 0 and not pinned:
+            continue
+        context = {
+            "id": item_id,
+            "kind": kind,
+            "status": status,
+            "text": text[:text_limit],
+        }
+        ranked.append((overlap, pinned, index, context))
+    selected = sorted(
+        ranked,
+        key=lambda row: (-row[0], -row[1], -row[2]),
+    )[:max_records]
+    return [row[3] for row in selected]
+
+
+def _lossless_packet_payload(packet: LosslessPacket) -> dict[str, Any]:
+    payload: dict[str, Any] = {
+        "selected_event_ids": list(packet.selected_event_ids),
+        "authoritative_events": [
+            _consolidator_source_payload(event) for event in packet.authoritative_events
+        ],
+        "packet_hash": packet.packet_hash,
+    }
+    if packet.canonical_text:
+        payload["canonical_text"] = packet.canonical_text
+    return payload
 
 
 def _generation_settings(client: OpenAICompatStructuredClient) -> dict[str, Any]:
@@ -425,6 +579,8 @@ class OpenAICompatSelectorEngine:
                 "source_ids_in_order": chunk_ids,
             }
             try:
+                if hasattr(self.client, "last_telemetry"):
+                    self.client.last_telemetry = None
                 _set_call_context(
                     self.client,
                     stage="selector",
@@ -453,6 +609,11 @@ class OpenAICompatSelectorEngine:
                         "selector returned ID outside current chunk"
                     )
                 selected_ids.update(selected)
+                remember = getattr(self.client, "remember_validated_result", None)
+                if remember is not None and not (
+                    self.client.last_telemetry or {}
+                ).get("cache_hit"):
+                    remember(response)
             except Exception as error:
                 _mark_call_failed(self.client, error)
                 raise
@@ -602,6 +763,11 @@ class OpenAICompatCanonicalizerEngine:
                     cited_source_refs=tuple(cited_ids),
                 )
                 batch_results.append(batch_result)
+                remember = getattr(self.client, "remember_validated_result", None)
+                if remember is not None and not (
+                    self.client.last_telemetry or {}
+                ).get("cache_hit"):
+                    remember(response)
             except Exception as error:
                 failure = error
                 _mark_call_failed(self.client, error)
@@ -655,6 +821,7 @@ class OpenAICompatCanonicalizerEngine:
 class OpenAICompatConsolidatorEngine:
     client: OpenAICompatStructuredClient
     require_memory_items: bool = False
+    patch_telemetry: dict[str, Any] = field(default_factory=dict, init=False)
 
     def __post_init__(self) -> None:
         self.client.response_format = CONSOLIDATOR_RESPONSE_FORMAT
@@ -679,21 +846,33 @@ class OpenAICompatConsolidatorEngine:
                 allowed_ids,
                 require_memory_items=self.require_memory_items,
             )
-            response = await self.client.complete_json(
-                {
-                    "base_capsule": _capsule_payload(base_capsule),
-                    "snapshot_end_event_id": snapshot_end_event_id,
-                    "lossless_packet": {
-                        "canonical_text": packet.canonical_text,
-                        "selected_event_ids": list(packet.selected_event_ids),
-                        "authoritative_events": [
-                            _consolidator_source_payload(event)
-                            for event in packet.authoritative_events
-                        ],
-                        "packet_hash": packet.packet_hash,
-                    },
-                }
+            base_items = (
+                list(base_capsule.memory_items)
+                if base_capsule is not None
+                else []
             )
+            patch_mode = bool(base_items)
+            base_record_context = base_record_context_for_packet(base_items, packet)
+            payload: dict[str, Any] = {
+                "base_capsule": _capsule_payload(
+                    base_capsule,
+                    include_content=not patch_mode,
+                ),
+                "snapshot_end_event_id": snapshot_end_event_id,
+                "lossless_packet": _lossless_packet_payload(packet),
+            }
+            if patch_mode:
+                payload["base_record_context"] = base_record_context
+                payload["base_record_context_truncated"] = (
+                    len(base_record_context) < len(base_items)
+                )
+            self.patch_telemetry = {
+                "patch_mode": patch_mode,
+                "base_records_total": len(base_items),
+                "base_records_sent": len(base_record_context),
+                "base_capsule_content_sent": not patch_mode,
+            }
+            response = await self.client.complete_json(payload)
             _check_call_ownership(self.client)
             _require_exact_response_keys(
                 response,
@@ -730,12 +909,12 @@ class OpenAICompatConsolidatorEngine:
                 for item in raw_retire:
                     if not isinstance(item, dict):
                         continue
-                    content = item.get("content")
+                    retire_content = item.get("content")
                     memory_type = item.get("memory_type")
                     importance = item.get("importance")
                     retire_evidence = item.get("evidence_event_ids")
                     if (
-                        not isinstance(content, str)
+                        not isinstance(retire_content, str)
                         or not isinstance(memory_type, str)
                         or not isinstance(importance, (int, float))
                         or isinstance(importance, bool)
@@ -747,7 +926,7 @@ class OpenAICompatConsolidatorEngine:
                         continue
                     retire_memories.append(
                         RetireMemory(
-                            content=content,
+                            content=retire_content,
                             memory_type=memory_type,
                             importance=float(importance),
                             evidence_event_ids=tuple(retire_evidence),
@@ -759,6 +938,18 @@ class OpenAICompatConsolidatorEngine:
                 for item in raw_items:
                     if isinstance(item, dict):
                         memory_items.append(dict(item))
+            if patch_mode:
+                content = compose_incremental_content(
+                    model_content=content,
+                    settled_items=base_items,
+                    patch_items=memory_items,
+                )
+            self.patch_telemetry["patch_records_returned"] = len(memory_items)
+            remember = getattr(self.client, "remember_validated_result", None)
+            if remember is not None and not (
+                self.client.last_telemetry or {}
+            ).get("cache_hit"):
+                remember(response)
             return ConsolidationResult(
                 content=content,
                 evidence_event_ids=tuple(evidence_ids),
@@ -774,7 +965,9 @@ class OpenAICompatConsolidatorEngine:
 
     @property
     def last_telemetry(self) -> dict[str, Any] | None:
-        return self.client.last_telemetry
+        if self.client.last_telemetry is None and not self.patch_telemetry:
+            return None
+        return {**dict(self.client.last_telemetry or {}), **self.patch_telemetry}
 
 
 def build_lossless_engine(
@@ -837,7 +1030,12 @@ def build_lossless_engine(
         "must be [] when there is no durable cold memory to store. "
         "Preserve conditions, causal relationships, current state, negative knowledge, "
         "and uncertainty. Cite only authoritative source-item IDs from the input. "
-        "Retire only durable semantic memories, not raw excerpts."
+        "Retire only durable semantic memories, not raw excerpts. "
+        "If base_record_context is present, it is a bounded index of prior records that "
+        "may be affected by the new evidence. Return only new or changed record patches; "
+        "do not copy unchanged records. To replace prior state, cite its id in "
+        "supersedes_item_ids. Software carries every omitted prior record forward. Return "
+        "content covering only new or changed state from the lossless packet."
     )
     if config.memory_format in {"v2", "v2_shadow"}:
         consolidator_prompt += (

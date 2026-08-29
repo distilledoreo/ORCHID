@@ -16,14 +16,13 @@ import asyncio
 import hashlib
 import json
 import math
-import re
 import sqlite3
 import statistics
 import sys
 import time
 import uuid
 from dataclasses import replace
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -39,7 +38,6 @@ from live_endurance import (  # noqa: E402
     RECALL_INSTRUCTION,
     RECALL_RESPONSE_FORMAT,
     SolarRecallClient,
-    TransportRetryingStructuredClient,
     _unavailable_answer,
     expected_recall,
     residue_hits,
@@ -47,22 +45,22 @@ from live_endurance import (  # noqa: E402
     score_capsule_layer,
     score_recall_layer,
 )
-from memory_gateway.config import RuntimeConfig  # noqa: E402
-from memory_gateway.context import estimate_tokens  # noqa: E402
-from memory_gateway.db import content_hash  # noqa: E402
-from memory_gateway.structured_client import OpenAICompatStructuredClient  # noqa: E402
-from memory_gateway.telemetry import deterministic_input_hash  # noqa: E402
 from residency_shadow_chained import (  # noqa: E402
-    FORK_GENERATION,
     conn_for_generation,
     open_connections,
     source_db_path,
 )
 from residency_shadow_sample import (  # noqa: E402
     consolidator_api_key,
-    snapshot_events,
     sha256_text,
+    snapshot_events,
 )
+
+from memory_gateway.config import RuntimeConfig  # noqa: E402
+from memory_gateway.context import estimate_tokens  # noqa: E402
+from memory_gateway.db import content_hash  # noqa: E402
+from memory_gateway.structured_client import OpenAICompatStructuredClient  # noqa: E402
+from memory_gateway.telemetry import deterministic_input_hash  # noqa: E402
 
 OUT_DIR = _ROOT / "artifacts" / "degradation" / "memory_strategy_comparison_1_200"
 SHADOW_DIR = _ROOT / "artifacts" / "degradation" / "residency_shadow_chained_1_200"
@@ -111,7 +109,7 @@ TRADITIONAL_SCHEMA: dict[str, Any] = {
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def write_json(path: Path, payload: Any) -> None:

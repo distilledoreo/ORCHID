@@ -15,16 +15,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from memory_gateway.compaction import Event, expand_source_items
-from memory_gateway.context import estimate_tokens
-from memory_gateway.pipeline_adapters import (
-    _chunk_events,
-    _event_payload,
-    canonicalizer_response_format_for_batch,
-    selector_response_format_for_chunk,
-)
-from memory_gateway.structured_client import OpenAICompatStructuredClient
-
 from phase3_2_stall_analysis import (
     CANONICALIZER_SYSTEM,
     ENDPOINT,
@@ -33,6 +23,16 @@ from phase3_2_stall_analysis import (
     SELECTOR_SYSTEM,
     load_events,
 )
+
+from memory_gateway.compaction import expand_source_items
+from memory_gateway.context import estimate_tokens
+from memory_gateway.pipeline_adapters import (
+    _chunk_events,
+    _event_payload,
+    canonicalizer_response_format_for_batch,
+    selector_response_format_for_chunk,
+)
+from memory_gateway.structured_client import OpenAICompatStructuredClient
 
 
 def make_client(system_prompt: str, prompt_version: str) -> OpenAICompatStructuredClient:

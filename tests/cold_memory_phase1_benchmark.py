@@ -30,7 +30,6 @@ from memory_gateway.cold_memory import (
 from memory_gateway.context import ContextAssembler
 from memory_gateway.db import SQLiteStore
 
-
 PROJECT_ID = "phase1-project"
 THREAD_ID = "phase1-thread"
 DEFAULT_OUTPUT = Path("artifacts/cold_memory/phase1_baseline")

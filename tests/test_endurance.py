@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from memory_gateway.db import SQLiteStore
-
 from endurance_harness import (
     CHECKPOINT_GENERATIONS,
     DEFAULT_GENERATIONS,
@@ -12,6 +10,8 @@ from endurance_harness import (
     run_endurance,
     semantic_engine,
 )
+
+from memory_gateway.db import SQLiteStore
 
 
 def test_semantic_pipeline_survives_fifty_compaction_generations(tmp_path: Path, capsys) -> None:

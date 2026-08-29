@@ -1,15 +1,15 @@
 {
-  "source_run": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_corrected_all_solar",
+  "source_run": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/agent_benchmarks/freetoshop_pi_vs_orchid_corrected_all_solar",
   "requests": 57,
   "promotions_applied": [
     1,
     2,
     3
   ],
-  "old_mean_foreground_tokens": 144630.5,
-  "new_mean_foreground_tokens": 41945.6,
-  "old_cumulative_foreground_tokens": 8243937,
-  "new_cumulative_foreground_tokens": 2390898,
+  "old_mean_foreground_tokens": 144624.5,
+  "new_mean_foreground_tokens": 45132.7,
+  "old_cumulative_foreground_tokens": 8243595,
+  "new_cumulative_foreground_tokens": 2572563,
   "historical_observed_orchid_cumulative_input": 7864313,
   "historical_observed_pi_cumulative_input": 1811513,
   "covered_raw_tokens_forwarded_nonzero_requests": [
@@ -62,27 +62,27 @@
   "collapse_by_generation": [
     {
       "generation": 1,
-      "pre_promotion_new_tokens": 126759,
-      "immediate_post_promotion_new_tokens": 93229,
-      "immediate_post_old_tokens": 143851,
-      "percentage_collapse_vs_old": 35.19,
-      "percentage_collapse_vs_pre_new": 26.45
+      "pre_promotion_new_tokens": 127596,
+      "immediate_post_promotion_new_tokens": 97194,
+      "immediate_post_old_tokens": 143850,
+      "percentage_collapse_vs_old": 32.43,
+      "percentage_collapse_vs_pre_new": 23.83
     },
     {
       "generation": 2,
-      "pre_promotion_new_tokens": 109675,
-      "immediate_post_promotion_new_tokens": 36637,
-      "immediate_post_old_tokens": 167613,
-      "percentage_collapse_vs_old": 78.14,
-      "percentage_collapse_vs_pre_new": 66.59
+      "pre_promotion_new_tokens": 113636,
+      "immediate_post_promotion_new_tokens": 40603,
+      "immediate_post_old_tokens": 167610,
+      "percentage_collapse_vs_old": 75.78,
+      "percentage_collapse_vs_pre_new": 64.27
     },
     {
       "generation": 3,
-      "pre_promotion_new_tokens": 39126,
-      "immediate_post_promotion_new_tokens": 6959,
-      "immediate_post_old_tokens": 173415,
-      "percentage_collapse_vs_old": 95.99,
-      "percentage_collapse_vs_pre_new": 82.21
+      "pre_promotion_new_tokens": 43089,
+      "immediate_post_promotion_new_tokens": 10927,
+      "immediate_post_old_tokens": 173409,
+      "percentage_collapse_vs_old": 93.7,
+      "percentage_collapse_vs_pre_new": 74.64
     }
   ],
   "cache_observation": {

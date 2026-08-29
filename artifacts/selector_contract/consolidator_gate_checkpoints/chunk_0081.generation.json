@@ -1,0 +1,85 @@
+{
+  "generation": 82,
+  "content": "The test performs a coverage analysis on a desktop-chromium configuration by opening Reference Settings, clicking the coverage optimizer summary, and analyzing results. It verifies that the drawer layout stays within viewport bounds, that 24,576 fine samples are reported, and that originB has 3 finite values with the second value less than 2.5 (ensuring props/rooftops do not become candidate platforms). It confirms existing panorama origins are never rewritten and no capture pair applies. In desktop-chromium specifically, after switching to joint-pair mode, it analyzes again and validates that both originA and jointOriginB contain finite values with a Euclidean distance greater than 1 between them, and that a capture element becomes visible.",
+  "events": [
+    {
+      "id": "panoref_evt_001036::span::000001",
+      "sequence": 1036,
+      "content": "await startChecking.isVisible().catch(() => false)) await startChecking.click();\\r\\n      await dismissOverlays(page);\\r\\n    }\\r\\n    await page.getByRole('button', { name: 'More', exact: true }).click();\\r\\n    const drawer = page.getByRole('dialog', { name: 'Reference Settings' });\\r\\n    await expect(drawer).toBeVisible();\\r\\n    await page.locator('[data-coverage-optimizer] summary').click();\\r\\n\\r\\n    const layout = await drawer.evaluate((element) => {\\r\\n      const rect = element.getBoundingClientRect();\\r\\n      return {\\r\\n        left: rect.left,\\r\\n        right: rect.right,\\r\\n        viewportWidth: window.innerWidth,\\r\\n        clientWidth: element.clientWidth,\\r\\n        scrollWidth: element.scrollWidth,\\r\\n      };\\r\\n    });\\r\\n    expect(layout.left).toBeGreaterThanOrEqual(0);\\r\\n    expect(layout.right).toBeLessThanOrEqual(layout.viewportWidth);\\r\\n    expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);\\r\\n\\r\\n    await page.locator('[data-coverage-analyze]').click();\\r\\n    const result = page.locator('[data-coverage-result]');\\r\\n    await expect(result).toBeVisible({ timeout: 90_000 });\\r\\n    await expect(result).toContainText('24,576 fine samples');\\r\\n    const originB = (await result.getAttribute('data-coverage-origin-b'))\\r\\n      ?.split(',').map((value) => Number(value));\\r\\n    expect(originB).toHaveLength(3);\\r\\n    expect(originB?.every(Number.isFinite)).toBe(true);\\r\\n    // The default set has an authored ground floor; props/rooftops must not\\r\\n    // become candidate platforms.\\r\\n    expect(originB?.[1]).toBeLessThan(2.5);\\r\\n    await expect(page.locator('[data-coverage-capture-plan]')).toContainText('Existing panorama origins are never rewritten');\\r\\n    await expect(page.locator('[data-coverage-apply-pair]')).toHaveCount(0);\\r\\n\\r\\n    if (testInfo.project.name === 'desktop-chromium') {\\r\\n      await page.locator('[data-coverage-mode]').selectOption('joint-pair');\\r\\n      await page.locator('[data-coverage-analyze]').click();\\r\\n      await expect(result).toBeVisible({ timeout: 120_000 });\\r\\n      const originA = (await result.getAttribute('data-coverage-origin-a'))\\r\\n        ?.split(',').map((value) => Number(value));\\r\\n      const jointOriginB = (await result.getAttribute('data-coverage-origin-b'))\\r\\n        ?.split(',').map((value) => Number(value));\\r\\n      expect(originA?.every(Number.isFinite)).toBe(true);\\r\\n      expect(jointOriginB?.every(Number.isFinite)).toBe(true);\\r\\n      expect(Math.hypot(\\r\\n        (originA?.[0] ?? 0) - (jointOriginB?.[0] ?? 0),\\r\\n        (originA?.[1] ?? 0) - (jointOriginB?.[1] ?? 0),\\r\\n        (originA?.[2] ?? 0) - (jointOriginB?.[2] ?? 0),\\r\\n      )).toBeGreaterThan(1);\\r\\n      await expect(page.locator('[data-coverage-apply-capture-a]')).toBeVisible();\\r\\n    }\\r\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+      "content_hash": "5750f983b389bb048dda7d052448a8fda8724f078003ab319769eee76b71288a",
+      "event_type": "custom_tool_call_output",
+      "role": "tool"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "await expect(result).toContainText('24,576 fine samples');",
+          "source_id": "panoref_evt_001036::span::000001"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "text": "Coverage analysis reports exactly 24,576 fine samples for the default ground-floor-authored set."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "expect(originB?.[1]).toBeLessThan(2.5);",
+          "source_id": "panoref_evt_001036::span::000001"
+        }
+      ],
+      "kind": "constraint",
+      "status": "active",
+      "text": "OriginB's second coordinate must remain below 2.5, enforcing that props and rooftops do not become candidate platforms."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "await expect(page.locator('[data-coverage-capture-plan]')).toContainText('Existing panorama origins are never rewritten');",
+          "source_id": "panoref_evt_001036::span::000001"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "text": "UI confirms that existing panorama origins are never rewritten during coverage optimization."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "await expect(page.locator('[data-coverage-apply-pair]')).toHaveCount(0);",
+          "source_id": "panoref_evt_001036::span::000001"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "text": "No capture-pair apply elements are present in default mode."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "if (testInfo.project.name === 'desktop-chromium') { await page.locator('[data-coverage-mode]').selectOption('joint-pair'); ... expect(Math.hypot((originA?.[0] ?? 0) - (jointOriginB?.[0] ?? 0), (originA?.[1] ?? 0) - (jointOriginB?.[1] ?? 0), (originA?.[2] ?? 0) - (jointOriginB?.[2] ?? 0))).toBeGreaterThan(1); ... await expect(page.locator('[data-coverage-apply-capture-a]')).toBeVisible(); }",
+          "source_id": "panoref_evt_001036::span::000001"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "text": "In desktop-chromium, joint-pair mode is supported: originA and jointOriginB are finite, separated by more than 1 unit, and a capture-a apply element becomes visible."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "expect(layout.left).toBeGreaterThanOrEqual(0); expect(layout.right).toBeLessThanOrEqual(layout.viewportWidth); expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);",
+          "source_id": "panoref_evt_001036::span::000001"
+        }
+      ],
+      "kind": "constraint",
+      "status": "active",
+      "text": "The Reference Settings drawer must remain within viewport bounds and not exceed its client width via scrolling."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_001036::span::000001"
+  ]
+}

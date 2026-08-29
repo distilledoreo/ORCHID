@@ -15,9 +15,10 @@ import os
 import sys
 import tempfile
 import time
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -35,15 +36,10 @@ from memory_gateway.compaction import (
 )
 from memory_gateway.context import estimate_tokens
 from memory_gateway.db import SQLiteStore
-from memory_gateway.openai_adapter import ModelProtocolError, ModelTransportError
+from memory_gateway.openai_adapter import ModelProtocolError
 from memory_gateway.pipeline import (
-    CanonicalizationBatchResult,
-    CanonicalizationResult,
     LosslessCompactionEngine,
-    LosslessPacket,
     SelectionResult,
-    build_canonicalization_result,
-    build_lossless_packet,
 )
 from memory_gateway.pipeline_adapters import (
     CONSOLIDATOR_RESPONSE_FORMAT,
@@ -54,7 +50,6 @@ from memory_gateway.pipeline_adapters import (
     _event_payload,
 )
 from memory_gateway.structured_client import OpenAICompatStructuredClient
-
 
 DEFAULT_REPLAY = ROOT / (
     "artifacts/agent_benchmarks/freetoshop_operability_hardening/"

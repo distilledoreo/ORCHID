@@ -33,7 +33,6 @@ from memory_gateway.dense_abstention import (  # noqa: E402
     DenseAbstentionFeatures,
     DenseAbstentionPolicy,
     calibrate_policy,
-    evaluate_policy,
     feature_dict,
 )
 from memory_gateway.dense_experiment import (  # noqa: E402
@@ -55,10 +54,10 @@ try:
     from tests.cold_memory_phase2_dense_experiment import (
         MODEL_ID,
         MODEL_REVISION,
-        _NoopTelemetry,
         _download_model,
         _hot_path_state,
         _memory_rows,
+        _NoopTelemetry,
     )
 except ModuleNotFoundError:
     from cold_memory_phase1_2_calibration import _acceptance_holdout_queries  # type: ignore
@@ -72,10 +71,10 @@ except ModuleNotFoundError:
     from cold_memory_phase2_dense_experiment import (  # type: ignore
         MODEL_ID,
         MODEL_REVISION,
-        _NoopTelemetry,
         _download_model,
         _hot_path_state,
         _memory_rows,
+        _NoopTelemetry,
     )
 
 

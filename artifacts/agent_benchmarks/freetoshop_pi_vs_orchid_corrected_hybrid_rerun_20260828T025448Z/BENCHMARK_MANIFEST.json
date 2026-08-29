@@ -1,0 +1,108 @@
+{
+  "benchmark": "Corrected FreetoShop Pi-vs-ORCHID Hybrid A/B",
+  "run_id": "freetoshop_pi_vs_orchid_corrected_hybrid_rerun_20260828T025448Z",
+  "status": "FROZEN",
+  "frozen_at": "2026-08-28T02:54:49.516+00:00",
+  "design": "sealed contemporaneous paired run, n=1",
+  "corrected_base_commit": "98f0b0e5017db5d746257e40668e71ce777925e6",
+  "implementation_commit": "ac4bce5fb9824f8fd04973c16acc98d4bd643f74",
+  "implementation_tree": "448aaf7791befcb1fb28cb22c1d133134b591517",
+  "implementation_file_sha256": {
+    "memory_gateway/compaction.py": "8b5f0aebcdbdc6fe6bd10a0477ad776b2bdfaec7d91ed8e66ad44d522c0ccb40",
+    "memory_gateway/config.py": "9440256a26ff3b89387fe44dffdbd11320e1aaf7eda2c236f8724d1bf1ec683c",
+    "memory_gateway/context.py": "c56926702062a4e15be0e0a90f42f2d45c3efb67b6edc5076628a25e65655ae7",
+    "memory_gateway/foreground_telemetry.py": "7a9dad0332dc7d63689aff8c51feadbb5ac6c373870436248363a49c1e2041ab",
+    "memory_gateway/gateway.py": "5a2153ced4738a7c598f3095b023aefabd2277bc8723be43a9c87ac49f692ec4",
+    "memory_gateway/pipeline.py": "9070e3bad0a651852f6cdc9e8c1ed6d6976a588a520257fc8544b196bcc1f7c7",
+    "memory_gateway/pipeline_adapters.py": "19899eb0ac5089ffd14b47bbf9a5724c9d4f89ec8d9b1bea97bf9a52140a68c4",
+    "memory_gateway/scheduler.py": "2daa7a28df8f5ffee9dead6850f1b1991fd53de51f9c141d8623f654312b27c0",
+    "tools/benchmark_freetoshop_corrected_all_solar.py": "0fa2764e70bf8fc0565972b871916815c3890db57a4d31df76fff1535b0607e7",
+    "tools/finalize_freetoshop_corrected_all_solar.py": "2d7069ab4320aa2236b48463ab322d9a9c354ae92301671af1390c066eebcacb",
+    "tools/freetoshop_corrected_all_solar_driver.mjs": "4f063f03f9cd111b2283ecfe6b2962168f34862ffd8918f60c1f0789b5b68d64",
+    "tools/pi_continuation_policy.mjs": "5fb231e449c50cb7cf74767d7b09625360131f91afd4c8a29bf61ac3a9329ca5",
+    "tools/recover_freetoshop_benchmark_inputs.py": "dc6ff3babd836ce00437103a774719c081b6cea18c143e3d713102b866dde0a1",
+    "tools/start_freetoshop_corrected_all_solar.ps1": "012723e129daf9795334522190d2c620204e9140ae59a2779c4b1be51500a060",
+    "tools/start_freetoshop_corrected_all_solar.sh": "4bc3bd48435e890df6f04b6d019e993ebdc22a479418bd500fb44fe83eff091c"
+  },
+  "historical_source_manifest": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/agent_benchmarks/freetoshop_pi_vs_orchid_20260820/BENCHMARK_MANIFEST.json",
+  "historical_source_manifest_sha256": "316445e4ea13665e389ce798c3e85e32f8b3d8da36a72886ae913ce19d5b7961",
+  "start_commit": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+  "start_tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+  "original_start_commit": "db24908e582c1642a001abd2feca4ec47b1947f8",
+  "target_commit_controller_private": "bd9555eafa3dcab1096c503186cbac48dbbd3f73",
+  "target_tree_controller_private": "d6b721436b8f39d5c4081298a88582d3dd9004ee",
+  "original_target_commit_controller_private": "71ed699e605ddfcec6f172d529040f39544dcc8f",
+  "original_target_tree_controller_private": "032d926eeed1bdff5586f9aeb0d063ea6d876284",
+  "input_recovery": {
+    "status": "RECOVERED_AND_TREE_VERIFIED",
+    "recovered_at": "2026-08-28T02:35:55.520627+00:00",
+    "source_artifact": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/agent_benchmarks/freetoshop_pi_vs_orchid_corrected_all_solar/pi_native/repository_final",
+    "telemetry": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/agent_benchmarks/freetoshop_pi_vs_orchid_corrected_all_solar/pi_native/telemetry.jsonl",
+    "original_start_commit": "db24908e582c1642a001abd2feca4ec47b1947f8",
+    "original_pi_baseline_commit": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa",
+    "original_orchid_baseline_commit": "ef22afee503843305c28d47dbf966cd644f52401",
+    "recovered_baseline_commit": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+    "source_evidence": {
+      "expected_tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+      "actual_tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+      "reversed_edits": 1,
+      "removed_written_paths": [
+        "packages/raster-engine/src/cloneStamp.ts",
+        "packages/raster-engine/src/types.ts"
+      ]
+    },
+    "original_oracle_commit": "71ed699e605ddfcec6f172d529040f39544dcc8f",
+    "recovered_oracle_commit": "bd9555eafa3dcab1096c503186cbac48dbbd3f73",
+    "evaluator_sha256": "3f00b8a0b3acfe22c4b645c7b5d3a5efd7945143c42a82a08d13d2b184b3aee0"
+  },
+  "hidden_evaluator_sha256": "3f00b8a0b3acfe22c4b645c7b5d3a5efd7945143c42a82a08d13d2b184b3aee0",
+  "public_goal": {
+    "path": "BENCHMARK_GOAL.md",
+    "sha256": "d789f01c840878946c1cd885bcd48dfb4f96b4db2eafb82615dfdd4064290e7e",
+    "byte_identical_between_arms": true
+  },
+  "sealed_arms": {
+    "PI_NATIVE": {
+      "baseline_commit": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+      "original_baseline_commit": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa",
+      "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+      "model": "benchmark/agnes-2.5-flash",
+      "native_compaction": true
+    },
+    "ORCHID": {
+      "baseline_commit": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+      "original_baseline_commit": "ef22afee503843305c28d47dbf966cd644f52401",
+      "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+      "model": "orchid/agnes-2.5-flash",
+      "native_compaction": false,
+      "selector_provider": "http://127.0.0.1:1234/v1",
+      "selector_model": "qwen3.5-4b@q6_k",
+      "consolidator_model": "agnes-2.5-flash",
+      "canonicalizer_enabled": false
+    }
+  },
+  "early_gate": {
+    "required_clean_promotions": 3,
+    "failure_action": "stop both arms and preserve evidence"
+  },
+  "run_policy": {
+    "max_wall_clock_ms_per_arm": 21600000,
+    "checkpoint_interval_ms": 900000,
+    "launch": "paired",
+    "manual_rescue": "forbidden",
+    "controller_restart_limit": 0,
+    "tuning_after_launch": "forbidden",
+    "provider_preflight_calls": 0
+  },
+  "predeclared_stop_conditions": [
+    "ORCHID fails the 3-promotion gate",
+    "unrecoverable continuity stall",
+    "repository corruption",
+    "benchmark leakage",
+    "asymmetric provider outage or throttling",
+    "unrecoverable provider failure",
+    "benchmark process exits unexpectedly"
+  ],
+  "stage": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/../benchmark_work/freetoshop_pi_vs_orchid_corrected_hybrid_rerun_20260828T025448Z",
+  "oracle_root_controller_private": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/../benchmark_recovered_inputs/freetoshop_20260820_recovered_v2/oracle"
+}

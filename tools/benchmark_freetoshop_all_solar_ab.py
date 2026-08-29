@@ -17,7 +17,7 @@ import sqlite3
 import subprocess
 import time
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -27,7 +27,6 @@ from memory_gateway.pipeline_adapters import (
     CONSOLIDATOR_RESPONSE_FORMAT,
     selector_response_format_for_chunk,
 )
-
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT = Path(
@@ -53,7 +52,7 @@ ORACLE_ROOT = Path(
 
 
 def now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return datetime.now(UTC).isoformat(timespec="seconds")
 
 
 def sha256_bytes(value: bytes) -> str:

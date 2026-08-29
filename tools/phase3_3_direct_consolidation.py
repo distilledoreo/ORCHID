@@ -18,17 +18,36 @@ import os
 import sys
 import tempfile
 import time
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+# Reuse the already validated Phase 3.2 selector implementation and client
+# telemetry helpers.  This keeps the ablation prompt/client behavior identical
+# to the measured pilot without modifying production code.
+from phase3_2_pipeline_ablation import (  # noqa: E402
+    DIRECT_RAW_CONSOLIDATOR_SYSTEM,
+    DIRECT_SELECTOR_CONSOLIDATOR_SYSTEM,
+    GENERATION,
+    LOCAL_MODEL,
+    SELECTOR_TARGET,
+    SOLAR_ENDPOINT,
+    SOLAR_MODEL,
+    SOLAR_TIMEOUT,
+    make_client,
+    run_selector,
+    selected_items_from_result,
+    source_token_count,
+)
+
 from memory_gateway.compaction import (  # noqa: E402
     Capsule,
-    CompactionSnapshot,
     CompactionResult,
+    CompactionSnapshot,
     Event,
     SourceItem,
     compute_input_hash,
@@ -45,30 +64,6 @@ from memory_gateway.pipeline_adapters import (  # noqa: E402
     _chunk_events,
     _event_payload,
 )
-from memory_gateway.structured_client import OpenAICompatStructuredClient  # noqa: E402
-
-# Reuse the already validated Phase 3.2 selector implementation and client
-# telemetry helpers.  This keeps the ablation prompt/client behavior identical
-# to the measured pilot without modifying production code.
-from phase3_2_pipeline_ablation import (  # noqa: E402
-    GENERATION,
-    DIRECT_RAW_CONSOLIDATOR_SYSTEM,
-    DIRECT_SELECTOR_CONSOLIDATOR_SYSTEM,
-    LOCAL_ENDPOINT,
-    LOCAL_MODEL,
-    LOCAL_TIMEOUT,
-    SELECTOR_TARGET,
-    SOLAR_ENDPOINT,
-    SOLAR_MODEL,
-    SOLAR_TIMEOUT,
-    digest as phase32_digest,
-    make_client,
-    run_selector,
-    selected_items_from_result,
-    source_token_count,
-)
-from memory_gateway.pipeline_adapters import OpenAICompatSelectorEngine  # noqa: E402
-
 
 REPLAY = ROOT / (
     "artifacts/agent_benchmarks/freetoshop_operability_hardening/"
@@ -996,7 +991,7 @@ def assemble() -> None:
     report += f"Frozen ARM B semantic checks: {b_sem.get('semantic_pass', 0)} PASS / {b_sem.get('semantic_fail', 0)} FAIL; current-fact losses {b_sem.get('current_fact_losses', 0)}, intent/blocker/continuation losses {b_sem.get('intent_or_blocker_losses', 0)}, resurrection failures {b_sem.get('resurrection_failures', 0)}, invention failures {b_sem.get('invention_failures', 0)}. These are deterministic coverage checks, not a claim that every failure is a human-judged semantic failure.\n\n"
     report += "## EXPLICIT FINAL QUESTIONS\n\n"
     questions = [
-        f"1. Did the exact ARM C second-batch request reproduce its timeout? **No.** One same-policy trial completed in 43.206s; the second completed provider generation in 97.789s but failed unknown-ID validation; payload hashes did not match the historical hash.",
+        "1. Did the exact ARM C second-batch request reproduce its timeout? **No.** One same-policy trial completed in 43.206s; the second completed provider generation in 97.789s but failed unknown-ID validation; payload hashes did not match the historical hash.",
         "2. Was the failure deterministic or long-tail/transient? **Not input-deterministic; classify the prior timeout as an unreproduced provider-tail incident, with a separate nondeterministic protocol-output risk.**",
         f"3. Did ARM B complete all 202,761 planned source tokens? **No.** It processed the full raw trace through 230 selector calls but selected {b.get('selected_source_tokens', 0):,}.",
         "4. Did ARM C complete all 202,761 planned source tokens? **No; it failed on batch 0.**",

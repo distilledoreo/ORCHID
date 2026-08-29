@@ -15,6 +15,20 @@ from memory_gateway.fake_engines import PerfectCompactionEngine
 from memory_gateway.gateway import create_app
 
 
+class BlockingCompactionEngine:
+    """Hold background maintenance open while foreground requests continue."""
+
+    def __init__(self) -> None:
+        self.started = asyncio.Event()
+        self.release = asyncio.Event()
+        self.delegate = PerfectCompactionEngine()
+
+    async def compact(self, **kwargs):
+        self.started.set()
+        await self.release.wait()
+        return await self.delegate.compact(**kwargs)
+
+
 class BackendHandler(BaseHTTPRequestHandler):
     last_model: str | None = None
     last_authorization: str | None = None
@@ -117,6 +131,11 @@ def test_gateway_routes_solar_and_runs_background_compaction(tmp_path: Path) -> 
                     assert debug["last_promotion"]["status"] == "PROMOTED"
                     assert debug["active_capsule"]["state"] == "ACTIVE"
                     assert debug["estimated_active_tokens"] > 0
+                    assert debug["compaction_wait_ms"] == 0
+                    assert debug["memory_maintenance_awaited"] is False
+                    assert sum(debug["component_tokens"].values()) == debug[
+                        "estimated_active_tokens"
+                    ]
 
         asyncio.run(run())
         assert BackendHandler.last_model == "upstage/solar-pro4"
@@ -176,5 +195,77 @@ def test_gateway_returns_503_when_foreground_hard_limit_exceeded(tmp_path: Path)
                     assert body["error"]["limit_tokens"] == 16
                     assert body["error"]["estimated_tokens"] > 16
                     assert body["error"]["job_id"]
+
+        asyncio.run(run())
+
+
+def test_foreground_request_does_not_await_running_compaction(tmp_path: Path) -> None:
+    with backend_server() as backend_url:
+        engine = BlockingCompactionEngine()
+        config = RuntimeConfig(
+            db_path=str(tmp_path / "memory.db"),
+            backend_url=backend_url,
+            backend_api_key=None,
+            backend_model="upstage/solar-pro4",
+            selector_url="http://127.0.0.1:1234/v1",
+            selector_model="qwen3.5-4b@q6_k",
+            selector_api_key=None,
+            canonicalizer_url="http://127.0.0.1:1234/v1",
+            canonicalizer_model="qwen3.5-4b@q6_k",
+            canonicalizer_api_key=None,
+            consolidator_url=None,
+            consolidator_model=None,
+            consolidator_api_key=None,
+            context_tokens=128_000,
+            foreground_target_tokens=1,
+            foreground_hard_limit_tokens=48_000,
+            background_fraction=0.5,
+            urgent_fraction=0.8,
+            worker_poll_seconds=0.001,
+            model_timeout_seconds=1,
+        )
+        app = create_app(config=config, compaction_engine=engine)
+
+        async def run() -> None:
+            async with app.router.lifespan_context(app):
+                transport = httpx.ASGITransport(app=app)
+                async with httpx.AsyncClient(
+                    transport=transport,
+                    base_url="http://orchid",
+                ) as client:
+                    first_message = {"role": "user", "content": "start background work"}
+                    first = await client.post(
+                        "/v1/chat/completions",
+                        headers={
+                            "x-memory-project": "project",
+                            "x-memory-thread": "thread",
+                        },
+                        json={"messages": [first_message]},
+                    )
+                    assert first.status_code == 200
+                    await asyncio.wait_for(engine.started.wait(), timeout=1)
+
+                    second = await asyncio.wait_for(
+                        client.post(
+                            "/v1/chat/completions",
+                            headers={
+                                "x-memory-project": "project",
+                                "x-memory-thread": "thread",
+                            },
+                            json={
+                                "messages": [
+                                    first_message,
+                                    {"role": "user", "content": "continue immediately"},
+                                ]
+                            },
+                        ),
+                        timeout=1,
+                    )
+                    assert second.status_code == 200
+                    running = (await client.get("/debug/jobs")).json()[
+                        "queued_or_running"
+                    ]
+                    assert any(job["status"] == "RUNNING" for job in running)
+                    engine.release.set()
 
         asyncio.run(run())

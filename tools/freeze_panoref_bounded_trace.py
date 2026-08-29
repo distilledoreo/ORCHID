@@ -19,10 +19,14 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import freeze_coding_trace as full_trace
-from memory_gateway.compaction import expand_source_items, source_item_parent_event_id, source_item_payload
+
+from memory_gateway.compaction import (
+    expand_source_items,
+    source_item_parent_event_id,
+    source_item_payload,
+)
 from memory_gateway.context import estimate_tokens
 from memory_gateway.pipeline_adapters import _chunk_events
-
 
 OUT = ROOT / "artifacts/agent_benchmarks/panoref_direct_generalization_bounded_v2"
 REPLAY = OUT / "frozen_panoref_replay/events.jsonl"

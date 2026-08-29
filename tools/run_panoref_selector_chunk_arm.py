@@ -20,9 +20,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "tools") not in sys.path:
     sys.path.insert(0, str(ROOT / "tools"))
 
-import memory_gateway.pipeline_adapters as adapters  # noqa: E402
 import phase3_2_pipeline_ablation as selector_module  # noqa: E402
 import run_panoref_selector_control as control  # noqa: E402
+
+import memory_gateway.pipeline_adapters as adapters  # noqa: E402
 
 
 def digest_bytes(path: Path) -> str:

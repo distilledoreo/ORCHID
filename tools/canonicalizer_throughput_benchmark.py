@@ -15,15 +15,14 @@ if str(ROOT) not in sys.path:
 
 from memory_gateway.compaction import Event, SourceItem, expand_source_items
 from memory_gateway.context import estimate_tokens
+from memory_gateway.pipeline import CanonicalizerBatchError
 from memory_gateway.pipeline_adapters import (
     OpenAICompatCanonicalizerEngine,
-    canonicalizer_response_format_for_batch,
     _chunk_events,
     _event_payload,
+    canonicalizer_response_format_for_batch,
 )
-from memory_gateway.pipeline import CanonicalizerBatchError
 from memory_gateway.structured_client import OpenAICompatStructuredClient
-
 
 DEFAULT_REPLAY = Path(
     "artifacts/agent_benchmarks/freetoshop_operability_hardening/"

@@ -15,10 +15,9 @@ import json
 import os
 import shutil
 import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
 
 ROOT = Path(__file__).resolve().parents[1]
 CORRECTED = (
@@ -192,7 +191,7 @@ def recover(destination: Path) -> None:
     oracle_commit = make_oracle(destination / "oracle", expected_evaluator)
     manifest = {
         "status": "RECOVERED_AND_TREE_VERIFIED",
-        "recovered_at": datetime.now(timezone.utc).isoformat(),
+        "recovered_at": datetime.now(UTC).isoformat(),
         "source_artifact": str(SOURCE_SNAPSHOT),
         "telemetry": str(SOURCE_TELEMETRY),
         "original_start_commit": historical["start_commit"],

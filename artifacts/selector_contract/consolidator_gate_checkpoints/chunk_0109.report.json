@@ -1,0 +1,43 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 110,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001112::span::000001' for item mem_457b62da5da1721967cade89",
+        "excerpt not found in source 'panoref_evt_001112::span::000002' for item mem_457b62da5da1721967cade89",
+        "excerpt not found in source 'panoref_evt_001112::span::000001' for item mem_b852df3fd2032546d7941305"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "In the layout-and-workflow E2E test, floor region min/max inputs now set floorRegionTouchedRef.current=true and call invalidateAnalysis() on change instead of only updating state. The patch was applied via exec tool to update e2e/layout-and-workflow.spec.ts and related source.",
+      "envelope_json": "{\"generation\":110,\"items\":[{\"evidence\":[{\"excerpt\":\"\\\"onChange={(event) => {\\\\n                      floorRegionTouchedRef.current = true;\\\\n                      setFloorRegion((current) => {\\\\n                        const min = [...current.min] as Vec3;\\\\n                        min[axisIndex] = Number(event.target.value);\\\\n                        return { ...current, min };\\\\n                      });\\\\n                      invalidateAnalysis();\\\\n                    }}\\\"\",\"source_id\":\"panoref_evt_001112::span::000001\"},{\"excerpt\":\"\\\"*** End Patch\\\\\\\";\\\\ntext(await tools.apply_patch(patch));\\\"\",\"source_id\":\"panoref_evt_001112::span::000002\"}],\"id\":\"mem_457b62da5da1721967cade89\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Floor region input handlers now mark the region as touched and invalidate analysis on change\"},{\"evidence\":[{\"excerpt\":\"\\\"\\\\n+    await drawer.locator('[data-coverage-floor-min=\\\\\\\\\\\\\\\"x\\\\\\\\\\\\\\\"]').fill('-4');\\\\n+    await expect(result).toHaveCount(0);\\\\n+    await expect(page.locator('[data-coverage-apply-capture]')).toHaveCount\\\"\",\"source_id\":\"panoref_evt_001112::span::000001\"}],\"id\":\"mem_b852df3fd2032546d7941305\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Continue extending the layout-and-workflow E2E test by completing the coverage-apply-capture expectation after filling floor minimum x\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 110,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001112::span::000001' for item mem_457b62da5da1721967cade89",
+        "excerpt not found in source 'panoref_evt_001112::span::000002' for item mem_457b62da5da1721967cade89",
+        "excerpt not found in source 'panoref_evt_001112::span::000001' for item mem_b852df3fd2032546d7941305"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

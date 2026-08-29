@@ -1,0 +1,41 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 10,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_8c11cff4d186ab2908703b78",
+        "item mem_8c11cff4d186ab2908703b78 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Unit tests passed across 13 test suites (175 total tests) in ~0.6s wall time using vitest v3.2.6 on Windows.",
+      "envelope_json": "{\"generation\":10,\"items\":[{\"evidence\":[{\"excerpt\":\"✓ tests/uiFidelity.test.ts (40 tests) 62ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_8c11cff4d186ab2908703b78\",\"kind\":\"completed\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"All unit tests passed (13 suites, 175 tests) via vitest run --run in 43.7s wall time.\"},{\"evidence\":[{\"excerpt\":\"vitest run --run\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_da31cae5f73d134050d5e71a\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Run `vitest run --run` to execute the full test suite.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 10,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_8c11cff4d186ab2908703b78",
+        "item mem_8c11cff4d186ab2908703b78 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/sealed_probe_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

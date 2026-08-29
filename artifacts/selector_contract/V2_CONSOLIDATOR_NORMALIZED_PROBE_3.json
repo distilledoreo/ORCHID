@@ -1,0 +1,76 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 3,
+  "accepted": 0,
+  "rejected": 3,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 1,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_0b514fea26a7488e0e8a793e",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_1e5449a1eb8fe20c32bddf71",
+        "item mem_4c3eacf40d662731d04b18fd text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The Joint Coverage Engine algorithm is a real implementation with 17 new files, supporting both fixed-first and genuinely joint search modes. Architecture score is 8/10 and search mode correctness is 7.5/10, but readiness for complex imported sets is only 4/10 due to two critical blockers: imported sets can produce zero legal candidates because candidate clearance incorrectly uses object AABBs (rejecting origins inside empty interior space), and the triangle-expanded geometry representation does not scale to heavy imports.",
+      "envelope_json": "{\"generation\":1,\"items\":[{\"evidence\":[{\"excerpt\":\"Joint mode genuinely evaluates candidate pairs rather than greedily selecting the best first origin.\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Algorithm architecture for normal graybox sets: 8/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Readiness for complex imported sets: 4/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"For every non-floor scene object, the extractor stores the entire object’s axis-aligned bounding box as an obstacle.\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"This can affect: a complete Maya set imported as one GLB, a room shell and furniture combined into one mesh, concave geometry\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Use actual geometry clearance, not object AABBs\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"The geometry representation will not scale to heavy imports\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_0b514fea26a7488e0e8a793e\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Joint Coverage Engine implemented but not production-ready for complex imports due to AABB-based candidate rejection and scaling limits.\"},{\"evidence\":[{\"excerpt\":\"For every non-floor scene object, the extractor stores the entire object’s axis-aligned bounding box as an obstacle.\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"candidate valid = camera sphere/capsule does not intersect nearby triangles\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Add a regression test with one imported object containing a room floor, walls, and empty interior.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_1e5449a1eb8fe20c32bddf71\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blocker: Imported sets can produce zero legal candidates because clearance uses object AABBs instead of actual geometry.\"},{\"evidence\":[{\"excerpt\":\"The geometry representation will not scale to heavy imports\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_4c3eacf40d662731d04b18fd\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blocker: Geometry representation does not scale to heavy imports.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 6,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000923::span::000001' for item mem_d426cb4707c47a984c4d2708"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Projected panorama fallback shader implements a two-projector blend system using continuous visibility/quality scores without hard thresholds. Primary sample is always computed from projectedPanoMap; secondary sample from projectedSecondaryPanoMap only when projectedUseSecondary==1 and a valid position offset exists. Blend mode 0 uses primary only, mode 1 uses secondary only, mode 2 adds primary dominance factor 1.15, mode 3 adds secondary dominance 1.15. Winner-takes-most weighting applies power-4 exponent to primaryScore and secondaryScore, with coverage diagnostic available when projectedDebugCoverage==1 (four-state: red/cyan/magenta/white).",
+      "envelope_json": "{\"generation\":6,\"items\":[{\"evidence\":[{\"excerpt\":\"float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_71f90b2924285f75a171f61b\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"hasSecondary is computed as 1.0 only when projectedUseSecondary==1 AND secondaryValid>0.5; otherwise 0.0\"},{\"evidence\":[{\"excerpt\":\"float primaryEnabled = projectedBlendMode == 1 ? 0.0 : 1.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_6e204c39bfdedad041a01798\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"primaryEnabled is 0.0 when blendMode==1 (secondary-only), else 1.0\"},{\"evidence\":[{\"excerpt\":\"float secondaryEnabled = projectedBlendMode == 0 ? 0.0 : hasSecondary;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_252226c038459b236c695a42\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"secondaryEnabled is 0.0 when blendMode==0 (primary-only), else equals hasSecondary\"},{\"evidence\":[{\"excerpt\":\"float primaryDominance = projectedBlendMode == 2 ? 1.15 : 1.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_247cfce50cdf03eb96610fad\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"primaryDominance is 1.15 when blendMode==2, else 1.0\"},{\"evidence\":[{\"excerpt\":\"float secondaryDominance = projectedBlendMode == 3 ? 1.15 : 1.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_7d5dc4979d67683d1564d91e\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"secondaryDominance is 1.15 when blendMode==3, else 1.0\"},{\"evidence\":[{\"excerpt\":\"float primaryWeight = pow(primaryScore, 4.0);\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float secondaryWeight = pow(secondaryScore, 4.0);\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_7caf64125c688848384f3b9d\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Winner-takes-most weighting uses power-4 exponent on primaryWeight and secondaryWeight\"},{\"evidence\":[{\"excerpt\":\"// --- Coverage diagnostic (four-state: red/cyan/magenta/white) ---\\\\n  if (projectedDebugCoverage == 1) {\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_d426cb4707c47a984c4d2708\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Coverage diagnostic activates when projectedDebugCoverage==1, using four-state color output (red/cyan/magenta/white)\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 10,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_2fac47008bf468e6e3669799"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "5.12-Flash-2.5 by Sapiens AI",
+      "envelope_json": "{\"generation\":10,\"items\":[{\"evidence\":[{\"excerpt\":\"Agnes-2.5-Flash, a language model developed by Sapiens AI\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_2fac47008bf468e6e3669799\",\"kind\":\"artifact\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Identity capsule: Agnes-2.5-Flash, Sapiens AI\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 1,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_0b514fea26a7488e0e8a793e",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_1e5449a1eb8fe20c32bddf71",
+        "item mem_4c3eacf40d662731d04b18fd text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 6,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000923::span::000001' for item mem_d426cb4707c47a984c4d2708"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 10,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_2fac47008bf468e6e3669799"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 3,
+  "mode": "live",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

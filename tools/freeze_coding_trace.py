@@ -18,10 +18,14 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from memory_gateway.compaction import Event, expand_source_items, source_item_parent_event_id, source_item_payload
+from memory_gateway.compaction import (
+    Event,
+    expand_source_items,
+    source_item_parent_event_id,
+    source_item_payload,
+)
 from memory_gateway.context import estimate_tokens
 from memory_gateway.pipeline_adapters import _chunk_events
-
 
 SESSION = (
     Path(r"C:\Users\disti\.codex\sessions\2026\07\19")

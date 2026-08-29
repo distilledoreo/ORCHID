@@ -11,7 +11,6 @@ import argparse
 import asyncio
 import hashlib
 import json
-import os
 import subprocess
 import sys
 import time
@@ -22,11 +21,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "tools") not in sys.path:
     sys.path.insert(0, str(ROOT / "tools"))
 
-from memory_gateway.compaction import compute_source_event_hash  # noqa: E402
-import memory_gateway.pipeline_adapters as adapters  # noqa: E402
 import phase3_2_pipeline_ablation as selector_module  # noqa: E402
 import run_panoref_selector_control as control  # noqa: E402
 
+import memory_gateway.pipeline_adapters as adapters  # noqa: E402
+from memory_gateway.compaction import compute_source_event_hash  # noqa: E402
 
 SELECTOR_SYSTEM_PROMPT = (
     "You select durable-memory source items. Return JSON only with exactly "

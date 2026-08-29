@@ -8,7 +8,6 @@ from memory_gateway.dense_eligibility import (
 )
 from memory_gateway.dense_experiment import DenseMemoryCandidate
 
-
 PROJECT_ID = "project"
 THREAD_ID = "thread"
 

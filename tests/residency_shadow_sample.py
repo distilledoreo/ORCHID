@@ -14,7 +14,6 @@ import os
 import re
 import sqlite3
 import sys
-import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -32,7 +31,12 @@ from live_endurance import (  # noqa: E402
     resurrection_hits,
     score_capsule_layer,
 )
-from memory_gateway.compaction import Event, expand_source_items  # noqa: E402
+
+from memory_gateway.compaction import (  # noqa: E402
+    Capsule,  # noqa: E402
+    Event,
+    expand_source_items,
+)
 from memory_gateway.context import estimate_tokens  # noqa: E402
 from memory_gateway.pipeline import build_lossless_packet  # noqa: E402
 from memory_gateway.pipeline_adapters import (  # noqa: E402
@@ -40,7 +44,6 @@ from memory_gateway.pipeline_adapters import (  # noqa: E402
     _capsule_payload,
     _event_payload,
 )
-from memory_gateway.compaction import Capsule  # noqa: E402
 from memory_gateway.structured_client import OpenAICompatStructuredClient  # noqa: E402
 from memory_gateway.telemetry import deterministic_input_hash  # noqa: E402
 

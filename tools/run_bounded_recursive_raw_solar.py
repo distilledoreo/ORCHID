@@ -16,14 +16,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / "tools"
 if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 
 import disposable_recursive_raw_solar as harness
-
 
 BASE_OUT = ROOT / "artifacts/agent_benchmarks/freetoshop_recursive_raw_solar_bounded"
 BASE_SYSTEM_PROMPT = harness.SYSTEM_PROMPT

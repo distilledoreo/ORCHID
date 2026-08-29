@@ -1,0 +1,48 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 1,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_cb48411aa8802bb76ebb3391",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_5acd142a46e475d1469f7962",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_a8a16d21d2a36ac1ee38745b",
+        "item mem_a8a16d21d2a36ac1ee38745b text is not grounded in cited evidence",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_accd2496939ce82e10b4b40e",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_84e627abd2bf4c734c8c9f55",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_ddbff90264059bcab4978b02",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_2cbc3c896add94274982a292"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The joint mode coverage algorithm implementation is now a real, non-greedy system with deterministic area-proportional sampling and comprehensive scoring (occlusion, normals, view angle, texel density, visibility/coverage bitsets). Architecture rated 8/10; search modes 7.5/10. Two critical blockers remain: (1) imported sets using full object AABBs for clearance cause zero legal candidates when origins are inside the AABB (affects complete imported models, concave geometry, L-shaped walls); fix requires per-mesh or spatial-cluster obstacle bounds with actual geometry clearance via BVH shapecast, plus regression test. (2) Triangle-level geometry representation does not scale to heavy imports.",
+      "envelope_json": "{\"generation\":1,\"items\":[{\"evidence\":[{\"excerpt\":\"The latest head adds 17 coverage-engine files, a worker, UI, and tests. Joint mode genuinely evaluates candidate pairs rather than greedily selecting the best first origin\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_b52137e8255e183eb7ffb2ac\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Implementation of joint-pair coverage engine is complete with 17 new files, worker, UI, and tests\"},{\"evidence\":[{\"excerpt\":\"Algorithm architecture for normal graybox sets: 8/10\\n\\nCorrectness of the two search modes: 7.5/10\\n\\nReadiness for complex imported sets: 4/10\\n\\nOverall: promising, but I would not merge it as production-ready yet\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_cb48411aa8802bb76ebb3391\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Implementation rated 8/10 architecture, 7.5/10 search correctness, 4/10 readiness for imported sets; not production-ready\"},{\"evidence\":[{\"excerpt\":\"The surface sampler is deterministic and correctly samples triangles in proportion to world-space area using barycentric coordinates. Origin evaluation includes: actual segment occlusion, geometric face normals, viewing angle, approximate projected texel density, separate visibility and usable-coverage bitsets, continuous quality values\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_5acd142a46e475d1469f7962\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Surface sampler is deterministic area-proportional; origin evaluation includes occlusion, normals, view angle, texel density, and separate visibility/coverage bitsets\"},{\"evidence\":[{\"excerpt\":\"The shared coarse-to-fine engine is also sensibly organized: 4,096 coarse samples, 256 candidates, retained pair seeds, 24,576 fine samples, local offsets, separate fixed-first and joint branches\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_a8a16d21d2a36ac1ee38745b\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Coarse-to-fine engine has 4096 coarse samples, 256 candidates, 24576 fine samples with separate fixed-first and joint branches\"},{\"evidence\":[{\"excerpt\":\"Blockers\\n\\n1. Imported sets can produce zero legal candidates\\n\\nThis is the biggest correctness issue.\\n\\nFor every non-floor scene object, the extractor stores the entire object’s axis-aligned bounding box as an obstacle. Candidate clearance is then the distance from the origin point to those bounding boxes, and candidates within 0.3 meters are rejected. A point anywhere inside an AABB has a distance of zero.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_accd2496939ce82e10b4b40e\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Critical blocker: imported sets using full object AABBs for obstacle clearance cause all interior origins to be rejected (distance=0 inside AABB)\"},{\"evidence\":[{\"excerpt\":\"Consider a typical imported model: Imported Set with floor, walls, furniture, props represented as one imported SceneObject. Its AABB may enclose the entire room. Every sensible camera origin inside the room is therefore 'inside the obstacle bounds,' gets zero clearance, and is rejected.\\n\\nThis can affect: a complete Maya set imported as one GLB, a room shell and furniture combined into one mesh, concave geometry, L-shaped walls, any large model whose AABB contains empty navigable space\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_84e627abd2bf4c734c8c9f55\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Imported GLBs with combined geometry (room shell+furniture, concave/L-shaped, complete Maya sets) will fail due to AABB-based rejection\"},{\"evidence\":[{\"excerpt\":\"Fix\\n\\nUse actual geometry clearance, not object AABBs:\\n\\ncandidate valid =\\n    camera sphere/capsule does not intersect nearby triangles\\n\\nThe coverage BVH can support this through point-to-triangle distance, sphere intersection, or a shapecast. At minimum, obstacle bounds should be per connected mesh or spatial cluster—not per imported set object.\\n\\nAdd a regression test with one imported object containing a room floor, walls, and empty interior\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_ddbff90264059bcab4978b02\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Fix required: replace AABB clearance with triangle-level or connected-mesh clearance using BVH point-to-triangle/sphere/shapecast; add regression test\"},{\"evidence\":[{\"excerpt\":\"2. The geometry representation will not scale to heavy imports\\n\\nEvery triangle is expanded in\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_2cbc3c896add94274982a292\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Scalability blocker: current triangle-expanded geometry representation does not scale to heavy imports\"},{\"evidence\":[{\"excerpt\":\"The tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_0bb4951e3d04923651188d52\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Test coverage exists for deterministic sampling, double-sided occlusion, marginal ranking, non-greedy pairs, candidate generation, and both search modes\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 1,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_cb48411aa8802bb76ebb3391",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_5acd142a46e475d1469f7962",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_a8a16d21d2a36ac1ee38745b",
+        "item mem_a8a16d21d2a36ac1ee38745b text is not grounded in cited evidence",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_accd2496939ce82e10b4b40e",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_84e627abd2bf4c734c8c9f55",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_ddbff90264059bcab4978b02",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_2cbc3c896add94274982a292"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

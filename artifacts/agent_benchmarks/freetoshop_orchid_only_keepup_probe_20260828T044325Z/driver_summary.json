@@ -1,0 +1,24 @@
+{
+  "started_at": "2026-08-28T04:43:29.555Z",
+  "ended_at": "2026-08-28T05:43:34.693Z",
+  "reason": "wall_clock_limit",
+  "max_runtime_ms": 3600000,
+  "arms": {
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "launch_count": 1,
+      "prompt_count": 2,
+      "continuation_count": 1,
+      "provider_messages": 104,
+      "tool_calls": 257,
+      "tool_failures": 16,
+      "pi_native_compactions": 0,
+      "request_responses": 3,
+      "errors": [],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": " M apps/web/src/App.tsx\n M apps/web/src/editor/types.ts\n M apps/web/src/shell/ToolOptionsBar.tsx\n M apps/web/src/tools/toolRegistry.test.ts\n M apps/web/src/tools/toolRegistry.ts\n M apps/web/src/ui/Icon.tsx\n M docs/perf-evidence/browser-brush-frame-interactive.json\n M docs/perf-evidence/browser-canvas-cache-diagnostics.json\n M docs/perf-evidence/browser-composite-2048-dense-interactive.json\n M docs/perf-evidence/browser-composite-4096-dense-interactive.json\n M docs/perf-evidence/browser-composite-4096-dense-x20-interactive.json\n M docs/perf-evidence/browser-composite-4096-dense-x6-interactive.json\n M docs/perf-evidence/browser-composite-4k-sparse-interactive.json\n M docs/perf-evidence/browser-composite-8192-sparse-interactive.json\n M docs/perf-evidence/browser-composite-large-doc-interactive.json\n M docs/perf-evidence/browser-composite-large-doc-sustained-memory.json\n M docs/perf-evidence/browser-composite-long-session.json\n M docs/perf-evidence/browser-composite-probe.json\n M docs/perf-evidence/browser-composite-working-set.json\n M docs/perf-evidence/browser-dense-mixed-long-session-chromium.json\n M docs/perf-evidence/browser-live-app-long-session-chromium.json\n M docs/perf-evidence/browser-live-app-mip-streaming-chromium.json\n M docs/perf-evidence/browser-live-app-pan-edit-eviction-chromium.json\n M docs/perf-evidence/browser-live-pan-zoom.json\n M docs/perf-evidence/browser-mixed-result-cancellation-chromium.json\n M docs/perf-evidence/browser-progressive-cancellation-recovery-chromium.json\n M docs/perf-evidence/browser-psd-import-progress-chromium.json\n M docs/perf-evidence/browser-repeated-mixed-result-chromium.json\n M docs/perf-evidence/browser-structured-cross-kind-worker-session-chromium.json\n M docs/perf-evidence/browser-structured-filter-composite-mutation-chromium.json\n M docs/perf-evidence/browser-structured-localized-mutation-chromium.json\n M docs/perf-evidence/browser-structured-worker-session-chromium.json\n M docs/perf-evidence/browser-worker-composite-cold-path-large.json\n M docs/perf-evidence/browser-worker-composite-cold-path.json\n M docs/ui-checkpoints/visual-parity/final/1366x768-layered.png\n M docs/ui-checkpoints/visual-parity/final/1440x900-layered.png\n M docs/ui-checkpoints/visual-parity/final/1672x941-layered.png\n M docs/ui-checkpoints/visual-parity/final/1672x941-menu-filter-blur.png\n M docs/ui-checkpoints/visual-parity/final/1672x941-menu-image-adjustments.png\n M docs/ui-checkpoints/visual-parity/final/1672x941-menu-layer-adjustment.png\n M docs/ui-checkpoints/visual-parity/final/1672x941-new.png\n M docs/ui-checkpoints/visual-parity/final/1672x941-selection.png\n M docs/ui-checkpoints/visual-parity/final/1672x941-transform.png\n M docs/ui-checkpoints/visual-parity/final/2048x1046-layered.png\n M packages/raster-engine/src/index.test.ts\n M packages/raster-engine/src/index.ts\n M tests/e2e/editor.spec.ts\n?? BENCHMARK_GOAL.md\n?? tests/e2e/visual-workspace.spec.ts-snapshots/visual-parity-1366x768-layered-chromium-linux.png\n?? tests/e2e/visual-workspace.spec.ts-snapshots/visual-parity-1440x900-layered-chromium-linux.png\n?? tests/e2e/visual-workspace.spec.ts-snapshots/visual-parity-1672x941-layered-chromium-linux.png\n?? tests/e2e/visual-workspace.spec.ts-snapshots/visual-parity-1672x941-menu-filter-blur-chromium-linux.png\n?? tests/e2e/visual-workspace.spec.ts-snapshots/visual-parity-1672x941-menu-image-adjustments-chromium-linux.png\n?? tests/e2e/visual-workspace.spec.ts-snapshots/visual-parity-1672x941-menu-layer-adjustment-chromium-linux.png\n?? tests/e2e/visual-workspace.spec.ts-snapshots/visual-parity-1672x941-new-chromium-linux.png\n?? tests/e2e/visual-workspace.spec.ts-snapshots/visual-parity-1672x941-selection-chromium-linux.png\n?? tests/e2e/visual-workspace.spec.ts-snapshots/visual-parity-1672x941-transform-chromium-linux.png\n?? tests/e2e/visual-workspace.spec.ts-snapshots/visual-parity-2048x1046-layered-chromium-linux.png\n"
+      }
+    }
+  }
+}

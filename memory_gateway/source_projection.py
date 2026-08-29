@@ -115,6 +115,81 @@ def normalize_citation_match_text(text: str) -> str:
     return re.sub(r"\s+", " ", normalized).strip()
 
 
+def _citation_match_text_with_offsets(
+    source_text: str,
+) -> tuple[str, tuple[int, ...], tuple[int, ...]]:
+    """Normalize citation text while retaining offsets into the exact source."""
+
+    characters: list[str] = []
+    starts: list[int] = []
+    ends: list[int] = []
+    index = 0
+    quote_map = {
+        "\u2019": "'",
+        "\u2018": "'",
+        "\u201c": '"',
+        "\u201d": '"',
+        "\u00a0": " ",
+    }
+    while index < len(source_text):
+        ansi = _ANSI_ESCAPE.match(source_text, index)
+        if ansi is not None:
+            index = ansi.end()
+            continue
+        source_start = index
+        source_end = index + 1
+        character = quote_map.get(source_text[index], source_text[index])
+        index = source_end
+        if character.isspace():
+            if not characters:
+                continue
+            if characters[-1] == " ":
+                ends[-1] = source_end
+                continue
+            characters.append(" ")
+            starts.append(source_start)
+            ends.append(source_end)
+            continue
+        for normalized_character in character.casefold():
+            characters.append(normalized_character)
+            starts.append(source_start)
+            ends.append(source_end)
+    while characters and characters[-1] == " ":
+        characters.pop()
+        starts.pop()
+        ends.pop()
+    return "".join(characters), tuple(starts), tuple(ends)
+
+
+def exact_citation_excerpt(
+    excerpt: str,
+    source_text: str,
+    *,
+    max_chars: int = 512,
+) -> str | None:
+    """Map a formatting-normalized quote back to an exact source substring.
+
+    This repairs transport-only differences such as JSON escapes, ANSI style
+    sequences, whitespace, smart quotes, and case. It deliberately does not
+    use fuzzy or semantic matching: a paraphrase remains a failed citation.
+    """
+
+    if max_chars <= 0:
+        raise ValueError("max_chars must be positive")
+    needle = normalize_citation_match_text(excerpt).casefold()
+    if not needle:
+        return None
+    haystack, starts, ends = _citation_match_text_with_offsets(source_text)
+    match_start = haystack.find(needle)
+    if match_start < 0:
+        return None
+    match_end = match_start + len(needle)
+    exact = source_text[starts[match_start] : ends[match_end - 1]]
+    if len(exact) > max_chars:
+        return None
+    return exact
+
+
 def authoritative_source_text(content: str) -> str:
     """Return citation-ready source text for CapsuleEnvelopeV2 excerpt checks."""
 

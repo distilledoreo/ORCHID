@@ -1,0 +1,30 @@
+{
+  "started_at": "2026-08-28T12:45:09.484Z",
+  "ended_at": "2026-08-28T12:47:45.861Z",
+  "reason": "gate_monitor_unexpected_exit_SIGSEGV",
+  "max_runtime_ms": 1200000,
+  "arms": {
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 0,
+      "provider_messages": 11,
+      "tool_calls": 30,
+      "tool_failures": 2,
+      "pi_native_compactions": 0,
+      "request_responses": 2,
+      "errors": [
+        {
+          "at": "2026-08-28T12:47:40.863Z",
+          "category": "provider_response_error",
+          "error": "This operation was aborted"
+        }
+      ],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": "?? BENCHMARK_GOAL.md\n"
+      }
+    }
+  }
+}

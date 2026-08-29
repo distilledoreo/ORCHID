@@ -1,0 +1,39 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 58,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001005' for item mem_e4aedab6775292956601055f"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The development process is actively investigating projection coverage implementation in src/engine/projectionCoverage/. The analysis identified that coarsePairs must not be empty (enforced by a thrown error), and seed evaluations are collected by matching coarse pair endpoints against fineByPosition lookups. The extractCoverageScene function is exported from surfaceSampler.ts at line 213 and is used in tests at lines 180 and 249. A shell command was executed to read index.ts, candidateGenerator.ts, Field.tsx (first 220 lines), and test.ts (lines 275-385) to further analyze the codebase.",
+      "envelope_json": "{\"generation\":58,\"items\":[{\"evidence\":[{\"excerpt\":\"  if (coarsePairs.length === 0) throw new Error('No valid origin pair satisfies the minimum separation.');\",\"source_id\":\"panoref_evt_001004::span::000007\"},{\"excerpt\":\"      const evaluation = fineByPosition.get(candidateKey(endpoint.position));\\n      if (evaluation && !seedEvaluations.includes(evaluation)) seedEvaluations.push(evaluation);\",\"source_id\":\"panoref_evt_001004::span::000007\"}],\"id\":\"mem_a7fbf8fac34aeb1f4c791e86\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Validation logic enforces non-empty coarsePairs and builds seedEvaluations by matching coarse pair endpoints against fine position evaluations.\"},{\"evidence\":[{\"excerpt\":\"src\\\\\\\\engine\\\\\\\\projectionCoverage\\\\\\\\surfaceSampler.ts:213:export async function extractCoverageScene(\\\\r\\\\n\",\"source_id\":\"panoref_evt_001004::span::000007\"},{\"excerpt\":\"tests\\\\\\\\projectionCoverage.test.ts:180:    const scene = await extractCoverageScene(project);\\\\ntests\\\\\\\\projectionCoverage.test.ts:249:    const scene = await extractCoverageScene(createDefaultProject());\",\"source_id\":\"panoref_evt_001004::span::000007\"}],\"id\":\"mem_dcdcef71cbaa6e57a31afe57\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"extractCoverageScene is exported from surfaceSampler.ts and referenced in tests at lines 180 and 249.\"},{\"evidence\":[{\"excerpt\":\"{\\\"call_id\\\": \\\"call_18JCa7KLDlbmBV3EgDAjeIdd\\\", ... \\\"name\\\": \\\"exec\\\", ... \\\"input\\\": \\\"const r = await tools.shell_command({command:\\\\\\\"Get-Content src/engine/projectionCoverage/index.ts; Get-Content src/engine/projectionCoverage/candidateGenerator.ts; ...\\\\\\\",...}\\\"}\",\"source_id\":\"panoref_evt_001005\"}],\"id\":\"mem_e4aedab6775292956601055f\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"A shell command was executed to read src/engine/projectionCoverage/index.ts, candidateGenerator.ts, Field.tsx, and projectionCoverage.test.ts to continue the investigation.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 58,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001005' for item mem_e4aedab6775292956601055f"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

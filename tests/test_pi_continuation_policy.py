@@ -17,6 +17,7 @@ def _eval(script: str) -> dict:
 import {{
   continuationType,
   continuationCommand,
+  gateNeedsPostFinalExtension,
   isIdleEvent,
   isBusyEvent,
   isTurnStartEvidence,
@@ -106,3 +107,22 @@ console.log(JSON.stringify({ first, second, duplicate: false }));
     assert payload["first"]["stalled"] is True
     assert payload["second"]["stalled"] is True
     assert payload["first"]["reason"] == "continuation_turn_start_timeout"
+
+
+def test_gate_needs_post_final_extension_when_promotions_met_but_turns_short() -> None:
+    payload = _eval(
+        """
+console.log(JSON.stringify({
+  needs: gateNeedsPostFinalExtension({
+    clean_promotions: 5,
+    post_final_promotion_turns: 1,
+  }),
+  done: gateNeedsPostFinalExtension({
+    clean_promotions: 5,
+    post_final_promotion_turns: 5,
+  }),
+}));
+"""
+    )
+    assert payload["needs"] is True
+    assert payload["done"] is False

@@ -26,6 +26,9 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "tools") not in sys.path:
     sys.path.insert(0, str(ROOT / "tools"))
 
+import phase3_2_pipeline_ablation as selector_module  # noqa: E402
+import phase3_3_direct_consolidation as harness  # noqa: E402
+
 import memory_gateway.pipeline_adapters as adapters  # noqa: E402
 from memory_gateway.compaction import (  # noqa: E402
     Event,
@@ -33,9 +36,6 @@ from memory_gateway.compaction import (  # noqa: E402
     expand_source_items,
     source_item_parent_event_id,
 )
-import phase3_2_pipeline_ablation as selector_module  # noqa: E402
-import phase3_3_direct_consolidation as harness  # noqa: E402
-
 
 RULESET_JSON = ROOT / "artifacts/agent_benchmarks/structural_noise_prefilter_v1/RULESET.json"
 RULESET_HASH = ROOT / "artifacts/agent_benchmarks/structural_noise_prefilter_v1/RULESET_HASH.txt"

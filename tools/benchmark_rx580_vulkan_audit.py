@@ -16,7 +16,7 @@ import re
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import mean
 from typing import Any
@@ -29,18 +29,20 @@ if str(ROOT) not in sys.path:
 
 from tools.benchmark_qwen_backend_shootout import (  # noqa: E402
     LLAMA_SERVER_BIN,
-    MODEL_PATH,
     TARGET_ESTIMATE,
     call_once,
     digest,
-    load_plan as load_backend_plan,
-    observe as backend_observe,
     percentile,
     prompt_delta,
     write_json,
 )
+from tools.benchmark_qwen_backend_shootout import (
+    load_plan as load_backend_plan,
+)
+from tools.benchmark_qwen_backend_shootout import (
+    observe as backend_observe,
+)
 from tools.benchmark_qwen_prompt_scaling import load_plan as load_scaling_plan  # noqa: E402
-
 
 OUT_ROOT = ROOT / "artifacts/agent_benchmarks/rx580_vulkan_optimization_v1"
 PLAN_PATH = OUT_ROOT / "AUDIT_PLAN.json"
@@ -133,7 +135,7 @@ EXPERIMENTS: dict[str, dict[str, Any]] = {
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def run_process(args: list[str], *, timeout: int = 30) -> tuple[int, str, str]:
@@ -301,7 +303,7 @@ Windows exposed GPU-engine utilization and adapter/process-memory counters, but 
 
 
 def deferred_driver_text() -> str:
-    return f"""# Deferred driver/reboot work
+    return """# Deferred driver/reboot work
 
 No driver or system package was installed, removed, downgraded, or upgraded.
 No reboot, display reset, firmware change, Safe Mode operation, or remote-access change was performed.

@@ -1,0 +1,153 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 5,
+  "accepted": 1,
+  "rejected": 4,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 1,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_839e6f372124397504a88754",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_f4121496cd5e1e3b1ac6da41",
+        "item mem_f4121496cd5e1e3b1ac6da41 text is not grounded in cited evidence",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_0e91ae37c9fdae4b411114ab",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_8b1971768848c403986d9947",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_74909b369b6411060540bc33",
+        "item mem_ed7b700e36763c03bc681a80 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Normal graybox implementation has been upgraded from occlusion foundation to a full algorithm with 17 coverage-engine files, worker, UI, and tests. Joint mode genuinely evaluates candidate pairs rather than greedily selecting the best first origin. Key strengths: deterministic surface sampler using barycentric coordinates weighted by world-space area; origin evaluation includes actual segment occlusion, geometric face normals, viewing angle, approximate projected texel density, separate visibility and usable-coverage bitsets, and continuous quality values; shared coarse-to-fine engine with 4,096 coarse samples, 256 candidates, retained pair seeds, 24,576 fine samples, and separate fixed-first and joint branches; tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes. Two critical blockers remain: (1) imported sets can produce zero legal candidates because clearance uses entire object AABBs—any camera origin inside an object's AABB gets zero clearance and is rejected, affecting complete Maya sets, room shells, concave geometry, L-shaped walls, and large models with empty interior space; fix requires actual geometry clearance via point-to-triangle distance, sphere intersection, or shapecast through coverage BVH, with per-connected-mesh or spatial-cluster obstacle bounds rather than per-imported-set-object; (2) geometry representation does not scale to heavy imports (content truncated).",
+      "envelope_json": "{\"generation\":1,\"items\":[{\"evidence\":[{\"excerpt\":\"this is now a real implementation of the algorithm, not merely the occlusion foundation. The latest head adds 17 coverage-engine files, a worker, UI, and tests.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_2c01cd07f17fef305c96e71f\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Normal graybox implementation is now a real algorithm with 17 coverage-engine files, worker, UI, and tests.\"},{\"evidence\":[{\"excerpt\":\"Joint mode genuinely evaluates candidate pairs rather than greedily selecting the best first origin.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_18edd64e639333cd26b05cd6\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Joint mode performs genuine joint evaluation of candidate pairs instead of greedy first-origin selection.\"},{\"evidence\":[{\"excerpt\":\"The surface sampler is deterministic and correctly samples triangles in proportion to world-space area using barycentric coordinates.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_024bba2b8d64b5bea0819365\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Surface sampler is deterministic, sampling triangles proportionally to world-space area via barycentric coordinates.\"},{\"evidence\":[{\"excerpt\":\"Origin evaluation includes: actual segment occlusion, geometric face normals, viewing angle, approximate projected texel density, separate visibility and usable-coverage bitsets, continuous quality values.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_839e6f372124397504a88754\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Origin evaluation includes segment occlusion, face normals, viewing angle, projected texel density, separate visibility and usable-coverage bitsets, and continuous quality values.\"},{\"evidence\":[{\"excerpt\":\"4,096 coarse samples, 256 candidates, retained pair seeds, 24,576 fine samples, local offsets, separate fixed-first and joint branches.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_f4121496cd5e1e3b1ac6da41\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Coarse-to-fine engine configuration: 4096 coarse samples, 256 candidates, retained pair seeds, 24576 fine samples, with separate fixed-first and joint branches.\"},{\"evidence\":[{\"excerpt\":\"Algorithm architecture for normal graybox sets: 8/10, Correctness of the two search modes: 7.5/10, Readiness for complex imported sets: 4/10, Overall: promising, but I would not merge it as production-ready yet.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_0e91ae37c9fdae4b411114ab\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Implementation is not production-ready: architecture scored 8/10, search mode correctness 7.5/10, imported set readiness 4/10.\"},{\"evidence\":[{\"excerpt\":\"For every non-floor scene object, the extractor stores the entire object's axis-aligned bounding box as an obstacle. Candidate clearance is then the distance from the origin point to those bounding boxes, and candidates within 0.3 meters are rejected. A point anywhere inside an AABB has a distance of zero. This can affect: a complete Maya set imported as one GLB, a room shell and furniture combined into one mesh, concave geometry, L-shaped walls, any large model whose AABB contains empty navigable space.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_8b1971768848c403986d9947\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blocker: Imported sets can produce zero legal candidates because clearance uses entire object AABBs; any camera origin inside an AABB gets zero clearance and is rejected.\"},{\"evidence\":[{\"excerpt\":\"Fix: Use actual geometry clearance, not object AABBs: candidate valid = camera sphere/capsule does not intersect nearby triangles. The coverage BVH can support this through point-to-triangle distance, sphere intersection, or a shapecast. At minimum, obstacle bounds should be per connected mesh or spatial cluster—not per imported set object. Add a regression test with one imported object containing a room floor, walls, and empty interior.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_74909b369b6411060540bc33\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Fix blocker by implementing actual geometry clearance via BVH point-to-triangle distance, sphere intersection, or shapecast; use per-connected-mesh or spatial-cluster obstacle bounds; add regression test with room floor, walls, and empty interior in one imported object.\"},{\"evidence\":[{\"excerpt\":\"The geometry representation will not scale to heavy imports\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_ed7b700e36763c03bc681a80\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blocker: Geometry representation will not scale to heavy imports (details truncated in source).\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 6,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "The shader implements dual-projector panoramic rendering with continuous visibility scoring, blending primary and secondary samples based on projectedBlendMode (0: secondary-only, 1: primary-only, 2: primary-dominant winner-takes-most, 3: secondary-dominant winner-takes-most) using power-4 weighting for smooth transitions, with optional coverage diagnostics.",
+      "envelope_json": "{\"generation\":6,\"items\":[{\"evidence\":[{\"excerpt\":\"float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_1fc9208c246165f98c217500\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Dual-projector system uses hasSecondary flag to gate secondary blending only when projector exists and sample is valid.\"},{\"evidence\":[{\"excerpt\":\"float primaryEnabled = projectedBlendMode == 1 ? 0.0 : 1.0;\\\\r\\\\n  float secondaryEnabled = projectedBlendMode == 0 ? 0.0 : hasSecondary;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_5e3a8376aa699d2d0a7b1f5f\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blend mode controls sample enablement: mode 1 disables primary, mode 0 disables secondary.\"},{\"evidence\":[{\"excerpt\":\"float primaryWeight = pow(primaryScore, 4.0);\\\\r\\\\n  float secondaryWeight = pow(secondaryScore, 4.0);\\\\r\\\\n  float scoreTotal = primaryWeight + secondaryWeight;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_4d823945cc9c7dc5287f6b2e\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Winner-takes-most weighting uses power-4 normalization for narrow transition when qualities are nearly equal.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 10,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_1fc9208c246165f98c217500",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_5e3a8376aa699d2d0a7b1f5f",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_4d823945cc9c7dc5287f6b2e",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_e06d5f3d42b5edfd7a46ed83",
+        "item mem_e06d5f3d42b5edfd7a46ed83 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "vitest run --run passed all 165 tests across 14 test files in 563ms (slowest: modelImport.test.ts).",
+      "envelope_json": "{\"generation\":10,\"items\":[{\"evidence\":[{\"excerpt\":\"float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_1fc9208c246165f98c217500\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Dual-projector system uses hasSecondary flag to gate secondary blending only when projector exists and sample is valid.\"},{\"evidence\":[{\"excerpt\":\"float primaryEnabled = projectedBlendMode == 1 ? 0.0 : 1.0;\\\\r\\\\n  float secondaryEnabled = projectedBlendMode == 0 ? 0.0 : hasSecondary;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_5e3a8376aa699d2d0a7b1f5f\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blend mode controls sample enablement: mode 1 disables primary, mode 0 disables secondary.\"},{\"evidence\":[{\"excerpt\":\"float primaryWeight = pow(primaryScore, 4.0);\\\\r\\\\n  float secondaryWeight = pow(secondaryScore, 4.0);\\\\r\\\\n  float scoreTotal = primaryWeight + secondaryWeight;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_4d823945cc9c7dc5287f6b2e\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Winner-takes-most weighting uses power-4 normalization for narrow transition when qualities are nearly equal.\"},{\"evidence\":[{\"excerpt\":\"✓ tests/uiFidelity.test.ts (40 tests) 62ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_e06d5f3d42b5edfd7a46ed83\",\"kind\":\"state\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"vitest test suite passed: 14 files, 165 tests, max 563ms.\"},{\"evidence\":[{\"excerpt\":\"> continuity-stage@0.0.0 test\\\\n> vitest run --run\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_8abcc771c63f0ba19e4c11a5\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"npm script continuity-stage test completed with exit code 0.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 15,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_1fc9208c246165f98c217500",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_5e3a8376aa699d2d0a7b1f5f",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_4d823945cc9c7dc5287f6b2e",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "item mem_3fc13ea420eed6da923cd1da text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The automated gate is green with 371 unit/integration tests passing (covering both optimizer modes over 101,250 triangles), TypeScript compilation, production build, and real WebGL compile/pixel checks. The application is running on LocalAddress 127.0.0.1, LocalPort 4173, OwningProcess 33292. The current workflow phase is app-level browser E2E testing.",
+      "envelope_json": "{\"generation\":15,\"items\":[{\"evidence\":[{\"excerpt\":\"float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_1fc9208c246165f98c217500\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Dual-projector system uses hasSecondary flag to gate secondary blending only when projector exists and sample is valid.\"},{\"evidence\":[{\"excerpt\":\"float primaryEnabled = projectedBlendMode == 1 ? 0.0 : 1.0;\\\\r\\\\n  float secondaryEnabled = projectedBlendMode == 0 ? 0.0 : hasSecondary;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_5e3a8376aa699d2d0a7b1f5f\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blend mode controls sample enablement: mode 1 disables primary, mode 0 disables secondary.\"},{\"evidence\":[{\"excerpt\":\"float primaryWeight = pow(primaryScore, 4.0);\\\\r\\\\n  float secondaryWeight = pow(secondaryScore, 4.0);\\\\r\\\\n  float scoreTotal = primaryWeight + secondaryWeight;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_4d823945cc9c7dc5287f6b2e\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Winner-takes-most weighting uses power-4 normalization for narrow transition when qualities are nearly equal.\"},{\"evidence\":[{\"excerpt\":\"Script completed\\nWall time 1.8 seconds\\nOutput:\\n\",\"source_id\":\"panoref_evt_000936\"},{\"excerpt\":\"Exit code: 0\",\"source_id\":\"panoref_evt_000936\"},{\"excerpt\":\"127.0.0.1         4173         33292\",\"source_id\":\"panoref_evt_000936\"},{\"excerpt\":\"The complete automated gate is green: 371 unit/integration tests (including both optimizer modes over 101,250 triangles), TypeScript, production build, and the real WebGL compile/pixel checks all pass. I’m moving through the app-level browser workflow next.\",\"source_id\":\"panoref_evt_000937\"}],\"id\":\"mem_3fc13ea420eed6da923cd1da\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Automated gate is green: 371 unit/integration tests pass (both optimizer modes over 101,250 triangles), TypeScript compiles, production build succeeds, and real WebGL compile/pixel checks pass. App running at 127.0.0.1:4173.\"},{\"evidence\":[{\"excerpt\":\"I’m moving through the app-level browser workflow next.\",\"source_id\":\"panoref_evt_000937\"}],\"id\":\"mem_456033c04aac7b9bbfd7cb63\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Moving through the app-level browser workflow next\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 20,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_1fc9208c246165f98c217500",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_5e3a8376aa699d2d0a7b1f5f",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_4d823945cc9c7dc5287f6b2e",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "excerpt not found in source 'panoref_evt_000958' for item mem_040ffaeb49b9b0c0eebb8a35"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "No code changes remain to be committed (clean working tree per git diff checks and status), and the branch is not ahead of origin/main.",
+      "envelope_json": "{\"generation\":20,\"items\":[{\"evidence\":[{\"excerpt\":\"float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_1fc9208c246165f98c217500\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Dual-projector system uses hasSecondary flag to gate secondary blending only when projector exists and sample is valid.\"},{\"evidence\":[{\"excerpt\":\"float primaryEnabled = projectedBlendMode == 1 ? 0.0 : 1.0;\\\\r\\\\n  float secondaryEnabled = projectedBlendMode == 0 ? 0.0 : hasSecondary;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_5e3a8376aa699d2d0a7b1f5f\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blend mode controls sample enablement: mode 1 disables primary, mode 0 disables secondary.\"},{\"evidence\":[{\"excerpt\":\"float primaryWeight = pow(primaryScore, 4.0);\\\\r\\\\n  float secondaryWeight = pow(secondaryScore, 4.0);\\\\r\\\\n  float scoreTotal = primaryWeight + secondaryWeight;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_4d823945cc9c7dc5287f6b2e\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Winner-takes-most weighting uses power-4 normalization for narrow transition when qualities are nearly equal.\"},{\"evidence\":[{\"excerpt\":\"\\\"origin/main is an ancestor of HEAD\\\"\",\"source_id\":\"panoref_evt_000958\"}],\"id\":\"mem_040ffaeb49b9b0c0eebb8a35\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"The branch HEAD is based on origin/main.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 1,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_839e6f372124397504a88754",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_f4121496cd5e1e3b1ac6da41",
+        "item mem_f4121496cd5e1e3b1ac6da41 text is not grounded in cited evidence",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_0e91ae37c9fdae4b411114ab",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_8b1971768848c403986d9947",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_74909b369b6411060540bc33",
+        "item mem_ed7b700e36763c03bc681a80 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 10,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_1fc9208c246165f98c217500",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_5e3a8376aa699d2d0a7b1f5f",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_4d823945cc9c7dc5287f6b2e",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_e06d5f3d42b5edfd7a46ed83",
+        "item mem_e06d5f3d42b5edfd7a46ed83 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 15,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_1fc9208c246165f98c217500",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_5e3a8376aa699d2d0a7b1f5f",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_4d823945cc9c7dc5287f6b2e",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "item mem_3fc13ea420eed6da923cd1da text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 20,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_1fc9208c246165f98c217500",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_5e3a8376aa699d2d0a7b1f5f",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_4d823945cc9c7dc5287f6b2e",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "excerpt not found in source 'panoref_evt_000958' for item mem_040ffaeb49b9b0c0eebb8a35"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 5,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

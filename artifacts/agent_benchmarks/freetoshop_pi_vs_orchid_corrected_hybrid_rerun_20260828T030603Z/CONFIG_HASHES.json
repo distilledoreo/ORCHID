@@ -1,0 +1,25 @@
+{
+  "benchmark_goal_sha256": "d789f01c840878946c1cd885bcd48dfb4f96b4db2eafb82615dfdd4064290e7e",
+  "benchmark_manifest_sha256": "cec8a02ff8f505addc2a2958162b915631bfe2b4bf96e62e5d3ce81607bf4917",
+  "config_pi_native_sha256": "9f85f8b24d4cfc2a081240cfdf15c497e5206a32f555a6ec94d11b57f370c473",
+  "config_orchid_sha256": "e4b86d15d151b5206c68c530f85dfa1bffdc79432f7727fe19be23ad926447ff",
+  "implementation_commit": "4f4c86ebfd36bbdfacb48d60f07362d1548da24b",
+  "implementation_tree": "7b8a7f74218b6cadb017336f03e4c0f68501214a",
+  "implementation_file_sha256": {
+    "memory_gateway/compaction.py": "8b5f0aebcdbdc6fe6bd10a0477ad776b2bdfaec7d91ed8e66ad44d522c0ccb40",
+    "memory_gateway/config.py": "9440256a26ff3b89387fe44dffdbd11320e1aaf7eda2c236f8724d1bf1ec683c",
+    "memory_gateway/context.py": "80f1cbba0bab1d0fb0c5f783133fb6b5939c0996649dcf25934bb8b6a201c82b",
+    "memory_gateway/foreground_telemetry.py": "7a9dad0332dc7d63689aff8c51feadbb5ac6c373870436248363a49c1e2041ab",
+    "memory_gateway/gateway.py": "5a2153ced4738a7c598f3095b023aefabd2277bc8723be43a9c87ac49f692ec4",
+    "memory_gateway/pipeline.py": "9070e3bad0a651852f6cdc9e8c1ed6d6976a588a520257fc8544b196bcc1f7c7",
+    "memory_gateway/pipeline_adapters.py": "19899eb0ac5089ffd14b47bbf9a5724c9d4f89ec8d9b1bea97bf9a52140a68c4",
+    "memory_gateway/scheduler.py": "2daa7a28df8f5ffee9dead6850f1b1991fd53de51f9c141d8623f654312b27c0",
+    "tools/benchmark_freetoshop_corrected_all_solar.py": "0fa2764e70bf8fc0565972b871916815c3890db57a4d31df76fff1535b0607e7",
+    "tools/finalize_freetoshop_corrected_all_solar.py": "2d7069ab4320aa2236b48463ab322d9a9c354ae92301671af1390c066eebcacb",
+    "tools/freetoshop_corrected_all_solar_driver.mjs": "4f063f03f9cd111b2283ecfe6b2962168f34862ffd8918f60c1f0789b5b68d64",
+    "tools/pi_continuation_policy.mjs": "5fb231e449c50cb7cf74767d7b09625360131f91afd4c8a29bf61ac3a9329ca5",
+    "tools/recover_freetoshop_benchmark_inputs.py": "dc6ff3babd836ce00437103a774719c081b6cea18c143e3d713102b866dde0a1",
+    "tools/start_freetoshop_corrected_all_solar.ps1": "012723e129daf9795334522190d2c620204e9140ae59a2779c4b1be51500a060",
+    "tools/start_freetoshop_corrected_all_solar.sh": "4bc3bd48435e890df6f04b6d019e993ebdc22a479418bd500fb44fe83eff091c"
+  }
+}

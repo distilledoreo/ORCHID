@@ -1,147 +1,214 @@
-# ORCHID Pareto Improvement Plan
+# ORCHID Core Goal Plan
 
 Last updated: 2026-08-28
 
-## Goal
+## North Star
 
-Make ORCHID's live-compaction architecture beat traditional compaction on the same workloads and provider model while preserving:
+Make a deliberately small main-model context feel effectively unbounded by moving older information into lossless long-term storage, organizing it continuously on a secondary GPU, and retrieving the right memory when needed—without ever pausing a foreground request for compaction.
 
-- the selector's current organizing role and frozen request contract;
-- a main model on the primary GPU and the selector on a smaller secondary GPU;
-- evidence-grounded, recursively valid memory capsules;
-- fail-open serving behavior until V2 is proven safe.
+ORCHID succeeds first when it provides the experience above. Beating traditional compaction on API cost, total VRAM, and cache behavior remains the final optimization and release target, but those metrics must not distort the core architecture.
 
-Release requires three valid paired runs in which ORCHID is non-inferior on hidden-task quality and reliability while improving total VRAM, foreground API cost, prompt/KV footprint, and peak context without unacceptable latency regression.
+## Non-Negotiable Product Contract
 
-## Current Baseline
+1. **Raw history is never destroyed.** Every accepted event remains in an append-only journal with a stable ID and content hash.
+2. **Foreground never waits for memory maintenance.** Selector, canonicalizer, consolidation, indexing, and verification are background work only.
+3. **The selector stays frozen.** Preserve its current model, prompt, schema, chunking, serial execution, and organizing role. It organizes new material; it is not treated as a disposable filter.
+4. **Each new event is admitted once.** A large raw event may become multiple deterministic source spans, but every resulting source item is delivered once. Crash replays must reuse validated work by exact input hash; normal operation must not repay old history through the model pipeline.
+5. **The main prompt stays bounded.** It contains authoritative instructions, compact current state, relevant retrieved memory, and a recent raw tail—not the whole journal.
+6. **Memory remains recoverable.** Every semantic memory points back to raw source events so a missed detail can be retrieved rather than guessed.
+7. **The intended deployment remains two-tier.** The main model runs on the primary GPU; the frozen selector and related small-model work run serially on the smaller secondary GPU.
 
-- Full suite: 318 passed, 2 skipped; no failures.
-- Ruff passes for every production/test/tool file touched by this continuation.
-- Recursive V2 carry-forward probe: passing for two generations.
-- Frozen selector offline V2 gate: 100% accepted after normalizing ANSI transport noise before grounding checks.
-- Sealed consolidator V2 gate: live checkpoints admit 13/32 after skipping citation checks for unchanged carried-forward items; remaining rejections are mostly `excerpt not found`. The fixture must be regenerated with the V3 citation-view prompt plus excerpt clipping, so benchmark remains on V1.
-- Release blocker tool correctly refuses a run when provider, V2, or worktree checks fail.
-- Foreground exact-once/control/root/token-accounting regressions are fixed and covered by focused tests.
-- Foreground assembly now keeps developer/system, capsule, and root-task as a reusable prefix and places cold memory, raw tail, and conversation in the suffix so growing tails no longer invalidate the cached root task.
-- Publication now compares eight-turn prompt savings against cached-prefix invalidation cost; without cache telemetry it requires a 25% prompt cut or urgent pressure.
-- Agnes pricing is explicitly unknown rather than zero/free. Until measured billing or a complete versioned rate card exists, the cost gate uses conservative componentwise dominance over uncached input, cache reads/writes, and output.
-- Corrected historical baseline (including cache-read prompt area and excluding the local selector from cloud spend): Pi prompt area 2,424,057 tokens versus ORCHID 7,944,825. ORCHID remains far from the target; the old benchmark is diagnostic, not release evidence.
-- Remaining measurement defects: no trusted Agnes dollar rate and no arm-isolated two-GPU VRAM traces. Direct latency and hidden functional-quality schemas are now enforced for new release artifacts.
+## Initial Measurable Target
 
-## Work Plan
+Use the FreetoShop workload as the first proof with a declared **32k foreground target** and **48k emergency ceiling**, both configurable in the sealed manifest.
 
-### 1. Foreground correctness and exact-once assembly
+A core-goal run passes only when:
 
-- [x] Forward every conversational occurrence exactly once before and after the first promotion.
-- [x] Preserve system/developer instructions as authoritative messages across promotions.
-- [x] Preserve the original root task exactly once alongside fresh user turns.
-- [x] Preserve assistant/tool protocol pairs when a promotion watermark splits a tool loop.
-- [x] Make estimated foreground tokens equal the messages actually sent to the provider.
-- [x] Add adversarial regression tests for duplicates, repeated identical events, control messages, fresh turns, and cold-memory injection.
+- no foreground request awaits a compaction job (`compaction_wait_ms == 0` for every request);
+- assembled foreground context never exceeds the emergency ceiling;
+- the workload grows beyond at least five times the 32k target without prompt growth proportional to total history;
+- every raw event remains retrievable by ID and hash;
+- hidden task quality is non-inferior to traditional compaction;
+- frozen recall checks preserve current facts, goals, decisions, constraints, blockers, negative knowledge, and exact identifiers;
+- the background queue drains faster than the measured arrival rate with enough headroom for the p99 job duration.
 
-### 2. V2 admission and safe rollout
+If an adversarial input burst exceeds the declared service envelope, the run must report an SLO violation. It must not silently drop history, fabricate memory, or claim that an unavoidable emergency fallback is “zero pause.”
 
-- [x] Preserve unchanged evidence-backed items across recursive V2 generations.
-- [x] Classify and fix every frozen-selector gate rejection without changing the selector contract.
-- [x] Reach 100% acceptance on the frozen selector fixture without relaxing evidence requirements.
-- [ ] Reach 100% acceptance on a freshly generated sealed consolidator fixture.
-- [x] Make `v2_shadow` record failures while serving the valid V1 result unchanged.
-- [x] Make verifier budget exhaustion/unavailability explicit; never silently omit changed items or evidence.
-- [ ] Promote V2 only after offline, recursive, shadow, and full-suite gates pass.
+## Minimal Runtime Architecture
 
-### 3. Benchmark truth and release gates
+### 1. Lossless journal
 
-- [x] Never interpret an unknown/all-zero rate card as free; use a conservative rate-independent cost proof instead.
-- [ ] Capture a complete versioned Agnes rate card or measured billed cost for dollar-denominated comparisons.
-- [x] Account separately for uncached input, cache reads/writes, output, local selector/canonicalizer, and cloud consolidator/verifier calls.
-- [x] Measure provider request latency directly rather than inferring it from assistant-message spacing.
-- [ ] Capture primary-GPU and selector-GPU baseline, peak, and time-integrated VRAM; missing telemetry must fail the gate.
-- [x] Require a hidden-evaluation artifact in every paired release artifact.
-- [x] Replace file/message-count quality proxies with task-specific correctness results.
-- [ ] Validate preflight, V2 eligibility, telemetry completeness, and worktree provenance before paid runs.
+The journal is the source of truth. Capsules and indexes are disposable materialized views. A bad summary can be rebuilt from raw events; raw events are never rebuilt from a summary.
 
-### 4. Measured optimization
+### 2. Hot raw tail
 
-- [x] Stabilize the longest reusable prompt prefix and move volatile context into the suffix.
-- [x] Optimize promotion timing using forecasted future token-cost savings minus compaction cost and cache invalidation cost.
-- [x] Start the first live compaction at a separate early bootstrap watermark while preserving the steady-state policy and frozen selector contract.
-- [ ] Deduplicate semantic state without deleting distinct event occurrences or selector structure.
-- [ ] Bound capsule growth with evidence-aware incremental updates and stable item identities.
-- [ ] Tune selector batching/concurrency for the secondary GPU without changing its selected organization.
-- [ ] Evaluate quantization, residency, and scheduling choices using total two-GPU VRAM and end-to-end latency.
+Keep the newest unresolved interaction in the foreground prompt verbatim. Size it by tokens and protocol boundaries, preserving tool-call/result pairs and authoritative system/developer messages.
 
-### 5. Proof of Pareto dominance
+### 3. Incremental organizer
 
-- [ ] Run cheap deterministic and replay gates first.
-- [ ] Run one paid smoke pair and audit raw provider/cache/VRAM telemetry.
-- [ ] Run three sealed paired repetitions with fixed workload, model, ordering policy, and evaluator.
-- [ ] Require every run—not only the median—to pass correctness, reliability, and telemetry-validity gates.
-- [ ] Publish the scorecards, raw metric provenance, confidence intervals, and remaining tradeoffs.
+Feed only the monotonic delta after the organizer watermark to the frozen selector. Persist the validated selector result by input hash so retries are free and exact. The selector may group and relate events without deleting their journal representation.
+
+### 4. Stable memory records
+
+Represent durable memory as keyed records such as goals, decisions, constraints, current state, blockers, resolved facts, files/symbols, and open questions. Records carry stable IDs, status, recency, and raw source references.
+
+Updating memory is a patch operation: upsert changed records, supersede obsolete records, and leave untouched records untouched. Do not recursively rewrite the entire accumulated capsule.
+
+### 5. Local retrieval
+
+Before each foreground request, use a bounded local hybrid retrieval step over memory records and raw-source metadata. Build the query from the current user turn, active goal, touched files/entities, and unresolved blockers. Retrieval must not require a foreground model call.
+
+### 6. Bounded foreground assembly
+
+Assemble the prompt in stable-to-volatile order:
+
+1. system/developer instructions;
+2. root task and current goal;
+3. compact current-state records;
+4. retrieved memory and raw evidence;
+5. recent raw tail;
+6. current conversation turn.
+
+Use explicit budgets for each section. When the background worker lags, retain unprocessed events in the hot tail or emergency spill allowance; never wait synchronously for a capsule.
+
+### 7. Exception-driven expensive work
+
+Deterministic reducers handle exact facts such as file paths, commands, test results, IDs, and unchanged records. Model consolidation handles semantic conflicts, supersession, and ambiguity. Main-model background work must be preemptible/idle-only and can never contend with a foreground request without being counted as an SLO failure.
+
+## Ordered Implementation Plan
+
+### Phase 0 — Freeze the reset
+
+- [x] Record the core goal and selector invariants in this canonical roadmap.
+- [x] Add a sealed core-goal manifest containing context targets, workload, selector contract hash, and pass/fail thresholds.
+- [x] Align runtime configuration with frozen decisions; the canonicalizer `KEEP` verdict and corrected launcher now both enable it.
+- [x] Mark existing Pareto, V2, cache, and VRAM machinery as supporting evidence rather than the runtime design authority.
+
+**Exit gate: passed.** `tools/core_goal_status.py check` prints the contract, frozen hashes, exact-once replay counts, and unpaid blockers without provider calls.
+
+### Phase 1 — Make background work truly incremental
+
+- [x] Use active-capsule coverage as the organizer watermark and persist validated per-delta stage results by exact input hash.
+- [x] Prove frozen-plan admission once per raw event and delivery once per deterministic source item (199 raw events, 216 source items, 63 chunks).
+- [x] Prove a selector restart reuses every completed chunk and sends only the unfinished chunk again.
+- [x] Make stage-result cache read/write failures fail closed instead of silently issuing potentially duplicate paid calls.
+- [x] Add stable-record patch responses and deterministic carry-forward in V2 record mode.
+- [x] Omit prior capsule prose and evidence from record-mode consolidation; send at most 16 compact, relevant prior record headers plus changed/new sources.
+- [x] Coalesce queued event-watermark deltas while preserving immutable running snapshots and protocol-safe event boundaries.
+- [x] Retain the current canonicalizer and restrict it to selected source items from the current delta, with exact-retry reuse.
+- [ ] Make the accepted stable-record envelope the primary runtime path; V2 admission is not yet good enough to retire the legacy whole-capsule path.
+- [ ] Prove byte-identical final memory after a crash at every pipeline boundary, not only selector chunk recovery.
+
+**Exit gate:** the 199-event frozen replay completes with complete coverage, no duplicate semantic processing, bounded per-event work, and identical output after crash/retry replay.
+
+### Phase 2 — Enforce bounded, non-blocking foreground assembly
+
+- [x] Align runtime defaults and gateway assembly with the sealed 32k target and 48k emergency ceiling.
+- [x] Prove foreground execution does not await a running compaction worker; a second request completes while background maintenance is deliberately blocked.
+- [x] Preserve authoritative root-task and tool-call/result continuity while suppressing covered history; local retrieval remains bounded and foreground-only.
+- [x] Emit per-request and debug component tokens, compaction wait time, organizer lag, target/ceiling state, assembly time, and emergency-spill usage.
+- [x] Add a six-window synthetic run (more than 5×32k of journal history) that checks every raw ID/hash at every bounded assembly checkpoint.
+
+**Exit gate: passed for the unpaid deterministic harness.** Live two-GPU service-envelope and failure-injection proof remains Phase 4.
+
+### Phase 3 — Prove memory quality before optimizing it
+
+- [ ] Build frozen checkpoint questions for old facts, changed facts, decisions, blockers, negative knowledge, exact identifiers, and current intent.
+- [ ] Compare full-source and projected-source inputs through the identical frozen selector and downstream pipeline.
+- [ ] Require projected input to be semantically non-inferior before keeping its token savings.
+- [ ] Exercise semantic “page faults”: retrieve original raw evidence when a compact record is insufficient.
+- [ ] Run the hidden task evaluator at multiple history depths, not only at the final checkpoint.
+- [ ] Keep V2 in shadow until every sealed generation admits; make citation excerpts deterministic from stored sources rather than asking a model to reproduce formatting exactly.
+
+**Exit gate:** ORCHID is non-inferior to traditional compaction on every required hidden-quality and frozen-recall category.
+
+### Phase 4 — Establish the no-pause service envelope
+
+- [ ] Measure arrival tokens/second, selector service tokens/second, queue age, and p50/p95/p99 job duration on the secondary GPU.
+- [ ] Trigger work early enough that measured headroom covers p99 completion plus a burst margin.
+- [ ] Stress bursts, provider failures, selector restarts, and stale-job recovery.
+- [ ] Demonstrate that foreground execution remains independent while the worker catches up.
+
+**Exit gate:** background service is at least 1.5× measured average arrival, the sealed burst trace stays inside the emergency ceiling, and all injected worker failures recover without a foreground compaction wait.
+
+### Phase 5 — Optimize economics without changing behavior
+
+- [ ] Generate a real full-pipeline token ledger: selector, canonicalizer, consolidator, verifier, foreground, cache reads/writes, outputs, and retries.
+- [ ] Require background provider work to scale with changed information rather than total history.
+- [ ] Keep stable prompt/memory pages content-addressed so unchanged prefixes can be cached.
+- [ ] Invoke expensive semantic consolidation only for changed or conflicting records.
+- [ ] Prove price-independent API savings when rates are unknown by reducing every billed token class; otherwise use a sealed measured rate card.
+- [ ] Record local selector latency/energy separately from cloud/API spend.
+
+**Exit gate:** ORCHID is cheaper per accepted milestone or componentwise cheaper in every billed token class while preserving the Phase 3 quality result.
+
+### Phase 6 — Measure the intended two-GPU deployment
+
+- [ ] Support stable device identities and both NVIDIA and AMD VRAM sampling.
+- [ ] Measure exact arm windows with multiple samples, coverage duration, peak residency, and byte-seconds; one sample is never “complete.”
+- [ ] Run a local main-model hardware track for total VRAM. Do not claim cloud Agnes VRAM from local selector measurements.
+- [ ] Verify that main-GPU KV savings exceed the secondary model footprint for total-VRAM dominance.
+- [ ] Counterbalance arm order and use a predeclared fixed duration; exclude warm-up and shutdown transitions.
+
+**Exit gate:** complete isolated traces show lower main-GPU context/KV usage and either lower total two-GPU VRAM or an explicitly reported remaining tradeoff.
+
+### Phase 7 — Paid paired proof
+
+- [ ] Run one short paid smoke pair only after Phases 1–4 pass.
+- [ ] Audit raw quality, latency, token, cache, and failure telemetry before repetitions.
+- [ ] Run three sealed pairs with counterbalanced order and identical fixed workloads.
+- [ ] Require every run—not merely the median—to pass the core-goal gates.
+- [ ] Publish core-goal results separately from optional Pareto metrics.
+
+## Work We Are Explicitly Stopping
+
+- No selector-removal or selector-configuration experiments.
+- No more full-history model replays presented as an incremental architecture.
+- No new pipeline stage without evidence that it removes more work than it adds.
+- No paid A/B while the unpaid core-quality or no-pause gates are red.
+- No treating a compact capsule as the only copy of history.
+- No using message counts, files changed, or model activity as a quality score.
+- No allowing cache, pricing, or perfect VRAM instrumentation to delay proving the core experience.
+
+## Immediate Next Slice
+
+1. Remove the remaining strict-V2 admission failures so stable records and patch-only consolidation can become the core runtime path.
+2. Add full-pipeline crash injection after selector, canonicalizer, consolidation, admission, and publication; require byte-identical recovery without repaying validated stages.
+3. Run the frozen semantic checkpoint suite at multiple history depths before doing any paid work.
+4. Measure the secondary-GPU service envelope only after the unpaid semantic gates pass.
 
 ## Progress Log
 
-### 2026-08-28 — Codex handoff
+### 2026-08-28 — Core-goal reset
 
-- Created this roadmap and adopted the existing Composer worktree without overwriting it.
-- Confirmed the selector configuration is an invariant, not an optimization target.
-- Confirmed recursive V2 carry-forward is fixed.
-- Reproduced the three current targeted test failures and the foreground assembly defects.
-- Started Phase 1 at exact-once assembly and authoritative instruction preservation.
+- Reframed ORCHID around the actual product: bounded active context, lossless external memory, continuous secondary-GPU organization, retrieval, and zero foreground compaction pauses.
+- Preserved the selector as a frozen organizer.
+- Demoted strict Pareto dominance from architecture driver to final optimization/release proof.
+- Kept the useful completed foundations: append-only event storage, exact-once foreground fixes, stable prefix assembly, fail-open V2 shadowing, direct latency telemetry, hidden-evaluation schemas, conservative API accounting, and fail-closed missing-metric behavior.
+- Confirmed the current full suite passes: 341 passed, 4 skipped.
+- Identified the next implementation target as delta-only organization and patch-based memory maintenance, not another benchmark-harness expansion.
 
-### 2026-08-28 — Foreground exact-once slice
+### 2026-08-28 — First core implementation slice
 
-- Removed the pre-capsule double-forward path by excluding request-aligned event occurrences from the raw-tail block in every memory state.
-- Kept system/developer messages authoritative across promotion and rendered the persisted root task exactly once even when a fresh user turn is present.
-- Preserved genuinely repeated identical user events by deduplicating with aligned event identity rather than text hashes.
-- Corrected cold-memory budgeting and final token accounting to measure the provider packet exactly once.
-- Added three adversarial regressions; 63 focused gateway/context/cache/invariant tests pass and the full suite has no new failures.
-- Remaining full-suite failures are isolated to the zero-priced provider configuration and two frozen V2 admission rejections.
-
-### 2026-08-28 — V2 admission and citation protocol slice
-
-- Normalized ANSI transport escapes before grounding-token extraction, bringing the frozen selector gate to 100% without weakening numerical grounding.
-- Changed the consolidator input to the exact deterministic citation view used by admission and tightened excerpts to short contiguous evidence spans; bumped the prompt protocol to `consolidator-v3-citation-view`.
-- Made `v2_shadow` genuinely fail open to a valid legacy capsule while recording V2 violations, and prevented rejected shadow envelopes from becoming recursive bases.
-- Removed silent verifier truncation. Oversized, unavailable, or failed verification now produces a typed semantic rejection; strict V2 fails while shadow mode safely serves the legacy result.
-- Full V2/capsule/pipeline regression slices pass. The old sealed consolidator output is intentionally not grandfathered and needs a fresh gate run.
-
-### 2026-08-28 — Cache-aware API economics slice
-
-- Restored the Solar Pro4 compatibility profile as an explicit, versioned provider/model/rate card instead of inheriting the Agnes defaults.
-- Marked the all-zero Agnes price placeholder as unknown. Dollar-cost fields are now null when pricing is unknown rather than claiming zero spend.
-- Added uncached-input, cache-read, cache-write, output, total-prompt, and peak-prompt metrics. The release path uses prompt tokens including cache reads for KV/context comparisons.
-- Split local secondary-GPU selector/canonicalizer work from cloud-billed consolidator/verifier work. Legacy all-stage fields remain only to reproduce the sealed historical scorecard.
-- Added a componentwise token-class theorem: when dollar prices are unavailable, ORCHID must reduce every billed class by the gated fraction to prove it is cheaper for any nonnegative rate vector.
-- Missing selector-VRAM telemetry now fails rather than passing as zero, and paired release validation once again requires hidden evaluation.
-- Added cache/accounting/provider regressions; the complete suite passed at that checkpoint.
-
-### 2026-08-28 — Honest latency, quality, VRAM, and bootstrap gates
-
-- Added controller-side per-provider-request timing for both arms and gateway monotonic timing for ORCHID. Release latency no longer uses assistant-message spacing, which included tools and idle time.
-- Replaced message-count/file-count quality proxies. ORCHID must now actually pass the sealed hidden evaluator, typecheck, and build; equal failure on both arms is a failed benchmark, not “non-inferior.”
-- Added a paired VRAM evidence schema requiring arm-isolated main-GPU and selector-GPU baseline, peak, sample count, and byte-seconds. Missing traces fail, as do peak or integrated total-VRAM regressions.
-- Added an 8k initial compaction watermark (forecast-aware) only before the first capsule. Steady-state remains at 22k and the selector model, prompt, chunk target, schema, and organizing role are unchanged.
-- This specifically attacks the report's pre-first-capsule peak: the old run waited until the selector backlog had grown to a 143,790-token foreground. Exact-once assembly plus early bootstrap should remove the two largest measured causes before any selector tuning.
-- The complete suite now passes: 301 passed, 4 skipped. Node/shell syntax checks and Ruff pass for all touched production and benchmark files.
-
-### 2026-08-28 — Stable prompt prefix and cache-aware publication
-
-- Reordered foreground assembly to `developer/system → capsule → root task → cold memory → raw tail → conversation`, matching the frozen request contract while putting volatile context in the suffix.
-- Prompt-cache telemetry now hashes only the stable prefix. Changing the raw tail no longer busts the reusable prefix estimate; the first cache-break block is reported in assembly order.
-- Each assemble persists the latest prompt-cache snapshot on the thread so publication can see recently cached prefix tokens.
-- Publication economics now compare eight-turn prompt-token savings against cache-invalidation cost. Known rate cards scale reset cost by `(uncached - cached) / uncached`. Missing cache telemetry requires a ≥25% prompt reduction or urgent pressure. Urgent jobs still publish immediately.
-- Scheduling projects tokens at compaction completion from EWMA arrival, p95 service time over the last ten jobs (240s until three samples), optional median turn interval, and a 20% burst margin. Projected 22k pressure queues background work; projected 80% of the hard limit is urgent.
-- Benchmark launch enables publication economics. The complete suite passes: 318 passed, 2 skipped. Ruff passes for all touched production and test files.
+- Added and sealed `artifacts/core_goal/CORE_GOAL_MANIFEST.json`, including the 32k target, 48k emergency ceiling, selector contract/golden hashes, canonicalizer `KEEP` evidence, frozen-trace hash, and two-GPU deployment contract.
+- Added `tools/core_goal_status.py`; its unpaid gate verifies the checked-in manifest and frozen evidence without model calls and keeps the paid benchmark blocked while runtime gates remain open.
+- Aligned the corrected FreetoShop launcher and manifest with the frozen canonicalizer `KEEP` result instead of forcibly bypassing the stage.
+- Added a frozen exact-once organizer report. The sealed trace contains 199 unique raw events, deterministically expands to 216 source items, and schedules 63 selector chunks with no duplicate, missing, unknown, or reordered deliveries.
+- Confirmed the existing SQLite stage-result cache is the durable per-delta ledger, then made cache read/write failures fail closed. Added restart coverage proving a completed selector chunk is reused after a later chunk fails.
+- Added the first delta-only stable-record consolidation protocol. In record mode, ORCHID omits the old capsule and prior evidence, supplies at most 16 compact relevant record headers, returns only new/changed patches, and carries untouched records forward deterministically during admission.
+- Added deterministic evidence canonicalization: formatting-only differences (JSON escapes, ANSI styling, whitespace, smart quotes, and case) are mapped back to exact stored source slices, and uniquely misattributed quotes are relinked to their true source. Fuzzy/paraphrase repair and ambiguous relinking remain forbidden. The existing 32-generation consolidator checkpoint replay repaired 72 citations across 20 generations and improved strict admission from 13/32 to 14/32; 18 generations still correctly fail, so V2 remains shadow-only.
+- Fixed a consolidator parsing bug where a retire entry could overwrite the main rendered content.
+- Aligned the actual `RuntimeConfig` defaults and gateway assembler with the sealed 32k/48k contract; the earlier 22k/64k runtime split is gone.
+- Added foreground invariants and telemetry for exact component tokens, target/ceiling breaches, emergency spill, organizer lag, assembly latency, and `compaction_wait_ms`. The runtime records `memory_maintenance_awaited=false` by construction.
+- Added a concurrency test that holds compaction open and proves the next foreground request still reaches the backend, plus a six-window journal test with more than 160k historical tokens, bounded prompts, zero compaction wait, and byte-verified raw history.
+- Verified the complete repository suite after this slice: 366 tests collected, 364 passed, 2 skipped. Ruff, shell syntax, and whitespace checks also pass for the touched surface.
+- Remaining truth: patch mode still depends on an accepted V2 record envelope, and exact-once recovery is sealed at the frozen planner and selector-chunk boundary—not yet at every end-to-end crash point.
 
 ## Decision Log
 
-- Selector behavior remains fixed unless a future benchmark exposes a correctness bug rather than a tuning opportunity.
-- All optimization claims use total system cost, including both GPUs and all model calls.
-- A missing metric fails its release gate; absence is never interpreted as zero usage.
-- Historical scorecard fields remain reproducible, but corrected release fields are versioned alongside them and take precedence for decisions.
-- Selector model tokens count toward local compute/VRAM/latency, never cloud API spend, unless telemetry explicitly marks a stage as remote.
-- Unknown pipeline stages are conservatively treated as provider-billed so incomplete labels cannot make ORCHID look cheaper.
-- A release-quality VRAM comparison must isolate arms; concurrent shared-GPU sampling is rejected as confounded.
-- Activity is not correctness. More messages, edits, or files can never compensate for a failed hidden task.
-- V2 validation may become more robust to representation differences, but evidence/grounding standards will not be weakened to make a fixture pass.
-- No new paid benchmark runs occur while deterministic correctness or telemetry gates are red.
+- The product promise is “effectively unbounded memory under a declared service envelope,” not mathematically infinite attention.
+- Raw history is authoritative; summaries and indexes are rebuildable views.
+- The selector organizes and remains frozen.
+- Product correctness and no-pause behavior are proved before cost and VRAM dominance.
+- Unknown pricing does not permit a zero-cost claim; componentwise billed-token dominance is an acceptable price-independent proof.
+- Missing evidence fails its associated release claim, but optional evidence cannot block development of the core runtime.

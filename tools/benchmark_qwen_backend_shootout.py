@@ -17,7 +17,7 @@ import shutil
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import mean
 from typing import Any
@@ -29,13 +29,13 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from tools.benchmark_qwen_prompt_scaling import (  # noqa: E402
-    build_body,
     call_once,
     digest,
-    load_plan as load_scaling_plan,
     percentile,
 )
-
+from tools.benchmark_qwen_prompt_scaling import (
+    load_plan as load_scaling_plan,
+)
 
 OUT_ROOT = ROOT / "artifacts/agent_benchmarks/qwen_backend_shootout_v1"
 PLAN_PATH = OUT_ROOT / "BACKEND_SHOOTOUT_PLAN.json"
@@ -88,7 +88,7 @@ CONDITIONS: dict[str, dict[str, Any]] = {
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def canonical_bytes(value: Any) -> bytes:

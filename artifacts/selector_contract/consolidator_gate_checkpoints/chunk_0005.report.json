@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 6,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "Projective texture blending uses a winner-takes-most weighting scheme with a narrow transition when qualities are nearly equal. Primary and secondary panos are sampled via equirectangular UV mapping from world positions, then weighted by visibility, quality, and dominance factors based on blend mode (0=secondary only, 1=primary only, 2=primary-favored, 3=secondary-favored). A debug coverage mode visualizes four states: red/cyan/magenta/white. Single-projector output is never mixed with fallback when secondary projector is unavailable.",
+      "envelope_json": "{\"generation\":6,\"items\":[{\"evidence\":[{\"excerpt\":\"Winner-takes-most weighting follows the optimizer's max-quality objective\\n  // while retaining a narrow transition when qualities are nearly equal.\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_5ac6b7fc374b79b7db091d41\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Projective blending uses winner-takes-most weighting with narrow transition\"},{\"evidence\":[{\"excerpt\":\"Gate everything by the actual availability of a secondary projector AND the\\n  // selected blend mode, so single-projector output is never mixed with the\\n  // fallback and blend modes are honored.\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_b605dfa84de9ff6916b804af\",\"kind\":\"constraint\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Single-projector output must never be mixed with fallback\"},{\"evidence\":[{\"excerpt\":\"--- Coverage diagnostic (four-state: red/cyan/magenta/white) ---\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_ca1f9c94883190cd61c77367\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Debug coverage visualization uses four-state color coding: red/cyan/magenta/white\"},{\"evidence\":[{\"excerpt\":\"float primaryDominance = projectedBlendMode == 2 ? 1.15 : 1.0;\\n  float secondaryDominance = projectedBlendMode == 3 ? 1.15 : 1.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_6c834a72eb51430a1276cea0\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blend modes 2 and 3 apply 1.15 dominance factor to primary or secondary respectively\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

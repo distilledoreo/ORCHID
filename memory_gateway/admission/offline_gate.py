@@ -178,6 +178,9 @@ async def process_v2_document(
                 "ok": admission.ok,
                 "error": admission.error,
                 "deterministic_violations": list(admission.deterministic_violations),
+                "deterministic_evidence_repairs": (
+                    admission.deterministic_evidence_repairs
+                ),
                 "semantic_violations": list(admission.semantic_violations),
                 "rendered_content": admission.rendered_content,
                 "envelope_json": admission.envelope_json,

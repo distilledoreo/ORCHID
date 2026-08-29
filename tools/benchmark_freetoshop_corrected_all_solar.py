@@ -18,7 +18,7 @@ import subprocess
 import sys
 import time
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -26,8 +26,27 @@ SCRIPT_ROOT = Path(__file__).resolve().parents[1]
 if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
 
-from memory_gateway.compaction import Event, estimate_tokens, expand_source_items, source_item_payload
-
+from memory_gateway.benchmark_manifest import (  # noqa: E402
+    DEFAULT_RATE_CARD,
+    pareto_manifest_extensions,
+    validate_manifest_for_run,
+)
+from memory_gateway.compaction import (  # noqa: E402
+    Event,
+    estimate_tokens,
+    expand_source_items,
+    source_item_payload,
+)
+from memory_gateway.core_goal import (  # noqa: E402
+    CORE_CANONICALIZER_ENABLED,
+    FOREGROUND_EMERGENCY_CEILING_TOKENS,
+    FOREGROUND_TARGET_TOKENS,
+)
+from memory_gateway.pareto_release import (  # noqa: E402
+    benchmark_memory_format,
+    count_post_final_promotion_turns,
+    orchid_release_gate_complete,
+)
 
 ROOT = SCRIPT_ROOT
 ARTIFACT = Path(
@@ -68,7 +87,7 @@ ORACLE_ROOT = Path(
 DB_PATH = STAGE / "orchid-state" / "memory.db"
 THREAD_ID = "orchid-arm-b"
 PROVIDER_BASE_URL = os.environ.get(
-    "BENCHMARK_PROVIDER_BASE_URL", "https://openrouter.ai/api/v1"
+    "BENCHMARK_PROVIDER_BASE_URL", "https://apihub.agnes-ai.com/v1"
 ).rstrip("/")
 MODEL_ID = os.environ.get("BENCHMARK_MODEL_ID", "upstage/solar-pro4")
 SELECTOR_BASE_URL = os.environ.get(
@@ -77,7 +96,7 @@ SELECTOR_BASE_URL = os.environ.get(
 SELECTOR_MODEL_ID = os.environ.get(
     "BENCHMARK_SELECTOR_MODEL_ID", "qwen3.5-4b@q6_k"
 )
-PROVIDER_CONTEXT_TOKENS = int(os.environ.get("BENCHMARK_CONTEXT_TOKENS", "524288"))
+PROVIDER_CONTEXT_TOKENS = int(os.environ.get("BENCHMARK_CONTEXT_TOKENS", "128000"))
 RESERVED_OUTPUT_TOKENS = 8_192
 FIXED_OVERHEAD_TOKENS = 4_096
 SAFETY_MARGIN = 0.7
@@ -96,7 +115,7 @@ PI_EXECUTABLE = os.environ.get("PI_EXECUTABLE", "pi.cmd" if os.name == "nt" else
 
 
 def now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -226,9 +245,13 @@ def freeze() -> None:
         "arm": "ORCHID",
         "foreground_provider": PROVIDER_BASE_URL,
         "foreground_model": MODEL_ID,
+        "memory_format": benchmark_memory_format(
+            report_path=ROOT / "artifacts/selector_contract/V2_CONSOLIDATOR_GATE_REPORT.json"
+        ),
         "pipeline": [
             "bounded_immutable_source_window",
             "local_qwen_selector",
+            "local_qwen_canonicalizer",
             "software_owned_semantic_packet",
             "solar_consolidator",
             "validation",
@@ -237,9 +260,13 @@ def freeze() -> None:
         "selector_provider": SELECTOR_BASE_URL,
         "selector_model": SELECTOR_MODEL_ID,
         "consolidator_model": MODEL_ID,
-        "canonicalizer_enabled": False,
+        "canonicalizer_enabled": CORE_CANONICALIZER_ENABLED,
         "source_window_tokens": SOURCE_WINDOW_TOKENS,
         "provider_context_tokens": PROVIDER_CONTEXT_TOKENS,
+        "backend_context_limit_tokens": PROVIDER_CONTEXT_TOKENS,
+        "foreground_target_tokens": FOREGROUND_TARGET_TOKENS,
+        "foreground_hard_limit_tokens": FOREGROUND_EMERGENCY_CEILING_TOKENS,
+        "initial_compaction_threshold_tokens": 8_000,
         "reserved_output_tokens": RESERVED_OUTPUT_TOKENS,
         "fixed_overhead_tokens": FIXED_OVERHEAD_TOKENS,
         "safety_margin": SAFETY_MARGIN,
@@ -251,10 +278,27 @@ def freeze() -> None:
         "structured_output": True,
         "model_timeout_seconds": 180,
         "cold_memory_mode": "off",
+        "foreground_telemetry_relative_path": "orchid/foreground_substitution.jsonl",
         "retry_policy": "existing model-client policy; controller records stream errors and stops only after Pi retry exhaustion",
         "pricing_usd_per_million_tokens": {
-            "input": float(os.environ.get("BENCHMARK_INPUT_USD_PER_MILLION", "0")),
-            "output": float(os.environ.get("BENCHMARK_OUTPUT_USD_PER_MILLION", "0")),
+            "input": float(
+                os.environ.get(
+                    "BENCHMARK_INPUT_USD_PER_MILLION",
+                    str(DEFAULT_RATE_CARD["pricing_usd_per_million_tokens"]["input"]),
+                )
+            ),
+            "output": float(
+                os.environ.get(
+                    "BENCHMARK_OUTPUT_USD_PER_MILLION",
+                    str(DEFAULT_RATE_CARD["pricing_usd_per_million_tokens"]["output"]),
+                )
+            ),
+            "cache_read": float(
+                os.environ.get("BENCHMARK_CACHE_READ_USD_PER_MILLION", "0")
+            ),
+            "cache_write": float(
+                os.environ.get("BENCHMARK_CACHE_WRITE_USD_PER_MILLION", "0")
+            ),
         },
     }
     write_json(ARTIFACT / "CONFIG_PI_NATIVE.json", pi_config)
@@ -328,11 +372,12 @@ def freeze() -> None:
                 "selector_provider": SELECTOR_BASE_URL,
                 "selector_model": SELECTOR_MODEL_ID,
                 "consolidator_model": MODEL_ID,
-                "canonicalizer_enabled": False,
+                "canonicalizer_enabled": CORE_CANONICALIZER_ENABLED,
             },
         },
         "early_gate": {
             "required_clean_promotions": 3,
+            "minimum_post_final_promotion_turns": 5,
             "failure_action": "stop both arms and preserve evidence",
         },
         "run_policy": {
@@ -355,6 +400,15 @@ def freeze() -> None:
         ],
         "stage": str(STAGE),
         "oracle_root_controller_private": str(ORACLE_ROOT),
+        "pareto": pareto_manifest_extensions(
+            rate_card={
+                "provider": PROVIDER_BASE_URL,
+                "model": MODEL_ID,
+                "pricing_usd_per_million_tokens": orchid_config[
+                    "pricing_usd_per_million_tokens"
+                ],
+            },
+        ),
     }
     write_json(ARTIFACT / "BENCHMARK_MANIFEST.json", manifest)
     write_json(
@@ -554,8 +608,9 @@ def verify() -> None:
         '"selected_events"' not in consolidator_text
         and '"authoritative_events"' in consolidator_text
     )
-    checks["canonicalizer_disabled"] = (
-        load_json(ARTIFACT / "CONFIG_ORCHID.json")["canonicalizer_enabled"] is False
+    checks["canonicalizer_policy_aligned"] = (
+        load_json(ARTIFACT / "CONFIG_ORCHID.json")["canonicalizer_enabled"]
+        is CORE_CANONICALIZER_ENABLED
     )
     checks["safe_source_window_exact"] = (
         load_json(ARTIFACT / "CONFIG_ORCHID.json")["source_window_tokens"]
@@ -563,6 +618,10 @@ def verify() -> None:
     )
     checks["cold_memory_off"] = (
         load_json(ARTIFACT / "CONFIG_ORCHID.json")["cold_memory_mode"] == "off"
+    )
+    checks["foreground_telemetry_path_declared"] = (
+        load_json(ARTIFACT / "CONFIG_ORCHID.json").get("foreground_telemetry_relative_path")
+        == "orchid/foreground_substitution.jsonl"
     )
     checks["fresh_database"] = not DB_PATH.exists()
     checks["api_key_available_without_disclosure"] = _user_api_key_available()
@@ -581,6 +640,22 @@ def verify() -> None:
     checks["provider_context_tokens"] = PROVIDER_CONTEXT_TOKENS == load_json(
         ARTIFACT / "CONFIG_ORCHID.json"
     )["provider_context_tokens"]
+    pareto_validation = validate_manifest_for_run(
+        manifest,
+        orchid_config=load_json(ARTIFACT / "CONFIG_ORCHID.json"),
+        pi_config=load_json(ARTIFACT / "CONFIG_PI_NATIVE.json"),
+    )
+    checks.update({f"pareto:{key}": value for key, value in pareto_validation["checks"].items()})
+    pareto_limits = (manifest.get("pareto") or {}).get("context_limits") or {}
+    expected_backend = pareto_limits.get("backend_context_limit_tokens")
+    if expected_backend is not None:
+        checks["pareto:backend_context_limit_matches_env"] = (
+            PROVIDER_CONTEXT_TOKENS == expected_backend
+        )
+        if not checks["pareto:backend_context_limit_matches_env"]:
+            pareto_validation["reasons"].append(
+                f"BENCHMARK_CONTEXT_TOKENS={PROVIDER_CONTEXT_TOKENS} does not match manifest {expected_backend}"
+            )
     checks["pi_version"] = (
         subprocess.check_output([PI_EXECUTABLE, "--version"], text=True).strip()
         == "0.84.2"
@@ -589,6 +664,7 @@ def verify() -> None:
         "verified_at": now(),
         "provider_requests_made": 0,
         "checks": checks,
+        "pareto_reasons": pareto_validation["reasons"],
         "all_ok": all(checks.values()),
     }
     write_json(ARTIFACT / "prelaunch/RESULTS.json", result)
@@ -909,7 +985,17 @@ def monitor(interval_seconds: float) -> None:
         state = inspect_state()
         append_jsonl(runtime_path, state)
         gate = state["gate"]
-        write_json(gate_path, {**gate, "observed_at": state["timestamp"]})
+        post_final_turns = count_post_final_promotion_turns(ARTIFACT)
+        minimum_post_final = 5
+        write_json(
+            gate_path,
+            {
+                **gate,
+                "observed_at": state["timestamp"],
+                "post_final_promotion_turns": post_final_turns,
+                "minimum_post_final_promotion_turns": minimum_post_final,
+            },
+        )
         for generation in state.get("generations", []):
             if (
                 generation["status"] == "PROMOTED"
@@ -947,6 +1033,24 @@ def monitor(interval_seconds: float) -> None:
             write_json(
                 stop_path,
                 {"requested_at": now(), "reason": failure_reason, "state": state},
+            )
+        if (
+            orchid_release_gate_complete(
+                gate["status"],
+                post_final_promotion_turns=post_final_turns,
+                minimum_post_final_promotion_turns=minimum_post_final,
+            )
+            and not stop_path.exists()
+        ):
+            write_json(
+                stop_path,
+                {
+                    "requested_at": now(),
+                    "reason": "orchid_release_gate_complete",
+                    "state": state,
+                    "post_final_promotion_turns": post_final_turns,
+                    "minimum_post_final_promotion_turns": minimum_post_final,
+                },
             )
         if (ARTIFACT / "driver_summary.json").exists():
             return

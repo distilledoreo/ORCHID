@@ -6,9 +6,8 @@ import time
 from dataclasses import dataclass, replace
 from typing import Any, Protocol
 
-from .db import SQLiteStore, content_hash
 from .cold_telemetry import ColdMemoryTelemetrySink
-
+from .db import SQLiteStore, content_hash
 
 _TOKEN_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_./:-]*")
 _STOPWORDS = {

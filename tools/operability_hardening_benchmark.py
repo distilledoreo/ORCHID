@@ -9,7 +9,7 @@ import sqlite3
 import sys
 import tempfile
 import time
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -27,12 +27,11 @@ from memory_gateway.context import estimate_tokens
 from memory_gateway.db import SQLiteStore, canonical_json, content_hash
 from memory_gateway.ingestion import (
     message_content,
-    message_hash,
     message_event_type,
+    message_hash,
     normalize_message,
     parse_stream_message,
 )
-
 
 DEFAULT_CAPTURE = Path(
     r"C:\Users\disti\benchmark_work\freetoshop_pi_vs_orchid_20260820\orchid-state-actual-2\memory.db"

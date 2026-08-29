@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 53,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "Rendered component displays joint-pair coverage metrics with combined coverage (accent), overlap, A-only, B-only, usable origins, reachable upper bound, reachable efficiency, and estimated remaining surface. Includes origin labels, candidate count, fine sample count, elapsed time, and apply-capture button for origin A.",
+      "envelope_json": "{\"generation\":53,\"items\":[{\"evidence\":[{\"excerpt\":\"<strong className=\\\"text-right text-[var(--accent)]\\\">{percent(result.combinedCoverage)}</strong>\",\"source_id\":\"panoref_evt_001004::span::000002\"},{\"excerpt\":\"<span className=\\\"text-secondary\\\">Overlap</span><strong className=\\\"text-right text-primary\\\">{percent(result.overlapCoverage)}</strong>\",\"source_id\":\"panoref_evt_001004::span::000002\"},{\"excerpt\":\"<span className=\\\"text-secondary\\\">Estimated remaining</span><strong className=\\\"text-right text-primary\\\">{percent(result.estimatedRemainingSurface)}</strong>\",\"source_id\":\"panoref_evt_001004::span::000002\"},{\"excerpt\":\"data-coverage-origin-a={result.originA.join(',')}\",\"source_id\":\"panoref_evt_001004::span::000002\"},{\"excerpt\":\"data-coverage-origin-b={result.originB.join(',')}\",\"source_id\":\"panoref_evt_001004::span::000002\"},{\"excerpt\":\"<span className=\\\"text-secondary\\\">Reachable upper bound</span><strong className=\\\"text-right text-primary\\\">{percent(result.reachableCoverage)}</strong>\",\"source_id\":\"panoref_evt_001004::span::000002\"},{\"excerpt\":\"onSetCaptureOrigin && mode === 'joint-pair'\",\"source_id\":\"panoref_evt_001004::span::000002\"}],\"id\":\"mem_d2f088a63caab553e8a56757\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Joint-pair coverage rendering shows combined, overlap, estimated remaining, reachable bounds, and per-origin stats with apply-capture A action.\"},{\"evidence\":[{\"excerpt\":\"<button type=\\\"button\\\" onClick={() => onSetCaptureOrigin(result.originA)} data-coverage-apply-capture-a\",\"source_id\":\"panoref_evt_001004::span::000002\"}],\"id\":\"mem_c12ef80c931ff257ba1df7e0\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Apply capture from origin A available when onSetCaptureOrigin prop is provided in joint-pair mode.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

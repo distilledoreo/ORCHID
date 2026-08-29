@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-08-28T12:45:09.491Z",
+  "elapsed_ms": 7,
+  "reason": "launch",
+  "arms": {
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "pid": 794591,
+      "launch_count": 1,
+      "prompt_count": 0,
+      "continuation_count": 0,
+      "provider_messages": 0,
+      "tool_calls": 0,
+      "tool_failures": 0,
+      "pi_native_compactions": 0,
+      "request_responses": 0,
+      "errors": [],
+      "last_usage": null,
+      "last_events": [],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": "?? BENCHMARK_GOAL.md\n"
+      },
+      "orchid": {
+        "thread": {
+          "thread_id": "orchid-arm-b",
+          "active_capsule": null,
+          "raw_tail_event_ids": [],
+          "raw_tail_tokens": 0,
+          "capsule_tokens": 0,
+          "estimated_active_tokens": 0,
+          "last_snapshot_watermark": null,
+          "jobs": [],
+          "last_promotion": null,
+          "last_failure": null
+        },
+        "jobs": {
+          "jobs": [],
+          "queued_or_running": [],
+          "last_failure": null
+        }
+      }
+    }
+  }
+}

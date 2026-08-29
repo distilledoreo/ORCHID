@@ -1,0 +1,11 @@
+{
+  "status": "INVALIDATED",
+  "reason": "free_provider_rejected_post_promotion_tool_loop_without_user_role",
+  "details": {
+    "clean_promotions_before_stop": 1,
+    "required_clean_promotions": 3,
+    "provider_error": "No user query found in messages.",
+    "scoring_decision": "The declared early gate was not met, so this attempt is not scored."
+  },
+  "scorable": false
+}

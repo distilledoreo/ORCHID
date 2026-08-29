@@ -11,6 +11,7 @@ from memory_gateway.cold_memory import (
     FTS5ColdMemoryRetriever,
     build_retrieval_query,
 )
+from memory_gateway.cold_telemetry import BufferedColdMemoryTelemetry
 from memory_gateway.compaction import (
     CompactionResult,
     CompactionWorker,
@@ -18,9 +19,9 @@ from memory_gateway.compaction import (
     compute_input_hash,
     queue_snapshot_job,
 )
-from memory_gateway.context import ContextAssembler
+from memory_gateway.context import ContextAssembler, estimate_tokens
 from memory_gateway.db import SQLiteStore
-from memory_gateway.cold_telemetry import BufferedColdMemoryTelemetry
+from memory_gateway.ingestion import message_content
 
 
 def make_store(tmp_path: Path) -> SQLiteStore:
@@ -535,6 +536,9 @@ def test_injection_adds_only_bounded_non_authoritative_context(tmp_path: Path) -
     ]
     assert len(cold_messages) == 1
     assert memory_id in cold_messages[0]["content"]
+    assert snapshot.estimated_tokens == sum(
+        estimate_tokens(message_content(message)) for message in snapshot.messages
+    )
     with store.connect() as connection:
         row = connection.execute(
             "SELECT injection_count FROM long_term_memories WHERE id = ?",

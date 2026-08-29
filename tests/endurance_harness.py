@@ -10,9 +10,10 @@ from __future__ import annotations
 import json
 import re
 import time
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from hashlib import sha256
-from typing import Any, Iterable
+from typing import Any
 
 from memory_gateway.compaction import (
     CompactionWorker,
@@ -58,7 +59,7 @@ class WorldState:
     decisions: dict[str, str] = field(default_factory=dict)
     low: dict[str, str] = field(default_factory=dict)
 
-    def copy(self) -> "WorldState":
+    def copy(self) -> WorldState:
         return WorldState(
             current=dict(self.current),
             rejected=dict(self.rejected),

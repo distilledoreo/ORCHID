@@ -231,6 +231,7 @@ class Capsule:
     content: str
     capsule_hash: str
     covered_end_event_id: str | None
+    memory_items: tuple[dict[str, Any], ...] = ()
 
     @classmethod
     def from_row(cls, row: dict[str, Any] | None) -> Capsule | None:
@@ -242,7 +243,40 @@ class Capsule:
             content=row["content"],
             capsule_hash=row["capsule_hash"],
             covered_end_event_id=row["covered_end_event_id"],
+            memory_items=_memory_items_from_metadata(row.get("model_metadata_json")),
         )
+
+
+def _memory_items_from_metadata(raw: Any) -> tuple[dict[str, Any], ...]:
+    """Load active V2 items from a stored capsule so consolidation can be incremental."""
+
+    if not raw:
+        return ()
+    if isinstance(raw, str):
+        try:
+            metadata = json.loads(raw)
+        except json.JSONDecodeError:
+            return ()
+    elif isinstance(raw, dict):
+        metadata = raw
+    else:
+        return ()
+    if metadata.get("semantic_admission_ok") is not True:
+        return ()
+    envelope_raw = metadata.get("envelope_json")
+    if not isinstance(envelope_raw, str) or not envelope_raw.strip():
+        return ()
+    from .admission.envelope import envelope_to_dict, parse_envelope
+
+    try:
+        envelope = parse_envelope(envelope_raw)
+    except ValueError:
+        return ()
+    return tuple(
+        item
+        for item in envelope_to_dict(envelope)["items"]
+        if item.get("status") != "superseded"
+    )
 
 
 @dataclass(frozen=True)

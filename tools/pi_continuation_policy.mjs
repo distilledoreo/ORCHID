@@ -75,3 +75,13 @@ export function createContinuationWatchdog({
     },
   };
 }
+
+export const postGateContinuation =
+  "Continue validation work from BENCHMARK_GOAL.md. Run the test suite, fix any failures, and complete another incremental milestone slice without asking for confirmation.";
+
+export function gateNeedsPostFinalExtension(gateStatus, minimumPostFinalTurns = 5) {
+  if (!gateStatus || typeof gateStatus !== "object") return false;
+  const promotions = Number(gateStatus.clean_promotions ?? gateStatus.promotions ?? 0);
+  const postFinal = Number(gateStatus.post_final_promotion_turns ?? 0);
+  return promotions >= 3 && postFinal < minimumPostFinalTurns;
+}

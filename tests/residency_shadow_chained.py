@@ -10,14 +10,13 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
-import math
 import sqlite3
 import statistics
 import sys
 import time
 import uuid
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -29,12 +28,6 @@ if str(_TESTS) not in sys.path:
     sys.path.insert(0, str(_TESTS))
 
 from endurance_harness import THREAD_ID  # noqa: E402
-from memory_gateway.compaction import Capsule  # noqa: E402
-from memory_gateway.context import estimate_tokens  # noqa: E402
-from memory_gateway.db import content_hash  # noqa: E402
-from memory_gateway.pipeline import build_lossless_packet  # noqa: E402
-from memory_gateway.structured_client import OpenAICompatStructuredClient  # noqa: E402
-from memory_gateway.telemetry import deterministic_input_hash  # noqa: E402
 from residency_shadow_sample import (  # noqa: E402
     PROMPT_VERSION,
     build_consolidator_payload,
@@ -47,11 +40,16 @@ from residency_shadow_sample import (  # noqa: E402
     read_system_prompt,
     reconstruct_input,
     replay_canonicalizer,
-    resolve_output_capsule_id,
     shadow_response_format,
-    sha256_text,
     validate_shadow_refs,
 )
+
+from memory_gateway.compaction import Capsule  # noqa: E402
+from memory_gateway.context import estimate_tokens  # noqa: E402
+from memory_gateway.db import content_hash  # noqa: E402
+from memory_gateway.pipeline import build_lossless_packet  # noqa: E402
+from memory_gateway.structured_client import OpenAICompatStructuredClient  # noqa: E402
+from memory_gateway.telemetry import deterministic_input_hash  # noqa: E402
 
 EXPECTED_BUNDLE_HASH = "124048d4f7475a2ec70141d8483026ee2d77817b93682ee38a65f0dcac89068c"
 SAMPLE_DIR = _ROOT / "artifacts" / "degradation" / "residency_shadow_sample"
@@ -382,8 +380,8 @@ async def process_chained_generation(
             "model_input_hash": input_hash,
         }
 
-    from live_endurance import residue_hits  # noqa: E402
     from endurance_harness import expected_state_after  # noqa: E402
+    from live_endurance import residue_hits  # noqa: E402
 
     shadow_residue_list = residue_hits(active_content, expected_state_after(generation))
     residue_recursive = classify_residue_recursive(
@@ -773,7 +771,7 @@ async def async_main(resume: bool) -> int:
                 "generations_63_200": str(HARDENED_DB),
             },
             "planned_generations": 200,
-            "start_timestamp": datetime.now(timezone.utc).isoformat(),
+            "start_timestamp": datetime.now(UTC).isoformat(),
             "run_id": str(uuid.uuid4()),
         }
         (OUT_DIR / "RUN_MANIFEST.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")

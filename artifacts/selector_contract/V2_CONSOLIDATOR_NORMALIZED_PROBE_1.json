@@ -1,0 +1,42 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 1,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_76ffa541577d4e51f60e4132",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_76ffa541577d4e51f60e4132",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_87112eb5d99ee5e3e78ded5f",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_17b084d1b47b49c3be9c54e8",
+        "item mem_553f9d31aed0e8b503c995a2 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The algorithm implementation now includes a real coverage engine with 17 new files, supporting both fixed-first and genuine joint-pair search modes. Joint mode evaluates all legal coarse pairs ranked by bitset union before applying quality tie-breakers, avoiding premature discard of complementary origins. The surface sampler is deterministic, sampling triangles proportional to world-space area. Origin evaluation includes segment occlusion, geometric face normals, viewing angle, approximate projected texel density, and separate visibility/usable-coverage bitsets. However, the implementation has critical blockers: (1) imported sets using whole-object AABBs as obstacles cause zero clearance for origins inside large bounding boxes (e.g., room shells or combined furniture), rejecting all sensible camera positions; fix requires actual geometry clearance via triangle-level collision checks or per-mesh spatial clustering rather than per-imported-set AABBs; (2) the triangle-expansion-based geometry representation will not scale to heavy imports. Readiness for complex imported sets remains low (4/10), though the core math/search design is mostly correct (8/10 overall architecture).",
+      "envelope_json": "{\"generation\":1,\"items\":[{\"evidence\":[{\"excerpt\":\"The latest head adds 17 coverage-engine files, a worker, UI, and tests\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Joint mode genuinely evaluates candidate pairs rather than greedily selecting the best first origin\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"It checks every legal coarse pair, ranks them by bitset union, and only then applies quality and contribution tie-breakers\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"The surface sampler is deterministic and correctly samples triangles in proportion to world-space area using barycentric coordinates\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Origin evaluation includes: actual segment occlusion, geometric face normals, viewing angle, approximate projected texel density, separate visibility and usable-coverage bitsets, continuous quality values\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"For every non-floor scene object, the extractor stores the entire object’s axis-aligned bounding box as an obstacle\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"A point anywhere inside an AABB has a distance of zero\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Every sensible camera origin inside the room is therefore 'inside the obstacle bounds,' gets zero clearance, and is rejected\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Use actual geometry clearance, not object AABBs\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"At minimum, obstacle bounds should be per connected mesh or spatial cluster—not per imported set object\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"The geometry representation will not scale to heavy imports\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Readiness for complex imported sets: 4/10\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_76ffa541577d4e51f60e4132\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Algorithm implementation includes joint-pair search, deterministic area-proportional sampling, multi-factor origin evaluation, but has critical blocker: AABB-based obstacle clearance rejects all origins inside large imported objects; fix requires geometry-level collision detection instead of whole-object bounding boxes.\"},{\"evidence\":[{\"excerpt\":\"Candidate clearance is then the distance from the origin point to those bounding boxes, and candidates within 0.3 meters are rejected\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"This can affect: a complete Maya set imported as one GLB, a room shell and furniture combined into one mesh, concave geometry, L-shaped walls, any large model whose AABB contains empty navigable space\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_87112eb5d99ee5e3e78ded5f\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blocker: Imported set obstacles use whole-object AABBs, causing zero clearance for any camera origin inside large bounding volumes (room shells, combined meshes, concave geometry).\"},{\"evidence\":[{\"excerpt\":\"4,096 coarse samples, 256 candidates, retained pair seeds, 24,576 fine samples\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"The tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_17b084d1b47b49c3be9c54e8\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Shared coarse-to-fine engine configured with 4,096 coarse samples, 256 candidates, 24,576 fine samples; tests cover deterministic sampling, double-sided occlusion, marginal ranking, non-greedy pair ranking, and both search modes.\"},{\"evidence\":[{\"excerpt\":\"Algorithm architecture for normal graybox sets: 8/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Correctness of the two search modes: 7.5/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Overall: promising, but I would not merge it as production-ready yet\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_553f9d31aed0e8b503c995a2\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Current assessment: Architecture 8/10, search mode correctness 7.5/10, not production-ready due to implementation blockers.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 1,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_76ffa541577d4e51f60e4132",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_76ffa541577d4e51f60e4132",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_87112eb5d99ee5e3e78ded5f",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_17b084d1b47b49c3be9c54e8",
+        "item mem_553f9d31aed0e8b503c995a2 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

@@ -385,6 +385,46 @@ class LosslessCompactionEngine:
         selected_ids = set(selection.selected_event_ids)
         selected_events = [item for item in source_items if item.id in selected_ids]
         self._check_ownership()
+        if not selected_events and base_capsule is not None:
+            snapshot_event_ids = tuple(event.id for event in events)
+            self.last_telemetry["canonicalizer"] = {
+                "status": "SKIPPED",
+                "wall_ms": 0.0,
+                "call_count": 0,
+                "calls": [],
+                "reason": "no new selected sources",
+            }
+            self.last_telemetry["consolidator"] = {
+                "status": "SKIPPED",
+                "wall_ms": 0.0,
+                "call_count": 0,
+                "calls": [],
+                "reason": "carry_forward_empty_selection",
+            }
+            result = CompactionResult(
+                content=base_capsule.content,
+                covered_event_ids=snapshot_event_ids,
+                evidence_event_ids=(),
+                input_hash=compute_input_hash(
+                    base_capsule, events, snapshot_end_event_id
+                ),
+                output_hash=sha256(base_capsule.content.encode("utf-8")).hexdigest(),
+                model_identity="software",
+                prompt_version="consolidator-carried-empty-selection-v1",
+                generation_settings={},
+                evidence_source_ids=(),
+                memory_items=base_capsule.memory_items,
+            )
+            self.last_telemetry["validation_ms"] = 0.0
+            self.last_telemetry["source_tokens"] = sum(
+                estimate_tokens(event.content) for event in events
+            )
+            self.last_telemetry["status"] = "SUCCEEDED"
+            self.last_telemetry["wall_ms"] = (time.perf_counter() - total_started) * 1000
+            self.last_telemetry["source_tokens_per_second"] = self.last_telemetry[
+                "source_tokens"
+            ] / max(self.last_telemetry["wall_ms"] / 1000, 0.000001)
+            return result
         canonicalizer_started = time.perf_counter()
         if self.canonicalizer is None:
             selected_source_ids = tuple(item.id for item in selected_events)

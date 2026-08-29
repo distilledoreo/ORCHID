@@ -14,7 +14,6 @@ if str(ROOT) not in sys.path:
 
 from tools.benchmark_panoref_selector_prefix_reuse import build_chunk_lookup, load_profile_inputs
 
-
 OUT = ROOT / "artifacts/agent_benchmarks/panoref_selector_request_encoding_v1"
 PLAN_PATH = OUT / "REQUEST_ENCODING_PLAN.json"
 

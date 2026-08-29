@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 29,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "The projection coverage engine evaluates spatial origins by sampling world-space surface area deterministically and proportionally, using double-sided BVH raycasting to reject geometry-hidden samples, ranking origin pairs via marginal union/joint complementary logic, and filtering imported-room interior candidates with triangle clearance rather than enclosing AABBs.",
+      "envelope_json": "{\"generation\":29,\"items\":[{\"evidence\":[{\"excerpt\":\"describe('projection coverage engine', () => {  it('samples world-space surface area deterministically and proportionally', () => {\",\"source_id\":\"panoref_evt_000961::span::000006\"},{\"excerpt\":\"  it('uses double-sided BVH segment hits to reject geometry-hidden samples', () => {\",\"source_id\":\"panoref_evt_000961::span::000006\"},{\"excerpt\":\"  it('ranks fixed-first marginal union and joint complementary pairs', () => {\",\"source_id\":\"panoref_evt_000961::span::000006\"},{\"excerpt\":\"  it('keeps imported-room interior candidates by using triangle clearance instead of an enclosing AABB','source_id':'panoref_evt_000961::span::000006'}],\",\"source_id\":\"panoref_evt_000961::span::000006\"}],\"id\":\"mem_eed5809ab7f28a9b11cd548f\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Projection coverage engine implements deterministic proportional surface sampling, double-sided BVH occlusion rejection, marginal union/joint complementary pair ranking, and triangle-clearance interior candidate filtering.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

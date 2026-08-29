@@ -30,9 +30,9 @@ import re
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from statistics import mean, median
+from statistics import mean
 from typing import Any
 
 import httpx
@@ -53,7 +53,6 @@ from tools.profile_panoref_selector_calls import (
     header_metric,
     percentile,
 )
-
 
 OUT_ROOT = ROOT / "artifacts/agent_benchmarks/panoref_selector_language_v1"
 PLAN_PATH = OUT_ROOT / "LANGUAGE_PLAN.json"
@@ -120,7 +119,7 @@ def file_sha256(path: Path) -> str:
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def write_json(path: Path, value: Any) -> None:

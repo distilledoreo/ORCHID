@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import time
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from .cold_memory import (
@@ -139,6 +139,16 @@ class ContextSnapshot:
     estimated_tokens: int
     messages: list[dict[str, Any]]
     hard_limit_exceeded: bool = False
+    target_exceeded: bool = False
+    foreground_target_tokens: int | None = None
+    foreground_hard_limit_tokens: int | None = None
+    emergency_spill_tokens: int = 0
+    organizer_lag_events: int = 0
+    organizer_lag_tokens: int = 0
+    compaction_wait_ms: float = 0.0
+    memory_maintenance_awaited: bool = False
+    assembly_wall_ms: float = 0.0
+    component_tokens: dict[str, int] = field(default_factory=dict)
     cold_retrieval: ColdMemorySearchResult | None = None
     substitution: SubstitutionReport | None = None
     prompt_cache: Any | None = None
@@ -229,8 +239,19 @@ class ContextAssembler:
         *,
         project_id: str | None = None,
     ) -> ContextSnapshot:
+        assembly_started = time.perf_counter()
         active = self.store.get_active_capsule(thread_id)
         covered_sequence = self._covered_sequence(active)
+        all_events = self.store.list_events(thread_id)
+        organizer_lag = [
+            event
+            for event in all_events
+            if covered_sequence is None or int(event["sequence"]) > covered_sequence
+        ]
+        organizer_lag_tokens = sum(
+            event["token_count"] or estimate_tokens(event["content"])
+            for event in organizer_lag
+        )
         tail = self._tail(
             thread_id,
             after_sequence=covered_sequence,
@@ -537,7 +558,21 @@ class ContextAssembler:
             + raw_tail_messages
             + other_messages
         )
-        final_tokens = sum(_message_tokens(message) for message in assembled)
+        component_tokens = {
+            "instructions": sum(_message_tokens(message) for message in system_messages),
+            "capsule": sum(_message_tokens(message) for message in capsule_messages),
+            "root_task": sum(_message_tokens(message) for message in root_task_block),
+            "retrieved_memory": sum(
+                _message_tokens(message) for message in cold_memory_messages
+            ),
+            "raw_tail": sum(_message_tokens(message) for message in raw_tail_messages),
+            "conversation": sum(_message_tokens(message) for message in other_messages),
+        }
+        final_tokens = sum(component_tokens.values())
+        target_exceeded = bool(
+            self.context_budget_tokens is not None
+            and final_tokens > self.context_budget_tokens
+        )
         hard_limit_exceeded = bool(
             self.foreground_hard_limit_tokens is not None
             and final_tokens > self.foreground_hard_limit_tokens
@@ -592,6 +627,20 @@ class ContextAssembler:
             cold_memory_tokens=cold_tokens,
             estimated_tokens=final_tokens,
             hard_limit_exceeded=hard_limit_exceeded,
+            target_exceeded=target_exceeded,
+            foreground_target_tokens=self.context_budget_tokens,
+            foreground_hard_limit_tokens=self.foreground_hard_limit_tokens,
+            emergency_spill_tokens=(
+                max(0, final_tokens - self.context_budget_tokens)
+                if self.context_budget_tokens is not None
+                else 0
+            ),
+            organizer_lag_events=len(organizer_lag),
+            organizer_lag_tokens=organizer_lag_tokens,
+            compaction_wait_ms=0.0,
+            memory_maintenance_awaited=False,
+            assembly_wall_ms=(time.perf_counter() - assembly_started) * 1_000,
+            component_tokens=component_tokens,
             messages=assembled,
             cold_retrieval=cold_result,
             substitution=substitution,

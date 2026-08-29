@@ -10,9 +10,14 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import numpy as np
+
 
 def sha256_file(path: str | Path) -> str:
     digest = hashlib.sha256()
@@ -110,7 +115,7 @@ class DenseMemoryIndex:
         cls,
         memories: list[dict[str, Any]],
         embedder: OnnxTextEmbedder,
-    ) -> "DenseMemoryIndex":
+    ) -> DenseMemoryIndex:
         texts = [str(memory["content"]) for memory in memories]
         return cls(
             [str(memory["id"]) for memory in memories],
@@ -118,7 +123,7 @@ class DenseMemoryIndex:
         )
 
     @classmethod
-    def load(cls, path: str | Path) -> "DenseMemoryIndex":
+    def load(cls, path: str | Path) -> DenseMemoryIndex:
         import numpy as np
 
         with np.load(path, allow_pickle=False) as data:

@@ -1,0 +1,167 @@
+{
+  "timestamp": "2026-08-28T12:52:22.159Z",
+  "elapsed_ms": 120126,
+  "reason": "periodic",
+  "arms": {
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "pid": 798368,
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 0,
+      "provider_messages": 8,
+      "tool_calls": 23,
+      "tool_failures": 0,
+      "pi_native_compactions": 0,
+      "request_responses": 1,
+      "errors": [],
+      "last_usage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "last_events": [
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update"
+      ],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": "?? BENCHMARK_GOAL.md\n"
+      },
+      "orchid": {
+        "thread": {
+          "thread_id": "orchid-arm-b",
+          "active_capsule": null,
+          "raw_tail_event_ids": [
+            "evt_cbf4cdd5711d41a49c676dc65802d9f4",
+            "evt_9fadc4245202448794a8ee78d15fb933",
+            "evt_b18e5d62f41d40c2b0a60d76c2af1f6b",
+            "evt_12f8acb0e66547fcbd55a67f37c5d0d8",
+            "evt_297b83f023804bfa96ee56cc9b81675e",
+            "evt_5fcb8e6e973d4fa3b67002e0e6cbd93e",
+            "evt_29dfe4ab998242358f75ac678bceab09"
+          ],
+          "raw_tail_tokens": 24649,
+          "capsule_tokens": 0,
+          "estimated_active_tokens": 24649,
+          "last_snapshot_watermark": null,
+          "jobs": [
+            {
+              "id": "job_548637762e9f4a77b3e1ebf4e3955993",
+              "thread_id": "orchid-arm-b",
+              "base_capsule_id": null,
+              "snapshot_start_event_id": "evt_0daac8e1638a47df94b5cf3eb7e8dba0",
+              "snapshot_end_event_id": "evt_fdae534ce1de4a2b9bd48e043b1fa0e1",
+              "status": "RUNNING",
+              "priority": 100,
+              "generation": 1,
+              "idempotency_key": "orchid-arm-b|none|evt_fdae534ce1de4a2b9bd48e043b1fa0e1",
+              "created_at": "2026-08-28T12:51:09.203+00:00",
+              "started_at": "2026-08-28T12:51:10.125+00:00",
+              "finished_at": null,
+              "attempts": 1,
+              "lease_until": "2026-08-28T13:07:10.295+00:00",
+              "lease_token": "ef4d6e9056384ff7a4514c0a47e23fc7",
+              "worker_id": "gateway-compaction-worker",
+              "error": null
+            }
+          ],
+          "last_promotion": null,
+          "last_failure": null
+        },
+        "jobs": {
+          "jobs": [
+            {
+              "id": "job_548637762e9f4a77b3e1ebf4e3955993",
+              "thread_id": "orchid-arm-b",
+              "base_capsule_id": null,
+              "snapshot_start_event_id": "evt_0daac8e1638a47df94b5cf3eb7e8dba0",
+              "snapshot_end_event_id": "evt_fdae534ce1de4a2b9bd48e043b1fa0e1",
+              "status": "RUNNING",
+              "priority": 100,
+              "generation": 1,
+              "idempotency_key": "orchid-arm-b|none|evt_fdae534ce1de4a2b9bd48e043b1fa0e1",
+              "created_at": "2026-08-28T12:51:09.203+00:00",
+              "started_at": "2026-08-28T12:51:10.125+00:00",
+              "finished_at": null,
+              "attempts": 1,
+              "lease_until": "2026-08-28T13:07:10.295+00:00",
+              "lease_token": "ef4d6e9056384ff7a4514c0a47e23fc7",
+              "worker_id": "gateway-compaction-worker",
+              "error": null
+            }
+          ],
+          "queued_or_running": [
+            {
+              "id": "job_548637762e9f4a77b3e1ebf4e3955993",
+              "thread_id": "orchid-arm-b",
+              "base_capsule_id": null,
+              "snapshot_start_event_id": "evt_0daac8e1638a47df94b5cf3eb7e8dba0",
+              "snapshot_end_event_id": "evt_fdae534ce1de4a2b9bd48e043b1fa0e1",
+              "status": "RUNNING",
+              "priority": 100,
+              "generation": 1,
+              "idempotency_key": "orchid-arm-b|none|evt_fdae534ce1de4a2b9bd48e043b1fa0e1",
+              "created_at": "2026-08-28T12:51:09.203+00:00",
+              "started_at": "2026-08-28T12:51:10.125+00:00",
+              "finished_at": null,
+              "attempts": 1,
+              "lease_until": "2026-08-28T13:07:10.295+00:00",
+              "lease_token": "ef4d6e9056384ff7a4514c0a47e23fc7",
+              "worker_id": "gateway-compaction-worker",
+              "error": null
+            }
+          ],
+          "last_failure": null
+        }
+      }
+    }
+  }
+}

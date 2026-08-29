@@ -23,10 +23,11 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "tools") not in sys.path:
     sys.path.insert(0, str(ROOT / "tools"))
 
-from memory_gateway.compaction import compute_source_event_hash  # noqa: E402
-import memory_gateway.pipeline_adapters as adapters  # noqa: E402
 import phase3_2_pipeline_ablation as selector_module  # noqa: E402
 import run_panoref_selector_control as control  # noqa: E402
+
+import memory_gateway.pipeline_adapters as adapters  # noqa: E402
+from memory_gateway.compaction import compute_source_event_hash  # noqa: E402
 
 
 def digest_bytes(path: Path) -> str:

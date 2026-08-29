@@ -21,7 +21,6 @@ if str(ROOT) not in sys.path:
 
 import phase3_3_direct_consolidation as harness  # noqa: E402
 
-
 FIXTURE = ROOT / "artifacts/agent_benchmarks/panoref_direct_generalization_bounded_v2"
 REPLAY = FIXTURE / "frozen_panoref_replay/events.jsonl"
 ORACLE = FIXTURE / "semantic_oracle"

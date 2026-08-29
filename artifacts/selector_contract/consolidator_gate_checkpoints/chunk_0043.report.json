@@ -1,0 +1,39 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 44,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001002::span::000000' for item mem_76b2f84c8a38fda15ac2c63c"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Script test failure in projectionCoverage.test.ts showing unresolved function resolveCoverageOptions across multiple test cases.",
+      "envelope_json": "{\"generation\":44,\"items\":[{\"evidence\":[{\"excerpt\":\"tests\\\\\\\\projectionCoverage.test.ts:15:  resolveCoverageOptions\",\"source_id\":\"panoref_evt_001002::span::000000\"}],\"id\":\"mem_76b2f84c8a38fda15ac2c63c\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Script test failure in projectionCoverage.test.ts showing unresolved function resolveCoverageOptions across multiple test cases.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 44,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001002::span::000000' for item mem_76b2f84c8a38fda15ac2c63c"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

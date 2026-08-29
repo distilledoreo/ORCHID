@@ -13,11 +13,10 @@ import argparse
 import asyncio
 import hashlib
 import json
-import math
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import mean
 from typing import Any
@@ -29,8 +28,12 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from memory_gateway.context import estimate_tokens
-from tools.profile_panoref_selector_calls import endpoint_url, extract_metric, header_metric, percentile
-
+from tools.profile_panoref_selector_calls import (
+    endpoint_url,
+    extract_metric,
+    header_metric,
+    percentile,
+)
 
 OUT_ROOT = ROOT / "artifacts/agent_benchmarks/qwen_prompt_scaling_v1"
 PLAN_PATH = OUT_ROOT / "SCALING_PLAN.json"
@@ -59,7 +62,7 @@ def file_sha256(path: Path) -> str:
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -408,7 +411,7 @@ def report(run_id: str) -> None:
     else:
         verdict = "MIXED_OR_INSUFFICIENT_EVIDENCE"
         interpretation = "The measured curve does not cleanly separate fixed overhead from prompt scaling at this sample size and variance level."
-    lines.extend([f"## Conclusion", "", interpretation, "", verdict])
+    lines.extend(["## Conclusion", "", interpretation, "", verdict])
     (run_dir / "REPORT.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"summary: {run_dir / 'SUMMARY.json'}")
     print(f"report: {run_dir / 'REPORT.md'}")

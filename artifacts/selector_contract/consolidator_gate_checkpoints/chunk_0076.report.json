@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 77,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "The CoverageOptimizerPanel includes a UI section for restricting the optimizer to an allowed floor region, with TextInput fields for each axis (X, Y, Z) minimum and maximum values. An 'Analyze panorama origins' button triggers analysis when not running and at least one visible object exists.",
+      "envelope_json": "{\"generation\":77,\"items\":[{\"evidence\":[{\"excerpt\":\"onChange={(value) => {\\\\r\\\\n              setRestrictFloorRegion(value);\\\\r\\\\n              setStatus('idle');\\\\r\\\\n              setResult(undefined);\\\\r\\\\n            }}\\\\r\\\\n            label=\\\"Restrict optimizer to an allowed floor region\\\"\",\"source_id\":\"panoref_evt_001024\"}],\"id\":\"mem_63b72e28bc99cca50dbfe4be\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"The panel has a restrictFloorRegion option with a label 'Restrict optimizer to an allowed floor region'.\"},{\"evidence\":[{\"excerpt\":\"<Field label={`${axis} minimum`}>\\\\r\\\\n                <TextInput\\\\r\\\\n                  type=\\\"number\\\"\\\\r\\\\n                  step=\\\"0.1\\\"\\\\r\\\\n                  value={floorRegion.min[axisIndex]}\\\\r\\\\n                  onChange={(event) => setFloorRegion((current) => {\\\\r\\\\n                    const min = [...current.min] as Vec3;\\\\r\\\\n                    min[axisIndex] = Number(event.target.value);\\\\r\\\\n                    return { ...current, min };\\\\r\\\\n                  })}\\\\r\\\\n                  data-coverage-floor-min={axis.toLowerCase()}\\\\r\\\\n                />\\\\r\\\\n              </Field>,\\\\r\\\\n              <Field label={`${axis} maximum`}>\\\\r\\\\n                <TextInput\\\\r\\\\n                  type=\\\"number\\\"\\\\r\\\\n                  step=\\\"0.1\\\"\\\\r\\\\n                  value={floorRegion.max[axisIndex]}\\\\r\\\\n                  onChange={(event) => setFloorRegion((current) => {\\\\r\\\\n                    const max = [...current.max] as Vec3;\\\\r\\\\n                    max[axisIndex] = Number(event.target.value);\\\\r\\\\n                    return { ...current, max };\\\\r\\\\n                  })}\\\\r\\\\n                  data-coverage-floor-max={axis.toLowerCase()}\\\\r\\\\n                />\",\"source_id\":\"panoref_evt_001024\"}],\"id\":\"mem_6388049da03f7722a81a1028\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"For each axis (X, Y, Z), there are input fields for minimum and maximum values in floorRegion, with data attributes data-coverage-floor-min and data-coverage-floor-max.\"},{\"evidence\":[{\"excerpt\":\"{status === 'running' ? 'Analyzing coverage…' : 'Analyze panorama origins'}\",\"source_id\":\"panoref_evt_001024\"}],\"id\":\"mem_e39ccaf30b0afde3684f28f0\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"The analyze button displays 'Analyze panorama origins' when not running, or 'Analyzing coverage…' when running.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

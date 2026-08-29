@@ -392,11 +392,16 @@ PY
   export ORCHID_SELECTOR_URL="$BENCHMARK_SELECTOR_BASE_URL"
   export ORCHID_SELECTOR_API_KEY="$BENCHMARK_SELECTOR_API_KEY"
   export ORCHID_SELECTOR_MODEL="$BENCHMARK_SELECTOR_MODEL_ID"
-  export ORCHID_CANONICALIZER_ENABLED="0"
+  export ORCHID_CANONICALIZER_ENABLED="1"
+  export ORCHID_CANONICALIZER_URL="$BENCHMARK_SELECTOR_BASE_URL"
+  export ORCHID_CANONICALIZER_API_KEY="$BENCHMARK_SELECTOR_API_KEY"
+  export ORCHID_CANONICALIZER_MODEL="$BENCHMARK_SELECTOR_MODEL_ID"
   export ORCHID_CONSOLIDATOR_URL="$BENCHMARK_PROVIDER_BASE_URL"
   export ORCHID_CONSOLIDATOR_API_KEY="$BENCHMARK_PROVIDER_API_KEY"
   export ORCHID_CONSOLIDATOR_MODEL="$BENCHMARK_MODEL_ID"
   export ORCHID_BACKEND_CONTEXT_LIMIT_TOKENS="${BENCHMARK_CONTEXT_TOKENS:-128000}"
+  export ORCHID_FOREGROUND_TARGET_TOKENS="${ORCHID_FOREGROUND_TARGET_TOKENS:-32000}"
+  export ORCHID_FOREGROUND_HARD_LIMIT_TOKENS="${ORCHID_FOREGROUND_HARD_LIMIT_TOKENS:-48000}"
   export ORCHID_INITIAL_COMPACTION_THRESHOLD_TOKENS="8000"
   export ORCHID_COMPACTION_CONTEXT_TOKENS="${BENCHMARK_CONTEXT_TOKENS:-128000}"
   export ORCHID_COMPACTION_RESERVED_OUTPUT_TOKENS="8192"
@@ -441,14 +446,40 @@ pathlib.Path(sys.argv[1]).write_text(json.dumps({
 PY
 }
 
+start_vram_sampler() {
+  mkdir -p "$ORCHID_CORRECTED_ARTIFACT/hardware"
+  "$python_executable" "$root/tools/sample_vram.py" \
+    --output "$ORCHID_CORRECTED_ARTIFACT/hardware/vram_samples.jsonl" \
+    --interval-seconds 2 \
+    --arm-file "$ORCHID_CORRECTED_ARTIFACT/hardware/active_arm.txt" \
+    >"$ORCHID_CORRECTED_ARTIFACT/hardware/sampler.log" 2>&1 &
+  vram_sampler_pid=$!
+  export vram_sampler_pid
+}
+
+stop_vram_sampler() {
+  if [[ -n "${vram_sampler_pid:-}" ]]; then
+    kill "$vram_sampler_pid" 2>/dev/null || true
+    wait "$vram_sampler_pid" 2>/dev/null || true
+  fi
+}
+
 run_benchmark() {
   load_run_paths
   require_environment
   require_file "$ORCHID_CORRECTED_ARTIFACT/prelaunch/RESULTS.json"
+  export BENCHMARK_SEQUENTIAL_ARMS="${BENCHMARK_SEQUENTIAL_ARMS:-1}"
+  if [[ "$BENCHMARK_SEQUENTIAL_ARMS" == "1" ]]; then
+    export BENCHMARK_VRAM_ARM_ISOLATED="${BENCHMARK_VRAM_ARM_ISOLATED:-1}"
+  else
+    export BENCHMARK_VRAM_ARM_ISOLATED="${BENCHMARK_VRAM_ARM_ISOLATED:-0}"
+  fi
   start_gateway
-  trap 'if [[ -n "${gateway_pid:-}" ]]; then kill "$gateway_pid" 2>/dev/null || true; fi' EXIT INT TERM
+  start_vram_sampler
+  trap 'stop_vram_sampler; if [[ -n "${gateway_pid:-}" ]]; then kill "$gateway_pid" 2>/dev/null || true; fi' EXIT INT TERM
   node "$root/tools/freetoshop_corrected_all_solar_driver.mjs"
   wait "$gateway_pid" 2>/dev/null || true
+  stop_vram_sampler
   trap - EXIT INT TERM
 }
 

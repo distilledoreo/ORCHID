@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import sqlite3
 import sys
 from pathlib import Path
@@ -23,7 +22,6 @@ from memory_strategy_comparison import (  # noqa: E402
     classify_recall_answers,
     compute_full_raw_metrics,
     generate_raw_only_audit,
-    render_events,
     score_summary_semantics,
     select_tail,
     token_count_events,

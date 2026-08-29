@@ -1,0 +1,42 @@
+{
+  "generation": 29,
+  "content": "The projection coverage engine evaluates spatial origins by sampling world-space surface area deterministically and proportionally, using double-sided BVH raycasting to reject geometry-hidden samples, ranking origin pairs via marginal union/joint complementary logic, and filtering imported-room interior candidates with triangle clearance rather than enclosing AABBs.",
+  "events": [
+    {
+      "id": "panoref_evt_000961::span::000006",
+      "sequence": 961,
+      "content": ": number, quality: number[], position: Vec3): OriginEvaluation {\\r\\n  return {\\r\\n    position,\\r\\n    coverageBits: new Uint32Array([bits]),\\r\\n    visibleBits: new Uint32Array([bits]),\\r\\n    quality: new Uint8Array(quality),\\r\\n    individualCoverage: quality.filter((_, index) => Boolean(bits & (1 << index))).length / quality.length,\\r\\n    averageQuality: quality.reduce((sum, value) => sum + value, 0) / (255 * quality.length),\\r\\n    clearance: 1,\\r\\n  };\\r\\n}\\r\\n\\r\\ndescribe('projection coverage engine', () => {\\r\\n  it('samples world-space surface area deterministically and proportionally', () => {\\r\\n    const scene = packedScene([\\r\\n      { a: [0, 0, 0], b: [1, 0, 0], c: [0, 1, 0] },\\r\\n      { a: [2, 0, 0], b: [6, 0, 0], c: [2, 2, 0] },\\r\\n    ]);\\r\\n    const first = sampleMeshSurface(scene, 5_000, 1234);\\r\\n    const second = sampleMeshSurface(scene, 5_000, 1234);\\r\\n    expect(second).toEqual(first);\\r\\n    const largeCount = first.filter((sample) => sample.triangleIndex === 1).length;\\r\\n    expect(largeCount / first.length).toBeGreaterThan(0.86);\\r\\n    expect(largeCount / first.length).toBeLessThan(0.92);\\r\\n  });\\r\\n\\r\\n  it('uses double-sided BVH segment hits to reject geometry-hidden samples', () => {\\r\\n    const scene = packedScene([\\r\\n      { a: [1, -1, -1], b: [1, 1, -1], c: [1, 0, 1] },\\r\\n      { a: [2, -1, -1], b: [2, 0, 1], c: [2, 1, -1] },\\r\\n    ]);\\r\\n    const acceleration = buildSceneAcceleration(scene);\\r\\n    expect(acceleration.raycastAny([0, 0, 0], [1, 0, 0], 1.99, 1)).toBe(true);\\r\\n    const options = resolveCoverageOptions(floorScene(), { minimumTexelDensity: 0, targetTexelDensity: 1 });\\r\\n    const result = evaluateOrigin(\\r\\n      { position: [0, 0, 0], clearance: 1 },\\r\\n      [{ position: [2, 0, 0], geometricNormal: [-1, 0, 0], meshId: 0, triangleId: 1, triangleIndex: 1 }],\\r\\n      acceleration,\\r\\n      4,\\r\\n      options,\\r\\n    );\\r\\n    expect(result.individualCoverage).toBe(0);\\r\\n  });\\r\\n\\r\\n  it('ranks fixed-first marginal union and joint complementary pairs', () => {\\r\\n    const first = evaluation(0b0011, [220, 220, 0, 0], [0, 0, 0]);\\r\\n    const redundant = evaluation(0b0011, [255, 255, 0, 0], [1, 0, 0]);\\r\\n    const complementary = evaluation(0b1100, [0, 0, 200, 200], [2, 0, 0]);\\r\\n    const partial = evaluation(0b0110, [0, 180, 180, 0], [3, 0, 0]);\\r\\n    expect(rankSecondOrigins(first, [redundant, complementary, partial])[0].evaluation).toBe(complementary);\\r\\n    const bestPair = rankAllPairs([redundant, complementary, partial], 0.5, 4, 1)[0];\\r\\n    expect(new Set([bestPair.evaluationA, bestPair.evaluationB])).toEqual(new Set([redundant, complementary]));\\r\\n    expect(compareOriginPair(redundant, complementary).unionCoverage).toBe(1);\\r\\n  });\\r\\n\\r\\n  it('keeps imported-room interior candidates by using triangle clearance instead of an enclosing AABB', () => {\\r\\n    const triangles = [...floorTriangles(0, 3)];\\r\\n    // One imported mesh can contain floor and all four walls; its object AABB encloses the room.\\r\\n    triangles.push(\\r\\n      { a: [-3, 0, -3], b: [-3, 3, -3], c: [3, 3, -3] },\\r\\n      { a: [-3, 0, -3], b: [3, 3, -3], c: [3, 0, -3] },\\r\\n      { a: [3, 0, ",
+      "content_hash": "bfd59a53a72298417d1528f5b344f3d92c05aea268f61f1dda41d0516046ab8e",
+      "event_type": "custom_tool_call_output",
+      "role": "tool"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "describe('projection coverage engine', () => {  it('samples world-space surface area deterministically and proportionally', () => {",
+          "source_id": "panoref_evt_000961::span::000006"
+        },
+        {
+          "excerpt": "  it('uses double-sided BVH segment hits to reject geometry-hidden samples', () => {",
+          "source_id": "panoref_evt_000961::span::000006"
+        },
+        {
+          "excerpt": "  it('ranks fixed-first marginal union and joint complementary pairs', () => {",
+          "source_id": "panoref_evt_000961::span::000006"
+        },
+        {
+          "excerpt": "  it('keeps imported-room interior candidates by using triangle clearance instead of an enclosing AABB','source_id':'panoref_evt_000961::span::000006'}],",
+          "source_id": "panoref_evt_000961::span::000006"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "text": "Projection coverage engine implements deterministic proportional surface sampling, double-sided BVH occlusion rejection, marginal union/joint complementary pair ranking, and triangle-clearance interior candidate filtering."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_000961::span::000006"
+  ]
+}

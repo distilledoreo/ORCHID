@@ -1,0 +1,9 @@
+{
+  "schema_version": "orchid.pareto_release.v1",
+  "required_runs": 3,
+  "runs_evaluated": 1,
+  "release_pass": false,
+  "reasons": [
+    "need 3 paired runs, got 1"
+  ]
+}

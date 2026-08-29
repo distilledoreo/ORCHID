@@ -5,7 +5,6 @@ import os
 from pathlib import Path
 
 import pytest
-
 from endurance_harness import replay_history, script_for_generation, semantic_engine
 from live_endurance import (
     CapsuleParseRecallClient,
@@ -17,6 +16,7 @@ from live_endurance import (
     run_live_endurance,
     score_capsule_layer,
 )
+
 from memory_gateway.compaction import Event
 from memory_gateway.db import SQLiteStore
 from memory_gateway.openai_adapter import ModelProtocolError, ModelTransportError
@@ -156,6 +156,7 @@ def test_degradation_mode_records_selector_miss_and_continues(tmp_path: Path) ->
 
 def test_protocol_retry_recovers_out_of_chunk_then_succeeds() -> None:
     from live_endurance import ProtocolRetryingSelector
+
     from memory_gateway.openai_adapter import ModelProtocolError
     from memory_gateway.pipeline import SelectionResult
 
@@ -340,8 +341,8 @@ def test_absent_identity_probe_classifies_solar_only_as_leakage() -> None:
 
 
 def test_q10_is_lab_mascot_not_running_model() -> None:
-    from live_endurance import expected_recall, RECALL_QUESTIONS
     from endurance_harness import expected_state_after
+    from live_endurance import RECALL_QUESTIONS, expected_recall
 
     assert RECALL_QUESTIONS[9][0] == "q10"
     assert "mascot" in RECALL_QUESTIONS[9][1].lower()
@@ -357,6 +358,7 @@ def test_q10_is_lab_mascot_not_running_model() -> None:
 )
 def test_live_endurance_staged_run(tmp_path: Path) -> None:
     from live_endurance import SolarRecallClient, live_engine
+
     from memory_gateway.config import RuntimeConfig
 
     config = RuntimeConfig.from_env(db_path=str(tmp_path / "live_endurance.db"))

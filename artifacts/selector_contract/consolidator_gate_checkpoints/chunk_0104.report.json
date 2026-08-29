@@ -1,0 +1,49 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 105,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001111::span::000000' for item mem_c1466743e5f77e8ae1d767c5",
+        "item mem_c1466743e5f77e8ae1d767c5 text is not grounded in cited evidence",
+        "excerpt not found in source 'panoref_evt_001111::span::000000' for item mem_3170f1dddd7f459e3a7c83bd",
+        "excerpt not found in source 'panoref_evt_001111::span::000000' for item mem_fa229272679a04dd3da51b43",
+        "excerpt not found in source 'panoref_evt_001111::span::000000' for item mem_25e3acd5cf5c7945c7847c21",
+        "excerpt not found in source 'panoref_evt_001111::span::000000' for item mem_3d83f46375d012015dd75303"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The CoverageOptimizerPanel is a React component that provides a UI for coverage optimization. It accepts project, primaryPano, and onSetCaptureOrigin props. The component tracks optimization mode (default 'fixed-first'), status ('idle' | 'running' | 'complete' | 'failed'), and result state. It calculates captureOrigin from primaryPano or project.scene.panoOrigin, and derives floorRegion bounds from captureOrigin and cameraHeight. The analyze function extracts scene geometry via extractCoverageScene and runs coverage optimization, supporting cancellation and progress tracking.",
+      "envelope_json": "{\"generation\":105,\"items\":[{\"evidence\":[{\"excerpt\":\"export function CoverageOptimizerPanel({\\n  project,\\n  primaryPano,\\n  onSetCaptureOrigin,\\n}\",\"source_id\":\"panoref_evt_001111::span::000000\"}],\"id\":\"mem_c1466743e5f77e8ae1d767c5\",\"kind\":\"artifact\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"CoverageOptimizerPanel component interface: accepts project: LocationProject, primaryPano?: PanoReference, onSetCaptureOrigin?: (origin: Vec3) => void\"},{\"evidence\":[{\"excerpt\":\"const cameraHeight = project.settings.defaultCameraHeightMeters ?? 1.6;\\n  const captureOrigin = primaryPano?.origin ?? project.scene.panoOrigin;\",\"source_id\":\"panoref_evt_001111::span::000000\"}],\"id\":\"mem_3170f1dddd7f459e3a7c83bd\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"cameraHeight defaults to 1.6m from project.settings.defaultCameraHeightMeters; captureOrigin derived from primaryPano.origin or project.scene.panoOrigin\"},{\"evidence\":[{\"excerpt\":\"const floorRegion = useState<CoverageBounds>(() => ({\\n    min: [captureOrigin[0] - 5, captureOrigin[1] - cameraHeight - 0.25, captureOrigin[2] - 5],\\n    max: [captureOrigin[0] + 5, captureOrigin[1] - cameraHeight + 0.25, captureOrigin[2] + 5],\\n  }));\",\"source_id\":\"panoref_evt_001111::span::000000\"}],\"id\":\"mem_fa229272679a04dd3da51b43\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Default floorRegion bounds: min=[captureOrigin[0]-5, captureOrigin[1]-cameraHeight-0.25, captureOrigin[2]-5], max=[captureOrigin[0]+5, captureOrigin[1]-cameraHeight+0.25, captureOrigin[2]+5]\"},{\"evidence\":[{\"excerpt\":\"const analyze = async () => {\\n    taskRef.current?.cancel();\\n    ...\",\"source_id\":\"panoref_evt_001111::span::000000\"}],\"id\":\"mem_25e3acd5cf5c7945c7847c21\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"analyze function cancels previous task before starting new analysis\"},{\"evidence\":[{\"excerpt\":\"const scene = await extractCoverageScene(\\n        project,\\n        (_progress, message) => {\\n          if (analysisIdRef.current === analysisId) setStatusMessage(message);\\n        },\\n        restrictFloorRegion ? [floorRegion] : undefined,\\n      );\",\"source_id\":\"panoref_evt_001111::span::000000\"}],\"id\":\"mem_3d83f46375d012015dd75303\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"extractCoverageScene called with project, progress callback, and optional floorRegion constraint when restrictFloorRegion is enabled\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 105,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001111::span::000000' for item mem_c1466743e5f77e8ae1d767c5",
+        "item mem_c1466743e5f77e8ae1d767c5 text is not grounded in cited evidence",
+        "excerpt not found in source 'panoref_evt_001111::span::000000' for item mem_3170f1dddd7f459e3a7c83bd",
+        "excerpt not found in source 'panoref_evt_001111::span::000000' for item mem_fa229272679a04dd3da51b43",
+        "excerpt not found in source 'panoref_evt_001111::span::000000' for item mem_25e3acd5cf5c7945c7847c21",
+        "excerpt not found in source 'panoref_evt_001111::span::000000' for item mem_3d83f46375d012015dd75303"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

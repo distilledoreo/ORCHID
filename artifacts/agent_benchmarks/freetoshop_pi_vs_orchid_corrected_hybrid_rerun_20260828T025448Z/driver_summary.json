@@ -1,0 +1,46 @@
+{
+  "started_at": "2026-08-28T02:54:56.963Z",
+  "ended_at": "2026-08-28T03:03:47.804Z",
+  "reason": "arm_b_orchid_provider_response_error",
+  "max_runtime_ms": 21600000,
+  "arms": {
+    "arm_a_pi": {
+      "name": "PI_NATIVE",
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 0,
+      "provider_messages": 31,
+      "tool_calls": 90,
+      "tool_failures": 0,
+      "pi_native_compactions": 0,
+      "request_responses": 2,
+      "errors": [],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": " M apps/web/src/editor/types.ts\n M apps/web/src/tools/toolRegistry.ts\n M apps/web/src/ui/Icon.tsx\n M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md\n"
+      }
+    },
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 0,
+      "provider_messages": 24,
+      "tool_calls": 72,
+      "tool_failures": 9,
+      "pi_native_compactions": 0,
+      "request_responses": 2,
+      "errors": [
+        {
+          "at": "2026-08-28T03:03:42.748Z",
+          "category": "provider_response_error",
+          "error": "HTTP 400: {\"error\":{\"message\":\"***.BadRequestError: OpenAIException - {\\\"object\\\":\\\"error\\\",\\\"message\\\":\\\"No user query found in messages.\\\",\\\"type\\\":\\\"BadRequest\\\",\\\"param\\\":null,\\\"code\\\":400}\",\"type\":\"upstream_error\",\"param\":\"\",\"code\":\"400\"}}"
+        }
+      ],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": " M apps/web/src/tools/toolRegistry.ts\n?? BENCHMARK_GOAL.md\n"
+      }
+    }
+  }
+}

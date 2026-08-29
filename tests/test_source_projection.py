@@ -4,6 +4,7 @@ from memory_gateway.ingestion import append_novel_messages
 from memory_gateway.source_projection import (
     authoritative_source_text,
     classify_tool_text,
+    exact_citation_excerpt,
     normalize_citation_match_text,
     project_compaction_events,
     project_tool_content,
@@ -12,8 +13,8 @@ from memory_gateway.source_projection import (
 
 
 def _tool_event(content: str, sequence: int = 1) -> Event:
-    payload = '{"content":%s,"role":"tool","tool_call_id":"call_1"}' % (
-        __import__("json").dumps(content)
+    payload = __import__("json").dumps(
+        {"content": content, "role": "tool", "tool_call_id": "call_1"}
     )
     return Event(
         id=f"evt_{sequence}",
@@ -156,6 +157,23 @@ def test_normalize_citation_match_text_strips_ansi_and_decodes_unicode_escapes()
     source = "\x1b[32m✓\x1b[39m tests/uiFidelity.test.ts"
     excerpt = "\\u001b[32m✓\\u001b[39m tests/uiFidelity.test.ts"
     assert normalize_citation_match_text(excerpt) in normalize_citation_match_text(source)
+
+
+def test_exact_citation_excerpt_returns_the_stored_source_slice() -> None:
+    source = "The Latest Head adds 17 files.\n\n\x1b[32m✓\x1b[39m 51 tests passed."
+    assert exact_citation_excerpt(
+        "the latest head adds 17 files.",
+        source,
+    ) == "The Latest Head adds 17 files."
+    assert exact_citation_excerpt("✓ 51 tests passed.", source) == (
+        "✓\x1b[39m 51 tests passed."
+    )
+
+
+def test_exact_citation_excerpt_does_not_fuzzily_accept_paraphrases() -> None:
+    source = "If debug is enabled, return true."
+    assert exact_citation_excerpt("if (debug) { ... }", source) is None
+    assert exact_citation_excerpt("Debug mode returns the value.", source) is None
 
 
 def test_freeze_input_hash_matches_projected_events(tmp_path) -> None:

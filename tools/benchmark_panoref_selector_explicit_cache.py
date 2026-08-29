@@ -17,11 +17,10 @@ import argparse
 import asyncio
 import hashlib
 import json
-import math
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -43,7 +42,6 @@ from tools.benchmark_panoref_selector_prefix_reuse import (
     load_profile_inputs,
     percentile,
 )
-
 
 OUT_ROOT = ROOT / "artifacts/agent_benchmarks/panoref_selector_explicit_cache_v1"
 PLAN_PATH = OUT_ROOT / "EXPLICIT_CACHE_PLAN.json"
@@ -78,7 +76,7 @@ def canonical_bytes(value: Any) -> bytes:
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def git_commit() -> str:
@@ -709,7 +707,7 @@ def summarize(plan: dict[str, Any]) -> None:
             f"- Baseline first low-TTFT call: {b['first_low_ttft_call_index']}; warmup wall to that point: {f(b['warmup_wall_ms_to_first_low_ttft'])} ms; low-TTFT calls: {b['low_ttft_calls_lt_1000ms']}; >=5 s regressions: {b['cold_or_regression_calls_gte_5000ms']}.",
             f"- Explicit first low-TTFT call: {e['first_low_ttft_call_index']}; warmup wall to that point: {f(e['warmup_wall_ms_to_first_low_ttft'])} ms; low-TTFT calls: {e['low_ttft_calls_lt_1000ms']}; >=5 s regressions: {e['cold_or_regression_calls_gte_5000ms']}.",
             "- Changing evidence durability is measured by the full 148-call trace. Explicit cache-hit, slot, eviction, and session counters were not emitted by the OpenAI-compatible SSE response; the recorded backend instance identifier is the loaded model instance, not a cache-hit claim.",
-            f"- The narrow short-idle and post-cleanup check is recorded separately when present; Solar-between-selector-calls was not run because it would change the existing apparatus ordering (the selector stage precedes Solar).",
+            "- The narrow short-idle and post-cleanup check is recorded separately when present; Solar-between-selector-calls was not run because it would change the existing apparatus ordering (the selector stage precedes Solar).",
             "",
             "## Decision equivalence",
             "",

@@ -27,12 +27,11 @@ if str(_TESTS) not in sys.path:
     sys.path.insert(0, str(_TESTS))
 
 import httpx
-
 from endurance_harness import (
     CHECKPOINT_GENERATIONS,
-    FactKind,
     PROJECT_ID,
     THREAD_ID,
+    FactKind,
     WorldState,
     _append,
     _lineage_depth,
@@ -42,6 +41,7 @@ from endurance_harness import (
     replay_history,
     script_for_generation,
 )
+
 from memory_gateway.compaction import CompactionWorker, Event, queue_snapshot_job
 from memory_gateway.config import RuntimeConfig
 from memory_gateway.context import ContextAssembler, estimate_tokens
@@ -931,7 +931,9 @@ class CapsuleParseRecallClient:
         capsule = ""
         for message in messages:
             text = str(message.get("content") or "")
-            if text.startswith("PERSISTENT MEMORY CAPSULE"):
+            if text.startswith("DERIVED FACTUAL MEMORY") or text.startswith(
+                "PERSISTENT MEMORY CAPSULE"
+            ):
                 capsule = text
                 break
         body = capsule.split("\n\n", 1)[-1]

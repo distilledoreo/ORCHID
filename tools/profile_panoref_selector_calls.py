@@ -26,7 +26,7 @@ import math
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -43,7 +43,6 @@ from memory_gateway.pipeline_adapters import (
     selector_response_format_for_chunk,
 )
 from tools.phase3_2_pipeline_ablation import load_events, source_items
-
 
 REPLAY = ROOT / (
     "artifacts/agent_benchmarks/panoref_direct_generalization_bounded_v2/"
@@ -110,7 +109,7 @@ def git_commit() -> str:
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def write_json(path: Path, value: Any) -> None:

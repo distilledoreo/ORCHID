@@ -72,9 +72,9 @@ class RuntimeConfig:
     worker_poll_seconds: float
     model_timeout_seconds: float
     backend_context_limit_tokens: int = 128_000
-    foreground_target_tokens: int = 22_000
+    foreground_target_tokens: int = 32_000
     initial_compaction_threshold_tokens: int = 8_000
-    foreground_hard_limit_tokens: int = 64_000
+    foreground_hard_limit_tokens: int = 48_000
     recent_tail_target_tokens: int = 8_000
     capsule_max_tokens: int = 2_048
     selector_context_tokens: int = 32_768
@@ -90,8 +90,8 @@ class RuntimeConfig:
     cold_memory_telemetry_queue_size: int = 256
     cold_memory_telemetry_batch_size: int = 32
     cold_memory_telemetry_flush_ms: int = 5
-    # The legacy canonicalizer remains enabled by default for compatibility.
-    # The selected selector -> consolidator path can explicitly bypass it.
+    # Frozen semantic evidence currently requires the canonicalizer to remain
+    # enabled. Experimental bypasses are outside the sealed core-goal path.
     canonicalizer_enabled: bool = True
     compaction_context_tokens: int = 32_768
     compaction_reserved_output_tokens: int = 8_192
@@ -135,11 +135,11 @@ class RuntimeConfig:
             "ORCHID_BACKEND_CONTEXT_LIMIT_TOKENS",
             int(legacy_context) if legacy_context else 128_000,
         )
-        foreground_target_tokens = _int_env("ORCHID_FOREGROUND_TARGET_TOKENS", 22_000)
+        foreground_target_tokens = _int_env("ORCHID_FOREGROUND_TARGET_TOKENS", 32_000)
         initial_compaction_threshold_tokens = _int_env(
             "ORCHID_INITIAL_COMPACTION_THRESHOLD_TOKENS", 8_000
         )
-        foreground_hard_limit_tokens = _int_env("ORCHID_FOREGROUND_HARD_LIMIT_TOKENS", 64_000)
+        foreground_hard_limit_tokens = _int_env("ORCHID_FOREGROUND_HARD_LIMIT_TOKENS", 48_000)
         recent_tail_target_tokens = _int_env("ORCHID_RECENT_TAIL_TARGET_TOKENS", 8_000)
         capsule_max_tokens = _int_env("ORCHID_CAPSULE_MAX_TOKENS", 2_048)
         capsule_verification_enabled = _bool_env("ORCHID_CAPSULE_VERIFICATION_ENABLED", True)

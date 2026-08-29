@@ -23,7 +23,7 @@ import math
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -44,7 +44,6 @@ from tools.benchmark_panoref_selector_prefix_reuse import (
     file_sha256,
     load_profile_inputs,
 )
-
 
 OUT_ROOT = ROOT / "artifacts/agent_benchmarks/panoref_selector_request_encoding_v1"
 PLAN_PATH = OUT_ROOT / "REQUEST_ENCODING_PLAN.json"
@@ -88,7 +87,7 @@ def digest(value: Any) -> str:
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def git_commit() -> str:
@@ -365,7 +364,7 @@ def parse_response(content: str, allowed_ids: list[str], drop_mode: bool) -> tup
     if len(selected) != len(set(selected)):
         return None, f"{key} contained duplicate IDs"
     if not set(selected).issubset(set(allowed_ids)):
-        return None, f"selector returned an ID outside the current chunk"
+        return None, "selector returned an ID outside the current chunk"
     return selected, None
 
 
@@ -549,8 +548,8 @@ def summarize(rows: list[dict[str, Any]], planned: int, historical_by_chunk: dic
         "output_tokens_total": sum(output_tokens),
         "input_tokens_p50": pct(input_tokens, 0.5),
         "output_tokens_p50": pct(output_tokens, 0.5),
-        "historical_input_tokens_total": sum(float((historical_by_chunk[row["chunk_index"]].get("input_tokens") or 0)) for row in rows),
-        "historical_output_tokens_total": sum(float((historical_by_chunk[row["chunk_index"]].get("output_tokens") or 0)) for row in rows),
+        "historical_input_tokens_total": sum(float(historical_by_chunk[row["chunk_index"]].get("input_tokens") or 0) for row in rows),
+        "historical_output_tokens_total": sum(float(historical_by_chunk[row["chunk_index"]].get("output_tokens") or 0) for row in rows),
         "failed_rows": [
             {"chunk_index": row["chunk_index"], "error_category": row["error_category"], "error": row["error"]}
             for row in rows

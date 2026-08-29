@@ -140,6 +140,28 @@ CREATE TABLE IF NOT EXISTS model_runs (
     created_at TEXT NOT NULL
 );
 
+-- Exact-retry cache for byte-identical selector, canonicalizer, and
+-- consolidator results. Cached canonicalizer hits do not authorize removing
+-- that stage without a full-trace semantic gate.
+CREATE TABLE IF NOT EXISTS stage_result_cache (
+    cache_key TEXT PRIMARY KEY,
+    stage TEXT NOT NULL,
+    model TEXT NOT NULL,
+    prompt_version TEXT NOT NULL,
+    input_hash TEXT NOT NULL,
+    schema_hash TEXT NOT NULL,
+    settings_hash TEXT NOT NULL,
+    system_prompt_hash TEXT NOT NULL,
+    output_json TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_stage_result_cache_lookup
+    ON stage_result_cache(
+        stage, model, prompt_version, input_hash, schema_hash, settings_hash,
+        system_prompt_hash
+    );
+
 CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
     value_json TEXT NOT NULL,
@@ -358,6 +380,7 @@ class SQLiteStore:
             self._migrate_compaction_jobs(connection)
             self._migrate_model_runs(connection)
             self._migrate_cold_retrieval_runs(connection)
+            self._migrate_stage_result_cache(connection)
 
     @staticmethod
     def _backfill_long_term_memory_index(connection: sqlite3.Connection) -> None:
@@ -414,6 +437,34 @@ class SQLiteStore:
             )
         if "last_prompt_cache_json" not in columns:
             connection.execute("ALTER TABLE threads ADD COLUMN last_prompt_cache_json TEXT")
+
+    @staticmethod
+    def _migrate_stage_result_cache(connection: sqlite3.Connection) -> None:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS stage_result_cache (
+                cache_key TEXT PRIMARY KEY,
+                stage TEXT NOT NULL,
+                model TEXT NOT NULL,
+                prompt_version TEXT NOT NULL,
+                input_hash TEXT NOT NULL,
+                schema_hash TEXT NOT NULL,
+                settings_hash TEXT NOT NULL,
+                system_prompt_hash TEXT NOT NULL,
+                output_json TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_stage_result_cache_lookup
+                ON stage_result_cache(
+                    stage, model, prompt_version, input_hash, schema_hash,
+                    settings_hash, system_prompt_hash
+                )
+            """
+        )
 
     @staticmethod
     def _migrate_compaction_jobs(connection: sqlite3.Connection) -> None:
@@ -2264,6 +2315,94 @@ class SQLiteStore:
                 ),
             )
         return run_id
+
+    def lookup_stage_result(
+        self,
+        *,
+        stage: str,
+        model: str,
+        prompt_version: str,
+        input_hash: str,
+        schema_hash: str,
+        settings_hash: str,
+        system_prompt_hash: str,
+    ) -> dict[str, Any] | None:
+        with self.connect() as connection:
+            row = connection.execute(
+                """
+                SELECT output_json
+                FROM stage_result_cache
+                WHERE stage = ? AND model = ? AND prompt_version = ?
+                  AND input_hash = ? AND schema_hash = ? AND settings_hash = ?
+                  AND system_prompt_hash = ?
+                """,
+                (
+                    stage,
+                    model,
+                    prompt_version,
+                    input_hash,
+                    schema_hash,
+                    settings_hash,
+                    system_prompt_hash,
+                ),
+            ).fetchone()
+        if row is None:
+            return None
+        try:
+            payload = json.loads(row["output_json"])
+        except json.JSONDecodeError:
+            return None
+        if not isinstance(payload, dict):
+            return None
+        return payload
+
+    def store_stage_result(
+        self,
+        *,
+        stage: str,
+        model: str,
+        prompt_version: str,
+        input_hash: str,
+        schema_hash: str,
+        settings_hash: str,
+        system_prompt_hash: str,
+        output: dict[str, Any],
+    ) -> None:
+        cache_key = content_hash(
+            canonical_json(
+                {
+                    "stage": stage,
+                    "model": model,
+                    "prompt_version": prompt_version,
+                    "input_hash": input_hash,
+                    "schema_hash": schema_hash,
+                    "settings_hash": settings_hash,
+                    "system_prompt_hash": system_prompt_hash,
+                }
+            )
+        )
+        with self.transaction(immediate=True) as connection:
+            connection.execute(
+                """
+                INSERT OR REPLACE INTO stage_result_cache(
+                    cache_key, stage, model, prompt_version, input_hash,
+                    schema_hash, settings_hash, system_prompt_hash, output_json,
+                    created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    cache_key,
+                    stage,
+                    model,
+                    prompt_version,
+                    input_hash,
+                    schema_hash,
+                    settings_hash,
+                    system_prompt_hash,
+                    canonical_json(output),
+                    utc_now(),
+                ),
+            )
 
     def update_model_run(self, run_id: str, **updates: Any) -> None:
         allowed = {

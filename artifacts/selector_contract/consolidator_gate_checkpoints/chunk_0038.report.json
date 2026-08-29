@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 39,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "The auditor is currently reviewing the committed diff and evidence, deliberately avoiding changes to the underlying candidate until the review reports. Once the audit completes, each concrete gap will be addressed and the revised state submitted through a fresh audit.",
+      "envelope_json": "{\"generation\":39,\"items\":[{\"evidence\":[{\"excerpt\":\"The auditor is still working through the committed diff and evidence.\",\"source_id\":\"panoref_evt_000975\"},{\"excerpt\":\"I’m deliberately not changing the candidate underneath it; once it reports, I’ll address each concrete gap and send the revised state through a fresh audit.\",\"source_id\":\"panoref_evt_000975\"}],\"id\":\"mem_e0cd1d9f29a18162eb0476f8\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"The auditor is currently reviewing the committed diff and evidence, deliberately avoiding changes to the underlying candidate until the review reports. Once the audit completes, each concrete gap will be addressed and the revised state submitted through a fresh audit.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

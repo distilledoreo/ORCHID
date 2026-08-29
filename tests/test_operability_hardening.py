@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import threading
 import time
+from collections.abc import Iterator
 from contextlib import contextmanager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Iterator
 
 import httpx
 

@@ -22,8 +22,8 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from memory_gateway.cold_memory import FTS5ColdMemoryRetriever
-from memory_gateway.context import ContextAssembler
 from memory_gateway.cold_telemetry import BufferedColdMemoryTelemetry
+from memory_gateway.context import ContextAssembler
 
 try:
     from tests.cold_memory_phase1_benchmark import (

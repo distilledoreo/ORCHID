@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-08-28T13:35:28.224Z",
+  "elapsed_ms": 8,
+  "reason": "launch",
+  "arms": {
+    "arm_a_pi": {
+      "name": "PI_NATIVE",
+      "pid": 820691,
+      "launch_count": 1,
+      "prompt_count": 0,
+      "continuation_count": 0,
+      "provider_messages": 0,
+      "tool_calls": 0,
+      "tool_failures": 0,
+      "pi_native_compactions": 0,
+      "request_responses": 0,
+      "errors": [],
+      "last_usage": null,
+      "last_events": [],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": "?? BENCHMARK_GOAL.md\n"
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 148,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "projector-occlusion PR #23 is MERGEABLE/CLEAN with successful Netlify checks after rebasing onto origin/main; adds world-space allowed-floor regions, connected-component filtering, candidate/refinement enforcement, validation, and stale-analysis protection; final commit c1f6c8d published; README updated and coverage benchmark guide added; 42 files, 373/373 tests passed; TypeScript and production build passed; 22 full browser scenarios passed including final allowed-floor workflow on desktop and phone; real WebGL shader compilation and pixel-readback tests passed; real Blender production set verification passed: 171.2 MB, 191 mesh nodes, 36,788 triangles, 24,576 fine samples in 36.9 seconds, no browser errors; final build→reference→shots→export smoke produced valid 33,120,308-byte package; six adversarial audit rounds completed, four found actionable gaps fixed, rounds five and six found no remaining concrete holes; 688,000 tokens used over approximately 1 hour 4 minutes.",
+      "envelope_json": "{\"generation\":148,\"items\":[{\"evidence\":[{\"excerpt\":\"Published final commit `c1f6c8d`. [PR #23](https://github.com/distilledoreo/PanoRef/pull/23) is `MERGEABLE/CLEAN` with successful Netlify checks.\",\"source_id\":\"panoref_evt_001195\"}],\"id\":\"mem_e9999b599954facdac52d691\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"projector-occlusion PR #23 is MERGEABLE/CLEAN with successful Netlify checks; final commit c1f6c8d published.\"},{\"evidence\":[{\"excerpt\":\"Real Blender production set: 171.2 MB, 191 mesh nodes, 36,788 triangles.\\n- Full optimizer: 24,576 fine samples in 36.9 seconds, with no browser errors.\\n- Final build→reference→shots→export smoke produced a valid 33,120,308-byte package.\",\"source_id\":\"panoref_evt_001195\"}],\"id\":\"mem_edb85811c4013fd4e5460d7e\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Real Blender production set verification passed: 171.2 MB, 191 mesh nodes, 36,788 triangles; 24,576 fine samples in 36.9 seconds, no browser errors; final build→reference→shots→export smoke produced valid 33,120,308-byte package.\"},{\"evidence\":[{\"excerpt\":\"Four rounds found actionable gaps, all were fixed; rounds five and six found no remaining concrete holes.\",\"source_id\":\"panoref_evt_001195\"}],\"id\":\"mem_47dbd189e4e8a19fad8c5cf9\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"Six adversarial audit rounds completed; four rounds found actionable gaps fixed; rounds five and six found no remaining concrete holes.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

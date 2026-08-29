@@ -16,7 +16,7 @@ import json
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -28,10 +28,8 @@ if str(ROOT) not in sys.path:
 
 from memory_gateway.pipeline_adapters import selector_response_format_for_chunk
 from tools.benchmark_panoref_selector_explicit_cache import (
-    build_request,
     call_selector,
     canonical_bytes,
-    digest,
     metrics,
     write_json,
 )
@@ -40,9 +38,7 @@ from tools.benchmark_panoref_selector_prefix_reuse import (
     build_chunk_lookup,
     file_sha256,
     load_profile_inputs,
-    percentile,
 )
-
 
 OUT_ROOT = ROOT / "artifacts/agent_benchmarks/panoref_selector_llama_server_ab_v1"
 PLAN_PATH = OUT_ROOT / "LLAMA_SERVER_AB_PLAN.json"
@@ -61,7 +57,7 @@ COLD_TTFT_MS = 5_000.0
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 def git_commit() -> str:

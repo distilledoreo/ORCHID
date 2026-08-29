@@ -1,0 +1,9 @@
+{
+  "status": "INVALIDATED",
+  "reason": "provider_configuration_and_quota_failure",
+  "details": {
+    "PI_NATIVE": "Agnes returned insufficient_user_quota before any tool calls.",
+    "ORCHID": "Gateway upstream URL duplicated /v1 and returned HTTP 404 before any tool calls."
+  },
+  "scorable": false
+}

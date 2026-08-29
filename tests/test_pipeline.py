@@ -38,6 +38,7 @@ from memory_gateway.pipeline_adapters import (
     OpenAICompatSelectorEngine,
     _chunk_events,
     _event_payload,
+    base_record_context_for_packet,
     canonicalizer_response_format_for_batch,
     consolidator_response_format_for_sources,
     selector_response_format_for_chunk,
@@ -78,6 +79,27 @@ class Selector:
             prompt_version="selector-v1",
             generation_settings={},
         )
+
+
+class EmptySelector:
+    async def select(self, *, events):
+        return SelectionResult(
+            selected_event_ids=(),
+            input_hash="selector-empty",
+            output_hash="selector-empty-out",
+            model_identity="fake-selector",
+            prompt_version="selector-v1",
+            generation_settings={},
+        )
+
+
+class RecordingConsolidator:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    async def consolidate(self, *, base_capsule, events, snapshot_end_event_id, packet):
+        self.calls += 1
+        raise AssertionError("consolidator must not run for an empty selection")
 
 
 class Canonicalizer:
@@ -593,6 +615,66 @@ def test_lossless_pipeline_moves_authoritative_data_in_software() -> None:
     assert engine.last_telemetry["validation_ms"] >= 0
 
 
+def test_empty_selection_carries_base_capsule_without_consolidator() -> None:
+    consolidator = RecordingConsolidator()
+    base_capsule = Capsule(
+        id="cap-active",
+        thread_id="thread-1",
+        content="prior capsule",
+        capsule_hash=sha256(b"prior capsule").hexdigest(),
+        covered_end_event_id="event-0",
+    )
+    engine = LosslessCompactionEngine(EmptySelector(), Canonicalizer(), consolidator)
+    events = [event("event-1", 1), event("event-2", 2)]
+    result = asyncio.run(
+        engine.compact(
+            base_capsule=base_capsule,
+            events=events,
+            snapshot_end_event_id="event-2",
+        )
+    )
+    assert consolidator.calls == 0
+    assert result.content == "prior capsule"
+    assert result.covered_event_ids == ("event-1", "event-2")
+    assert result.evidence_event_ids == ()
+    assert result.prompt_version == "consolidator-carried-empty-selection-v1"
+    assert engine.last_telemetry is not None
+    assert engine.last_telemetry["canonicalizer"]["status"] == "SKIPPED"
+    assert engine.last_telemetry["consolidator"]["status"] == "SKIPPED"
+
+
+def test_compose_incremental_content_does_not_duplicate_settled_text() -> None:
+    from memory_gateway.pipeline_adapters import compose_incremental_content
+
+    settled = [{"text": "lease is 900"}, {"text": "owner is Disti"}]
+    composed = compose_incremental_content(
+        model_content="generation is 2",
+        settled_items=settled,
+    )
+    assert composed.startswith("lease is 900")
+    assert "owner is Disti" in composed
+    assert compose_incremental_content(
+        model_content="lease is 900\n\ngeneration is 2",
+        settled_items=settled[:1],
+    ) == "lease is 900\n\ngeneration is 2"
+
+
+def test_compose_incremental_content_omits_superseded_prior_text() -> None:
+    from memory_gateway.pipeline_adapters import compose_incremental_content
+
+    composed = compose_incremental_content(
+        model_content="lease is 900",
+        settled_items=[
+            {"id": "mem_old", "text": "lease is 30"},
+            {"id": "mem_owner", "text": "owner is Disti"},
+        ],
+        patch_items=[{"supersedes_item_ids": ["mem_old"]}],
+    )
+    assert "lease is 30" not in composed
+    assert "owner is Disti" in composed
+    assert "lease is 900" in composed
+
+
 def test_lossless_pipeline_can_bypass_legacy_canonicalizer() -> None:
     engine = LosslessCompactionEngine(Selector(), None, BypassConsolidator())
 
@@ -754,7 +836,166 @@ def test_consolidator_receives_the_admission_citation_view() -> None:
 
     event_payload = client.input_payload["lossless_packet"]["authoritative_events"][0]
     assert "content" not in event_payload
+    assert "content_hash" not in event_payload
+    assert "source_start" not in event_payload
+    assert "parent_content_hash" not in event_payload
+    assert set(event_payload) <= {"id", "citation_text", "event_type", "role"}
     assert event_payload["citation_text"] == "Script completed\nExit code: 0\n51 tests passed"
+
+
+def test_settled_items_are_those_whose_evidence_is_outside_the_new_window() -> None:
+    from memory_gateway.pipeline_adapters import settled_items_for_new_sources
+
+    items = (
+        {
+            "id": "mem_keep",
+            "kind": "state",
+            "status": "active",
+            "text": "lease is 900",
+            "evidence": [{"source_id": "old-event", "excerpt": "lease is 900"}],
+        },
+        {
+            "id": "mem_overlap",
+            "kind": "state",
+            "status": "active",
+            "text": "owner is Disti",
+            "evidence": [{"source_id": "new-event", "excerpt": "owner is Disti"}],
+        },
+    )
+    settled = settled_items_for_new_sources(items, ("new-event",))
+    assert [item["id"] for item in settled] == ["mem_keep"]
+
+
+def test_consolidator_sends_only_bounded_record_context_and_returns_patch_items() -> None:
+    source = event("new-event", 2)
+    canonical_result = asyncio.run(Canonicalizer().canonicalize(events=[source]))
+    settled = {
+        "id": "mem_keep",
+        "kind": "state",
+        "status": "active",
+        "text": "lease is 900",
+        "evidence": [{"source_id": "old-event", "excerpt": "lease is 900"}],
+        "supersedes_item_ids": [],
+    }
+    base_capsule = Capsule(
+        id="cap-active",
+        thread_id="thread-1",
+        content="prior capsule",
+        capsule_hash=sha256(b"prior capsule").hexdigest(),
+        covered_end_event_id="old-event",
+        memory_items=(settled,),
+    )
+    client = StructuredClient(
+        {
+            "content": "updated capsule",
+            "evidence_event_ids": ["new-event"],
+            "items": [
+                {
+                    "id": "mem_new",
+                    "kind": "state",
+                    "status": "active",
+                    "text": "generation is 2",
+                    "evidence": [{"source_id": "new-event", "excerpt": "generation is 2"}],
+                }
+            ],
+        }
+    )
+    result = asyncio.run(
+        OpenAICompatConsolidatorEngine(client).consolidate(
+            base_capsule=base_capsule,
+            events=[source],
+            snapshot_end_event_id="new-event",
+            packet=build_lossless_packet(canonical_result, [source]),
+        )
+    )
+    assert "settled_items" not in client.input_payload
+    assert client.input_payload["base_record_context"] == []
+    assert client.input_payload["base_record_context_truncated"] is True
+    assert "content" not in client.input_payload["base_capsule"]
+    assert "lease is 900" in result.content
+    assert [item["id"] for item in result.memory_items] == ["mem_new"]
+
+
+def test_base_record_context_is_relevant_bounded_and_has_no_old_evidence() -> None:
+    source = event("new-event", 2)
+    canonical_result = asyncio.run(Canonicalizer().canonicalize(events=[source]))
+    packet = build_lossless_packet(canonical_result, [source])
+    items = [
+        {
+            "id": "mem_relevant",
+            "kind": "state",
+            "status": "active",
+            "text": "content-new-event changes owner",
+            "evidence": [{"source_id": "old-event", "excerpt": "old evidence"}],
+        },
+        {
+            "id": "mem_pinned",
+            "kind": "blocker",
+            "status": "active",
+            "text": "unrelated blocker",
+            "evidence": [{"source_id": "older-event", "excerpt": "private"}],
+        },
+        {
+            "id": "mem_irrelevant",
+            "kind": "artifact",
+            "status": "active",
+            "text": "completely unrelated artifact",
+            "evidence": [{"source_id": "older-event", "excerpt": "private"}],
+        },
+    ]
+    context = base_record_context_for_packet(items, packet, max_records=2)
+    assert [item["id"] for item in context] == ["mem_relevant", "mem_pinned"]
+    assert all(set(item) == {"id", "kind", "status", "text"} for item in context)
+    assert all("evidence" not in item for item in context)
+
+
+def test_capsule_from_row_loads_active_v2_items() -> None:
+    from memory_gateway.admission.envelope import (
+        CAPSULE_SCHEMA_V2,
+        CapsuleEnvelopeV2,
+        MemoryEvidence,
+        MemoryItemV2,
+        envelope_to_dict,
+    )
+    from memory_gateway.db import canonical_json
+
+    envelope = CapsuleEnvelopeV2(
+        schema_version=CAPSULE_SCHEMA_V2,
+        generation=1,
+        items=(
+            MemoryItemV2(
+                id="mem_keep",
+                kind="state",
+                status="active",
+                text="lease is 900",
+                evidence=(MemoryEvidence(source_id="old-event", excerpt="lease is 900"),),
+            ),
+            MemoryItemV2(
+                id="mem_old",
+                kind="state",
+                status="superseded",
+                text="lease is 30",
+                evidence=(MemoryEvidence(source_id="older-event", excerpt="lease is 30"),),
+            ),
+        ),
+    )
+    capsule = Capsule.from_row(
+        {
+            "id": "cap-1",
+            "thread_id": "thread-1",
+            "content": "rendered",
+            "capsule_hash": "hash",
+            "covered_end_event_id": "old-event",
+            "model_metadata_json": canonical_json(
+                {
+                    "semantic_admission_ok": True,
+                    "envelope_json": canonical_json(envelope_to_dict(envelope)),
+                }
+            ),
+        }
+    )
+    assert capsule is not None
+    assert [item["id"] for item in capsule.memory_items] == ["mem_keep"]
 
 
 def test_consolidator_accepts_semantic_citation_subset() -> None:
@@ -815,6 +1056,8 @@ def test_consolidator_constrains_citations_to_exact_supplied_source_ids() -> Non
         "evidence_event_ids"
     ]["items"]["enum"] == [source_span.id]
     assert base_capsule.id not in json.dumps(schema)
+    assert client.input_payload["base_capsule"]["content"] == "prior capsule"
+    assert "settled_items" not in client.input_payload
 
 
 def test_consolidator_accepts_optional_retire_memories() -> None:
@@ -844,6 +1087,7 @@ def test_consolidator_accepts_optional_retire_memories() -> None:
         )
     )
 
+    assert result.content == "rendered"
     assert result.retire_memories == (
         RetireMemory(
             content="renew_lease must verify worker ownership",
@@ -889,7 +1133,6 @@ def test_adapter_consolidator_failure_leaves_active_capsule_untouched(
     tmp_path: Path,
 ) -> None:
     store, old_id, job_id = store_with_old_capsule(tmp_path)
-    events = [event("event-1", 1), event("event-2", 2)]
     client = StructuredClient(
         {"content": "rendered", "evidence_event_ids": ["missing"]}
     )

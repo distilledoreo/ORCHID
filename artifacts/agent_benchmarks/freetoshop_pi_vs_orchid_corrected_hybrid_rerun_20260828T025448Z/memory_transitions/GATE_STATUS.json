@@ -1,0 +1,9 @@
+{
+  "status": "PENDING",
+  "required": 3,
+  "promotions": 1,
+  "clean_promotions": 1,
+  "failures": 0,
+  "invariant_failures": 0,
+  "observed_at": "2026-08-28T03:03:44.502+00:00"
+}

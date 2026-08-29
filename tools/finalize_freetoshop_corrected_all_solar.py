@@ -10,9 +10,14 @@ import subprocess
 import sys
 import time
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+from memory_gateway.vram import (
+    assemble_paired_summary_from_jsonl,
+    write_paired_summary,
+)
 
 SCRIPT_ROOT = Path(__file__).resolve().parents[1]
 if str(SCRIPT_ROOT) not in sys.path:
@@ -22,7 +27,6 @@ from tools.benchmark_freetoshop_corrected_all_solar import (
     ARTIFACT,
     DB_PATH,
     ORACLE_ROOT,
-    PROVIDER_CONTEXT_TOKENS,
     STAGE,
     git_snapshot,
     inspect_state,
@@ -32,7 +36,6 @@ from tools.benchmark_freetoshop_corrected_all_solar import (
     sha256_file,
     write_json,
 )
-
 
 PRICING_USD_PER_MILLION = {
     "input": float(os.environ.get("BENCHMARK_INPUT_USD_PER_MILLION", "0")),
@@ -497,6 +500,18 @@ def collect() -> None:
             "generations": database.get("generations", []),
         },
     )
+
+    vram_samples = ARTIFACT / "hardware/vram_samples.jsonl"
+    isolated_env = os.environ.get("BENCHMARK_VRAM_ARM_ISOLATED")
+    arm_isolated = None if isolated_env is None else isolated_env == "1"
+    vram_payload = assemble_paired_summary_from_jsonl(
+        vram_samples,
+        main_gpu_index=int(os.environ.get("BENCHMARK_MAIN_GPU_INDEX", "0")),
+        selector_gpu_index=int(os.environ.get("BENCHMARK_SELECTOR_GPU_INDEX", "1")),
+        arm_isolated=arm_isolated,
+    )
+    if vram_payload is not None:
+        write_paired_summary(ARTIFACT / "hardware/paired_vram_summary.json", vram_payload)
 
     paid_memory_stages = [
         row

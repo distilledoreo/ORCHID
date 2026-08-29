@@ -9,7 +9,12 @@ from typing import Any, Protocol
 from ..compaction import CompactionResult, Event
 from ..context import estimate_tokens
 from ..db import canonical_json
-from ..source_projection import augment_source_text_aliases, authoritative_source_text
+from ..source_projection import (
+    augment_source_text_aliases,
+    authoritative_source_text,
+    exact_citation_excerpt,
+    resolve_citation_source_id,
+)
 from .envelope import (
     CAPSULE_SCHEMA_V2,
     CapsuleEnvelopeV2,
@@ -88,6 +93,7 @@ class CapsuleAdmissionResult:
     envelope_json: str | None
     deterministic_violations: tuple[str, ...] = ()
     semantic_violations: tuple[dict[str, Any], ...] = ()
+    deterministic_evidence_repairs: int = 0
     shadow_only: bool = False
     error: str | None = None
 
@@ -108,6 +114,10 @@ class CapsuleAdmissionResult:
             payload["deterministic_violations"] = list(self.deterministic_violations)
         if self.semantic_violations:
             payload["semantic_violations"] = list(self.semantic_violations)
+        if self.deterministic_evidence_repairs:
+            payload["deterministic_evidence_repairs"] = (
+                self.deterministic_evidence_repairs
+            )
         if self.error:
             payload["semantic_rejection"] = self.error
         return payload
@@ -330,6 +340,70 @@ def build_source_text_map(events: list[Event]) -> dict[str, str]:
     )
 
 
+def canonicalize_candidate_evidence(
+    candidate_items: tuple[dict[str, Any], ...],
+    *,
+    sources: dict[str, str],
+    allowed_source_ids: frozenset[str],
+) -> tuple[tuple[dict[str, Any], ...], int]:
+    """Replace formatting-normalized quotes with exact stored substrings.
+
+    A quote may be relinked to another source in the same immutable delta only
+    when that source is the unique full normalized match. No fuzzy or semantic
+    repair is permitted, so unsupported evidence continues to fail admission.
+    """
+
+    repaired_items: list[dict[str, Any]] = []
+    repair_count = 0
+    for candidate in candidate_items:
+        item = dict(candidate)
+        raw_evidence = candidate.get("evidence")
+        if not isinstance(raw_evidence, list):
+            repaired_items.append(item)
+            continue
+        repaired_evidence: list[Any] = []
+        for raw_entry in raw_evidence:
+            if not isinstance(raw_entry, dict):
+                repaired_evidence.append(raw_entry)
+                continue
+            entry = dict(raw_entry)
+            source_id = entry.get("source_id")
+            excerpt = entry.get("excerpt")
+            if not isinstance(source_id, str) or not isinstance(excerpt, str):
+                repaired_evidence.append(entry)
+                continue
+            resolved = resolve_citation_source_id(source_id, allowed_source_ids)
+            preferred = resolved if resolved in allowed_source_ids else None
+            selected: tuple[str, str] | None = None
+            matches: list[tuple[str, str]] = []
+            if preferred is not None:
+                exact = exact_citation_excerpt(excerpt, sources.get(preferred, ""))
+                if exact is not None:
+                    selected = (preferred, exact)
+            if selected is None:
+                for candidate_source_id in sorted(allowed_source_ids):
+                    if candidate_source_id == preferred:
+                        continue
+                    exact = exact_citation_excerpt(
+                        excerpt,
+                        sources.get(candidate_source_id, ""),
+                    )
+                    if exact is not None:
+                        matches.append((candidate_source_id, exact))
+            if selected is None and len(matches) == 1:
+                selected = matches[0]
+            if selected is not None:
+                selected_source_id, exact = selected
+                if selected_source_id != source_id or exact != excerpt:
+                    repair_count += 1
+                entry["source_id"] = selected_source_id
+                entry["excerpt"] = exact
+            repaired_evidence.append(entry)
+        item["evidence"] = repaired_evidence
+        repaired_items.append(item)
+    return tuple(repaired_items), repair_count
+
+
 def base_items_from_capsule_metadata(
     model_metadata: dict[str, Any] | None,
 ) -> tuple[MemoryItemV2, ...]:
@@ -496,6 +570,11 @@ async def admit_capsule_v2(
             error="FAILED: semantic_rejection",
         )
 
+    candidate_items, evidence_repairs = canonicalize_candidate_evidence(
+        candidate_items,
+        sources=sources,
+        allowed_source_ids=allowed_source_ids,
+    )
     envelope = build_envelope(
         generation=generation,
         candidate_items=candidate_items,
@@ -517,6 +596,7 @@ async def admit_capsule_v2(
             envelope=envelope,
             envelope_json=canonical_json(envelope_to_dict(envelope)),
             deterministic_violations=deterministic_violations,
+            deterministic_evidence_repairs=evidence_repairs,
             shadow_only=shadow_only,
             error="FAILED: semantic_rejection",
         )
@@ -549,6 +629,7 @@ async def admit_capsule_v2(
             envelope=envelope,
             envelope_json=canonical_json(envelope_to_dict(envelope)),
             semantic_violations=semantic.violations,
+            deterministic_evidence_repairs=evidence_repairs,
             shadow_only=shadow_only,
             error="FAILED: semantic_rejection",
         )
@@ -559,6 +640,7 @@ async def admit_capsule_v2(
         rendered_content=promotion_content,
         envelope=envelope,
         envelope_json=canonical_json(envelope_to_dict(envelope)),
+        deterministic_evidence_repairs=evidence_repairs,
         shadow_only=shadow_only,
     )
 

@@ -1,0 +1,41 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 72,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001013::span::000001' for item mem_c22178819dbda5cb2d5d482e",
+        "excerpt not found in source 'panoref_evt_001013::span::000001' for item mem_b27667db26d18f953d21f9fe"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Refactored floor selection logic in candidateGenerator.ts to extract floor eligibility checks into dedicated helper functions: isSelectedFloor() for triangle-based selection and floorPointIsAllowed() for bounding-box region validation, while applying patches successfully.",
+      "envelope_json": "{\"generation\":72,\"items\":[{\"evidence\":[{\"excerpt\":\"function floorPointIsAllowed(regions: readonly CoverageBounds[] | undefined, x: number, floorY: number, z: number): boolean {\\n  return !regions || regions.some((region) => (\\n    x >= region.min[0] && x <= region.max[0]\\n    && floorY >= region.min[1] && floorY <= region.max[1]\\n    && z >= region.min[2] && z <= region.max[2]\\n  ));\\n}\",\"source_id\":\"panoref_evt_001013::span::000001\"}],\"id\":\"mem_c22178819dbda5cb2d5d482e\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Added floorPointIsAllowed helper function that checks if a point is within any allowed floor region (CoverageBounds) by verifying x/y/z coordinates against min/max bounds\"},{\"evidence\":[{\"excerpt\":\"if (floorY === undefined || !floorPointIsAllowed(scene.allowedFloorRegions, x, floorY, z)) continue;\",\"source_id\":\"panoref_evt_001013::span::000001\"}],\"id\":\"mem_e3c361f14590bfa3d124cac0\",\"kind\":\"constraint\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Floor point validation now requires both defined floorY and passing floorPointIsAllowed check against scene.allowedFloorRegions\"},{\"evidence\":[{\"excerpt\":\"const isSelectedFloor = (triangleIndex: number): boolean => {\\n    if (selectedFlag !== undefined) return selectedFloorFlags[triangleIndex] === selectedFlag;\\n    if (selectedFloorFlags[triangleIndex] === 0 || !normalizedAllowedFloorRegions) return false;\\n    readWorldTriangle(scene, triangleIndex, triangleScratch);\\n    return triangleIntersectsAllowedFloorRegion(triangleScratch, normalizedAllowedFloorRegions);\\n  };\",\"source_id\":\"panoref_evt_001013::span::000001\"}],\"id\":\"mem_b27667db26d18f953d21f9fe\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Extracted isSelectedFloor helper function that determines if a triangle index represents a selected floor based on selectedFlag or triangle intersection with allowed floor regions\"},{\"evidence\":[{\"excerpt\":\"Script completed\\nWall time 0.0 seconds\\nOutput:\\n{}\",\"source_id\":\"panoref_evt_001014\"}],\"id\":\"mem_dacba697abe2909ad7552fff\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"Successfully applied patches to candidateGenerator.ts including new helper functions and updated floor filtering logic\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 72,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001013::span::000001' for item mem_c22178819dbda5cb2d5d482e",
+        "excerpt not found in source 'panoref_evt_001013::span::000001' for item mem_b27667db26d18f953d21f9fe"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

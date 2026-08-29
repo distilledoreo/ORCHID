@@ -1,0 +1,55 @@
+{
+  "generation": 6,
+  "content": "Projective pano rendering shader supports primary-only and dual-projector fallback modes: primary sample is always computed; secondary sample activates only when `projectedUseSecondary==1` AND a valid projection exists. Visibility blending uses continuous scores (no hard 0.5 threshold), weighted by visibility, texel quality, and optional dominance boost (1.15) for modes 2 and 3. Winner-takes-most weighting (`power=4`) selects dominant projector while preserving narrow transitions near equal quality.",
+  "events": [
+    {
+      "id": "panoref_evt_000923::span::000001",
+      "sequence": 923,
+      "content": "yOcclusionFaceSize,\\r\\n      projectedOcclusionBias,\\r\\n      projectedOcclusionSoftness\\r\\n    );\\r\\n  }\\r\\n\\r\\n  vec3 primarySample = fallbackAlbedo;\\r\\n  vec3 secondarySample = fallbackAlbedo;\\r\\n  float secondaryValid = 0.0;\\r\\n\\r\\n  // Primary pano sample.\\r\\n  {\\r\\n    vec3 offset = vProjectedWorldPos - projectedPanoOrigin;\\r\\n    if (dot(offset, offset) >= 1e-8) {\\r\\n      vec3 direction = applyInversePanoYaw(normalize(offset), projectedPanoYaw);\\r\\n      vec2 panoUv = equirectUvFromDirection(direction);\\r\\n      panoUv.x = fract(panoUv.x);\\r\\n      panoUv.y = clamp(panoUv.y, 0.0, 1.0);\\r\\n      vec4 panoSample = texture2D(projectedPanoMap, panoUv);\\r\\n      primarySample = panoSample.rgb * projectedExposure;\\r\\n    }\\r\\n  }\\r\\n\\r\\n  // Secondary pano sample (only when a secondary projector exists).\\r\\n  if (projectedUseSecondary == 1) {\\r\\n    vec3 offset = vProjectedWorldPos - projectedSecondaryOrigin;\\r\\n    if (dot(offset, offset) >= 1e-8) {\\r\\n      vec3 direction = applyInversePanoYaw(normalize(offset), projectedSecondaryYaw);\\r\\n      vec2 panoUv = equirectUvFromDirection(direction);\\r\\n      panoUv.x = fract(panoUv.x);\\r\\n      panoUv.y = clamp(panoUv.y, 0.0, 1.0);\\r\\n      vec4 panoSample = texture2D(projectedSecondaryPanoMap, panoUv);\\r\\n      secondarySample = panoSample.rgb * projectedExposure;\\r\\n    }\\r\\n    secondaryValid = 1.0;\\r\\n  }\\r\\n\\r\\n  // --- Continuous visibility scores (no hard 0.5 thresholding) ---\\r\\n  // Gate everything by the actual availability of a secondary projector AND the\\r\\n  // selected blend mode, so single-projector output is never mixed with the\\r\\n  // fallback and blend modes are honored.\\r\\n  float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;\\r\\n\\r\\n  float primaryEnabled = projectedBlendMode == 1 ? 0.0 : 1.0;\\r\\n  float secondaryEnabled = projectedBlendMode == 0 ? 0.0 : hasSecondary;\\r\\n\\r\\n  float primaryQuality = projectedQualityAt(\\r\\n    vProjectedWorldPos,\\r\\n    projectedPanoOrigin,\\r\\n    projectedPrimaryTexelConstant\\r\\n  );\\r\\n  float secondaryQuality = hasSecondary > 0.5\\r\\n    ? projectedQualityAt(vProjectedWorldPos, projectedSecondaryOrigin, projectedSecondaryTexelConstant)\\r\\n    : 0.0;\\r\\n\\r\\n  float primaryDominance = projectedBlendMode == 2 ? 1.15 : 1.0;\\r\\n  float secondaryDominance = projectedBlendMode == 3 ? 1.15 : 1.0;\\r\\n  float primaryScore = primaryEnabled * primaryVisibility * primaryQuality * primaryDominance;\\r\\n  float secondaryScore = secondaryEnabled * secondaryVisibility * secondaryQuality * secondaryDominance;\\r\\n  // Winner-takes-most weighting follows the optimizer's max-quality objective\\r\\n  // while retaining a narrow transition when qualities are nearly equal.\\r\\n  float primaryWeight = pow(primaryScore, 4.0);\\r\\n  float secondaryWeight = pow(secondaryScore, 4.0);\\r\\n  float scoreTotal = primaryWeight + secondaryWeight;\\r\\n\\r\\n  float coverage = max(\\r\\n    primaryScore,\\r\\n    secondaryScore\\r\\n  );\\r\\n\\r\\n  // --- Coverage diagnostic (four-state: red/cyan/magenta/white) ---\\r\\n  if (projectedDebugCoverage == 1) {\\r\\n    float p = primaryScore;\\r\\n    float s = secondaryScore;\\r\\n    float ",
+      "content_hash": "eff9d501ebbfbb18377a7b505b772ab02eccd3db8622fdf3d0fd831e761c89fa",
+      "event_type": "custom_tool_call_output",
+      "role": "tool"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "Secondary sample = fallbackAlbedo; float secondaryValid = 0.0;",
+          "source_id": "panoref_evt_000923::span::000001"
+        },
+        {
+          "excerpt": "if (projectedUseSecondary == 1) { ... secondaryValid = 1.0; }",
+          "source_id": "panoref_evt_000923::span::000001"
+        },
+        {
+          "excerpt": "float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;",
+          "source_id": "panoref_evt_000923::span::000001"
+        },
+        {
+          "excerpt": "float primaryQuality = projectedQualityAt(...); float secondaryQuality = hasSecondary > 0.5 ? projectedQualityAt(...) : 0.0;",
+          "source_id": "panoref_evt_000923::span::000001"
+        },
+        {
+          "excerpt": "float primaryDominance = projectedBlendMode == 2 ? 1.15 : 1.0; float secondaryDominance = projectedBlendMode == 3 ? 1.15 : 1.0;",
+          "source_id": "panoref_evt_000923::span::000001"
+        },
+        {
+          "excerpt": "float primaryWeight = pow(primaryScore, 4.0); float secondaryWeight = pow(secondaryScore, 4.0);",
+          "source_id": "panoref_evt_000923::span::000001"
+        },
+        {
+          "excerpt": "Winner-takes-most weighting follows the optimizer's max-quality objective while retaining a narrow transition when qualities are nearly equal.",
+          "source_id": "panoref_evt_000923::span::000001"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Dual-projector fallback shader: primary always sampled; secondary gated by `projectedUseSecondary==1` and `secondaryValid>0.5`; continuous visibility blended via `pow(score,4)` with optional dominance boost (mode 2/3 → 1.15 factor) for winner-takes-most behavior near equal quality."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_000923::span::000001"
+  ]
+}

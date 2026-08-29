@@ -14,9 +14,9 @@ import hashlib
 import json
 import statistics
 import sys
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Iterable
-
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / "tools"
@@ -24,7 +24,6 @@ if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 
 import disposable_recursive_raw_solar as harness  # noqa: E402
-
 
 DEFAULT_REPLAY = ROOT / (
     "artifacts/agent_benchmarks/freetoshop_operability_hardening/"
