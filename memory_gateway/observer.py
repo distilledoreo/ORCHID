@@ -28,7 +28,7 @@ class Quote(StrictModel):
     event_id: str
     start: int = Field(ge=0)
     end: int = Field(gt=0)
-    text: str = Field(min_length=1)
+    text: str = Field(min_length=1, max_length=512)
 
 
 class NewItem(StrictModel):
@@ -192,12 +192,17 @@ class ObserverEngine:
     async def _call(self, payload, model, stage):
         if self.idle_gate is not None:
             await self.idle_gate.idle.wait()
-        if estimate_tokens(canonical_json(payload)) > self.input_budget_tokens:
+        format = response_format(model, stage)
+        visible_tokens = (estimate_tokens(json.dumps(payload, ensure_ascii=False, sort_keys=True))
+                          + estimate_tokens(canonical_json(format))
+                          + estimate_tokens(getattr(self.client, "system_prompt", "")) + 32)
+        if visible_tokens > self.input_budget_tokens:
             raise ValueError("observer input exceeds configured capacity")
-        self.client.response_format = response_format(model, stage)
+        self.client.response_format = format
         setter = getattr(self.client, "set_call_context", None)
         if setter:
             setter(stage=stage, source_refs=tuple(e["event_id"] for e in payload.get("events", [])))
+        self.client.last_telemetry = None
         try:
             raw = await self.client.complete_json(payload)
             return model.model_validate(raw)
@@ -206,11 +211,11 @@ class ObserverEngine:
             if marker:
                 marker("invalid observer structured response")
             raise ValueError("invalid observer structured response") from None
-        except Exception:
+        except Exception as error:
             marker = getattr(self.client, "mark_call_failed", None)
             if marker:
                 marker("invalid observer structured response")
-            raise
+            raise RuntimeError(f"{stage} call failed ({type(error).__name__})") from None
 
     def _reflection_sources(self, items):
         sources = {}
@@ -282,10 +287,32 @@ class ObserverEngine:
         legacy = state.get("legacy", "") if state else (base_capsule.content if base_capsule else "")
         sources = {e.id: (source_text({"content": e.content, "role": e.role, "event_type": e.event_type}), e.sequence)
                    for e in events}
+        input_events = []
+        for event in events:
+            text = sources[event.id][0]
+            offloaded = False
+            if self.coding_agent_mode and self.store and estimate_tokens(text) > self.input_budget_tokens // 2:
+                # Coding offload is explicit. Preserve a durable artifact handle
+                # and bounded exact excerpts instead of a permanently unserviceable batch.
+                with self.store.connect() as connection:
+                    indexed = connection.execute("""SELECT 1 FROM raw_event_documents d JOIN events e ON e.id=d.event_id
+                        WHERE d.event_id=? AND e.privacy_class='normal' AND d.source_hash=?""",
+                                                 (event.id, sha256(text.encode()).hexdigest())).fetchone()
+                if indexed and text:
+                    item = NewItem(claim=f"Original {event.role} source is available as event:{event.id} ({len(text)} characters).",
+                                   kind="artifact", quotes=[Quote(event_id=event.id, start=0, end=min(80, len(text)), text=text[:80])])
+                    record = new_record(item, checked_quotes(item, sources), sources)
+                    if not any(prior["id"] == record["id"] for prior in items):
+                        items.append(record)
+                    spans = [{"start": 0, "end": min(320, len(text)), "text": text[:320]},
+                             {"start": max(320, len(text) - 160), "end": len(text), "text": text[max(320, len(text) - 160):]}]
+                    offloaded = True
+            if not offloaded:
+                spans = source_spans(text)
+            input_events.append({"event_id": event.id, "sequence": event.sequence, "role": event.role,
+                                 "source_view": "message-text-v1", "spans": spans, "offloaded": offloaded})
         payload = {"task": "observe", "current_items": similar_items(items, [t for t, _ in sources.values()]),
-                   "events": [{"event_id": e.id, "sequence": e.sequence, "role": e.role,
-                               "source_view": "message-text-v1", "spans": source_spans(sources[e.id][0])}
-                              for e in events]}
+                   "events": input_events}
         response = await self._call(payload, ObserverResponse, "observer")
         items, rejected = apply_operations(items, response.operations, sources)
         ledger = copy.deepcopy(state.get("file_ledger", {}))
@@ -316,7 +343,7 @@ def build_observer_engine(config, store, gate=None):
     client = OpenAICompatStructuredClient(
         endpoint=config.observer_url, model=config.observer_model, api_key=config.observer_api_key,
         timeout=config.observer_timeout_seconds, prompt_version="observer-v1",
-        telemetry_recorder=store, generation_settings={"temperature": 0},
+        telemetry_recorder=store, generation_settings={"temperature": 0, "max_tokens": config.observer_output_tokens},
         system_prompt=("Return structured evidence-linked memory deltas. Never delete or rewrite prior items. "
                        "Use add, supersede, or noop; compare current items before adding changed facts. "
                        "Each new item must quote exact source text with event_id and character offsets in "

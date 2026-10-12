@@ -71,3 +71,12 @@ the same-fixture legacy arm. Report: `artifacts/memory_upgrade/phase-4.json`.
 Live embeddings, external GUI MCP clients, and live semantic quality remain
 unverified. The fixture hash differs from phase 3 because the recall detail was
 added to every baseline arm.
+
+Final phase 5: Python 3.11.15 and 3.12 each pass 405 tests, seven optional checks
+skipped. Input accounting now includes schemas/framing/fake system instructions:
+legacy 40 calls / 65,722 input / 1,168 output; observer 10 / 5,300 / 415 (12.40x
+lower input), with 4/4 probes and raw recall passing. The separate coding fixture
+uses 14 / 7,533 / 603, passes 6/6 probes plus recall, and verifies file actions.
+Oversized unique-source promotion/range recovery is tested. Earlier payload-only
+figures remain historical. See `artifacts/memory_upgrade/phase-5.json` and
+[the delivery report](memory-upgrade-delivery.md).

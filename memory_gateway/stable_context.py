@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+import json
 
 from .context import (
     ContextSnapshot, SubstitutionReport, _message_tokens,
@@ -92,7 +93,8 @@ def assemble_stable(assembler, thread_id, inbound, *, project_id=None,
                     injectable.pop()
         except Exception:
             pass  # Retrieval cannot remove any hot context.
-    messages = instructions + memory + root_messages + cold_messages + conversation
+    # Stable bytes must not depend on the client's dictionary insertion order.
+    messages = json.loads(canonical_json(instructions + memory + root_messages + cold_messages + conversation))
     # Account for the complete serialized request, protocol boundaries, tool
     # schemas supplied by the caller, and reserved completion capacity.
     final = estimate_tokens(canonical_json(messages)) + 4 * len(messages)

@@ -105,6 +105,11 @@ Raw-event recall is available at `POST /v1/memory/recall` and
 See [raw recall](docs/raw-recall.md) for FTS5, optional embeddings, privacy,
 source ranges, and the scoped `recall(query, k)` stdio MCP adapter.
 
+Optional [coding mode](docs/coding-agent-mode.md) is off by default and adds
+recoverable offload/masking and a file ledger. The
+[delivery report](docs/memory-upgrade-delivery.md) lists the PR stack, results,
+Python 3.11/3.12 checks, configuration, and unverified live gates.
+
 Python 3.11 and 3.12 are supported:
 
 ```powershell

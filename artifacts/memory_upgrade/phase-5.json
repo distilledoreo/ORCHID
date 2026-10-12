@@ -14,7 +14,7 @@
       "input_tokens": 0,
       "output_tokens": 0,
       "compaction_wall_ms": 0,
-      "replay_wall_ms": 655.1082549995044,
+      "replay_wall_ms": 480.6499120022636,
       "per_1000_source_tokens": {
         "input_tokens": 0.0,
         "output_tokens": 0.0,
@@ -56,12 +56,12 @@
       "stored_events": 28,
       "input_tokens": 15061,
       "output_tokens": 130,
-      "compaction_wall_ms": 0.22991799050942063,
-      "replay_wall_ms": 705.7995990035124,
+      "compaction_wall_ms": 0.1528479770058766,
+      "replay_wall_ms": 536.0851690056734,
       "per_1000_source_tokens": {
         "input_tokens": 1015.1658128875708,
         "output_tokens": 8.762469668374225,
-        "wall_ms": 0.015497303215787317,
+        "wall_ms": 0.010302505864510422,
         "calls": 0.6740361283364789
       },
       "probes": {
@@ -91,7 +91,7 @@
           "stage": "rolling",
           "input_tokens": 1507,
           "output_tokens": 9,
-          "wall_ms": 0.07554900366812944,
+          "wall_ms": 0.02287999086547643,
           "status": "SUCCEEDED",
           "usage_kind": "estimate"
         },
@@ -99,7 +99,7 @@
           "stage": "rolling",
           "input_tokens": 1501,
           "output_tokens": 9,
-          "wall_ms": 0.06603999645449221,
+          "wall_ms": 0.014778997865505517,
           "status": "SUCCEEDED",
           "usage_kind": "estimate"
         },
@@ -107,7 +107,7 @@
           "stage": "rolling",
           "input_tokens": 1501,
           "output_tokens": 9,
-          "wall_ms": 0.010799994925037026,
+          "wall_ms": 0.012559990864247084,
           "status": "SUCCEEDED",
           "usage_kind": "estimate"
         },
@@ -115,7 +115,7 @@
           "stage": "rolling",
           "input_tokens": 1501,
           "output_tokens": 9,
-          "wall_ms": 0.010689996997825801,
+          "wall_ms": 0.017579994164407253,
           "status": "SUCCEEDED",
           "usage_kind": "estimate"
         },
@@ -123,7 +123,7 @@
           "stage": "rolling",
           "input_tokens": 1501,
           "output_tokens": 9,
-          "wall_ms": 0.010110001312568784,
+          "wall_ms": 0.01222900755237788,
           "status": "SUCCEEDED",
           "usage_kind": "estimate"
         },
@@ -131,7 +131,7 @@
           "stage": "rolling",
           "input_tokens": 1513,
           "output_tokens": 17,
-          "wall_ms": 0.012258999049663544,
+          "wall_ms": 0.015170007827691734,
           "status": "SUCCEEDED",
           "usage_kind": "estimate"
         },
@@ -139,7 +139,7 @@
           "stage": "rolling",
           "input_tokens": 1509,
           "output_tokens": 17,
-          "wall_ms": 0.01170000177808106,
+          "wall_ms": 0.013599987141788006,
           "status": "SUCCEEDED",
           "usage_kind": "estimate"
         },
@@ -147,7 +147,7 @@
           "stage": "rolling",
           "input_tokens": 1509,
           "output_tokens": 17,
-          "wall_ms": 0.011600001016631722,
+          "wall_ms": 0.01807999797165394,
           "status": "SUCCEEDED",
           "usage_kind": "estimate"
         },
@@ -155,7 +155,7 @@
           "stage": "rolling",
           "input_tokens": 1509,
           "output_tokens": 17,
-          "wall_ms": 0.010909992852248251,
+          "wall_ms": 0.011280004400759935,
           "status": "SUCCEEDED",
           "usage_kind": "estimate"
         },
@@ -163,7 +163,7 @@
           "stage": "rolling",
           "input_tokens": 1510,
           "output_tokens": 17,
-          "wall_ms": 0.01026000245474279,
+          "wall_ms": 0.014689998351968825,
           "status": "SUCCEEDED",
           "usage_kind": "estimate"
         }
@@ -180,12 +180,12 @@
       "stored_events": 28,
       "input_tokens": 65722,
       "output_tokens": 1168,
-      "compaction_wall_ms": 2.838115018676035,
-      "replay_wall_ms": 711.4706770080375,
+      "compaction_wall_ms": 2.4627059610793367,
+      "replay_wall_ms": 490.4563589952886,
       "per_1000_source_tokens": {
         "input_tokens": 4429.900242653007,
         "output_tokens": 78.72741978970073,
-        "wall_ms": 0.1912992058962008,
+        "wall_ms": 0.16599527912370834,
         "calls": 2.6961445133459154
       },
       "probes": {
@@ -215,7 +215,7 @@
           "stage": "selector",
           "input_tokens": 1120,
           "output_tokens": 19,
-          "wall_ms": 0.0376390089513734,
+          "wall_ms": 0.03311999898869544,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -223,7 +223,7 @@
           "stage": "selector",
           "input_tokens": 1061,
           "output_tokens": 29,
-          "wall_ms": 0.03640000068116933,
+          "wall_ms": 0.030349998269230127,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -231,7 +231,7 @@
           "stage": "selector",
           "input_tokens": 1120,
           "output_tokens": 19,
-          "wall_ms": 0.037479010643437505,
+          "wall_ms": 0.03373999788891524,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -239,7 +239,7 @@
           "stage": "selector",
           "input_tokens": 1046,
           "output_tokens": 29,
-          "wall_ms": 0.03362000279594213,
+          "wall_ms": 0.030889001209288836,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -247,7 +247,7 @@
           "stage": "selector",
           "input_tokens": 1120,
           "output_tokens": 19,
-          "wall_ms": 0.03718900552485138,
+          "wall_ms": 0.03168999683111906,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -255,7 +255,7 @@
           "stage": "selector",
           "input_tokens": 1046,
           "output_tokens": 29,
-          "wall_ms": 0.03483999171294272,
+          "wall_ms": 0.030060007702559233,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -263,7 +263,7 @@
           "stage": "selector",
           "input_tokens": 1120,
           "output_tokens": 19,
-          "wall_ms": 0.036120007280260324,
+          "wall_ms": 0.03345900040585548,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -271,7 +271,7 @@
           "stage": "selector",
           "input_tokens": 1046,
           "output_tokens": 29,
-          "wall_ms": 0.03912000101990998,
+          "wall_ms": 0.030009992769919336,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -279,7 +279,7 @@
           "stage": "selector",
           "input_tokens": 1120,
           "output_tokens": 19,
-          "wall_ms": 0.036779005313292146,
+          "wall_ms": 0.06259999645408243,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -287,7 +287,7 @@
           "stage": "selector",
           "input_tokens": 1046,
           "output_tokens": 29,
-          "wall_ms": 0.03340000694151968,
+          "wall_ms": 0.030170005629770458,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -295,7 +295,7 @@
           "stage": "selector",
           "input_tokens": 1120,
           "output_tokens": 19,
-          "wall_ms": 0.03665999975055456,
+          "wall_ms": 0.03405001189094037,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -303,7 +303,7 @@
           "stage": "selector",
           "input_tokens": 1059,
           "output_tokens": 29,
-          "wall_ms": 0.03375900269020349,
+          "wall_ms": 0.029809991247020662,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -311,7 +311,7 @@
           "stage": "selector",
           "input_tokens": 1120,
           "output_tokens": 19,
-          "wall_ms": 0.037488993257284164,
+          "wall_ms": 0.04707899643108249,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -319,7 +319,7 @@
           "stage": "selector",
           "input_tokens": 1047,
           "output_tokens": 29,
-          "wall_ms": 0.03461999585852027,
+          "wall_ms": 0.029660004656761885,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -327,7 +327,7 @@
           "stage": "selector",
           "input_tokens": 1120,
           "output_tokens": 19,
-          "wall_ms": 0.05294900620356202,
+          "wall_ms": 0.03536899748723954,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -335,7 +335,7 @@
           "stage": "selector",
           "input_tokens": 1047,
           "output_tokens": 29,
-          "wall_ms": 0.04931000876240432,
+          "wall_ms": 0.030370007152669132,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -343,7 +343,7 @@
           "stage": "selector",
           "input_tokens": 1120,
           "output_tokens": 19,
-          "wall_ms": 0.03833998925983906,
+          "wall_ms": 0.033309988793917,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -351,7 +351,7 @@
           "stage": "selector",
           "input_tokens": 1047,
           "output_tokens": 29,
-          "wall_ms": 0.033329997677356005,
+          "wall_ms": 0.029838993214070797,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -359,7 +359,7 @@
           "stage": "selector",
           "input_tokens": 1120,
           "output_tokens": 19,
-          "wall_ms": 0.037730002077296376,
+          "wall_ms": 0.03260000084992498,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -367,7 +367,7 @@
           "stage": "selector",
           "input_tokens": 1048,
           "output_tokens": 29,
-          "wall_ms": 0.034240001696161926,
+          "wall_ms": 0.0305499997921288,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -375,7 +375,7 @@
           "stage": "canonicalizer",
           "input_tokens": 1985,
           "output_tokens": 14,
-          "wall_ms": 0.09088999649975449,
+          "wall_ms": 0.07848899986129254,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -383,7 +383,7 @@
           "stage": "canonicalizer",
           "input_tokens": 1970,
           "output_tokens": 9,
-          "wall_ms": 0.09244900138583034,
+          "wall_ms": 0.07770000956952572,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -391,7 +391,7 @@
           "stage": "canonicalizer",
           "input_tokens": 1970,
           "output_tokens": 9,
-          "wall_ms": 0.08552901272196323,
+          "wall_ms": 0.07482001092284918,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -399,7 +399,7 @@
           "stage": "canonicalizer",
           "input_tokens": 1970,
           "output_tokens": 9,
-          "wall_ms": 0.08461000106763095,
+          "wall_ms": 0.07733999518677592,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -407,7 +407,7 @@
           "stage": "canonicalizer",
           "input_tokens": 1970,
           "output_tokens": 9,
-          "wall_ms": 0.08611900557298213,
+          "wall_ms": 0.0767699966672808,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -415,7 +415,7 @@
           "stage": "canonicalizer",
           "input_tokens": 1983,
           "output_tokens": 17,
-          "wall_ms": 0.09386899182572961,
+          "wall_ms": 0.07919898780528456,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -423,7 +423,7 @@
           "stage": "canonicalizer",
           "input_tokens": 1971,
           "output_tokens": 9,
-          "wall_ms": 0.08821899245958775,
+          "wall_ms": 0.07678000838495791,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -431,7 +431,7 @@
           "stage": "canonicalizer",
           "input_tokens": 1971,
           "output_tokens": 9,
-          "wall_ms": 0.0859889987623319,
+          "wall_ms": 0.07961899973452091,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -439,7 +439,7 @@
           "stage": "canonicalizer",
           "input_tokens": 1971,
           "output_tokens": 9,
-          "wall_ms": 0.08783899829722941,
+          "wall_ms": 0.07604999700561166,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -447,7 +447,7 @@
           "stage": "canonicalizer",
           "input_tokens": 1972,
           "output_tokens": 9,
-          "wall_ms": 0.08752899884711951,
+          "wall_ms": 0.07791000825818628,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -455,7 +455,7 @@
           "stage": "consolidator",
           "input_tokens": 2383,
           "output_tokens": 54,
-          "wall_ms": 0.14570799248758703,
+          "wall_ms": 0.10126898996531963,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -463,7 +463,7 @@
           "stage": "consolidator",
           "input_tokens": 2429,
           "output_tokens": 54,
-          "wall_ms": 0.11448899749666452,
+          "wall_ms": 0.09980899631045759,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -471,7 +471,7 @@
           "stage": "consolidator",
           "input_tokens": 2429,
           "output_tokens": 54,
-          "wall_ms": 0.12020900612697005,
+          "wall_ms": 0.09687899728305638,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -479,7 +479,7 @@
           "stage": "consolidator",
           "input_tokens": 2429,
           "output_tokens": 54,
-          "wall_ms": 0.11288899986539036,
+          "wall_ms": 0.10049900447484106,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -487,7 +487,7 @@
           "stage": "consolidator",
           "input_tokens": 2429,
           "output_tokens": 54,
-          "wall_ms": 0.11371899745427072,
+          "wall_ms": 0.09802999556995928,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -495,7 +495,7 @@
           "stage": "consolidator",
           "input_tokens": 2449,
           "output_tokens": 63,
-          "wall_ms": 0.11884899868164212,
+          "wall_ms": 0.1072899904102087,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -503,7 +503,7 @@
           "stage": "consolidator",
           "input_tokens": 2437,
           "output_tokens": 63,
-          "wall_ms": 0.11836900375783443,
+          "wall_ms": 0.10017000022344291,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -511,7 +511,7 @@
           "stage": "consolidator",
           "input_tokens": 2437,
           "output_tokens": 63,
-          "wall_ms": 0.11633899703156203,
+          "wall_ms": 0.10287899931427091,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -519,7 +519,7 @@
           "stage": "consolidator",
           "input_tokens": 2437,
           "output_tokens": 63,
-          "wall_ms": 0.11618999997153878,
+          "wall_ms": 0.10014898725785315,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
@@ -527,7 +527,7 @@
           "stage": "consolidator",
           "input_tokens": 2437,
           "output_tokens": 63,
-          "wall_ms": 0.12729899026453495,
+          "wall_ms": 0.10232999920845032,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         }
@@ -542,14 +542,14 @@
       "calls": 10,
       "promotions": 10,
       "stored_events": 32,
-      "input_tokens": 5160,
+      "input_tokens": 5300,
       "output_tokens": 415,
-      "compaction_wall_ms": 0.6041930028004572,
-      "replay_wall_ms": 748.8030919921584,
+      "compaction_wall_ms": 0.5071990308351815,
+      "replay_wall_ms": 568.730835992028,
       "per_1000_source_tokens": {
-        "input_tokens": 347.8026422216231,
+        "input_tokens": 357.2391480183338,
         "output_tokens": 27.972499325963874,
-        "wall_ms": 0.04072479123756115,
+        "wall_ms": 0.03418704710401601,
         "calls": 0.6740361283364789
       },
       "probes": {
@@ -577,81 +577,81 @@
       "model_runs": [
         {
           "stage": "observe",
-          "input_tokens": 523,
+          "input_tokens": 537,
           "output_tokens": 112,
-          "wall_ms": 0.07069999992381781,
+          "wall_ms": 0.058200006606057286,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.056168995797634125,
+          "wall_ms": 0.04447999526746571,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.06750899774488062,
+          "wall_ms": 0.04968000575900078,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.056478995247744024,
+          "wall_ms": 0.0470100058009848,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.05666899960488081,
+          "wall_ms": 0.05082000279799104,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 572,
+          "input_tokens": 586,
           "output_tokens": 127,
-          "wall_ms": 0.07073901360854506,
+          "wall_ms": 0.06420900172088295,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.0566200033063069,
+          "wall_ms": 0.050350005039945245,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.056509990827180445,
+          "wall_ms": 0.0453100074082613,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.057169003412127495,
+          "wall_ms": 0.052579998737201095,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 509,
+          "input_tokens": 523,
           "output_tokens": 22,
-          "wall_ms": 0.05562900332733989,
+          "wall_ms": 0.04456000169739127,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         }
@@ -662,8 +662,8 @@
         "expected": "friday",
         "passed": true,
         "event_ids": [
-          "evt_43fb21b3934447d59fb858388b840f52",
-          "evt_eb4e3baa8ab949a488dbbfcb0b0c4254"
+          "evt_2e0e348d27f1425da03bd2450eee4606",
+          "evt_27a35c61ddf346239ca28c2281e38af1"
         ]
       },
       "file_ledger": {}
@@ -675,14 +675,14 @@
       "calls": 14,
       "promotions": 14,
       "stored_events": 44,
-      "input_tokens": 7337,
+      "input_tokens": 7533,
       "output_tokens": 603,
-      "compaction_wall_ms": 0.8610020449850708,
-      "replay_wall_ms": 969.3806790019153,
+      "compaction_wall_ms": 0.7138430373743176,
+      "replay_wall_ms": 824.7058289998677,
       "per_1000_source_tokens": {
-        "input_tokens": 454.1909124675003,
+        "input_tokens": 466.3241302463786,
         "output_tokens": 37.32821592175313,
-        "wall_ms": 0.05329961897889506,
+        "wall_ms": 0.04418986241019671,
         "calls": 0.8666584127770212
       },
       "probes": {
@@ -720,113 +720,113 @@
       "model_runs": [
         {
           "stage": "observe",
-          "input_tokens": 523,
-          "output_tokens": 112,
-          "wall_ms": 0.07381000614259392,
-          "status": "SUCCEEDED",
-          "usage_kind": "estimate_visible_input_with_schema"
-        },
-        {
-          "stage": "observe",
-          "input_tokens": 535,
-          "output_tokens": 22,
-          "wall_ms": 0.05586000042967498,
-          "status": "SUCCEEDED",
-          "usage_kind": "estimate_visible_input_with_schema"
-        },
-        {
-          "stage": "observe",
-          "input_tokens": 558,
-          "output_tokens": 62,
-          "wall_ms": 0.09059900185093284,
-          "status": "SUCCEEDED",
-          "usage_kind": "estimate_visible_input_with_schema"
-        },
-        {
-          "stage": "observe",
           "input_tokens": 537,
-          "output_tokens": 22,
-          "wall_ms": 0.05509000038728118,
+          "output_tokens": 112,
+          "wall_ms": 0.05701000918634236,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 501,
+          "input_tokens": 549,
           "output_tokens": 22,
-          "wall_ms": 0.05480898835230619,
+          "wall_ms": 0.045859007514081895,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
-          "output_tokens": 22,
-          "wall_ms": 0.058210003771819174,
+          "input_tokens": 572,
+          "output_tokens": 62,
+          "wall_ms": 0.060179008869454265,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 551,
           "output_tokens": 22,
-          "wall_ms": 0.054589007049798965,
+          "wall_ms": 0.04541900125332177,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 515,
           "output_tokens": 22,
-          "wall_ms": 0.05370900908019394,
+          "wall_ms": 0.06879901047796011,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.0562390050617978,
+          "wall_ms": 0.04379000165499747,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 618,
+          "input_tokens": 522,
+          "output_tokens": 22,
+          "wall_ms": 0.045998996938578784,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 522,
+          "output_tokens": 22,
+          "wall_ms": 0.0475799897685647,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 522,
+          "output_tokens": 22,
+          "wall_ms": 0.04370001261122525,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 632,
           "output_tokens": 187,
-          "wall_ms": 0.07887001265771687,
+          "wall_ms": 0.07178900705184788,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.05535900709219277,
+          "wall_ms": 0.044199987314641476,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.05743000656366348,
+          "wall_ms": 0.046200002543628216,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 508,
+          "input_tokens": 522,
           "output_tokens": 22,
-          "wall_ms": 0.05398900248110294,
+          "wall_ms": 0.04431999695952982,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         },
         {
           "stage": "observe",
-          "input_tokens": 509,
+          "input_tokens": 523,
           "output_tokens": 22,
-          "wall_ms": 0.06243899406399578,
+          "wall_ms": 0.048999005230143666,
           "status": "SUCCEEDED",
           "usage_kind": "estimate_visible_input_with_schema"
         }
@@ -837,8 +837,8 @@
         "expected": "friday",
         "passed": true,
         "event_ids": [
-          "evt_0ff384da29384095ab9118a855dedbb2",
-          "evt_cf7cd0a008514ba9a3838e9d17655e4a"
+          "evt_6c674a77c2544427adb25fd8fefc28aa",
+          "evt_0b5cc924a889491fb0a57aab7114894d"
         ]
       },
       "file_ledger": {
@@ -846,13 +846,13 @@
           "attempted": [
             {
               "action": "edited",
-              "event_id": "evt_49efef128be9456b970416402678eb48"
+              "event_id": "evt_e02c5b1aa04246e0952607386d10b740"
             }
           ],
           "created": [
             {
-              "call_event_id": "evt_49efef128be9456b970416402678eb48",
-              "result_event_id": "evt_6a32930574c34d258c3a4346299043d4"
+              "call_event_id": "evt_e02c5b1aa04246e0952607386d10b740",
+              "result_event_id": "evt_04829f32de7f4e7e8e23a46ee2f68836"
             }
           ],
           "edited": [],
@@ -862,15 +862,15 @@
           "attempted": [
             {
               "action": "read",
-              "event_id": "evt_762b228bc9e44479a438d4b7b8f4d684"
+              "event_id": "evt_5c2f6a427d694d6791e3b5f6c9479962"
             }
           ],
           "created": [],
           "edited": [],
           "read": [
             {
-              "call_event_id": "evt_762b228bc9e44479a438d4b7b8f4d684",
-              "result_event_id": "evt_79af14f8f3064b11a4fbda62997a567d"
+              "call_event_id": "evt_5c2f6a427d694d6791e3b5f6c9479962",
+              "result_event_id": "evt_fbb7bd52dda6432cbf7158e8211c98a3"
             }
           ]
         }
@@ -879,5 +879,5 @@
   ],
   "input_accounting": "visible JSON input, framing, fake system instruction and response schema; no hidden provider overhead",
   "coding_fixture_hash": "d9ce21491fbb1f6bf404e5e5bf5c71fe6403e66282ef3248c07a5e86357d8379",
-  "legacy_to_observer_input_ratio": 12.736821705426356
+  "legacy_to_observer_input_ratio": 12.400377358490566
 }

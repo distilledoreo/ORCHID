@@ -61,6 +61,12 @@ instructions are unchanged. Request-specific retrieval follows that prefix.
 `overlap_tokens` is an ignored compatibility argument, never coverage policy.
 The legacy layout remains explicitly selectable for historical experiments.
 
+Optional coding mode may substitute indexed handles and bounded outlines.
+Originals remain immutable/range-recoverable; unavailable indexing retains
+original content. Masking boundaries are frozen atomically at promotion, not
+slid every turn. File actions cite call/result events and never turn failed
+writes into successful edits.
+
 ## Cold-memory isolation
 
 Raw recall is a separate scoped index over normalized event views. It never

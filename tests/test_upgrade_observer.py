@@ -155,3 +155,20 @@ def test_observer_loses_cas_without_replacing_other_promotion(tmp_path):
     assert compact(store, worker) == "STALE"
     assert store.get_active_capsule("t")["content"] == "Memory through sequence 1"
     assert store.list_events("t") == before
+
+
+def test_transport_error_does_not_expose_credential_in_job_or_telemetry(tmp_path, monkeypatch):
+    import httpx
+    from memory_gateway.structured_client import OpenAICompatStructuredClient
+    original = httpx.AsyncClient
+    transport = httpx.MockTransport(lambda _: httpx.Response(503, text="Bearer transport-only-secret"))
+    monkeypatch.setattr(httpx, "AsyncClient", lambda **kw: original(transport=transport, **kw))
+    store, _, _ = setup(tmp_path)
+    client = OpenAICompatStructuredClient(endpoint="http://observer.local/v1", model="test",
+                                          prompt_version="observer-v1", system_prompt="observer",
+                                          api_key="transport-only-secret", telemetry_recorder=store)
+    worker = CompactionWorker(store, ObserverEngine(client, store=store), "worker")
+    ingest(store, "FACT region=east")
+    assert compact(store, worker) == "FAILED"
+    assert "transport-only-secret" not in json.dumps(store.list_jobs())
+    assert "transport-only-secret" not in json.dumps(store.list_model_runs())

@@ -79,3 +79,23 @@ def test_coding_replay_probes_and_file_ledger():
     assert coding["raw_recall_probe"]["passed"]
     assert coding["file_ledger"]["src/widget.py"]["read"]
     assert coding["file_ledger"]["assets/icon.png"]["created"]
+
+
+def test_oversized_unique_source_promotes_with_recoverable_artifact_handle(tmp_path):
+    from memory_gateway.compaction import CompactionWorker, queue_snapshot_job
+    from memory_gateway.evaluation import FakeObserverClient
+    from memory_gateway.observer import ObserverEngine
+    import asyncio
+    store = SQLiteStore(tmp_path / "test.db")
+    store.ensure_project_and_thread("p", "t")
+    text = "\n".join(f"unique diagnostic row {i}: value_{i * 7919}" for i in range(5000)) + "\nFACT late=one"
+    row = append(store, {"role": "user", "content": text}, "large")
+    engine = ObserverEngine(FakeObserverClient(), store=store, coding_agent_mode=True)
+    worker = CompactionWorker(store, engine, "worker")
+    queue_snapshot_job(store, "t")
+    assert asyncio.run(worker.run_once()) == "PROMOTED"
+    active = store.get_active_capsule("t")
+    assert "event:" + row["id"] in active["content"] and "FACT late=one" in active["content"]
+    from memory_gateway.raw_recall import RawRecall
+    assert RawRecall(store).read("p", "t", row["id"], len(text) - 13)["excerpt"] == "FACT late=one"
+    assert store.get_event(row["id"])["content"] == row["content"]

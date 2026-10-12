@@ -119,6 +119,7 @@ class RuntimeConfig:
     observer_model: str | None = None
     observer_api_key: str | None = None
     observer_input_tokens: int = 32_768
+    observer_output_tokens: int = 2_048
     observer_timeout_seconds: float = 120.0
     background_idle_only: bool = False
     prompt_layout: str = "stable"
@@ -262,6 +263,7 @@ class RuntimeConfig:
             observer_url=_env("ORCHID_OBSERVER_URL"), observer_model=_env("ORCHID_OBSERVER_MODEL"),
             observer_api_key=_env("ORCHID_OBSERVER_API_KEY"),
             observer_input_tokens=_int_env("ORCHID_OBSERVER_INPUT_TOKENS", 32_768),
+            observer_output_tokens=_int_env("ORCHID_OBSERVER_OUTPUT_TOKENS", 2_048),
             observer_timeout_seconds=_positive_float_env("ORCHID_OBSERVER_TIMEOUT_SECONDS", 120.0),
             background_idle_only=_bool_env("ORCHID_BACKGROUND_IDLE_ONLY", False),
             prompt_layout=prompt_layout,

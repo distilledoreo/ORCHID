@@ -161,7 +161,8 @@ def parse_assistant_message(response_payload: Any) -> dict[str, Any] | None:
     if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
         return None
     message = choices[0].get("message")
-    return normalize_message(message)
+    normalized = normalize_message(message)
+    return normalized if normalized and normalized["role"] == "assistant" else None
 
 
 def parse_stream_message(chunks: list[bytes]) -> dict[str, Any] | None:
@@ -227,4 +228,4 @@ def parse_stream_message(chunks: list[bytes]) -> dict[str, Any] | None:
         message["tool_calls"] = [tool_calls[index] for index in sorted(tool_calls)]
     if function_call:
         message["function_call"] = function_call
-    return normalize_message(message)
+    return normalize_message(message) if role == "assistant" else None
