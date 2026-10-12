@@ -340,6 +340,100 @@ def _ordered_history_overlap_span(known: list[str], incoming: list[str]) -> tupl
     return (best_start, best_count)
 
 
+def _first_seen_preserve_order(values: list[str]) -> list[str]:
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for value in values:
+        if value in seen:
+            continue
+        seen.add(value)
+        ordered.append(value)
+    return ordered
+
+
+def _subsequence_reused_indices(known: list[str], incoming: list[str]) -> list[int]:
+    reused: list[int] = []
+    cursor = 0
+    for index, digest in enumerate(incoming):
+        found = cursor
+        while found < len(known) and known[found] != digest:
+            found += 1
+        if found >= len(known):
+            continue
+        reused.append(index)
+        cursor = found + 1
+    return reused
+
+
+def _subsequence_overlap_span(known: list[str], incoming: list[str]) -> tuple[int, int]:
+    """Return a contiguous incoming span that is an ordered subsequence of known.
+
+    Extra known hashes (stream reconstructions the client never resends) are
+    skipped. Incoming hashes that are not still ahead in known stay novel.
+    """
+    reused = _subsequence_reused_indices(known, incoming)
+    if not reused:
+        return (0, 0)
+    best_start = reused[0]
+    best_length = 1
+    run_start = reused[0]
+    run_length = 1
+    for previous, current in zip(reused, reused[1:]):
+        if current == previous + 1:
+            run_length += 1
+            if run_length > best_length:
+                best_start = run_start
+                best_length = run_length
+        else:
+            run_start = current
+            run_length = 1
+    return (best_start, best_length)
+
+
+def _reused_incoming_indices(known: list[str], incoming: list[str]) -> set[int]:
+    """Skip every incoming index that is an ordered resent of known history.
+
+    A single unmatched middle message must not cause the rest of a Pi
+    history resend to be appended again; compaction windows are token-bounded
+    and cannot keep up with duplicated events.
+    """
+    start, length = _best_ordered_history_overlap_span(known, incoming)
+    skipped = set(range(start, start + length))
+    skipped.update(
+        _subsequence_reused_indices(_first_seen_preserve_order(known), incoming)
+    )
+    return skipped
+
+
+def _best_ordered_history_overlap_span(
+    known: list[str], incoming: list[str]
+) -> tuple[int, int]:
+    """Reuse a resent client history even after duplicate events snowball.
+
+    Compaction windows are token-bounded. If every Pi resend is appended
+    again, those windows compact copies instead of new unique history.
+    """
+    full = _ordered_history_overlap_span(known, incoming)
+    first_seen = _subsequence_overlap_span(
+        _first_seen_preserve_order(known), incoming
+    )
+    if first_seen[1] >= full[1]:
+        return first_seen
+    return full
+
+
+def _metadata_is_chat_response(raw: Any) -> bool:
+    try:
+        metadata = json.loads(raw)
+    except (TypeError, json.JSONDecodeError):
+        return False
+    return (
+        isinstance(metadata, dict)
+        and metadata.get("ingest_kind") == "chat_message"
+        and metadata.get("source") == "response"
+    )
+
+
 class SQLiteStore:
     """Small SQLite repository with explicit transaction boundaries."""
 
@@ -870,12 +964,13 @@ class SQLiteStore:
         request_id: str | None,
         source: str,
     ) -> Any:
-        """Append only the ordered suffix not already in a thread history.
+        """Append new chat occurrences while suppressing protocol replays.
 
         OpenAI-compatible clients resend the prior message history on every
-        request.  This uses exact canonical message hashes plus sequence/order
-        overlap; it never performs fuzzy or semantic deduplication.  Repeated
-        text at a new position therefore remains a new event.
+        request. Request history uses exact canonical message hashes plus
+        sequence/order overlap. Response-only ingestion is keyed by request ID
+        instead, so identical assistant responses from distinct requests remain
+        distinct occurrences.
         """
         from .context import estimate_tokens
         from .ingestion import message_content, message_event_type, message_hash
@@ -890,7 +985,7 @@ class SQLiteStore:
                 raise ValueError("thread does not belong to project")
             rows = connection.execute(
                 """
-                SELECT id, content_hash, metadata_json, role
+                SELECT id, content_hash, metadata_json, role, request_id
                 FROM events
                 WHERE thread_id = ?
                 ORDER BY sequence
@@ -911,13 +1006,30 @@ class SQLiteStore:
                     known_hashes.append(digest)
                     known_ids.append(str(row["id"]))
 
-            reused_start, reused = _ordered_history_overlap_span(known_hashes, incoming_hashes)
+            response_replay = (
+                source == "response"
+                and request_id is not None
+                and any(
+                    row["request_id"] == request_id
+                    and _metadata_is_chat_response(row["metadata_json"])
+                    for row in rows
+                )
+            )
+            if source == "response":
+                reused_start = 0
+                reused = len(messages) if response_replay else 0
+                reused_indices = set(range(len(messages))) if response_replay else set()
+            else:
+                reused_start, reused = _best_ordered_history_overlap_span(
+                    known_hashes, incoming_hashes
+                )
+                reused_indices = _reused_incoming_indices(known_hashes, incoming_hashes)
             appended: list[dict[str, Any]] = []
             skipped_duplicate_count = 0
             sequence = int(thread["next_sequence"])
             parent_event_id = known_ids[-1] if known_ids else None
             for index, message in enumerate(messages):
-                if reused_start <= index < reused_start + reused:
+                if index in reused_indices:
                     skipped_duplicate_count += 1
                     continue
                 digest = incoming_hashes[index]
@@ -984,7 +1096,11 @@ class SQLiteStore:
             "known_message_count": len(known_hashes),
             "incoming_message_count": len(messages),
             "skipped_duplicate_count": skipped_duplicate_count,
-            "duplicate_protection": "ordered_canonical_message_hash_overlap",
+            "duplicate_protection": (
+                "response_request_id"
+                if source == "response"
+                else "ordered_canonical_message_hash_overlap"
+            ),
         }
 
     def create_gateway_stream_run(
@@ -1835,6 +1951,84 @@ class SQLiteStore:
             )
             return result.rowcount == 1
 
+    def _promote_capsule_cas_in_connection(
+        self,
+        connection: sqlite3.Connection,
+        thread_id: str,
+        candidate_id: str,
+        *,
+        job_id: str | None = None,
+        worker_id: str | None = None,
+        lease_token: str | None = None,
+    ) -> bool:
+        if job_id is not None or worker_id is not None or lease_token is not None:
+            if not all((job_id, worker_id, lease_token)):
+                raise ValueError(
+                    "job_id, worker_id, and lease_token must be provided together"
+                )
+            ownership = connection.execute(
+                """
+                SELECT 1
+                FROM compaction_jobs
+                WHERE id = ? AND worker_id = ? AND lease_token = ?
+                  AND status = 'RUNNING'
+                  AND lease_until IS NOT NULL AND lease_until > ?
+                """,
+                (job_id, worker_id, lease_token, utc_now()),
+            ).fetchone()
+            if ownership is None:
+                connection.execute(
+                    """
+                    UPDATE capsules
+                    SET state = 'STALE'
+                    WHERE id = ? AND state = 'READY'
+                    """,
+                    (candidate_id,),
+                )
+                return False
+        thread = connection.execute(
+            "SELECT active_capsule_id FROM threads WHERE id = ?",
+            (thread_id,),
+        ).fetchone()
+        candidate = connection.execute(
+            "SELECT * FROM capsules WHERE id = ? AND thread_id = ?",
+            (candidate_id, thread_id),
+        ).fetchone()
+        if thread is None or candidate is None:
+            raise ValueError("thread or candidate does not exist")
+        if candidate["state"] != "READY":
+            raise ValueError("only READY capsules can be promoted")
+        active_id = thread["active_capsule_id"]
+        if active_id == candidate_id:
+            return True
+        if candidate["base_capsule_id"] != active_id:
+            connection.execute(
+                "UPDATE capsules SET state = 'STALE' WHERE id = ? AND state = 'READY'",
+                (candidate_id,),
+            )
+            return False
+
+        connection.execute(
+            "UPDATE capsules SET state = 'ACTIVE' WHERE id = ? AND state = 'READY'",
+            (candidate_id,),
+        )
+        if active_id is not None:
+            connection.execute(
+                "UPDATE capsules SET state = 'SUPERSEDED' WHERE id = ? AND state = 'ACTIVE'",
+                (active_id,),
+            )
+        result = connection.execute(
+            """
+            UPDATE threads
+            SET active_capsule_id = ?
+            WHERE id = ? AND active_capsule_id IS ?
+            """,
+            (candidate_id, thread_id, active_id),
+        )
+        if result.rowcount != 1:
+            raise RuntimeError("capsule promotion compare-and-swap failed")
+        return True
+
     def promote_capsule_cas(
         self,
         thread_id: str,
@@ -1846,72 +2040,56 @@ class SQLiteStore:
     ) -> bool:
         """Atomically promote a READY descendant of the current active capsule."""
         with self.transaction(immediate=True) as connection:
-            if job_id is not None or worker_id is not None or lease_token is not None:
-                if not all((job_id, worker_id, lease_token)):
-                    raise ValueError(
-                        "job_id, worker_id, and lease_token must be provided together"
-                    )
-                ownership = connection.execute(
-                    """
-                    SELECT 1
-                    FROM compaction_jobs
-                    WHERE id = ? AND worker_id = ? AND lease_token = ?
-                      AND status = 'RUNNING'
-                      AND lease_until IS NOT NULL AND lease_until > ?
-                    """,
-                    (job_id, worker_id, lease_token, utc_now()),
-                ).fetchone()
-                if ownership is None:
-                    connection.execute(
-                        """
-                        UPDATE capsules
-                        SET state = 'STALE'
-                        WHERE id = ? AND state = 'READY'
-                        """,
-                        (candidate_id,),
-                    )
-                    return False
-            thread = connection.execute(
-                "SELECT active_capsule_id FROM threads WHERE id = ?",
-                (thread_id,),
-            ).fetchone()
-            candidate = connection.execute(
-                "SELECT * FROM capsules WHERE id = ? AND thread_id = ?",
-                (candidate_id, thread_id),
-            ).fetchone()
-            if thread is None or candidate is None:
-                raise ValueError("thread or candidate does not exist")
-            if candidate["state"] != "READY":
-                raise ValueError("only READY capsules can be promoted")
-            active_id = thread["active_capsule_id"]
-            if active_id == candidate_id:
-                return True
-            if candidate["base_capsule_id"] != active_id:
-                connection.execute(
-                    "UPDATE capsules SET state = 'STALE' WHERE id = ? AND state = 'READY'",
-                    (candidate_id,),
-                )
-                return False
-
-            connection.execute(
-                "UPDATE capsules SET state = 'ACTIVE' WHERE id = ? AND state = 'READY'",
-                (candidate_id,),
+            return self._promote_capsule_cas_in_connection(
+                connection,
+                thread_id,
+                candidate_id,
+                job_id=job_id,
+                worker_id=worker_id,
+                lease_token=lease_token,
             )
-            if active_id is not None:
-                connection.execute(
-                    "UPDATE capsules SET state = 'SUPERSEDED' WHERE id = ? AND state = 'ACTIVE'",
-                    (active_id,),
-                )
+
+    def promote_capsule_cas_and_finish_job(
+        self,
+        thread_id: str,
+        candidate_id: str,
+        *,
+        job_id: str,
+        worker_id: str,
+        lease_token: str,
+    ) -> bool:
+        """Commit capsule promotion and PROMOTED job completion together.
+
+        A worker crash after the promotion commit must never leave an ACTIVE
+        capsule paired with a still-RUNNING or later-recovered job. Keeping
+        both writes in one immediate transaction makes the committed states
+        durable as one unit; a crash before commit rolls both back.
+        """
+        with self.transaction(immediate=True) as connection:
+            promoted = self._promote_capsule_cas_in_connection(
+                connection,
+                thread_id,
+                candidate_id,
+                job_id=job_id,
+                worker_id=worker_id,
+                lease_token=lease_token,
+            )
+            if not promoted:
+                return False
             result = connection.execute(
                 """
-                UPDATE threads
-                SET active_capsule_id = ?
-                WHERE id = ? AND active_capsule_id IS ?
+                UPDATE compaction_jobs
+                SET status = 'PROMOTED', finished_at = ?, lease_until = NULL,
+                    error = NULL
+                WHERE id = ? AND worker_id = ? AND lease_token = ?
+                  AND status = 'RUNNING'
                 """,
-                (candidate_id, thread_id, active_id),
+                (utc_now(), job_id, worker_id, lease_token),
             )
             if result.rowcount != 1:
-                raise RuntimeError("capsule promotion compare-and-swap failed")
+                raise RuntimeError(
+                    "promoted capsule could not finish its compaction job"
+                )
             return True
 
     def create_compaction_job(
@@ -1957,13 +2135,49 @@ class SQLiteStore:
             except sqlite3.IntegrityError as error:
                 if "idempotency_key" not in str(error):
                     raise
-                row = connection.execute(
-                    "SELECT id FROM compaction_jobs WHERE idempotency_key = ?",
+                existing = connection.execute(
+                    "SELECT id, status FROM compaction_jobs WHERE idempotency_key = ?",
                     (idempotency_key,),
                 ).fetchone()
-                if row is None:
+                if existing is None:
                     raise
-                return str(row["id"])
+                if existing["status"] in {"QUEUED", "RUNNING"}:
+                    return str(existing["id"])
+                if existing["status"] in {"FAILED", "STALE"}:
+                    connection.execute(
+                        "UPDATE compaction_jobs SET idempotency_key = ? WHERE id = ?",
+                        (
+                            f"{idempotency_key}|retired|{existing['id']}",
+                            existing["id"],
+                        ),
+                    )
+                    generation_row = connection.execute(
+                        "SELECT COALESCE(MAX(generation), 0) + 1 AS generation "
+                        "FROM compaction_jobs WHERE thread_id = ?",
+                        (thread_id,),
+                    ).fetchone()
+                    connection.execute(
+                        """
+                        INSERT INTO compaction_jobs(
+                            id, thread_id, base_capsule_id, snapshot_start_event_id,
+                            snapshot_end_event_id, status, priority, generation,
+                            idempotency_key, created_at
+                        ) VALUES (?, ?, ?, ?, ?, 'QUEUED', ?, ?, ?, ?)
+                        """,
+                        (
+                            job_id,
+                            thread_id,
+                            base_capsule_id,
+                            snapshot_start_event_id,
+                            snapshot_end_event_id,
+                            priority,
+                            generation_row["generation"],
+                            idempotency_key,
+                            utc_now(),
+                        ),
+                    )
+                else:
+                    return str(existing["id"])
         return job_id
 
     def request_coalesced_compaction_job(
@@ -2085,6 +2299,35 @@ class SQLiteStore:
             idempotency_key = "|".join(
                 [thread_id, base_capsule_id or "none", snapshot_end_event_id]
             )
+            existing = connection.execute(
+                "SELECT id, status FROM compaction_jobs WHERE idempotency_key = ?",
+                (idempotency_key,),
+            ).fetchone()
+            if existing is not None:
+                if existing["status"] in {"QUEUED", "RUNNING"}:
+                    connection.execute(
+                        "UPDATE compaction_jobs SET priority = MAX(priority, ?) WHERE id = ?",
+                        (priority, existing["id"]),
+                    )
+                    connection.execute(
+                        "UPDATE threads SET compaction_dirty = 0, compaction_dirty_priority = 0 WHERE id = ?",
+                        (thread_id,),
+                    )
+                    return str(existing["id"])
+                if existing["status"] in {"FAILED", "STALE"}:
+                    connection.execute(
+                        "UPDATE compaction_jobs SET idempotency_key = ? WHERE id = ?",
+                        (
+                            f"{idempotency_key}|retired|{existing['id']}",
+                            existing["id"],
+                        ),
+                    )
+                else:
+                    connection.execute(
+                        "UPDATE threads SET compaction_dirty = 0, compaction_dirty_priority = 0 WHERE id = ?",
+                        (thread_id,),
+                    )
+                    return str(existing["id"])
             connection.execute(
                 """
                 INSERT INTO compaction_jobs(

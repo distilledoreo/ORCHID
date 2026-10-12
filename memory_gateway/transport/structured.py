@@ -10,6 +10,7 @@ from typing import Any
 
 import httpx
 
+from ..openrouter_routing import apply_openrouter_provider_routing
 from ..telemetry import (
     ModelCallContext,
     ModelRunRecorder,
@@ -150,6 +151,7 @@ class OpenAICompatStructuredClient:
             ],
             **settings,
         }
+        body = apply_openrouter_provider_routing(body)
         serialized_input = json.dumps(input_payload, ensure_ascii=False, sort_keys=True)
         serialized_schema = (
             json.dumps(self.response_format, ensure_ascii=False, sort_keys=True)

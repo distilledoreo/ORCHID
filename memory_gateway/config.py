@@ -107,6 +107,12 @@ class RuntimeConfig:
     publication_horizon_turns: int = 8
     compaction_forecast_alpha: float = 0.2
     compaction_forecast_lookahead_turns: float = 3.0
+    consolidator_timeout_seconds: float | None = None
+
+    def effective_consolidator_timeout_seconds(self) -> float:
+        if self.consolidator_timeout_seconds is None:
+            return self.model_timeout_seconds
+        return self.consolidator_timeout_seconds
 
     @classmethod
     def from_env(
@@ -209,6 +215,14 @@ class RuntimeConfig:
             urgent_fraction=_float_env("ORCHID_URGENT_FRACTION", 0.85),
             worker_poll_seconds=float(_env("ORCHID_WORKER_POLL_SECONDS", "0.25")),
             model_timeout_seconds=float(_env("ORCHID_MODEL_TIMEOUT_SECONDS", "120")),
+            consolidator_timeout_seconds=(
+                _positive_float_env(
+                    "ORCHID_CONSOLIDATOR_TIMEOUT_SECONDS",
+                    float(_env("ORCHID_MODEL_TIMEOUT_SECONDS", "120") or "120"),
+                )
+                if _env("ORCHID_CONSOLIDATOR_TIMEOUT_SECONDS")
+                else None
+            ),
             selector_context_tokens=_int_env("ORCHID_SELECTOR_CONTEXT_TOKENS", 32_768),
             canonicalizer_input_tokens=_int_env(
                 "ORCHID_CANONICALIZER_INPUT_TOKENS",

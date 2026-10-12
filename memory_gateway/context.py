@@ -11,7 +11,7 @@ from .cold_memory import (
     build_retrieval_query_trace,
 )
 from .cold_telemetry import ColdMemoryTelemetrySink
-from .db import SQLiteStore, _ordered_history_overlap_span, content_hash
+from .db import SQLiteStore, content_hash
 
 
 def estimate_tokens(text: str) -> int:
@@ -669,18 +669,16 @@ class ContextAssembler:
         ]
         known_hashes = [_event_message_hash(event) or "" for event in chat_events]
         incoming_hashes = [message_hash(message) for message in inbound]
-        overlap_start, overlap = _ordered_history_overlap_span(known_hashes, incoming_hashes)
-        if overlap and incoming_hashes[overlap_start : overlap_start + overlap] == known_hashes[-overlap:]:
-            aligned_events = chat_events[-overlap:]
-        elif overlap and overlap_start == 0 and incoming_hashes[:overlap] == known_hashes[:overlap]:
-            aligned_events = chat_events[:overlap]
-        else:
-            aligned_events = []
-        aligned: list[dict[str, Any] | None] = []
-        for index, _message in enumerate(inbound):
-            relative = index - overlap_start
-            event = aligned_events[relative] if 0 <= relative < overlap else None
-            aligned.append(event)
+        aligned: list[dict[str, Any] | None] = [None] * len(inbound)
+        cursor = 0
+        for index, digest in enumerate(incoming_hashes):
+            found = cursor
+            while found < len(known_hashes) and known_hashes[found] != digest:
+                found += 1
+            if found >= len(known_hashes):
+                continue
+            aligned[index] = chat_events[found]
+            cursor = found + 1
         return aligned
 
     def _inbound_event_id(

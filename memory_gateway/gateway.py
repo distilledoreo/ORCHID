@@ -5,6 +5,7 @@ import json
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from dataclasses import replace
 from datetime import UTC, datetime
 from typing import Any
 
@@ -16,7 +17,7 @@ from .cold_memory import CALIBRATED_RANKING_POLICY, FTS5ColdMemoryRetriever
 from .cold_telemetry import BufferedColdMemoryTelemetry
 from .compaction import CompactionEngine, CompactionWorker
 from .config import RuntimeConfig
-from .context import ContextAssembler
+from .context import ContextAssembler, ContextSnapshot
 from .db import SQLiteStore, new_id
 from .foreground_telemetry import (
     append_record,
@@ -24,9 +25,55 @@ from .foreground_telemetry import (
     record_provider_latency,
     substitution_record,
 )
+from .frozen_pipeline import MAXIMUM_FOREGROUND_WAIT_MS
 from .ingestion import append_novel_messages, parse_assistant_message, parse_stream_message
 from .pipeline_adapters import build_lossless_engine
 from .scheduler import CompactionScheduler, ThresholdPolicy
+
+
+def foreground_needs_capacity_wait(
+    context: ContextSnapshot, runtime: RuntimeConfig
+) -> bool:
+    _ = runtime
+    return context.hard_limit_exceeded
+
+
+def foreground_capacity_wait_budget_seconds(runtime: RuntimeConfig) -> float:
+    _ = runtime
+    return MAXIMUM_FOREGROUND_WAIT_MS / 1000.0
+
+
+def in_flight_compaction_job_id(store: SQLiteStore, thread_id: str) -> str | None:
+    jobs = store.list_jobs(thread_id=thread_id, statuses=("QUEUED", "RUNNING"), limit=8)
+    running = next((job for job in jobs if job.get("status") == "RUNNING"), None)
+    if running is not None:
+        return str(running["id"])
+    queued = next((job for job in jobs if job.get("status") == "QUEUED"), None)
+    if queued is not None:
+        return str(queued["id"])
+    return None
+
+
+async def _wait_out_hard_limit(
+    *,
+    store: SQLiteStore,
+    assembler: ContextAssembler,
+    scheduler: CompactionScheduler,
+    runtime: RuntimeConfig,
+    thread_id: str,
+    inbound: list[dict[str, Any]],
+    project_id: str,
+    context: ContextSnapshot,
+) -> tuple[ContextSnapshot, str | None]:
+    """Enqueue background maintenance without blocking the foreground path."""
+
+    _ = (store, assembler, runtime, inbound, project_id)
+    job_id = scheduler.enqueue_urgent(thread_id)
+    return replace(
+        context,
+        compaction_wait_ms=0.0,
+        memory_maintenance_awaited=False,
+    ), in_flight_compaction_job_id(store, thread_id) or job_id
 
 
 def create_app(
@@ -201,8 +248,29 @@ def create_app(
             payload["messages"],
             project_id=project_id,
         )
-        if context.hard_limit_exceeded:
-            job_id = scheduler.enqueue_urgent(thread_id)
+        foreground_record = substitution_record(
+            request_id=request_id,
+            thread_id=thread_id,
+            inbound=payload["messages"],
+            snapshot=context,
+            stream=bool(payload.get("stream", False)),
+        )
+        job_id = None
+        if foreground_needs_capacity_wait(context, runtime):
+            context, job_id = await _wait_out_hard_limit(
+                store=store,
+                assembler=assembler,
+                scheduler=scheduler,
+                runtime=runtime,
+                thread_id=thread_id,
+                inbound=payload["messages"],
+                project_id=project_id,
+                context=context,
+            )
+        if foreground_needs_capacity_wait(context, runtime):
+            job_id = job_id or scheduler.enqueue_urgent(thread_id)
+            foreground_record["gateway_outcome"] = "context_capacity_exceeded"
+            append_record(finalize_record(foreground_record, {}))
             return JSONResponse(
                 status_code=503,
                 headers={"Retry-After": "60"},
@@ -220,15 +288,12 @@ def create_app(
         outbound["messages"] = context.messages
         if runtime.backend_model:
             outbound["model"] = runtime.backend_model
+        from memory_gateway.openrouter_routing import apply_openrouter_provider_routing
+
+        outbound = apply_openrouter_provider_routing(outbound)
         headers = _backend_headers(request, runtime.backend_api_key)
         headers["content-type"] = "application/json"
-        foreground_record = substitution_record(
-            request_id=request_id,
-            thread_id=thread_id,
-            inbound=payload["messages"],
-            snapshot=context,
-            stream=bool(payload.get("stream", False)),
-        )
+        foreground_record["gateway_outcome"] = "forwarded"
 
         if payload.get("stream", False):
             stream_run_id = store.create_gateway_stream_run(
@@ -562,6 +627,19 @@ async def _stream_response(
             partial_output=int(bool(chunks)),
             error_excerpt=error_excerpt,
         )
+        if foreground_record is not None:
+            foreground_record["gateway_outcome"] = "client_cancelled"
+            record_provider_latency(
+                foreground_record,
+                provider_wall_ms=(time.perf_counter() - provider_started_perf) * 1_000,
+                time_to_first_event_ms=(
+                    (first_token_perf - provider_started_perf) * 1_000
+                    if first_token_perf is not None
+                    else None
+                ),
+                success=False,
+            )
+            append_record(finalize_record(foreground_record, {}))
         raise
     except ProviderStreamError as error:
         status = "FAILED"
@@ -604,6 +682,19 @@ async def _stream_response(
             )
         except Exception:
             pass
+        if foreground_record is not None:
+            foreground_record["gateway_outcome"] = "provider_stream_error"
+            record_provider_latency(
+                foreground_record,
+                provider_wall_ms=(time.perf_counter() - provider_started_perf) * 1_000,
+                time_to_first_event_ms=(
+                    (first_token_perf - provider_started_perf) * 1_000
+                    if first_token_perf is not None
+                    else None
+                ),
+                success=False,
+            )
+            append_record(finalize_record(foreground_record, {}))
         yield _synthetic_stream_error(request_id, failure_category, error_excerpt)
         yield b"data: [DONE]\n\n"
     except Exception as error:
@@ -621,6 +712,19 @@ async def _stream_response(
             partial_output=int(bool(chunks)),
             error_excerpt=error_excerpt,
         )
+        if foreground_record is not None:
+            foreground_record["gateway_outcome"] = "proxy_internal_error"
+            record_provider_latency(
+                foreground_record,
+                provider_wall_ms=(time.perf_counter() - provider_started_perf) * 1_000,
+                time_to_first_event_ms=(
+                    (first_token_perf - provider_started_perf) * 1_000
+                    if first_token_perf is not None
+                    else None
+                ),
+                success=False,
+            )
+            append_record(finalize_record(foreground_record, {}))
         yield _synthetic_stream_error(request_id, failure_category, error_excerpt)
         yield b"data: [DONE]\n\n"
     finally:

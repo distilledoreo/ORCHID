@@ -16,7 +16,7 @@ from memory_gateway.compaction import CompactionWorker, Event
 from memory_gateway.config import RuntimeConfig
 from memory_gateway.db import SQLiteStore
 from memory_gateway.openai_adapter import ModelProtocolError, ModelTransportError
-from memory_gateway.pipeline import build_lossless_packet
+from memory_gateway.pipeline import LosslessCompactionEngine, build_lossless_packet
 from memory_gateway.pipeline_adapters import (
     OpenAICompatCanonicalizerEngine,
     OpenAICompatConsolidatorEngine,
@@ -62,6 +62,22 @@ class StageHandler(BaseHTTPRequestHandler):
             content = "not-json"
         elif type(self).mode == "consolidator-malformed" and schema_name == "consolidator_response_v1":
             content = "not-json"
+        elif (
+            type(self).mode == "consolidator-short-then-valid"
+            and schema_name == "consolidator_response_v1"
+            and sum(
+                1
+                for request in type(self).requests
+                if request.get("response_format", {})
+                .get("json_schema", {})
+                .get("name")
+                == "consolidator_response_v1"
+            )
+            == 1
+        ):
+            content = json.dumps(
+                {"content": "short", "evidence_event_ids": [first_id]}
+            )
         elif type(self).mode == "selector-invalid" or (
             type(self).mode == "selector-invalid-after-first"
             and len(type(self).requests) == 2
@@ -73,7 +89,10 @@ class StageHandler(BaseHTTPRequestHandler):
             content = json.dumps({"canonical_text": "canonical"})
         elif schema_name == "consolidator_response_v1":
             content = json.dumps(
-                {"content": "rendered", "evidence_event_ids": [first_id]}
+                {
+                    "content": "valid rendered state " * 12,
+                    "evidence_event_ids": [first_id],
+                }
             )
         else:
             content = json.dumps({})
@@ -646,6 +665,7 @@ def test_consolidator_exact_retry_skips_http(tmp_path: Path) -> None:
                 packet=packet,
             )
         )
+        first.remember_validated_result()
         live_requests = len(StageHandler.requests)
         second = OpenAICompatConsolidatorEngine(
             stage_client(endpoint, store, "consolidator-model", job_id)
@@ -668,3 +688,83 @@ def test_consolidator_exact_retry_skips_http(tmp_path: Path) -> None:
         and json.loads(row["metadata_json"]).get("cache_hit")
     ]
     assert cached_rows
+
+
+def test_rejected_consolidator_candidate_is_not_cached_for_retry(
+    tmp_path: Path,
+) -> None:
+    store = SQLiteStore(tmp_path / "memory.db")
+    store.create_project("project")
+    store.create_thread("thread", "project")
+    events: list[Event] = []
+    for index in range(10):
+        content = f"durable event {index}"
+        event = store.append_event(
+            project_id="project",
+            thread_id="thread",
+            event_type="user_message",
+            role="user",
+            content=content,
+            event_id=f"event-{index}",
+        )
+        events.append(Event.from_row(event))
+    job_id = store.create_compaction_job(
+        thread_id="thread",
+        base_capsule_id=None,
+        snapshot_start_event_id=events[0].id,
+        snapshot_end_event_id=events[-1].id,
+    )
+
+    def engine_for(job: str) -> LosslessCompactionEngine:
+        selector = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job)
+        )
+        consolidator = OpenAICompatConsolidatorEngine(
+            stage_client(endpoint, store, "consolidator-model", job)
+        )
+        return LosslessCompactionEngine(selector, None, consolidator)
+
+    with stage_server(mode="consolidator-short-then-valid") as endpoint:
+        first_result = asyncio.run(
+            CompactionWorker(
+                store,
+                engine_for(job_id),
+                "retry-worker",
+            ).run_once()
+        )
+        assert first_result == "FAILED"
+        first_consolidator_requests = sum(
+            1
+            for request in StageHandler.requests
+            if request.get("response_format", {})
+            .get("json_schema", {})
+            .get("name")
+            == "consolidator_response_v1"
+        )
+        assert first_consolidator_requests == 1
+
+        retry_job_id = store.request_coalesced_compaction_job(
+            thread_id="thread",
+            base_capsule_id=None,
+            snapshot_start_event_id=events[0].id,
+            snapshot_end_event_id=events[-1].id,
+        )
+        assert retry_job_id is not None
+        second_result = asyncio.run(
+            CompactionWorker(
+                store,
+                engine_for(retry_job_id),
+                "retry-worker",
+            ).run_once()
+        )
+
+    assert second_result == "PROMOTED"
+    assert sum(
+        1
+        for request in StageHandler.requests
+        if request.get("response_format", {})
+        .get("json_schema", {})
+        .get("name")
+        == "consolidator_response_v1"
+    ) == 2
+    assert store.get_active_capsule("thread") is not None
