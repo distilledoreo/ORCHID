@@ -339,7 +339,7 @@ def test_capacity_check_does_not_apply_legacy_estimator_scaling() -> None:
 def test_foreground_capacity_wait_budget_is_zero() -> None:
     from types import SimpleNamespace
 
-    from memory_gateway.frozen_pipeline import MAXIMUM_FOREGROUND_WAIT_MS
+    from memory_gateway.core_goal import MAX_COMPACTION_WAIT_MS as MAXIMUM_FOREGROUND_WAIT_MS
     from memory_gateway.gateway import foreground_capacity_wait_budget_seconds
 
     sealed = SimpleNamespace(model_timeout_seconds=180, foreground_hard_limit_tokens=128_000)
