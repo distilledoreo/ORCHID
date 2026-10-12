@@ -20,7 +20,13 @@ class IngestionResult:
 
 
 def message_content(message: dict[str, Any]) -> str:
-    """Return the stable event payload for one protocol message."""
+    """Store exact protocol values; identity normalization is separate."""
+    fields = {"role", "content", "name", "tool_calls", "tool_call_id", "function_call", "refusal", "audio"}
+    return canonical_json({key: value for key, value in message.items() if key in fields})
+
+
+def _identity_content(message: dict[str, Any]) -> str:
+    """Compare provider resends without changing the immutable source payload."""
 
     # Pi may attach provider-local reasoning/diagnostic fields when it resends
     # an assistant message. Those fields are not a new conversational event;
@@ -74,7 +80,7 @@ def _normalize_json_text(value: str) -> str:
 
 
 def message_hash(message: dict[str, Any]) -> str:
-    return content_hash(message_content(message))
+    return content_hash(_identity_content(message))
 
 
 def event_to_message(event: dict[str, Any]) -> dict[str, Any] | None:

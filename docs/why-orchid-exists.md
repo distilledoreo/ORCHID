@@ -8,6 +8,12 @@ than asking a single prompt to solve it.
 
 ## Finite active context
 
+The upgraded runtime sends every message after ACTIVE's coverage as a real
+protocol message. A sliding tail is no longer a safety boundary: if the complete
+uncovered history does not fit, the gateway schedules maintenance and returns
+a retryable capacity error. The older capsule-plus-tail architecture below
+remains the selectable legacy comparison arm.
+
 At request time, an agent sees a bounded working set: a durable capsule plus a
 recent raw tail. The tail preserves immediate continuity; the capsule carries
 older distilled state. This is deliberately different from repeatedly

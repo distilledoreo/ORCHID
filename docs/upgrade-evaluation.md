@@ -43,3 +43,11 @@ Legacy envelope/SSE views are tested without changing their stored rows. The
 three baseline arms retain 4/4 deterministic probe results. The full report is
 `artifacts/memory_upgrade/phase-1.json`; ingestion does not change the memory
 algorithm and establishes no live-model quality or cost improvement.
+
+Phase 2: 382 passed, seven optional checks skipped. Thirty generated occurrence
+and promotion sequences verify coverage and instruction/memory prefix stability.
+Capacity tests include all uncovered events, tool overhead, and output reserve;
+tool-call mates remain real protocol messages across coverage. The gateway
+replay uses the new runtime layout; all baseline probes remain 4/4. See
+`artifacts/memory_upgrade/phase-2.json`. Token budgeting remains an estimate;
+provider-specific tokenization and live cache behavior are not verified.

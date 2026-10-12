@@ -85,6 +85,16 @@ Ingestion stores normalized message occurrences and provider completion usage.
 Legacy request envelopes and SSE remain readable through immutable-row views;
 raw wire/error payloads are never forwarded to memory models.
 
+The runtime defaults to `ORCHID_PROMPT_LAYOUT=stable`: instructions, memory,
+and every uncovered message with its original role/tool fields. It queues urgent
+maintenance and returns retryable 503 errors when the complete request exceeds
+capacity. `ORCHID_FOREGROUND_RESERVED_OUTPUT_TOKENS` defaults to 2,048;
+`max_completion_tokens` or `max_tokens` overrides the reservation per request.
+Use `ORCHID_PROMPT_LAYOUT=legacy` only for historical comparisons. Direct
+`ContextAssembler` library callers retain the legacy constructor default for
+compatibility and can select `layout="stable"` explicitly. Tail/overlap settings
+do not truncate the stable layout.
+
 Python 3.11 and 3.12 are supported:
 
 ```powershell

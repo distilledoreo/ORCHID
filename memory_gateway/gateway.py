@@ -76,6 +76,20 @@ async def _wait_out_hard_limit(
     ), in_flight_compaction_job_id(store, thread_id) or job_id
 
 
+def estimate_request_overhead(payload: dict) -> int:
+    from .context import estimate_tokens
+    from .db import canonical_json
+    return sum(estimate_tokens(canonical_json(payload[key])) for key in
+               ("tools", "functions", "response_format", "tool_choice") if key in payload)
+
+
+def completion_reservation(payload: dict, runtime: RuntimeConfig) -> int:
+    value = payload.get("max_completion_tokens", payload.get("max_tokens", runtime.foreground_reserved_output_tokens))
+    if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+        raise ValueError("completion token limit must be positive")
+    return value
+
+
 def create_app(
     *,
     db_path: str | None = None,
@@ -108,6 +122,7 @@ def create_app(
     )
     assembler = ContextAssembler(
         store,
+        layout=runtime.prompt_layout,
         raw_tail_target_tokens=runtime.raw_tail_target_tokens,
         minimum_raw_tail_tokens=runtime.minimum_raw_tail_tokens,
         context_budget_tokens=runtime.foreground_target_tokens,
@@ -227,6 +242,10 @@ def create_app(
                 status_code=400,
                 content={"error": {"message": "messages must be an array", "type": "invalid_request_error"}},
             )
+        try:
+            completion_reservation(payload, runtime)
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"type": "invalid_request_error", "message": str(error)}})
         from .ingestion import normalize_message
         if any(normalize_message(message) is None for message in payload["messages"]):
             return JSONResponse(status_code=400, content={"error": {"type": "invalid_request_error",
@@ -239,7 +258,7 @@ def create_app(
             thread_id,
             memory_format=runtime.memory_format,
         )
-        append_novel_messages(
+        ingestion = append_novel_messages(
             store,
             project_id=project_id,
             thread_id=thread_id,
@@ -251,6 +270,9 @@ def create_app(
             thread_id,
             payload["messages"],
             project_id=project_id,
+            request_event_ids=ingestion.message_event_ids,
+            overhead_tokens=estimate_request_overhead(payload),
+            reserved_output_tokens=completion_reservation(payload, runtime),
         )
         foreground_record = substitution_record(
             request_id=request_id,

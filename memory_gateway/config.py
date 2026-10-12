@@ -107,6 +107,8 @@ class RuntimeConfig:
     publication_horizon_turns: int = 8
     compaction_forecast_alpha: float = 0.2
     compaction_forecast_lookahead_turns: float = 3.0
+    prompt_layout: str = "stable"
+    foreground_reserved_output_tokens: int = 2_048
     consolidator_timeout_seconds: float | None = None
 
     def effective_consolidator_timeout_seconds(self) -> float:
@@ -121,6 +123,9 @@ class RuntimeConfig:
         db_path: str | None = None,
         backend_url: str | None = None,
     ) -> RuntimeConfig:
+        prompt_layout = _env("ORCHID_PROMPT_LAYOUT", "stable")
+        if prompt_layout not in {"stable", "legacy"}:
+            raise ValueError("ORCHID_PROMPT_LAYOUT must be stable or legacy")
         lease_seconds = _int_env("ORCHID_LEASE_SECONDS", 900)
         lease_renewal_seconds = float(_env("ORCHID_LEASE_RENEWAL_SECONDS", "30"))
         if lease_renewal_seconds <= 0 or lease_renewal_seconds >= lease_seconds:
@@ -230,6 +235,8 @@ class RuntimeConfig:
             ),
             lease_seconds=lease_seconds,
             lease_renewal_seconds=lease_renewal_seconds,
+            prompt_layout=prompt_layout,
+            foreground_reserved_output_tokens=_int_env("ORCHID_FOREGROUND_RESERVED_OUTPUT_TOKENS", 2_048),
             recover_expired_jobs=_bool_env("ORCHID_RECOVER_EXPIRED_JOBS", False),
             cold_memory_mode=cold_memory_mode,
             cold_memory_candidate_limit=_int_env(
