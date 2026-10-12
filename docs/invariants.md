@@ -63,4 +63,11 @@ The legacy layout remains explicitly selectable for historical experiments.
 
 ## Cold-memory isolation
 
+Raw recall is a separate scoped index over normalized event views. It never
+creates conversational events or changes ACTIVE. Only normal-privacy events
+may be indexed, returned, or embedded, and project/thread ownership is checked
+at every read. Source-ID lookup and ranges obey the same rules as lexical
+search. Indexing failures cannot prevent raw append; embedding failures cannot
+remove lexical results. The MCP process binds its scope before accepting tools.
+
 `RETIRE` records and their `memory_evidence` are a sidecar to hot memory. They are persisted only after hot promotion, retrieval never mutates `ACTIVE` capsules, and retrieved text is never appended to `events`. Retrieval, indexing, scoring, logging, and injection failures are fail-open: the assembled context must be no worse than the validated hot-memory context.

@@ -107,6 +107,10 @@ class RuntimeConfig:
     publication_horizon_turns: int = 8
     compaction_forecast_alpha: float = 0.2
     compaction_forecast_lookahead_turns: float = 3.0
+    embeddings_url: str | None = None
+    embeddings_model: str | None = None
+    embeddings_api_key: str | None = None
+    embeddings_timeout_seconds: float = 15.0
     memory_engine: str = "auto"
     observer_url: str | None = None
     observer_model: str | None = None
@@ -245,6 +249,9 @@ class RuntimeConfig:
             ),
             lease_seconds=lease_seconds,
             lease_renewal_seconds=lease_renewal_seconds,
+            embeddings_url=_env("ORCHID_EMBEDDINGS_URL"), embeddings_model=_env("ORCHID_EMBEDDINGS_MODEL"),
+            embeddings_api_key=_env("ORCHID_EMBEDDINGS_API_KEY"),
+            embeddings_timeout_seconds=_positive_float_env("ORCHID_EMBEDDINGS_TIMEOUT_SECONDS", 15.0),
             memory_engine=memory_engine,
             observer_url=_env("ORCHID_OBSERVER_URL"), observer_model=_env("ORCHID_OBSERVER_MODEL"),
             observer_api_key=_env("ORCHID_OBSERVER_API_KEY"),

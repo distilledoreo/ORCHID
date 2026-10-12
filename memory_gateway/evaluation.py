@@ -37,7 +37,7 @@ def synthetic_thread(generations: int = 10) -> list[dict]:
         raise ValueError("retention replay requires at least ten generations")
     messages = []
     for generation in range(1, generations + 1):
-        facts = "FACT stable=bluejay FACT region=east" if generation == 1 else ""
+        facts = "FACT stable=bluejay FACT region=east DETAIL deadline=friday" if generation == 1 else ""
         if generation == 6:
             facts = "FACT region=west FACT rejected_database=postgres"
         messages.append({"role": "user", "content": f"Generation {generation}. {facts}\n" +
@@ -154,7 +154,8 @@ def fake_backend():
             text = canonical_json([message for message in payload["messages"]
                                    if not (message.get("metadata") or {}).get("orchid_root_task_event_id")])
             probes = PROBE.findall(text)
-            answer = dict(FACT.findall(text)).get(probes[-1], "unknown") if probes else "acknowledged"
+            facts = dict(re.findall(r"(?:FACT|DETAIL) ([a-z_]+)=([a-z0-9_-]+)", text))
+            answer = facts.get(probes[-1], "unknown") if probes else "acknowledged"
             response = {"choices": [{"message": {"role": "assistant", "content": answer},
                                      "finish_reason": "stop"}],
                         "usage": {"prompt_tokens": estimate_tokens(text),
@@ -223,6 +224,19 @@ async def replay_arm(name: str, messages: list[dict], path: Path, backend: str) 
         expected = {"stable": "bluejay", "region": "west", "absent": "unknown",
                     "rejected_database": "postgres"}
         answers = {key: await send({"role": "user", "content": f"PROBE {key}"}) for key in expected}
+        recall_probe = None
+        if name == "observer":
+            before = await send({"role": "user", "content": "PROBE deadline"})
+            response = await client.post("/v1/memory/recall", json={"query": "deadline", "k": 5},
+                                         headers={"x-memory-project": "replay", "x-memory-thread": "thread"})
+            response.raise_for_status()
+            hits = response.json()["results"]
+            evidence = "\n".join(hit["excerpt"] for hit in hits)
+            after = await send({"role": "user", "content": "RECALL_EVIDENCE\n" + evidence + "\nPROBE deadline"})
+            recall_probe = {"before": before, "after": after, "expected": "friday",
+                            "passed": before == "unknown" and after == "friday",
+                            "event_ids": [hit["event_id"] for hit in hits]}
+
     runs = [run for stage in clients for run in stage.runs] if clients else engine.runs
     source_tokens = sum(estimate_tokens(canonical_json(message)) for message in messages)
     factor = 1000 / source_tokens
@@ -237,7 +251,7 @@ async def replay_arm(name: str, messages: list[dict], path: Path, backend: str) 
                                        | {"calls": len(runs) * factor},
             "probes": {key: {"expected": expected[key], "actual": answers[key],
                              "passed": answers[key] == expected[key]} for key in expected},
-            "model_runs": runs}
+            "model_runs": runs, "raw_recall_probe": recall_probe}
 
 
 def evaluate(messages: list[dict] | None = None) -> dict:

@@ -115,6 +115,11 @@ production-ready.
 
 ## The design stance
 
+Raw recall gives the foreground model a way back to details that an observer
+deliberately omitted from hot memory. Returned excerpts identify their original
+events and ranges. This separates compact working state from source inspection,
+without treating a retrieval result as a new episode or changing ACTIVE.
+
 ORCHID prefers explicit boundaries over clever prompts:
 
 - raw history is append-only;

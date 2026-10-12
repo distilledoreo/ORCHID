@@ -14,6 +14,7 @@ def test_real_gateway_replay_baselines():
     observer = report["arms"][3]
     assert observer["calls"] == observer["promotions"] == 10
     assert report["legacy_to_observer_input_ratio"] >= 5
+    assert observer["raw_recall_probe"]["passed"]
     for arm in report["arms"]:
         assert all(probe["passed"] for probe in arm["probes"].values())
         assert arm["per_1000_source_tokens"]["input_tokens"] == pytest.approx(arm["input_tokens"] * 1000 / arm["source_tokens"])

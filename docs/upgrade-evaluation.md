@@ -60,3 +60,14 @@ accounting, idle admission/cancellation, real structured-client telemetry, and
 lost CAS races are tested. Report: `artifacts/memory_upgrade/phase-3.json`.
 Live-provider non-inferiority, representative non-repetitive cost ratios, and
 Python 3.11 execution remain unverified.
+
+Phase 4: 396 passed, seven optional checks skipped. Raw lexical/range scoping,
+privacy exclusion, append/index-failure recovery, fake embedding transport and
+usage, dense-failure fallback, HTTP-backed MCP calls, and subprocess stdio are
+tested. The amended fixture intentionally omits the deadline from observer
+memory: unknown before raw recall, Friday after source retrieval. Observer cost
+is 10 calls / 1,159 input / 415 output tokens, with a 48.76x input ratio against
+the same-fixture legacy arm. Report: `artifacts/memory_upgrade/phase-4.json`.
+Live embeddings, external GUI MCP clients, and live semantic quality remain
+unverified. The fixture hash differs from phase 3 because the recall detail was
+added to every baseline arm.
