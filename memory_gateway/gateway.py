@@ -168,6 +168,7 @@ def create_app(
         if compaction_engine is not None
         else configured_engine
     )
+    scheduler.raw_events = bool(getattr(engine, "uses_raw_events", False))
     from .capsule_admission import build_capsule_verifier
 
     capsule_verifier = build_capsule_verifier(runtime, telemetry_recorder=store)

@@ -105,6 +105,9 @@ class CompactionScheduler:
         self.store = store
         self.policy = policy
         self.source_window_tokens = source_window_tokens
+        # Set by the gateway when the engine reads raw events (the observer): its snapshots are bounded
+        # by tokens alone, not by the legacy selector's chunk count.
+        self.raw_events = False
         self.forecast_alpha = forecast_alpha
         self.publication_min_savings_ratio = publication_min_savings_ratio
         self.publication_economics_enabled = publication_economics_enabled
@@ -243,6 +246,7 @@ class CompactionScheduler:
             thread_id,
             priority=priority,
             source_window_tokens=self.source_window_tokens,
+            raw_events=self.raw_events,
         )
 
     def enqueue_urgent(self, thread_id: str) -> str | None:
@@ -253,6 +257,7 @@ class CompactionScheduler:
             thread_id,
             priority=100,
             source_window_tokens=self.source_window_tokens,
+            raw_events=self.raw_events,
         )
 
     def reconcile_after_job(self, thread_id: str) -> str | None:

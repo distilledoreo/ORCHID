@@ -470,8 +470,8 @@ def freeze_snapshot(
             event_tokens = projected_source_tokens(event, projection_seen)
             if bounded_events and (
                 bounded_tokens + event_tokens > effective_source_window_tokens
-                or selector_chunk_count_for_events(bounded_events + [event])
-                > MAX_SELECTOR_CHUNKS_PER_GENERATION
+                or (not raw_events and selector_chunk_count_for_events(bounded_events + [event])
+                    > MAX_SELECTOR_CHUNKS_PER_GENERATION)
             ):
                 break
             # Include one event even when its provenance envelope is larger
@@ -513,11 +513,13 @@ def queue_snapshot_job(
     priority: int = 0,
     *,
     source_window_tokens: int | None = DEFAULT_COMPACTION_SOURCE_WINDOW_TOKENS,
+    raw_events: bool = False,
 ) -> str | None:
     snapshot = freeze_snapshot(
         store,
         thread_id,
         source_window_tokens=source_window_tokens,
+        raw_events=raw_events,
     )
     # Keep the low-level test/maintenance helper compatible with empty
     # snapshots. Production pressure scheduling already avoids calling this

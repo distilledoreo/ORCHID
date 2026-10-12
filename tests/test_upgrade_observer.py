@@ -4,7 +4,7 @@ import json
 import pytest
 
 from memory_gateway.activity import ActivityGate, ForegroundActivityMiddleware
-from memory_gateway.compaction import CompactionWorker, queue_snapshot_job
+from memory_gateway.compaction import CompactionWorker, Event, queue_snapshot_job
 from memory_gateway.db import SQLiteStore
 from memory_gateway.evaluation import FakeObserverClient
 from memory_gateway.ingestion import append_novel_messages
@@ -105,7 +105,9 @@ def test_idle_gate_and_cancellation_release_stream_activity():
         assert gate.active == 0 and gate.idle.is_set()
         gate.begin()
         engine = ObserverEngine(FakeObserverClient(), idle_gate=gate)
-        task = asyncio.create_task(engine.compact(base_capsule=None, events=[], snapshot_end_event_id=None))
+        waiting = Event.from_row({"id": "evt_wait", "sequence": 1, "content": "FACT region=east", "content_hash": "h",
+                                  "event_type": "user_message", "role": "user"})
+        task = asyncio.create_task(engine.compact(base_capsule=None, events=[waiting], snapshot_end_event_id="evt_wait"))
         await asyncio.sleep(0)
         assert not task.done() and not engine.client.runs
         gate.end()
@@ -219,3 +221,104 @@ def test_a_batch_of_only_invalid_operations_does_not_advance_coverage(tmp_path):
     ingest(store, "FACT region=east")
     assert compact(store, worker) == "FAILED"
     assert store.get_active_capsule("t") is None
+
+
+def _ingest_as(store, role, content, request):
+    return append_novel_messages(store, project_id="p", thread_id="t", messages=[{"role": role, "content": content}],
+                                 request_id=request, source="response").appended_events[0]
+
+
+class _Recording(FakeObserverClient):
+    def __init__(self):
+        super().__init__()
+        self.payloads = []
+
+    async def complete_json(self, payload):
+        self.payloads.append(payload)
+        return await super().complete_json(payload)
+
+
+def test_instructions_are_covered_but_never_sent_to_the_observer(tmp_path):
+    client = _Recording()
+    store, _, worker = setup(tmp_path, client=client)
+    _ingest_as(store, "developer", "FACT harness=pi You are a coding assistant.", "a")
+    assert compact(store, worker) == "PROMOTED"
+    assert client.payloads == []
+    _ingest_as(store, "developer", "FACT harness=pi Again.", "b")
+    ingest(store, "FACT region=east", "c")
+    assert compact(store, worker) == "PROMOTED"
+    sent = [event["role"] for payload in client.payloads for event in payload["events"]]
+    assert sent == ["user"]
+    state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
+    assert [item["claim"] for item in state["items"]] == ["FACT region=east"]
+
+
+def test_one_malformed_operation_does_not_discard_the_reply(tmp_path):
+    class Sloppy(FakeObserverClient):
+        async def complete_json(self, payload):
+            response = await super().complete_json(payload)
+            response["operations"].append({"op": "add", "claim": "missing the item envelope"})
+            return response
+    store, _, worker = setup(tmp_path, client=Sloppy())
+    ingest(store, "FACT region=east")
+    assert compact(store, worker) == "PROMOTED"
+    state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
+    assert [item["claim"] for item in state["items"]] == ["FACT region=east"]
+    assert [entry["reason"] for entry in state["rejected_operations"]] == ["malformed operation"]
+
+
+def test_failed_reply_is_retried_with_a_tighter_limit_then_on_half_the_input(tmp_path):
+    class Overflowing(_Recording):
+        """Fails like a reply cut off at the output cap whenever it is asked about more than one event."""
+        async def complete_json(self, payload):
+            if payload["task"] == "observe" and len(payload["events"]) > 1:
+                self.payloads.append(payload)
+                raise RuntimeError("truncated")
+            return await super().complete_json(payload)
+    client = Overflowing()
+    store, _, worker = setup(tmp_path, client=client)
+    ingest(store, "FACT one=alpha", "a")
+    ingest(store, "FACT two=beta", "b")
+    assert compact(store, worker) == "PROMOTED"
+    attempts = [(payload["max_operations"], len(payload["events"])) for payload in client.payloads]
+    assert attempts == [(8, 2), (3, 2), (8, 1), (8, 1)]
+    state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
+    assert sorted(item["claim"] for item in state["items"]) == ["FACT one=alpha", "FACT two=beta"]
+
+
+def test_split_keeps_offsets_in_the_original_source_view():
+    from memory_gateway.observer import split_events
+    text = ("line of source text\n" * 200)
+    event = {"event_id": "e", "sequence": 1, "role": "tool", "spans": [{"start": 0, "end": len(text), "text": text}], "offloaded": False}
+    first, second = split_events([event])
+    a, b = first[0]["spans"][0], second[0]["spans"][0]
+    assert a["text"] + b["text"] == text and a["end"] == b["start"] and a["text"].endswith("\n")
+    assert text[b["start"]:b["end"]] == b["text"]
+    small = {**event, "spans": [{"start": 0, "end": 5, "text": "short"}]}
+    assert split_events([small]) is None
+
+
+def test_large_snapshot_is_observed_in_several_calls(tmp_path):
+    client = _Recording()
+    store = SQLiteStore(tmp_path / "test.db")
+    store.ensure_project_and_thread("p", "t")
+    worker = CompactionWorker(store, ObserverEngine(client, store=store, call_source_tokens=60), "test")
+    for index, key in enumerate(("alpha", "beta", "gamma", "delta")):
+        ingest(store, f"FACT {key}=value{index} " + "padding words " * 12, f"r{index}")
+    queue_snapshot_job(store, "t", raw_events=True)
+    assert asyncio.run(worker.run_once()) == "PROMOTED"
+    assert len(client.payloads) > 1
+    assert sum(len(payload["events"]) for payload in client.payloads) == 4
+    state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
+    assert len(state["items"]) == 4
+
+
+def test_raw_event_snapshots_are_not_bounded_by_the_selector_chunk_rule(tmp_path):
+    from memory_gateway.compaction import freeze_snapshot
+    store = SQLiteStore(tmp_path / "test.db")
+    store.ensure_project_and_thread("p", "t")
+    for index in range(6):
+        ingest(store, f"FACT key{index}=value " + "padding words " * 400, f"r{index}")
+    legacy = freeze_snapshot(store, "t", source_window_tokens=8000)
+    raw = freeze_snapshot(store, "t", source_window_tokens=8000, raw_events=True)
+    assert len(raw.events) > len(legacy.events)
