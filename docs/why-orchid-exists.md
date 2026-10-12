@@ -73,6 +73,12 @@ candidate must become stale rather than replacing newer state.
 
 ## Provenance belongs to software
 
+The observer upgrade replaces repeated prose rewrites with evidence-linked
+operations. Software carries omitted items forward and appends replacements
+with pointers to older facts. Exact source ranges make every new item auditable;
+budget-triggered reflection must explain its treatment of all current items.
+The three-stage pipeline described below remains a selectable evaluation arm.
+
 Models are useful interpreters, but they are not authoritative database
 writers. ORCHID therefore keeps capsule state, source coverage, hashes,
 lineage, leases, and promotion in software.

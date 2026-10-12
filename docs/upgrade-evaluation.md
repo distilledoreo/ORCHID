@@ -51,3 +51,12 @@ tool-call mates remain real protocol messages across coverage. The gateway
 replay uses the new runtime layout; all baseline probes remain 4/4. See
 `artifacts/memory_upgrade/phase-2.json`. Token budgeting remains an estimate;
 provider-specific tokenization and live cache behavior are not verified.
+
+Phase 3: 390 passed, seven optional checks skipped. The observer arm uses 10
+calls / 1,153 estimated input / 415 output tokens, versus legacy 40 / 56,495 /
+1,168: 49.00x fewer inputs on the repetition-heavy synthetic fixture, with
+4/4 probes passing. Exact-range rejection, durable supersession, reflection
+accounting, idle admission/cancellation, real structured-client telemetry, and
+lost CAS races are tested. Report: `artifacts/memory_upgrade/phase-3.json`.
+Live-provider non-inferiority, representative non-repetitive cost ratios, and
+Python 3.11 execution remain unverified.

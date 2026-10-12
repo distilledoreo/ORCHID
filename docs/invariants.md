@@ -18,6 +18,15 @@ A job records `base_capsule_id` and `snapshot_end_event_id` when queued. A worke
 
 ## Capsule lineage
 
+Observer capsules retain a versioned item ledger with claims, kinds, current or
+superseded status, valid-from sequences, source event IDs, and exact quote ranges.
+New quotes must match `message-text-v1` at the cited ranges. Observer input hashes
+use raw immutable events, and capsule hashes include the complete observer state.
+Normal deltas append rendered items; only budget-triggered reflection may rebuild
+the hot view, with exhaustive current-item accounting. Neither supersession nor
+reflection deletes raw events or durable item history. Legacy text is preserved
+until an explicit evidence-backed migration; failed migration cannot erase it.
+
 Capsules are immutable artifacts. A candidate records its base capsule, source range, input/output hashes, capsule hash, and model metadata. A failed candidate cannot become active.
 
 ## Compare-and-swap promotion

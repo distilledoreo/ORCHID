@@ -103,6 +103,44 @@ class RollingSummaryEngine:
                                 generation_settings={"temperature": 0})
 
 
+class FakeObserverClient(FakeStageClient):
+    def __init__(self):
+        super().__init__("observer")
+
+    async def complete_json(self, payload):
+        started = time.perf_counter()
+        if payload["task"] == "reflection":
+            response = {"decisions": [{"item_id": item["id"], "action": "dropped",
+                                      "reason": "test-only budget eviction", "merge_group": None}
+                                     for item in payload["items"]], "merges": []}
+        else:
+            prior = {FACT.search(item["claim"]).group(1): item for item in payload["current_items"]
+                     if FACT.search(item["claim"])}
+            operations = []
+            for event in payload["events"]:
+                for span in event["spans"]:
+                    for match in FACT.finditer(span["text"]):
+                        key, value = match.groups()
+                        target = prior.get(key)
+                        if target and target["claim"] == match.group():
+                            continue
+                        operations.append({"op": "supersede" if target else "add",
+                                           "target_id": target["id"] if target else None, "reason": "new evidence",
+                                           "item": {"claim": match.group(), "kind": "decision" if key.startswith("rejected_") else "fact",
+                                                    "quotes": [{"event_id": event["event_id"], "text": match.group(),
+                                                                "start": span["start"] + match.start(),
+                                                                "end": span["start"] + match.end()}]}})
+            response = {"operations": operations or [{"op": "noop", "target_id": None, "item": None,
+                                                       "reason": "no durable changes"}]}
+        run = {"stage": payload["task"], "input_tokens": estimate_tokens(canonical_json(payload)),
+               "output_tokens": estimate_tokens(canonical_json(response)),
+               "wall_ms": (time.perf_counter() - started) * 1000,
+               "status": "SUCCEEDED", "usage_kind": "estimate"}
+        self.last_telemetry = run
+        self.runs.append(run)
+        return response
+
+
 @contextmanager
 def fake_backend():
     class Handler(BaseHTTPRequestHandler):
@@ -146,6 +184,10 @@ async def replay_arm(name: str, messages: list[dict], path: Path, backend: str) 
         engine = LosslessCompactionEngine(OpenAICompatSelectorEngine(clients[0]),
                                          OpenAICompatCanonicalizerEngine(clients[1]),
                                          OpenAICompatConsolidatorEngine(clients[2]))
+    elif name == "observer":
+        from .observer import ObserverEngine
+        clients = [FakeObserverClient()]
+        engine = ObserverEngine(clients[0])
     else:
         engine = RollingSummaryEngine()
     # Construct explicitly: evaluation must never load provider settings/credentials from env.
@@ -155,6 +197,8 @@ async def replay_arm(name: str, messages: list[dict], path: Path, backend: str) 
                            foreground_target_tokens=110_000, foreground_hard_limit_tokens=120_000,
                            capsule_verification_enabled=False)
     app = create_app(config=config, compaction_engine=engine)
+    if name == "observer":
+        engine.store = app.state.store
     history: list[dict] = []
     promotions = 0
     started = time.perf_counter()
@@ -200,10 +244,10 @@ def evaluate(messages: list[dict] | None = None) -> dict:
     messages = messages or synthetic_thread()
     with TemporaryDirectory() as tmp, fake_backend() as backend:
         arms = [asyncio.run(replay_arm(name, messages, Path(tmp) / f"{name}.db", backend))
-                for name in ("full_context", "rolling_summary", "three_stage")]
+                for name in ("full_context", "rolling_summary", "three_stage", "observer")]
     return {"format": "orchid-gateway-replay-v1", "fixture_hash": sha256(canonical_json(messages).encode()).hexdigest(),
             "mode": "deterministic-fakes", "quality_scope": "protocol/regression; not live-model recall evidence",
-            "arms": arms}
+            "arms": arms, "legacy_to_observer_input_ratio": arms[2]["input_tokens"] / max(1, arms[3]["input_tokens"])}
 
 
 def main():

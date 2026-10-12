@@ -95,6 +95,11 @@ Use `ORCHID_PROMPT_LAYOUT=legacy` only for historical comparisons. Direct
 compatibility and can select `layout="stable"` explicitly. Tail/overlap settings
 do not truncate the stable layout.
 
+Configure `ORCHID_OBSERVER_URL` and `ORCHID_OBSERVER_MODEL` to enable the single
+observer (`ORCHID_MEMORY_ENGINE=auto`), or force `observer`/`legacy` explicitly.
+See [observer memory](docs/observer-memory.md) for item evidence, reflection,
+legacy migration, endpoint configuration, and idle-only admission.
+
 Python 3.11 and 3.12 are supported:
 
 ```powershell

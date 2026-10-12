@@ -98,6 +98,9 @@ def create_app(
     compaction_engine: CompactionEngine | None = None,
 ) -> FastAPI:
     runtime = config or RuntimeConfig.from_env(db_path=db_path, backend_url=backend_url)
+    from .activity import ActivityGate, ForegroundActivityMiddleware
+    from .observer import build_observer_engine
+    activity_gate = ActivityGate()
     store = SQLiteStore(runtime.db_path)
     cold_memory_telemetry = (
         BufferedColdMemoryTelemetry(
@@ -151,10 +154,14 @@ def create_app(
         publication_economics_enabled=runtime.publication_economics_enabled,
         publication_horizon_turns=runtime.publication_horizon_turns,
     )
+    configured_engine = (build_observer_engine(runtime, store, activity_gate)
+                         if runtime.memory_engine == "observer" or
+                         (runtime.memory_engine == "auto" and runtime.observer_url and runtime.observer_model)
+                         else build_lossless_engine(runtime, telemetry_recorder=store))
     engine = (
         compaction_engine
         if compaction_engine is not None
-        else build_lossless_engine(runtime, telemetry_recorder=store)
+        else configured_engine
     )
     from .capsule_admission import build_capsule_verifier
 
@@ -187,7 +194,8 @@ def create_app(
             cold_memory_telemetry.start()
         if worker is not None:
             worker_task = asyncio.create_task(
-                _worker_loop(worker, stop_event, runtime.worker_poll_seconds),
+                _worker_loop(worker, stop_event, runtime.worker_poll_seconds,
+                             activity_gate if runtime.background_idle_only else None),
                 name="orchid-compaction-worker",
             )
             app.state.worker_task = worker_task
@@ -207,6 +215,8 @@ def create_app(
 
     backend = runtime.backend_url
     app = FastAPI(title="Orchid Memory Gateway", version="0.1.0", lifespan=lifespan)
+    app.add_middleware(ForegroundActivityMiddleware, gate=activity_gate)
+    app.state.activity_gate = activity_gate
     app.state.store = store
     app.state.runtime = runtime
     app.state.backend_url = backend
@@ -430,8 +440,11 @@ async def _worker_loop(
     worker: CompactionWorker,
     stop_event: asyncio.Event,
     poll_seconds: float,
+    activity_gate=None,
 ) -> None:
     while not stop_event.is_set():
+        if activity_gate is not None:
+            await activity_gate.idle.wait()
         try:
             result = await worker.run_once()
         except asyncio.CancelledError:
