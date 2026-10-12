@@ -12,7 +12,7 @@ changes were preserved. The stacked draft PRs are not merged or deployed.
 | Phase 2 | [#11](https://github.com/distilledoreo/ORCHID/pull/11) | Gap-free runtime layout, fixed coverage, stable serialization, capacity errors. |
 | Phase 3 | [#12](https://github.com/distilledoreo/ORCHID/pull/12) | Observer deltas, exact evidence, supersession, reflection, endpoint/idle settings. |
 | Phase 4 | [#13](https://github.com/distilledoreo/ORCHID/pull/13) | Scoped FTS5/range HTTP recall, optional embeddings, stdio MCP. |
-| Phase 5 | Final phase branch | Optional recoverable offload/masking and file ledger; off by default. |
+| Phase 5 | [#14](https://github.com/distilledoreo/ORCHID/pull/14) | Optional recoverable offload/masking and file ledger; off by default. |
 
 ## Verification and costs
 
