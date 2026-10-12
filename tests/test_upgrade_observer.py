@@ -172,3 +172,50 @@ def test_transport_error_does_not_expose_credential_in_job_or_telemetry(tmp_path
     assert compact(store, worker) == "FAILED"
     assert "transport-only-secret" not in json.dumps(store.list_jobs())
     assert "transport-only-secret" not in json.dumps(store.list_model_runs())
+
+
+def _add(text, start, end, event="e"):
+    return Operation.model_validate({"op": "add", "target_id": None, "reason": "evidence",
+                                     "item": {"claim": text, "kind": "fact",
+                                              "quotes": [{"event_id": event, "start": start, "end": end, "text": text}]}})
+
+
+def test_software_locates_verbatim_quotes_when_model_offsets_are_wrong():
+    source = "intro. region east. later the region west applies. region east again."
+    items, rejected = apply_operations([], [_add("region west", 0, 5)], {"e": (source, 7)})
+    assert not rejected
+    quote = items[0]["quotes"][0]
+    assert source[quote["start"]:quote["end"]] == "region west"
+    # Offsets past the end of the source are a counting error, not a different quote.
+    items, rejected = apply_operations([], [_add("region west", 900, 911)], {"e": (source, 7)})
+    assert not rejected and source[items[0]["quotes"][0]["start"]:items[0]["quotes"][0]["end"]] == "region west"
+
+
+def test_repeated_text_resolves_to_the_occurrence_nearest_the_models_estimate():
+    source = "intro. region east. later the region west applies. region east again."
+    first, last = source.index("region east"), source.rindex("region east")
+    near_first, _ = apply_operations([], [_add("region east", first + 3, first + 14)], {"e": (source, 7)})
+    near_last, _ = apply_operations([], [_add("region east", last - 4, last + 7)], {"e": (source, 7)})
+    assert near_first[0]["quotes"][0]["start"] == first
+    assert near_last[0]["quotes"][0]["start"] == last
+
+
+def test_paraphrased_or_unknown_source_quotes_are_still_rejected():
+    source = "region east"
+    _, rejected = apply_operations([], [_add("the eastern region", 0, 11)], {"e": (source, 4)})
+    assert rejected and "exact substring" in rejected[0]["reason"]
+    _, rejected = apply_operations([], [_add("region east", 0, 11, event="missing")], {"e": (source, 4)})
+    assert rejected and "unknown source" in rejected[0]["reason"]
+
+
+def test_a_batch_of_only_invalid_operations_does_not_advance_coverage(tmp_path):
+    class Paraphrasing(FakeObserverClient):
+        async def complete_json(self, payload):
+            event = payload["events"][0]["event_id"]
+            return {"operations": [{"op": "add", "target_id": None, "reason": "evidence",
+                                    "item": {"claim": "region is east", "kind": "fact",
+                                             "quotes": [{"event_id": event, "start": 0, "end": 9, "text": "not in the source"}]}}]}
+    store, _, worker = setup(tmp_path, client=Paraphrasing())
+    ingest(store, "FACT region=east")
+    assert compact(store, worker) == "FAILED"
+    assert store.get_active_capsule("t") is None
