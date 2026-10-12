@@ -105,7 +105,7 @@ def test_consolidator_subprocess_env_falls_back_to_benchmark_provider() -> None:
     assert env["ORCHID_CONSOLIDATOR_URL"] == "https://openrouter.ai/api/v1"
     assert env["ORCHID_CONSOLIDATOR_API_KEY"] == "bench-key"
     assert env["ORCHID_CONSOLIDATOR_MODEL"] == "upstage/solar-pro4"
-    assert "memory_gateway" in env["PYTHONPATH"]
+    assert (Path(env["PYTHONPATH"]) / "memory_gateway").is_dir()
 
 
 def test_run_live_consolidator_builds_fresh_engine_per_chunk(monkeypatch) -> None:

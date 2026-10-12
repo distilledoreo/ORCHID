@@ -77,6 +77,10 @@ Credentials are transport configuration only. They are never serialized into cap
 
 ## Development
 
+For the memory upgrade's credential-free gateway replay, see
+[Memory upgrade evaluation](docs/upgrade-evaluation.md). The revised phased
+implementation is described in [the upgrade plan](docs/orchid-memory-upgrade-plan.md).
+
 Python 3.11 and 3.12 are supported:
 
 ```powershell
