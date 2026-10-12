@@ -25,7 +25,7 @@ from .foreground_telemetry import (
     record_provider_latency,
     substitution_record,
 )
-from .frozen_pipeline import MAXIMUM_FOREGROUND_WAIT_MS
+from .core_goal import MAX_COMPACTION_WAIT_MS as MAXIMUM_FOREGROUND_WAIT_MS
 from .ingestion import append_novel_messages, parse_assistant_message, parse_stream_message
 from .pipeline_adapters import build_lossless_engine
 from .scheduler import CompactionScheduler, ThresholdPolicy
