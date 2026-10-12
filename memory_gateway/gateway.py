@@ -227,6 +227,10 @@ def create_app(
                 status_code=400,
                 content={"error": {"message": "messages must be an array", "type": "invalid_request_error"}},
             )
+        from .ingestion import normalize_message
+        if any(normalize_message(message) is None for message in payload["messages"]):
+            return JSONResponse(status_code=400, content={"error": {"type": "invalid_request_error",
+                                "message": "each message must have a supported role"}})
         project_id = request.headers.get("x-memory-project", "default")
         thread_id = request.headers.get("x-memory-thread", "default")
         request_id = request.headers.get("x-request-id", new_id("req"))
@@ -343,27 +347,13 @@ def create_app(
                     messages=[response_message],
                     request_id=request_id,
                     source="response",
+                    usage=parsed.get("usage") if isinstance(parsed, dict) else None,
                 )
             else:
-                store.append_event(
-                    project_id=project_id,
-                    thread_id=thread_id,
-                    event_type="assistant_response",
-                    role="assistant",
-                    content=response_text,
-                    metadata={"status_code": response.status_code, "stream": False},
-                    request_id=request_id,
-                )
-        else:
-            store.append_event(
-                project_id=project_id,
-                thread_id=thread_id,
-                event_type="backend_error",
-                role="system",
-                content=response_text[:2000],
-                metadata={"status_code": response.status_code, "stream": False},
-                request_id=request_id,
-            )
+                return JSONResponse(status_code=502, content={"error": {
+                    "type": "provider_protocol_error", "message": "provider response has no valid assistant message"}})
+            if isinstance(parsed.get("usage"), dict):
+                store.record_request_usage(thread_id, request_id, parsed["usage"])
         _maybe_enqueue(thread_id, scheduler)
         return JSONResponse(status_code=response.status_code, content=_json_or_text(response))
 
@@ -570,25 +560,15 @@ async def _stream_response(
                     )
                 stream_end_at = _stream_now()
         response_message = parse_stream_message(chunks)
-        if response_message is not None:
-            append_novel_messages(
-                store,
-                project_id=project_id,
-                thread_id=thread_id,
-                messages=[response_message],
-                request_id=request_id,
-                source="response",
-            )
-        else:
-            store.append_event(
-                project_id=project_id,
-                thread_id=thread_id,
-                event_type="assistant_response",
-                role="assistant",
-                content=b"".join(chunks).decode("utf-8", errors="replace"),
-                metadata={"stream": True},
-                request_id=request_id,
-            )
+        if response_message is None:
+            raise ProviderStreamError("invalid_assistant_message", "provider stream has no valid assistant message")
+        append_novel_messages(
+            store, project_id=project_id, thread_id=thread_id,
+            messages=[response_message], request_id=request_id, source="response",
+            usage=(last_usage_payload or {}).get("usage"),
+        )
+        if isinstance((last_usage_payload or {}).get("usage"), dict):
+            store.record_request_usage(thread_id, request_id, last_usage_payload["usage"])
         _maybe_enqueue(thread_id, scheduler)
         status = "SUCCEEDED"
         store.update_gateway_stream_run(

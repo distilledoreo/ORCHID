@@ -35,3 +35,11 @@ fixtures and benchmark thresholds have not been rewritten.
 Phase 0 default-suite validation: 376 passed, seven optional checks skipped.
 JSON/JSONL fixtures now use explicit LF checkout attributes so sealed byte
 hashes do not depend on Git's global autocrlf setting.
+
+Phase 1: 379 passed, seven optional checks skipped. Twelve turns of full-history
+resends store exactly 24 events; identical assistant replies remain separate,
+completion usage is preserved, and fragmented SSE tool arguments reconstruct.
+Legacy envelope/SSE views are tested without changing their stored rows. The
+three baseline arms retain 4/4 deterministic probe results. The full report is
+`artifacts/memory_upgrade/phase-1.json`; ingestion does not change the memory
+algorithm and establishes no live-model quality or cost improvement.

@@ -81,6 +81,10 @@ For the memory upgrade's credential-free gateway replay, see
 [Memory upgrade evaluation](docs/upgrade-evaluation.md). The revised phased
 implementation is described in [the upgrade plan](docs/orchid-memory-upgrade-plan.md).
 
+Ingestion stores normalized message occurrences and provider completion usage.
+Legacy request envelopes and SSE remain readable through immutable-row views;
+raw wire/error payloads are never forwarded to memory models.
+
 Python 3.11 and 3.12 are supported:
 
 ```powershell

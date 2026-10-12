@@ -4,6 +4,14 @@
 
 Events are append-only. Corrections append new events; they never mutate an earlier event. Each event has a thread-local monotonic sequence, a content hash, and optional request/parent identifiers.
 
+Gateway ingestion stores one normalized protocol message per new occurrence.
+Resent history reuses event identities; identical replies from different request
+IDs remain distinct. Completion usage is attached when the assistant row is
+created. Aggregate request usage is a separate numeric-only record, never an
+update to earlier events. Invalid provider wire payloads are not conversation
+events. Legacy envelopes/SSE are parsed through deterministic model views while
+their original database rows and hashes remain unchanged.
+
 ## Snapshot isolation
 
 A job records `base_capsule_id` and `snapshot_end_event_id` when queued. A worker must compact only that snapshot. Events appended afterward remain outside the job.

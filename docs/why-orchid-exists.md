@@ -31,6 +31,12 @@ record is the ground truth from which later memory can be reinterpreted.
 
 This is the episodic layer: what happened, in order, with its original source
 available for inspection. Capsules are not replacements for that history.
+
+The gateway records message occurrences rather than copies of whole HTTP
+requests. A history resend reuses the earlier occurrences; a new identical
+reply still belongs to its own request. Older wire-format records stay on disk
+and are interpreted through deterministic message views, so transport frames
+cannot masquerade as conversational evidence.
 They are derived, versioned interpretations of a frozen range of it. Keeping
 both layers makes memory evolution auditable and gives a failed compaction a
 safe outcome: the previous capsule and the raw events remain untouched.

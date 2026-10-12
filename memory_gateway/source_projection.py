@@ -315,6 +315,9 @@ def project_compaction_events(
 ) -> list[Event]:
     """Stub bulky/duplicate tool results; leave other roles unchanged."""
 
+    from .message_views import model_events
+
+    events = model_events(events)
     hashes = seen if seen is not None else {}
     projected: list[Event] = []
     for event in events:

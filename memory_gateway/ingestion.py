@@ -16,6 +16,7 @@ class IngestionResult:
     duplicate_protection: str
     skipped_duplicate_count: int = 0
     reused_prefix_start: int = 0
+    message_event_ids: tuple[str | None, ...] = ()
 
 
 def message_content(message: dict[str, Any]) -> str:
@@ -113,7 +114,7 @@ def normalize_message(value: Any) -> dict[str, Any] | None:
     if not isinstance(value, dict):
         return None
     role = value.get("role")
-    if not isinstance(role, str) or not role:
+    if role not in {"system", "developer", "user", "assistant", "tool", "function"}:
         return None
     # Preserve protocol fields, including tool call IDs and arguments. The
     # canonical JSON hash is intentionally exact: repeated text at a new
@@ -129,6 +130,7 @@ def append_novel_messages(
     messages: list[Any],
     request_id: str | None,
     source: str,
+    usage: dict[str, Any] | None = None,
 ) -> IngestionResult:
     normalized = tuple(
         message
@@ -141,6 +143,7 @@ def append_novel_messages(
         messages=normalized,
         request_id=request_id,
         source=source,
+        usage=usage,
     )
     return IngestionResult(**result)
 
@@ -162,6 +165,7 @@ def parse_stream_message(chunks: list[bytes]) -> dict[str, Any] | None:
     content_parts: list[str] = []
     tool_calls: dict[int, dict[str, Any]] = {}
     function_call: dict[str, str] = {}
+    saw_message = False
     # A network read is not an SSE frame boundary.  Joining first keeps a
     # frame split across two provider chunks parseable and prevents the
     # fallback raw-response event from reintroducing a duplicate.
@@ -180,6 +184,7 @@ def parse_stream_message(chunks: list[bytes]) -> dict[str, Any] | None:
             if not choices or not isinstance(choices[0], dict):
                 continue
             choice = choices[0]
+            saw_message = True
             delta = choice.get("delta") or {}
             if isinstance(delta.get("role"), str):
                 role = delta["role"]
@@ -209,6 +214,8 @@ def parse_stream_message(chunks: list[bytes]) -> dict[str, Any] | None:
                 function_call["name"] = function_call.get("name", "") + delta_function["name"]
             if isinstance(delta_function.get("arguments"), str):
                 function_call["arguments"] = function_call.get("arguments", "") + delta_function["arguments"]
+    if not saw_message:
+        return None
     message: dict[str, Any] = {"role": role, "content": "".join(content_parts) or None}
     if tool_calls:
         message["tool_calls"] = [tool_calls[index] for index in sorted(tool_calls)]

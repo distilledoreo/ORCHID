@@ -226,6 +226,11 @@ class ContextAssembler:
 
     @staticmethod
     def _render_events(events: list[dict[str, Any]]) -> str:
+        from .compaction import Event
+        from .message_views import model_events
+
+        events = [dict(event, content=view.content) for event, view in
+                  zip(events, model_events([Event.from_row(row) for row in events]))]
         rendered: list[str] = []
         for event in events:
             role = event["role"] or event["event_type"]
