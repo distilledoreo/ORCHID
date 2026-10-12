@@ -1,0 +1,883 @@
+{
+  "format": "orchid-gateway-replay-v1",
+  "fixture_hash": "9d16cc355626fa9362af69181ad6bf61626d2ab0b71f573cd7f77d2308e8b59e",
+  "mode": "deterministic-fakes",
+  "quality_scope": "protocol/regression; not live-model recall evidence",
+  "arms": [
+    {
+      "arm": "full_context",
+      "source_tokens": 14836,
+      "source_token_kind": "estimate",
+      "calls": 0,
+      "promotions": 0,
+      "stored_events": 28,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "compaction_wall_ms": 0,
+      "replay_wall_ms": 655.1082549995044,
+      "per_1000_source_tokens": {
+        "input_tokens": 0.0,
+        "output_tokens": 0.0,
+        "wall_ms": 0.0,
+        "calls": 0.0
+      },
+      "probes": {
+        "stable": {
+          "expected": "bluejay",
+          "actual": "bluejay",
+          "passed": true
+        },
+        "region": {
+          "expected": "west",
+          "actual": "west",
+          "passed": true
+        },
+        "absent": {
+          "expected": "unknown",
+          "actual": "unknown",
+          "passed": true
+        },
+        "rejected_database": {
+          "expected": "postgres",
+          "actual": "postgres",
+          "passed": true
+        }
+      },
+      "model_runs": [],
+      "raw_recall_probe": null,
+      "file_ledger": {}
+    },
+    {
+      "arm": "rolling_summary",
+      "source_tokens": 14836,
+      "source_token_kind": "estimate",
+      "calls": 10,
+      "promotions": 10,
+      "stored_events": 28,
+      "input_tokens": 15061,
+      "output_tokens": 130,
+      "compaction_wall_ms": 0.22991799050942063,
+      "replay_wall_ms": 705.7995990035124,
+      "per_1000_source_tokens": {
+        "input_tokens": 1015.1658128875708,
+        "output_tokens": 8.762469668374225,
+        "wall_ms": 0.015497303215787317,
+        "calls": 0.6740361283364789
+      },
+      "probes": {
+        "stable": {
+          "expected": "bluejay",
+          "actual": "bluejay",
+          "passed": true
+        },
+        "region": {
+          "expected": "west",
+          "actual": "west",
+          "passed": true
+        },
+        "absent": {
+          "expected": "unknown",
+          "actual": "unknown",
+          "passed": true
+        },
+        "rejected_database": {
+          "expected": "postgres",
+          "actual": "postgres",
+          "passed": true
+        }
+      },
+      "model_runs": [
+        {
+          "stage": "rolling",
+          "input_tokens": 1507,
+          "output_tokens": 9,
+          "wall_ms": 0.07554900366812944,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate"
+        },
+        {
+          "stage": "rolling",
+          "input_tokens": 1501,
+          "output_tokens": 9,
+          "wall_ms": 0.06603999645449221,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate"
+        },
+        {
+          "stage": "rolling",
+          "input_tokens": 1501,
+          "output_tokens": 9,
+          "wall_ms": 0.010799994925037026,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate"
+        },
+        {
+          "stage": "rolling",
+          "input_tokens": 1501,
+          "output_tokens": 9,
+          "wall_ms": 0.010689996997825801,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate"
+        },
+        {
+          "stage": "rolling",
+          "input_tokens": 1501,
+          "output_tokens": 9,
+          "wall_ms": 0.010110001312568784,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate"
+        },
+        {
+          "stage": "rolling",
+          "input_tokens": 1513,
+          "output_tokens": 17,
+          "wall_ms": 0.012258999049663544,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate"
+        },
+        {
+          "stage": "rolling",
+          "input_tokens": 1509,
+          "output_tokens": 17,
+          "wall_ms": 0.01170000177808106,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate"
+        },
+        {
+          "stage": "rolling",
+          "input_tokens": 1509,
+          "output_tokens": 17,
+          "wall_ms": 0.011600001016631722,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate"
+        },
+        {
+          "stage": "rolling",
+          "input_tokens": 1509,
+          "output_tokens": 17,
+          "wall_ms": 0.010909992852248251,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate"
+        },
+        {
+          "stage": "rolling",
+          "input_tokens": 1510,
+          "output_tokens": 17,
+          "wall_ms": 0.01026000245474279,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate"
+        }
+      ],
+      "raw_recall_probe": null,
+      "file_ledger": {}
+    },
+    {
+      "arm": "three_stage",
+      "source_tokens": 14836,
+      "source_token_kind": "estimate",
+      "calls": 40,
+      "promotions": 10,
+      "stored_events": 28,
+      "input_tokens": 65722,
+      "output_tokens": 1168,
+      "compaction_wall_ms": 2.838115018676035,
+      "replay_wall_ms": 711.4706770080375,
+      "per_1000_source_tokens": {
+        "input_tokens": 4429.900242653007,
+        "output_tokens": 78.72741978970073,
+        "wall_ms": 0.1912992058962008,
+        "calls": 2.6961445133459154
+      },
+      "probes": {
+        "stable": {
+          "expected": "bluejay",
+          "actual": "bluejay",
+          "passed": true
+        },
+        "region": {
+          "expected": "west",
+          "actual": "west",
+          "passed": true
+        },
+        "absent": {
+          "expected": "unknown",
+          "actual": "unknown",
+          "passed": true
+        },
+        "rejected_database": {
+          "expected": "postgres",
+          "actual": "postgres",
+          "passed": true
+        }
+      },
+      "model_runs": [
+        {
+          "stage": "selector",
+          "input_tokens": 1120,
+          "output_tokens": 19,
+          "wall_ms": 0.0376390089513734,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1061,
+          "output_tokens": 29,
+          "wall_ms": 0.03640000068116933,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1120,
+          "output_tokens": 19,
+          "wall_ms": 0.037479010643437505,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1046,
+          "output_tokens": 29,
+          "wall_ms": 0.03362000279594213,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1120,
+          "output_tokens": 19,
+          "wall_ms": 0.03718900552485138,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1046,
+          "output_tokens": 29,
+          "wall_ms": 0.03483999171294272,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1120,
+          "output_tokens": 19,
+          "wall_ms": 0.036120007280260324,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1046,
+          "output_tokens": 29,
+          "wall_ms": 0.03912000101990998,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1120,
+          "output_tokens": 19,
+          "wall_ms": 0.036779005313292146,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1046,
+          "output_tokens": 29,
+          "wall_ms": 0.03340000694151968,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1120,
+          "output_tokens": 19,
+          "wall_ms": 0.03665999975055456,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1059,
+          "output_tokens": 29,
+          "wall_ms": 0.03375900269020349,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1120,
+          "output_tokens": 19,
+          "wall_ms": 0.037488993257284164,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1047,
+          "output_tokens": 29,
+          "wall_ms": 0.03461999585852027,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1120,
+          "output_tokens": 19,
+          "wall_ms": 0.05294900620356202,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1047,
+          "output_tokens": 29,
+          "wall_ms": 0.04931000876240432,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1120,
+          "output_tokens": 19,
+          "wall_ms": 0.03833998925983906,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1047,
+          "output_tokens": 29,
+          "wall_ms": 0.033329997677356005,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1120,
+          "output_tokens": 19,
+          "wall_ms": 0.037730002077296376,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "selector",
+          "input_tokens": 1048,
+          "output_tokens": 29,
+          "wall_ms": 0.034240001696161926,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "canonicalizer",
+          "input_tokens": 1985,
+          "output_tokens": 14,
+          "wall_ms": 0.09088999649975449,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "canonicalizer",
+          "input_tokens": 1970,
+          "output_tokens": 9,
+          "wall_ms": 0.09244900138583034,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "canonicalizer",
+          "input_tokens": 1970,
+          "output_tokens": 9,
+          "wall_ms": 0.08552901272196323,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "canonicalizer",
+          "input_tokens": 1970,
+          "output_tokens": 9,
+          "wall_ms": 0.08461000106763095,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "canonicalizer",
+          "input_tokens": 1970,
+          "output_tokens": 9,
+          "wall_ms": 0.08611900557298213,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "canonicalizer",
+          "input_tokens": 1983,
+          "output_tokens": 17,
+          "wall_ms": 0.09386899182572961,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "canonicalizer",
+          "input_tokens": 1971,
+          "output_tokens": 9,
+          "wall_ms": 0.08821899245958775,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "canonicalizer",
+          "input_tokens": 1971,
+          "output_tokens": 9,
+          "wall_ms": 0.0859889987623319,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "canonicalizer",
+          "input_tokens": 1971,
+          "output_tokens": 9,
+          "wall_ms": 0.08783899829722941,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "canonicalizer",
+          "input_tokens": 1972,
+          "output_tokens": 9,
+          "wall_ms": 0.08752899884711951,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "consolidator",
+          "input_tokens": 2383,
+          "output_tokens": 54,
+          "wall_ms": 0.14570799248758703,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "consolidator",
+          "input_tokens": 2429,
+          "output_tokens": 54,
+          "wall_ms": 0.11448899749666452,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "consolidator",
+          "input_tokens": 2429,
+          "output_tokens": 54,
+          "wall_ms": 0.12020900612697005,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "consolidator",
+          "input_tokens": 2429,
+          "output_tokens": 54,
+          "wall_ms": 0.11288899986539036,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "consolidator",
+          "input_tokens": 2429,
+          "output_tokens": 54,
+          "wall_ms": 0.11371899745427072,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "consolidator",
+          "input_tokens": 2449,
+          "output_tokens": 63,
+          "wall_ms": 0.11884899868164212,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "consolidator",
+          "input_tokens": 2437,
+          "output_tokens": 63,
+          "wall_ms": 0.11836900375783443,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "consolidator",
+          "input_tokens": 2437,
+          "output_tokens": 63,
+          "wall_ms": 0.11633899703156203,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "consolidator",
+          "input_tokens": 2437,
+          "output_tokens": 63,
+          "wall_ms": 0.11618999997153878,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "consolidator",
+          "input_tokens": 2437,
+          "output_tokens": 63,
+          "wall_ms": 0.12729899026453495,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        }
+      ],
+      "raw_recall_probe": null,
+      "file_ledger": {}
+    },
+    {
+      "arm": "observer",
+      "source_tokens": 14836,
+      "source_token_kind": "estimate",
+      "calls": 10,
+      "promotions": 10,
+      "stored_events": 32,
+      "input_tokens": 5160,
+      "output_tokens": 415,
+      "compaction_wall_ms": 0.6041930028004572,
+      "replay_wall_ms": 748.8030919921584,
+      "per_1000_source_tokens": {
+        "input_tokens": 347.8026422216231,
+        "output_tokens": 27.972499325963874,
+        "wall_ms": 0.04072479123756115,
+        "calls": 0.6740361283364789
+      },
+      "probes": {
+        "stable": {
+          "expected": "bluejay",
+          "actual": "bluejay",
+          "passed": true
+        },
+        "region": {
+          "expected": "west",
+          "actual": "west",
+          "passed": true
+        },
+        "absent": {
+          "expected": "unknown",
+          "actual": "unknown",
+          "passed": true
+        },
+        "rejected_database": {
+          "expected": "postgres",
+          "actual": "postgres",
+          "passed": true
+        }
+      },
+      "model_runs": [
+        {
+          "stage": "observe",
+          "input_tokens": 523,
+          "output_tokens": 112,
+          "wall_ms": 0.07069999992381781,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.056168995797634125,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.06750899774488062,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.056478995247744024,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.05666899960488081,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 572,
+          "output_tokens": 127,
+          "wall_ms": 0.07073901360854506,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.0566200033063069,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.056509990827180445,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.057169003412127495,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 509,
+          "output_tokens": 22,
+          "wall_ms": 0.05562900332733989,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        }
+      ],
+      "raw_recall_probe": {
+        "before": "unknown",
+        "after": "friday",
+        "expected": "friday",
+        "passed": true,
+        "event_ids": [
+          "evt_43fb21b3934447d59fb858388b840f52",
+          "evt_eb4e3baa8ab949a488dbbfcb0b0c4254"
+        ]
+      },
+      "file_ledger": {}
+    },
+    {
+      "arm": "coding",
+      "source_tokens": 16154,
+      "source_token_kind": "estimate",
+      "calls": 14,
+      "promotions": 14,
+      "stored_events": 44,
+      "input_tokens": 7337,
+      "output_tokens": 603,
+      "compaction_wall_ms": 0.8610020449850708,
+      "replay_wall_ms": 969.3806790019153,
+      "per_1000_source_tokens": {
+        "input_tokens": 454.1909124675003,
+        "output_tokens": 37.32821592175313,
+        "wall_ms": 0.05329961897889506,
+        "calls": 0.8666584127770212
+      },
+      "probes": {
+        "stable": {
+          "expected": "bluejay",
+          "actual": "bluejay",
+          "passed": true
+        },
+        "region": {
+          "expected": "west",
+          "actual": "west",
+          "passed": true
+        },
+        "absent": {
+          "expected": "unknown",
+          "actual": "unknown",
+          "passed": true
+        },
+        "rejected_database": {
+          "expected": "postgres",
+          "actual": "postgres",
+          "passed": true
+        },
+        "artifact": {
+          "expected": "src/widget.py",
+          "actual": "src/widget.py",
+          "passed": true
+        },
+        "continuation": {
+          "expected": "resume_here",
+          "actual": "resume_here",
+          "passed": true
+        }
+      },
+      "model_runs": [
+        {
+          "stage": "observe",
+          "input_tokens": 523,
+          "output_tokens": 112,
+          "wall_ms": 0.07381000614259392,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 535,
+          "output_tokens": 22,
+          "wall_ms": 0.05586000042967498,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 558,
+          "output_tokens": 62,
+          "wall_ms": 0.09059900185093284,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 537,
+          "output_tokens": 22,
+          "wall_ms": 0.05509000038728118,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 501,
+          "output_tokens": 22,
+          "wall_ms": 0.05480898835230619,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.058210003771819174,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.054589007049798965,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.05370900908019394,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.0562390050617978,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 618,
+          "output_tokens": 187,
+          "wall_ms": 0.07887001265771687,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.05535900709219277,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.05743000656366348,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 508,
+          "output_tokens": 22,
+          "wall_ms": 0.05398900248110294,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        },
+        {
+          "stage": "observe",
+          "input_tokens": 509,
+          "output_tokens": 22,
+          "wall_ms": 0.06243899406399578,
+          "status": "SUCCEEDED",
+          "usage_kind": "estimate_visible_input_with_schema"
+        }
+      ],
+      "raw_recall_probe": {
+        "before": "unknown",
+        "after": "friday",
+        "expected": "friday",
+        "passed": true,
+        "event_ids": [
+          "evt_0ff384da29384095ab9118a855dedbb2",
+          "evt_cf7cd0a008514ba9a3838e9d17655e4a"
+        ]
+      },
+      "file_ledger": {
+        "assets/icon.png": {
+          "attempted": [
+            {
+              "action": "edited",
+              "event_id": "evt_49efef128be9456b970416402678eb48"
+            }
+          ],
+          "created": [
+            {
+              "call_event_id": "evt_49efef128be9456b970416402678eb48",
+              "result_event_id": "evt_6a32930574c34d258c3a4346299043d4"
+            }
+          ],
+          "edited": [],
+          "read": []
+        },
+        "src/widget.py": {
+          "attempted": [
+            {
+              "action": "read",
+              "event_id": "evt_762b228bc9e44479a438d4b7b8f4d684"
+            }
+          ],
+          "created": [],
+          "edited": [],
+          "read": [
+            {
+              "call_event_id": "evt_762b228bc9e44479a438d4b7b8f4d684",
+              "result_event_id": "evt_79af14f8f3064b11a4fbda62997a567d"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "input_accounting": "visible JSON input, framing, fake system instruction and response schema; no hidden provider overhead",
+  "coding_fixture_hash": "d9ce21491fbb1f6bf404e5e5bf5c71fe6403e66282ef3248c07a5e86357d8379",
+  "legacy_to_observer_input_ratio": 12.736821705426356
+}

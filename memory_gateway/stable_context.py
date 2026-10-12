@@ -54,7 +54,9 @@ def assemble_stable(assembler, thread_id, inbound, *, project_id=None,
             if event["sequence"] > boundary and event["id"] not in instruction_ids}
     mates = _protocol_continuity_indices([m for _, m in entries], keep)
     keep |= mates
-    conversation = [dict(message) for i, (_, message) in enumerate(entries) if i in keep]
+    from .coding import render_message
+    conversation = [render_message(store, event, message, active, store.coding_policy)
+                    for i, (event, message) in enumerate(entries) if i in keep]
     unmatched = [dict(m) for i, m in enumerate(inbound)
                  if (i >= len(alignment) or alignment[i] is None)
                  and m.get("role") not in {"system", "developer"}]
@@ -63,7 +65,8 @@ def assemble_stable(assembler, thread_id, inbound, *, project_id=None,
     root_messages = []
     root = store.get_root_task_event(thread_id)
     if active and root and root["sequence"] <= boundary and root["id"] not in {entries[i][0]["id"] for i in keep}:
-        root_messages = [dict(m, metadata={"orchid_root_task_event_id": root["id"]}) for m in event_messages(root)]
+        root_messages = [dict(render_message(store, root, m, active, store.coding_policy),
+                              metadata={"orchid_root_task_event_id": root["id"]}) for m in event_messages(root)]
     memory = [capsule_context_message(active["content"])] if active else []
     cold_messages = []
     cold_result = None

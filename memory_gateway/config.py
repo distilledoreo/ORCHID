@@ -107,6 +107,9 @@ class RuntimeConfig:
     publication_horizon_turns: int = 8
     compaction_forecast_alpha: float = 0.2
     compaction_forecast_lookahead_turns: float = 3.0
+    coding_agent_mode: bool = False
+    coding_keep_turns: int = 4
+    coding_offload_tokens: int = 8_000
     embeddings_url: str | None = None
     embeddings_model: str | None = None
     embeddings_api_key: str | None = None
@@ -249,6 +252,9 @@ class RuntimeConfig:
             ),
             lease_seconds=lease_seconds,
             lease_renewal_seconds=lease_renewal_seconds,
+            coding_agent_mode=_bool_env("ORCHID_CODING_AGENT_MODE", False),
+            coding_keep_turns=_int_env("ORCHID_CODING_KEEP_TURNS", 4),
+            coding_offload_tokens=_int_env("ORCHID_CODING_OFFLOAD_TOKENS", 8_000),
             embeddings_url=_env("ORCHID_EMBEDDINGS_URL"), embeddings_model=_env("ORCHID_EMBEDDINGS_MODEL"),
             embeddings_api_key=_env("ORCHID_EMBEDDINGS_API_KEY"),
             embeddings_timeout_seconds=_positive_float_env("ORCHID_EMBEDDINGS_TIMEOUT_SECONDS", 15.0),

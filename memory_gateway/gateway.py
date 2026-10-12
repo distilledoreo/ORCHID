@@ -102,6 +102,8 @@ def create_app(
     from .observer import build_observer_engine
     activity_gate = ActivityGate()
     store = SQLiteStore(runtime.db_path)
+    if runtime.coding_agent_mode:
+        store.coding_policy = {"keep_turns": runtime.coding_keep_turns, "offload_tokens": runtime.coding_offload_tokens}
     from .raw_recall import RawRecall
     raw_recall = RawRecall(store, embeddings_url=runtime.embeddings_url, embeddings_model=runtime.embeddings_model,
                            embeddings_api_key=runtime.embeddings_api_key, timeout=runtime.embeddings_timeout_seconds)

@@ -8,7 +8,7 @@ from memory_gateway.compaction import CompactionWorker, queue_snapshot_job
 from memory_gateway.db import SQLiteStore
 from memory_gateway.evaluation import FakeObserverClient
 from memory_gateway.ingestion import append_novel_messages
-from memory_gateway.observer import ObserverEngine, Operation, apply_operations, render_items, source_spans
+from memory_gateway.observer import ObserverEngine, Operation, apply_operations, source_spans
 
 
 def setup(tmp_path, budget=2048, client=None):
