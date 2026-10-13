@@ -322,3 +322,39 @@ def test_raw_event_snapshots_are_not_bounded_by_the_selector_chunk_rule(tmp_path
     legacy = freeze_snapshot(store, "t", source_window_tokens=8000)
     raw = freeze_snapshot(store, "t", source_window_tokens=8000, raw_events=True)
     assert len(raw.events) > len(legacy.events)
+
+
+def test_a_long_user_message_is_read_in_small_pieces(tmp_path):
+    from memory_gateway.observer import USER_CALL_TOKENS, pieces
+    client = _Recording()
+    store, _, worker = setup(tmp_path, client=client)
+    keys = ("alpha", "beta", "gamma", "delta", "epsilon", "zeta")
+    goal = "".join(f"FACT {key}=required by the person.\n"
+                   + "".join(f"{key} requirement detail number {n} of the plan\n" for n in range(150)) for key in keys)
+    event = ingest(store, goal)
+    queue_snapshot_job(store, "t", raw_events=True)
+    assert asyncio.run(worker.run_once()) == "PROMOTED"
+    assert len(client.payloads) > 2
+    assert all(len(payload["events"]) == 1 and payload["events"][0]["event_id"] == event["id"] for payload in client.payloads)
+    spans = [span for payload in client.payloads for span in payload["events"][0]["spans"]]
+    assert all(left["end"] <= right["start"] for left, right in zip(spans, spans[1:]))
+    state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
+    assert sorted(item["claim"] for item in state["items"]) == sorted(f"FACT {key}=required" for key in keys)
+    small = {"event_id": "e", "role": "user", "spans": [{"start": 0, "end": 5, "text": "short"}], "offloaded": False}
+    assert pieces(small, USER_CALL_TOKENS) == [small]
+
+
+def test_an_unlisted_kind_is_relabelled_instead_of_costing_the_claim(tmp_path):
+    class Inventive(FakeObserverClient):
+        async def complete_json(self, payload):
+            response = await super().complete_json(payload)
+            for operation in response["operations"]:
+                if operation.get("item"):
+                    operation["item"]["kind"] = "requirement"
+            return response
+    store, _, worker = setup(tmp_path, client=Inventive())
+    ingest(store, "FACT region=east")
+    assert compact(store, worker) == "PROMOTED"
+    state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
+    assert [(item["claim"], item["kind"]) for item in state["items"]] == [("FACT region=east", "fact")]
+    assert state["rejected_operations"] == []
