@@ -70,7 +70,7 @@ def test_reflection_accounts_for_all_items_and_preserves_cold_history(tmp_path):
     assert [run["stage"] for run in client.runs] == ["observe", "reflection"]
 
 
-def test_incomplete_reflection_and_protocol_failure_leave_active_unchanged(tmp_path):
+def test_reflection_that_frees_too_little_falls_back_without_losing_events_or_items(tmp_path):
     class Broken(FakeObserverClient):
         async def complete_json(self, payload):
             if payload["task"] == "reflection":
@@ -79,8 +79,12 @@ def test_incomplete_reflection_and_protocol_failure_leave_active_unchanged(tmp_p
     store, _, worker = setup(tmp_path, budget=35, client=Broken())
     ingest(store, "FACT one=alpha FACT two=beta FACT three=gamma")
     before = store.list_events("t")
-    assert compact(store, worker) == "FAILED"
-    assert store.get_active_capsule("t") is None
+    # Reflection is an optimisation: when the model's answer does not fit, software hides items by priority
+    # and the observation is still promoted. Nothing is deleted from the ledger or the event log.
+    assert compact(store, worker) == "PROMOTED"
+    state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
+    assert len(state["items"]) == 3 and not any(item["hot"] for item in state["items"])
+    assert "did not fit" in state["reflection_error"]
     assert store.list_events("t") == before
 
 
@@ -358,3 +362,81 @@ def test_an_unlisted_kind_is_relabelled_instead_of_costing_the_claim(tmp_path):
     state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
     assert [(item["claim"], item["kind"]) for item in state["items"]] == [("FACT region=east", "fact")]
     assert state["rejected_operations"] == []
+
+
+def test_reflection_lists_only_changes_and_unlisted_items_are_kept(tmp_path):
+    class Selective(_Recording):
+        async def complete_json(self, payload):
+            if payload["task"] == "reflection":
+                self.payloads.append(payload)
+                first = payload["items"][0]["id"]
+                return {"decisions": [{"item_id": first, "action": "dropped", "reason": "least needed", "merge_group": None}],
+                        "merges": []}
+            return await super().complete_json(payload)
+    from memory_gateway.context import estimate_tokens
+    (tmp_path / "probe").mkdir()
+    probe, _, probe_worker = setup(tmp_path / "probe")
+    ingest(probe, "FACT one=alpha FACT two=beta FACT three=gamma")
+    assert compact(probe, probe_worker) == "PROMOTED"
+    unreflected = estimate_tokens(probe.get_active_capsule("t")["content"])
+    client = Selective()
+    store = SQLiteStore(tmp_path / "test.db")
+    store.ensure_project_and_thread("p", "t")
+    # One token under the unreflected size: dropping a single item is enough to fit.
+    worker = CompactionWorker(store, ObserverEngine(client, store=store, memory_budget_tokens=unreflected - 1), "test")
+    ingest(store, "FACT one=alpha FACT two=beta FACT three=gamma")
+    assert compact(store, worker) == "PROMOTED"
+    state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
+    assert [item["hot"] for item in state["items"]] == [False, True, True]
+    assert state["reflection_error"] is None
+    sent = [payload for payload in client.payloads if payload["task"] == "reflection"][0]
+    assert set(sent["items"][0]) == {"id", "kind", "valid_from", "claim", "quotes"}
+
+
+def test_failed_reflection_falls_back_to_priority_eviction(tmp_path):
+    from memory_gateway.context import estimate_tokens
+
+    class NoReflection(FakeObserverClient):
+        async def complete_json(self, payload):
+            if payload["task"] == "reflection":
+                raise RuntimeError("cut off")
+            return await super().complete_json(payload)
+    (tmp_path / "probe").mkdir()
+    probe, _, probe_worker = setup(tmp_path / "probe")
+    ingest(probe, "FACT one=alpha FACT rejected_two=beta FACT three=gamma")
+    assert compact(probe, probe_worker) == "PROMOTED"
+    unreflected = estimate_tokens(probe.get_active_capsule("t")["content"])
+    store = SQLiteStore(tmp_path / "test.db")
+    store.ensure_project_and_thread("p", "t")
+    worker = CompactionWorker(store, ObserverEngine(NoReflection(), store=store, memory_budget_tokens=unreflected - 1), "test")
+    ingest(store, "FACT one=alpha FACT rejected_two=beta FACT three=gamma")
+    assert compact(store, worker) == "PROMOTED"
+    active = store.get_active_capsule("t")
+    state = json.loads(active["model_metadata_json"])["observer_state"]
+    assert estimate_tokens(active["content"]) <= unreflected - 1
+    # The oldest plain fact is hidden first; the decision outranks it and stays visible.
+    assert [(item["kind"], item["hot"]) for item in state["items"]] == [("fact", False), ("decision", True), ("fact", True)]
+    assert len(state["items"]) == 3 and "reflection" in state["reflection_error"]
+    assert [entry["action"] for entry in state["reflection"]] == ["evicted"]
+
+
+def test_quotes_may_differ_from_the_source_only_in_whitespace():
+    source = "# Architecture\r\n\r\nPixel layers own   immutable\r\nsparse tiles."
+    items, rejected = apply_operations([], [_add("Pixel layers own immutable sparse tiles.", 0, 10)], {"e": (source, 3)})
+    assert not rejected
+    quote = items[0]["quotes"][0]
+    assert quote["text"] == source[quote["start"]:quote["end"]] == "Pixel layers own   immutable\r\nsparse tiles."
+    _, rejected = apply_operations([], [_add("Pixel layers own mutable sparse tiles.", 0, 10)], {"e": (source, 3)})
+    assert rejected
+
+
+def test_long_tool_output_is_read_in_parts(tmp_path):
+    client = _Recording()
+    store, _, worker = setup(tmp_path, client=client)
+    document = "".join(f"design rule number {n} for the document model and its tiles\n" for n in range(900))
+    _ingest_as(store, "tool", "FACT architecture=tiled\n" + document + "FACT history=immutable\n", "doc")
+    queue_snapshot_job(store, "t", raw_events=True)
+    assert asyncio.run(worker.run_once()) == "PROMOTED"
+    assert len(client.payloads) > 2
+    state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
+    assert sorted(item["claim"] for item in state["items"]) == ["FACT architecture=tiled", "FACT history=immutable"]
