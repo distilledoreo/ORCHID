@@ -247,13 +247,12 @@ def apply_operations(items: list[dict], operations: list[Operation], sources: di
                 continue
             if op.item is None:
                 raise ValueError("add/supersede requires an item")
-            if op.op == "add" and op.target_id is not None:
-                raise ValueError("add must not supersede")
-            target = next((item for item in result if item["id"] == op.target_id), None)
-            if op.op == "supersede" and (target is None or target["status"] != "current"):
-                raise ValueError("replacement target is not a current item")
+            # The claim and its quote are the evidence; the target is only bookkeeping. A small model fills
+            # target_id on plain additions or names something that is not a current item, and that must not
+            # cost the claim: a usable target makes it a replacement, anything else makes it an addition.
+            target = next((item for item in result if item["id"] == op.target_id and item["status"] == "current"), None)
             quotes = checked_quotes(op.item, sources)
-            record = new_record(op.item, quotes, sources, op.target_id)
+            record = new_record(op.item, quotes, sources, target["id"] if target else None)
             if any(item["id"] == record["id"] for item in result):
                 continue  # Exact retry is deterministic, never a second copy.
             if target is not None:

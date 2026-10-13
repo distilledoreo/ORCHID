@@ -440,3 +440,21 @@ def test_long_tool_output_is_read_in_parts(tmp_path):
     assert len(client.payloads) > 2
     state = json.loads(store.get_active_capsule("t")["model_metadata_json"])["observer_state"]
     assert sorted(item["claim"] for item in state["items"]) == ["FACT architecture=tiled", "FACT history=immutable"]
+
+
+def test_a_wrong_target_never_costs_an_evidenced_claim():
+    source = "region east. region west."
+    def operation(kind, text, target):
+        return Operation.model_validate({"op": kind, "target_id": target, "reason": "evidence",
+                                         "item": {"claim": text, "kind": "fact",
+                                                  "quotes": [{"event_id": "e", "start": 0, "end": 5, "text": text}]}})
+    # An addition that names a target which is not an item is still an addition.
+    items, rejected = apply_operations([], [operation("add", "region east", "evt_not_an_item")], {"e": (source, 4)})
+    assert not rejected and items[0]["supersedes"] is None
+    # A replacement whose target is unknown is kept as an addition.
+    items, rejected = apply_operations(items, [operation("supersede", "region west", "obs_missing")], {"e": (source, 4)})
+    assert not rejected and [item["status"] for item in items] == ["current", "current"]
+    # An addition that names a current item replaces it.
+    items, rejected = apply_operations(items[:1], [operation("add", "region west", items[0]["id"])], {"e": (source, 4)})
+    assert not rejected and [item["status"] for item in items] == ["superseded", "current"]
+    assert items[1]["supersedes"] == items[0]["id"]
