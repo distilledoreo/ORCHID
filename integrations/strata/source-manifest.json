@@ -11,7 +11,7 @@
     },
     "serve/selected_prefill.py": {
       "before_sha256": null,
-      "after_sha256": "c449c84e3862f87f6f9767fb2c052d42fb1940170ab5e8eca66ef257d7bac03d"
+      "after_sha256": "e2e52bdbe3601f64bdc2af9303a233d1e3a30afca71bf82f39571ae9bd2e2069"
     },
     "serve/test_selected_prefill.py": {
       "before_sha256": null,

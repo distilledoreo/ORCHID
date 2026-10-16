@@ -191,7 +191,7 @@
              if (n + max_new + 8 > o.max_context) {
 --- /dev/null
 +++ b/serve/selected_prefill.py
-@@ -0,0 +1,89 @@
+@@ -0,0 +1,90 @@
 +"""Opt-in raw token interface; no chat template, tokenization, retrieval or output parsing."""
 +import threading
 +import time
@@ -279,7 +279,8 @@
 +                        'mode': 'original_positions' if explicit else 'implicit_contiguous'},
 +            'usage': {'prompt_tokens': len(ids), 'original_prompt_tokens': original,
 +                      'completion_tokens': len(output)},
-+            'timings': {'ttft_s': None if first is None else first-started,
++            'timings': {'first_token_monotonic_s': first,
++                        'ttft_s': None if first is None else first-started,
 +                        'total_s': time.perf_counter()-started, 'engine': timings}}
 --- /dev/null
 +++ b/serve/test_selected_prefill.py
