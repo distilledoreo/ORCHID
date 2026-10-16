@@ -92,6 +92,7 @@ def arm_summary(rows):
               "support_output_tokens_reported": sum(((r.get("router") or {}).get("output_tokens") or 0) + (r.get("legacy", {}).get("output_tokens") or 0) for r in rows),
               "legacy_usage_censored_requests": sum(bool(r.get("legacy", {}).get("usage_censored")) for r in rows),
               "legacy_completed_requests": sum(r.get("legacy", {}).get("status") == "succeeded" for r in rows),
+              "legacy_full_fallback_requests": sum(r.get("legacy", {}).get("status", "").startswith("failed_full_fallback") for r in rows),
               "retrieval_rate": mean([bool((r.get("retrieval") or {}).get("rounds")) for r in rows]),
               "full_fallback_rate": mean([(r.get("retrieval") or {}).get("full_fallback", False) for r in rows]),
               "mean_retrieval_ms": mean([sum(round_["elapsed_ms"] for round_ in (r.get("retrieval") or {}).get("rounds", [])) for r in rows]),
@@ -100,6 +101,9 @@ def arm_summary(rows):
                   (not r["main"]["correct"] or r["finally_sufficient"] is False) for r in answered]),
               "cache_tokens_reported": sum(r["main"].get("usage", {}).get("prompt_tokens_details", {}).get("cached_tokens", 0) for r in answered),
               "evaluator": detection(gates)}
+    recoverable = [r for r in rows if r["category"] != "unanswerable" and r["initially_sufficient"] is False]
+    result["recovery_success_rate_including_fallback"] = mean([r["finally_sufficient"] for r in recoverable])
+    result["recovery_cases"] = len(recoverable)
     return result
 
 
@@ -132,7 +136,11 @@ def generate(root):
              "compressible_input_reduction_at_least_30_percent": actual_reduction is not None and actual_reduction >= 0.3,
              "accuracy_loss_at_most_2_points": a["answer_accuracy"] is not None and e["answer_accuracy"] is not None and a["answer_accuracy"] - e["answer_accuracy"] <= 0.02,
              "positive_paired_net_ttft": summary["paired"]["held_out"]["E"].get("mean_improvement_ms", 0) > 0}
-    complete = len(requests) == 128 * 6 and all(r.get("main") and not r.get("main_error") for r in requests)
+    corpus = json.loads((root / "corpus.json").read_text())
+    expected_pairs = {(case["id"], arm) for case in corpus for arm in "ABCDEF"}
+    complete = (len(requests) == 128 * 6 and len(requests) == len(expected_pairs)
+                and {(r["case"], r["arm"]) for r in requests} == expected_pairs
+                and all(r.get("main") and not r.get("main_error") for r in requests))
     simpler = bool(e["answer_accuracy"] is not None and f["answer_accuracy"] is not None
                    and f["answer_accuracy"] >= e["answer_accuracy"] - 0.02
                    and f["mean_end_to_end_ttft_ms"] <= e["mean_end_to_end_ttft_ms"])
@@ -141,6 +149,18 @@ def generate(root):
         finding = "Reject"
     summary.update(finding=finding, complete=complete, decision_targets=tests,
                    lexical_not_inferior_and_faster=simpler, compressible_main_input_reduction=actual_reduction)
+    summary["workload_groups"] = {
+        name: {arm: arm_summary([r for r in requests if r["split"] == "held_out" and r["arm"] == arm
+                                and (r["category"] == "dense") == dense]) for arm in "ABCDEF"}
+        for name, dense in (("dense", True), ("compressible", False))}
+    recovery = load(root / "classifier-recovery.jsonl")
+    summary["classifier_recovery"] = {
+        split: {"cases": len(rows), "evidence_recall": mean([r["evidence_recall"] for r in rows if not r["case"].startswith("unanswerable-")]),
+                "full_fallback_rate": mean([r["retrieval"]["full_fallback"] for r in rows]),
+                "input_tokens": sum(c["input_tokens"] for r in rows for c in r["calls"]),
+                "mean_total_evaluator_ms": mean([sum(c["elapsed_ms"] for c in r["calls"]) for r in rows])}
+        for split in ("development", "held_out")
+        for rows in [[r for r in recovery if r["split"] == split]]}
     matrix = load(root / "ablations.jsonl")
     ablations = defaultdict(list)
     for row in matrix:
@@ -148,8 +168,12 @@ def generate(root):
             continue
         key = row.get("condition") or f"lookahead={row['lookahead']},chunk={row['chunk_size']},pool={row['pooling']},reference={row['reference_order']},keep={row['keep_ratio']}"
         ablations[key].append(row)
-    summary["ablations"] = {key: {"cases": len(rows), "evidence_recall": mean([r["evidence_recall"] for r in rows]),
-                                 "retained_tokens": mean([r["retained_tokens"] for r in rows])} for key, rows in ablations.items()}
+    def retention(rows):
+        return {"cases": len(rows), "evidence_recall": mean([r["evidence_recall"] for r in rows if r["category"] != "unanswerable"]),
+                "retained_tokens": mean([r["retained_tokens"] for r in rows])}
+
+    summary["ablations"] = {key: dict(retention(rows), by_category={category: retention([r for r in rows if r["category"] == category])
+                            for category in sorted({r["category"] for r in rows})}) for key, rows in ablations.items()}
     post = [r for r in requests if r["split"] == "held_out" and r["arm"] == "C"]
     summary["post_answer_recovery"] = {"requests": len(post), "main_requested_more": sum("post_answer_final" in r for r in post),
         "final_accuracy": mean([(r.get("post_answer_final") or r.get("main", {})).get("correct") for r in post]),
@@ -171,6 +195,29 @@ def generate(root):
     for category in categories:
         vals = [summary["by_category"].get(f"held_out|{category}|{arm}", {}) for arm in "AEF"]
         lines.append(f"| {category} | {fmt(vals[0].get('answer_accuracy'), True)} | {fmt(vals[1].get('answer_accuracy'), True)} | {fmt(vals[2].get('answer_accuracy'), True)} | {fmt(vals[1].get('required_evidence_recall'), True)} |")
+    lines += ["", "## Paired latency and controller costs", "",
+              "Positive paired improvement means faster than full context. Intervals are fixed-seed case bootstrap intervals, not independent-request confidence bounds.", "",
+              "| Arm | Paired TTFT improvement ms | 95% bootstrap interval ms | Router ms | Evaluator ms | Retrieval ms |", "|---|---:|---:|---:|---:|---:|"]
+    for arm in "BCDEF":
+        values, pair = test[arm], summary["paired"]["held_out"][arm]
+        interval = pair.get("bootstrap_95_interval_ms", [None, None])
+        lines.append(f"| {arm} | {fmt(pair.get('mean_improvement_ms'))} | {fmt(interval[0])} to {fmt(interval[1])} | {fmt(values['mean_router_ms'])} | {fmt(values['mean_evaluator_ms'])} | {fmt(values['mean_retrieval_ms'])} |")
+    lines += ["", "## Evidence evaluator", "",
+              "| Gate | False sufficient / needed | False retrieve / initially sufficient | Detection precision | Detection recall |", "|---|---:|---:|---:|---:|"]
+    for name, values in [("Deterministic attention", e["evaluator"]), ("Deterministic lexical", f["evaluator"]), ("Untrained classifier", summary["classifier"]["held_out"]["detection"])]:
+        lines.append(f"| {name} | {values['false_sufficient']} / {values['needed_retrieval']} | {values['false_retrieve']} / {values['cases'] - values['needed_retrieval']} | {fmt(values['precision'], True)} | {fmt(values['recall'], True)} |")
+    lines += ["", "Classifier calibration, three-way confusion, retrieval success including full fallback, support token counts, cache counters, and per-category costs are in summary.json. Classifier recovery has no main-answer arm; its evidence recall must not be read as final answer accuracy.", "",
+              "## Retention ablations", "",
+              "These comparisons hold the 50% source budget fixed and measure supporting-span recall before retrieval. They do not measure answer accuracy for every grid point.", "",
+              "| Condition | Evidence recall | Mean retained tokens |", "|---|---:|---:|"]
+    for look, chunk, pool, ref in [(0, 64, True, False), (8, 64, True, False), (8, 64, False, False), (8, 64, True, True), (8, 32, True, False), (8, 128, True, False), (8, 1, False, False)]:
+        key = f"lookahead={look},chunk={chunk},pool={pool},reference={ref},keep=0.5"
+        values = summary["ablations"].get(key, {})
+        lines.append(f"| {key} | {fmt(values.get('evidence_recall'), True)} | {fmt(values.get('retained_tokens'))} |")
+    adaptive = summary["ablations"].get("adaptive_task_threshold", {})
+    post = summary["post_answer_recovery"]
+    lines += ["", f"Adaptive task-threshold retention: recall {fmt(adaptive.get('evidence_recall'), True)}, mean tokens {fmt(adaptive.get('retained_tokens'))}. Dense-versus-compressible costs are separate in summary.json.", "",
+              f"Post-answer UNKNOWN recovery triggered on {post['main_requested_more']} / {post['requests']} held-out cases; final accuracy {fmt(post['final_accuracy'], True)}, mean total latency {fmt(post['mean_total_ms'])} ms. Compare against E in the primary table; this control can miss confidently wrong answers."]
     lines += ["", "## Decision targets", ""] + [f"- {name}: {'PASS' if passed else 'FAIL'}." for name, passed in tests.items()]
     lines += ["", "## Interpretation and limits", "",
               "Recommend the simpler lexical selector over attention under these measurements." if simpler else "Attention must justify its added full-context read and Q/K capture cost against the lexical control.", "",

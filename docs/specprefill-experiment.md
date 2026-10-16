@@ -84,3 +84,63 @@ Do not infer end-task quality from excerpt retention or a net speedup from a
 token ratio. The proposed 95% evidence recall, <1% false sufficiency, 30% input
 reduction, <=2-point quality loss, and positive net TTFT are experimental decision
 criteria, not established performance.
+
+## Reproduction
+
+Use a separate Python environment with ORCHID installed and the optional
+`experiments/specprefill/requirements.txt` dependencies. The measured environment
+uses PyTorch 2.7.1+cu126 and Transformers 5.19.0. Provide locally downloaded
+Qwen3.5-0.8B weights and the **main model's** tokenizer; the loader supports both
+standard Hugging Face tokenizer JSON and the Strata Qwen byte-BPE descriptor.
+No model weights, database contents, API keys, or server logs belong in the PR.
+
+Start compatible main and legacy chat endpoints on localhost. The measured
+main endpoint uses Swift IQ3_S in Strata's CUDA-12 engine with native expert
+settings, `--spec 4`, MTP, int8 KV, 32,768 maximum context, 16,384 resident KV,
+and a fixed 4,096 MiB VRAM reserve. Main and student share a Tesla P100 16GB.
+The legacy endpoint uses FrogNano-4B Q6_K on the RX 580, one slot, 16,384 context,
+reasoning disabled, with `GGML_VK_DISABLE_FUSION=1`,
+`GGML_VK_DISABLE_GRAPH_OPTIMIZE=1`, and `GGML_VK_DISABLE_MULTI_ADD=1`.
+The main runtime may choose a smaller expert cache under colocation; these
+results therefore apply to that deployment, not an independently sized engine.
+
+```bash
+python -m experiments.specprefill.run --experiment-enabled \
+  --speculator /path/to/Qwen3.5-0.8B \
+  --main-tokenizer /path/to/main/tokenizer.json \
+  --output artifacts/specprefill/new-run --device cuda --grid \
+  --main-url http://127.0.0.1:18583/v1 \
+  --main-model orchid-prefill-main-swift-iq3_s \
+  --legacy-url http://127.0.0.1:18584/v1 \
+  --legacy-model orchid-legacy-4b --legacy-timeout 8
+python -m experiments.specprefill.report artifacts/specprefill/new-run
+```
+
+For automatic main-server startup and cleanup, `--main-launch-json` accepts a
+JSON array containing the server executable and its arguments. It removes an
+inherited `STRATA_API_KEY` for this localhost-only test; configure authentication
+separately if adapting the harness beyond localhost. Load the student first so
+the colocated main engine sizes its cache around that allocation. Startup and
+model loading are excluded from request timings. Use a fresh output directory;
+the harness rejects appending request records to an existing run.
+
+The B arm uses the repository's existing selector/canonicalizer/consolidator
+engine with an experimental **eight-second total foreground deadline**. This
+does not reproduce its historical asynchronous service scheduling or cloud
+provider latency. Deadline failures forward full context and remain failures
+in the report. Provider usage from canceled calls is censored; completed-call
+token totals alone are lower bounds.
+
+The corpus follows ORCHID's tool-log, decision, configuration, and exact-table
+patterns using synthetic text only. Its dense cases exercise exact arithmetic;
+it does not establish performance on arbitrary code or comprehensive prose
+summarization. Multi-turn cases reroute a previously unimportant fact under a
+new query; they are a two-query replay, not a long interactive conversation.
+Only one long-context case per split and category is included. These limits
+constrain generalization even when the empirical targets pass.
+
+The failed initial colocation attempt completed 42 requests before exhausting
+GPU memory with a 700 MiB reserve. Its raw records remain in the operator's
+private experiment directory; the public environment record identifies the
+failure. The controlled rerun starts from scratch with 4,096 MiB headroom and
+unchanged algorithms, thresholds, corpus, and generation settings.
