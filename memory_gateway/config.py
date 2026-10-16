@@ -107,6 +107,21 @@ class RuntimeConfig:
     publication_horizon_turns: int = 8
     compaction_forecast_alpha: float = 0.2
     compaction_forecast_lookahead_turns: float = 3.0
+    coding_agent_mode: bool = False
+    coding_keep_turns: int = 4
+    coding_offload_tokens: int = 8_000
+    embeddings_url: str | None = None
+    embeddings_model: str | None = None
+    embeddings_api_key: str | None = None
+    embeddings_timeout_seconds: float = 15.0
+    memory_engine: str = "auto"
+    observer_url: str | None = None
+    observer_model: str | None = None
+    observer_api_key: str | None = None
+    observer_input_tokens: int = 32_768
+    observer_output_tokens: int = 2_048
+    observer_timeout_seconds: float = 120.0
+    background_idle_only: bool = False
     prompt_layout: str = "stable"
     foreground_reserved_output_tokens: int = 2_048
     consolidator_timeout_seconds: float | None = None
@@ -123,6 +138,9 @@ class RuntimeConfig:
         db_path: str | None = None,
         backend_url: str | None = None,
     ) -> RuntimeConfig:
+        memory_engine = _env("ORCHID_MEMORY_ENGINE", "auto")
+        if memory_engine not in {"auto", "observer", "legacy"}:
+            raise ValueError("ORCHID_MEMORY_ENGINE must be auto, observer, or legacy")
         prompt_layout = _env("ORCHID_PROMPT_LAYOUT", "stable")
         if prompt_layout not in {"stable", "legacy"}:
             raise ValueError("ORCHID_PROMPT_LAYOUT must be stable or legacy")
@@ -235,6 +253,19 @@ class RuntimeConfig:
             ),
             lease_seconds=lease_seconds,
             lease_renewal_seconds=lease_renewal_seconds,
+            coding_agent_mode=_bool_env("ORCHID_CODING_AGENT_MODE", False),
+            coding_keep_turns=_int_env("ORCHID_CODING_KEEP_TURNS", 4),
+            coding_offload_tokens=_int_env("ORCHID_CODING_OFFLOAD_TOKENS", 8_000),
+            embeddings_url=_env("ORCHID_EMBEDDINGS_URL"), embeddings_model=_env("ORCHID_EMBEDDINGS_MODEL"),
+            embeddings_api_key=_env("ORCHID_EMBEDDINGS_API_KEY"),
+            embeddings_timeout_seconds=_positive_float_env("ORCHID_EMBEDDINGS_TIMEOUT_SECONDS", 15.0),
+            memory_engine=memory_engine,
+            observer_url=_env("ORCHID_OBSERVER_URL"), observer_model=_env("ORCHID_OBSERVER_MODEL"),
+            observer_api_key=_env("ORCHID_OBSERVER_API_KEY"),
+            observer_input_tokens=_int_env("ORCHID_OBSERVER_INPUT_TOKENS", 32_768),
+            observer_output_tokens=_int_env("ORCHID_OBSERVER_OUTPUT_TOKENS", 2_048),
+            observer_timeout_seconds=_positive_float_env("ORCHID_OBSERVER_TIMEOUT_SECONDS", 120.0),
+            background_idle_only=_bool_env("ORCHID_BACKGROUND_IDLE_ONLY", False),
             prompt_layout=prompt_layout,
             foreground_reserved_output_tokens=_int_env("ORCHID_FOREGROUND_RESERVED_OUTPUT_TOKENS", 2_048),
             recover_expired_jobs=_bool_env("ORCHID_RECOVER_EXPIRED_JOBS", False),

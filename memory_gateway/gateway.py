@@ -98,7 +98,15 @@ def create_app(
     compaction_engine: CompactionEngine | None = None,
 ) -> FastAPI:
     runtime = config or RuntimeConfig.from_env(db_path=db_path, backend_url=backend_url)
+    from .activity import ActivityGate, ForegroundActivityMiddleware
+    from .observer import build_observer_engine
+    activity_gate = ActivityGate()
     store = SQLiteStore(runtime.db_path)
+    if runtime.coding_agent_mode:
+        store.coding_policy = {"keep_turns": runtime.coding_keep_turns, "offload_tokens": runtime.coding_offload_tokens}
+    from .raw_recall import RawRecall
+    raw_recall = RawRecall(store, embeddings_url=runtime.embeddings_url, embeddings_model=runtime.embeddings_model,
+                           embeddings_api_key=runtime.embeddings_api_key, timeout=runtime.embeddings_timeout_seconds)
     cold_memory_telemetry = (
         BufferedColdMemoryTelemetry(
             store,
@@ -151,10 +159,14 @@ def create_app(
         publication_economics_enabled=runtime.publication_economics_enabled,
         publication_horizon_turns=runtime.publication_horizon_turns,
     )
+    configured_engine = (build_observer_engine(runtime, store, activity_gate)
+                         if runtime.memory_engine == "observer" or
+                         (runtime.memory_engine == "auto" and runtime.observer_url and runtime.observer_model)
+                         else build_lossless_engine(runtime, telemetry_recorder=store))
     engine = (
         compaction_engine
         if compaction_engine is not None
-        else build_lossless_engine(runtime, telemetry_recorder=store)
+        else configured_engine
     )
     from .capsule_admission import build_capsule_verifier
 
@@ -187,7 +199,8 @@ def create_app(
             cold_memory_telemetry.start()
         if worker is not None:
             worker_task = asyncio.create_task(
-                _worker_loop(worker, stop_event, runtime.worker_poll_seconds),
+                _worker_loop(worker, stop_event, runtime.worker_poll_seconds,
+                             activity_gate if runtime.background_idle_only else None),
                 name="orchid-compaction-worker",
             )
             app.state.worker_task = worker_task
@@ -207,6 +220,9 @@ def create_app(
 
     backend = runtime.backend_url
     app = FastAPI(title="Orchid Memory Gateway", version="0.1.0", lifespan=lifespan)
+    app.add_middleware(ForegroundActivityMiddleware, gate=activity_gate)
+    app.state.activity_gate = activity_gate
+    app.state.raw_recall = raw_recall
     app.state.store = store
     app.state.runtime = runtime
     app.state.backend_url = backend
@@ -379,6 +395,52 @@ def create_app(
         _maybe_enqueue(thread_id, scheduler)
         return JSONResponse(status_code=response.status_code, content=_json_or_text(response))
 
+    def recall_scope(request):
+        project = request.headers.get("x-memory-project")
+        thread = request.headers.get("x-memory-thread")
+        if not project or not thread:
+            raise ValueError("recall requires explicit project and thread headers")
+        return project, thread
+
+    @app.post("/v1/memory/recall")
+    async def recall_events(request: Request):
+        try:
+            project, thread = recall_scope(request)
+            body = await request.json()
+            if not isinstance(body, dict):
+                raise ValueError("recall body must be an object")
+            return await raw_recall.recall(project, thread, body.get("query"), body.get("k", 5))
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"message": str(error)}})
+        except Exception:
+            return JSONResponse(status_code=503, content={"error": {"type": "recall_unavailable"}}, headers={"Retry-After": "1"})
+
+    @app.get("/v1/memory/events/{event_id}")
+    async def read_event(event_id: str, request: Request, start: int = 0, end: int | None = None):
+        try:
+            project, thread = recall_scope(request)
+            result = raw_recall.read(project, thread, event_id, start, end)
+            if result is None:
+                return JSONResponse(status_code=404, content={"error": {"type": "event_not_found"}})
+            return result
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"message": str(error)}})
+        except Exception:
+            return JSONResponse(status_code=503, content={"error": {"type": "recall_unavailable"}})
+
+    @app.post("/v1/memory/index-embeddings")
+    async def index_embeddings(request: Request):
+        try:
+            project, thread = recall_scope(request)
+            body = await request.json()
+            if not isinstance(body, dict):
+                raise ValueError("index body must be an object")
+            return await raw_recall.index_embeddings(project, thread, body.get("batch_size", 32))
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"message": str(error)}})
+        except Exception:
+            return JSONResponse(status_code=503, content={"error": {"type": "index_unavailable"}})
+
     @app.get("/debug/thread/{thread_id}")
     async def debug_thread(thread_id: str) -> dict[str, Any]:
         context = assembler.assemble(thread_id, [])
@@ -430,8 +492,11 @@ async def _worker_loop(
     worker: CompactionWorker,
     stop_event: asyncio.Event,
     poll_seconds: float,
+    activity_gate=None,
 ) -> None:
     while not stop_event.is_set():
+        if activity_gate is not None:
+            await activity_gate.idle.wait()
         try:
             result = await worker.run_once()
         except asyncio.CancelledError:

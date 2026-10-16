@@ -95,6 +95,21 @@ Use `ORCHID_PROMPT_LAYOUT=legacy` only for historical comparisons. Direct
 compatibility and can select `layout="stable"` explicitly. Tail/overlap settings
 do not truncate the stable layout.
 
+Configure `ORCHID_OBSERVER_URL` and `ORCHID_OBSERVER_MODEL` to enable the single
+observer (`ORCHID_MEMORY_ENGINE=auto`), or force `observer`/`legacy` explicitly.
+See [observer memory](docs/observer-memory.md) for item evidence, reflection,
+legacy migration, endpoint configuration, and idle-only admission.
+
+Raw-event recall is available at `POST /v1/memory/recall` and
+`GET /v1/memory/events/{event_id}` under explicit project/thread headers.
+See [raw recall](docs/raw-recall.md) for FTS5, optional embeddings, privacy,
+source ranges, and the scoped `recall(query, k)` stdio MCP adapter.
+
+Optional [coding mode](docs/coding-agent-mode.md) is off by default and adds
+recoverable offload/masking and a file ledger. The
+[delivery report](docs/memory-upgrade-delivery.md) lists the PR stack, results,
+Python 3.11/3.12 checks, configuration, and unverified live gates.
+
 Python 3.11 and 3.12 are supported:
 
 ```powershell
