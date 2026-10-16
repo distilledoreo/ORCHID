@@ -14,6 +14,11 @@ Uncommitted provider and benchmark research from the original checkout was
 preserved separately before returning the checkout to the integrated branch.
 It is not part of the reviewed memory upgrade.
 
+The separate `upgrade/observer-live-readiness` branch is retained for reference,
+with its experimental code excluded from integration because the recorded live
+trial still stalled and underperformed rolling-summary memory. Its report and
+grading fixtures are preserved in [live observer findings](live-observer-findings.md).
+
 Sealed fixtures use the LF bytes specified in `.gitattributes`. When deliberately
 updating a sealed fixture, regenerate its manifest against the committed bytes
 and verify from a fresh checkout. Do not change the seal merely to bypass a

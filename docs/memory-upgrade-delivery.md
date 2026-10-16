@@ -65,6 +65,11 @@ quotes establish source identity, not semantic entailment. Protected legacy
 text/file state that cannot fit causes a safe failed candidate. Historical live
 artifacts and thresholds were preserved.
 
+A separate, unmerged live-readiness experiment found observer stalls and lower
+recall quality than a rolling summary on one coding session. Its code is not
+included here; the [findings and limitations](live-observer-findings.md) are
+preserved so deterministic passes are not mistaken for live-quality evidence.
+
 Details: [evaluation](upgrade-evaluation.md), [observer](observer-memory.md),
 [recall](raw-recall.md), [coding mode](coding-agent-mode.md), and
 [invariants](invariants.md).
