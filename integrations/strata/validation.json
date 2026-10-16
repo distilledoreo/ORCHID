@@ -1,0 +1,100 @@
+{
+  "model": "orchid-prefill-main-swift-iq3_s",
+  "context": 4096,
+  "prompt_tokens": 305,
+  "selected_tokens": 171,
+  "full_retention_token_match": true,
+  "ordinary_after_sparse_match": true,
+  "sparse_device_table_verified": true,
+  "sparse_first_decode_position": 305,
+  "sparse_output_differs_from_compact_control": false,
+  "http_rejection_checks": 3,
+  "scope": "Functional interface check only; no latency or quality claim.",
+  "first_logits_full_vs_explicit": {
+    "max_abs_error": 0.0,
+    "rmse": 0.0,
+    "different_values": 0,
+    "values": 248320
+  },
+  "first_logits_full_after_sparse": {
+    "max_abs_error": 0.0,
+    "rmse": 0.0,
+    "different_values": 0,
+    "values": 248320
+  },
+  "first_logits_sparse_original_vs_compact": {
+    "max_abs_error": 1.490614414215088,
+    "rmse": 0.25757263021117915,
+    "different_values": 248320,
+    "values": 248320
+  },
+  "logits_checks_passed": true,
+  "hardware": {
+    "gpu": "Tesla P100 16GB",
+    "compute_capability": "6.0",
+    "model": "existing Swift IQ3_S GGUF",
+    "runtime": "local Strata 0.1.43 CUDA-12.9 build",
+    "kv": "int8",
+    "mtp": 4,
+    "context": 4096
+  },
+  "diagnostic_controls": {
+    "STRATA_ROUTE_TAIL_SKIP": "0",
+    "STRATA_PREFILL_CPU_SHARE": "0",
+    "pcie_frac": 1,
+    "prompt_cache": 0,
+    "selected_prefill": true
+  },
+  "default_runtime_diagnostic": {
+    "full_vs_explicit": {
+      "max_abs_error": 0.6197404861450195,
+      "rmse": 0.09923119140803809
+    },
+    "full_vs_repeat": {
+      "max_abs_error": 0.6742105484008789,
+      "rmse": 0.11828215438984009
+    },
+    "sparse_vs_compact": {
+      "max_abs_error": 1.5308728218078613,
+      "rmse": 0.20081356336177542
+    },
+    "finding": "Default runtime did not pass strict 1e-5 logit parity; even ordinary repeats differed. Generated IDs matched. No causal attribution or numeric-equivalence claim from this run."
+  },
+  "verification": {
+    "cuda_build": "passed",
+    "strata_server_tests": 305,
+    "strata_server_tests_passed": true,
+    "selected_prefill_tests_included": 9,
+    "cpp_position_test": "passed",
+    "orchid_tests_passed": 422,
+    "orchid_tests_skipped": 5,
+    "patch_application_and_hash_checks": "passed",
+    "ruff": "passed",
+    "hip": "not built: compiler unavailable",
+    "sycl": "separate engine, unchanged"
+  },
+  "startup_rejections": {
+    "cache": {
+      "returncode": 2,
+      "expected_rejection": true
+    },
+    "batch": {
+      "returncode": 2,
+      "expected_rejection": true
+    },
+    "vision": {
+      "returncode": 2,
+      "expected_rejection": true
+    },
+    "split": {
+      "returncode": 2,
+      "expected_rejection": true
+    }
+  },
+  "limitations": [
+    "One synthetic 305-token prompt, eight output tokens per valid request; functional validation only.",
+    "Strict logit parity passed with diagnostic controls; default-runtime ordinary repeats differed numerically.",
+    "Original rotary coordinates with compact KV and retained-stream recurrent/PLE history; not restored full-context computation.",
+    "No latency, quality, or SpecPrefill-paper reproduction claim."
+  ]
+}
