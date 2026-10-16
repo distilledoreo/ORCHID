@@ -150,3 +150,82 @@ def test_latency_comparison_uses_paired_cases():
     assert result["pairs"] == 1
     assert result["relative_mean_improvement"] == 0.2
     assert result["bootstrap_95_interval_ms"] == [20, 20]
+
+
+def test_quality_replay_protocol_is_balanced_held_out_and_immutable(tmp_path):
+    import json
+
+    from experiments.specprefill.quality import protocol
+    (tmp_path / "corpus.json").write_text(json.dumps(build_cases()))
+    plan = protocol(tmp_path)
+    selected = [c for c in build_cases() if c["id"] in plan["cases"]]
+    assert len(selected) == 16 and all(c["split"] == "held_out" for c in selected)
+    assert all(sum(c["category"] == category for c in selected) == 2 for category in CATEGORIES)
+    assert protocol(tmp_path) == plan
+    plan["keep_ratio_primary"] = 0.9
+    (tmp_path / "quality-protocol.json").write_text(json.dumps(plan))
+    with pytest.raises(AssertionError, match="protocol changed"):
+        protocol(tmp_path)
+
+
+def test_cold_request_timing_includes_candidate_preparation(tmp_path, monkeypatch):
+    import asyncio
+    import time
+
+    import httpx
+
+    from experiments.specprefill import attention, run, tokenization
+    prepared, forwarded = [], []
+    original = run.make_all_chunks
+
+    def prepare(*args):
+        prepared.append(time.perf_counter())
+        time.sleep(0.005)
+        return original(*args)
+
+    class Student:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def trace(self, sources, query, **kwargs):
+            text = sources[0]["text"]
+            return {"scores": [1.0] * len(text), "reference_scores": [1.0] * len(text),
+                    "offsets": [(i, i + 1) for i in range(len(text))], "source_locations": {"s1": [0, len(text)]},
+                    "wall_ms": 0, "attention_extraction_ms": 0, "input_tokens": len(text),
+                    "output_tokens": 0, "attention_layers": 6, "query_rows": 1}
+
+        def classify(self, *args):
+            return {"decision": "SUFFICIENT", "score": 0.5, "calibrated": False, "missing": [],
+                    "candidate_source_ids": [], "elapsed_ms": 0, "input_tokens": 1, "output_tokens": 0}
+
+    class Client:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            pass
+
+        async def get(self, *args, **kwargs):
+            return SimpleNamespace(status_code=200, json=lambda: {"data": [{}]})
+
+    async def answer(client, url, model, case, context, nonce, *, request_started=None):
+        # A cold request must begin before its candidate preparation, including
+        # when preparation is much slower than the model's first-token delay.
+        assert request_started <= prepared[-1]
+        forwarded.append(case["id"])
+        elapsed = (time.perf_counter() - request_started) * 1000
+        return {"answer": case["expected_answer"], "correct": True, "usage": {"prompt_tokens": 1},
+                "ttft_ms": 0, "request_ttft_ms": elapsed, "total_ms": 0}
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(run, "make_all_chunks", prepare)
+    monkeypatch.setattr(run, "main_answer", answer)
+    monkeypatch.setattr(attention, "AttentionSpeculator", Student)
+    monkeypatch.setattr(tokenization, "load_tokenizer", lambda _: CharacterTokenizer())
+    monkeypatch.setattr(httpx, "AsyncClient", lambda **kwargs: Client())
+    args = SimpleNamespace(output=str(tmp_path / "out"), limit=1, speculator="fake", main_tokenizer="fake",
+                           device="cpu", threads=1, main_launch_json=None, main_url="http://unit.test/v1", main_model="fake",
+                           grid=False, chunk_size=64, lookahead=8, keep_ratio=0.5, retrieval_rounds=2,
+                           legacy_url=None, legacy_model="fake", legacy_timeout=8)
+    asyncio.run(run.run(args))
+    assert len(forwarded) == 6

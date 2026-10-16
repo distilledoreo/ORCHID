@@ -14,6 +14,7 @@ def audit(root, *, legacy_log=None, student_tokenizer=None):
     traces = load(root / "attention-traces.jsonl")
     classifiers = load(root / "classifier.jsonl")
     recovery = load(root / "classifier-recovery.jsonl")
+    quality = load(root / "quality-ablations.jsonl")
     corpus = json.loads((root / "corpus.json").read_text())
     environment = json.loads((root / "environment.json").read_text())
     completed_cases = {r["case"] for r in traces}
@@ -56,6 +57,8 @@ def audit(root, *, legacy_log=None, student_tokenizer=None):
         "main_post_answer_input_tokens": sum(r.get("post_answer_final", {}).get("usage", {}).get("prompt_tokens", 0) for r in requests),
         "main_post_answer_output_tokens": sum(r.get("post_answer_final", {}).get("usage", {}).get("completion_tokens", 0) for r in requests),
         "main_native_draft_tokens_reported": sum(r.get("main", {}).get("timings", {}).get("draft_n", 0) or 0 for r in requests),
+        "quality_replay_main_input_tokens": sum(r.get("main", {}).get("usage", {}).get("prompt_tokens", 0) for r in quality),
+        "quality_replay_main_output_tokens": sum(r.get("main", {}).get("usage", {}).get("completion_tokens", 0) for r in quality),
         "main_native_accepted_draft_tokens_reported": sum(r.get("main", {}).get("timings", {}).get("draft_n_accepted", 0) or 0 for r in requests),
         "post_answer_native_draft_tokens_reported": sum(r.get("post_answer_final", {}).get("timings", {}).get("draft_n", 0) or 0 for r in requests),
         "native_draft_note": "Main-engine MTP-head proposals, not full student forwards; separate from support totals. Identical native settings for every arm.",

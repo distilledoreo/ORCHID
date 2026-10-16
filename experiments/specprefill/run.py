@@ -261,6 +261,9 @@ async def run(args):
                     beginning = time.perf_counter()
                     arm_store = EvidenceStore(private / (case["id"] + "-" + arm + ".db"), "experiment", case["id"], case["sources"])
                     ingestion_ms = (time.perf_counter() - beginning) * 1000
+                    chunk_started = time.perf_counter()
+                    all_chunks = make_all_chunks(case, tokenizer, args.chunk_size)
+                    candidate_chunking_ms = (time.perf_counter() - chunk_started) * 1000
                     route_trace, retrieval, summary, support = None, None, None, {}
                     chosen = list(all_chunks)
                     if arm == "B":
@@ -293,6 +296,7 @@ async def run(args):
                               "main_context_tokens": len(tokenizer.encode(context, add_special_tokens=False).ids),
                               "original_context_tokens": sum(len(tokenizer.encode(s["text"], add_special_tokens=False).ids) for s in case["sources"]),
                               "preprocessing_ms": preprocessing_ms, "ingestion_ms": ingestion_ms, "retrieval": retrieval, "legacy": support,
+                              "candidate_chunking_ms": candidate_chunking_ms,
                               "router": {k: route_trace[k] for k in ("wall_ms", "attention_extraction_ms", "input_tokens", "output_tokens", "attention_layers", "query_rows")} if route_trace else None,
                               "position_restoration": False}
                     if arm == "B":
@@ -338,6 +342,7 @@ async def run(args):
                 "device": args.device, "keep_ratio": args.keep_ratio, "lookahead": args.lookahead,
                 "chunk_size": args.chunk_size, "position_restoration": False,
                 "all_query_processing_in_ttft": True, "classifier_calibrated": False,
+                "candidate_chunking_in_ttft": True,
                 "estimated_cost": None, "cost_reason": "Local inference; electricity cost was not measured.",
                 "mean_preprocessing_ms": statistics.mean(r["preprocessing_ms"] for r in records)}
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")

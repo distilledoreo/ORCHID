@@ -25,11 +25,14 @@ def validate(root, tokenizer_path):
     assert len(pairs) == 768 and all(pairs[c, arm] == 1 for c in corpus for arm in "ABCDEF")
     assert manifest["corpus_hash"] == digest(json.dumps(cases, sort_keys=True))
     assert manifest["cases_executed"] == 128 and manifest["position_restoration"] is False
+    assert manifest["candidate_chunking_in_ttft"] is True
     for row in requests:
         case = corpus[row["case"]]
         assert (row["split"], row["category"]) == (case["split"], case["category"])
         assert "main_error" not in row and row["main"]["answer"]
         assert row["end_to_end_ttft_ms"] > 0 and row["main"]["usage"]["prompt_tokens"] > 0
+        assert row["candidate_chunking_ms"] > 0
+        assert row["end_to_end_ttft_ms"] >= row["ingestion_ms"] + row["candidate_chunking_ms"]
         assert row["main"]["correct"] == (row["main"]["answer"].casefold() == case["expected_answer"].casefold())
         for name in ("retrieval", "post_answer_retrieval"):
             assert len((row.get(name) or {}).get("rounds", [])) <= 2
@@ -73,8 +76,14 @@ def validate(root, tokenizer_path):
     assert Counter(r["case"] for r in grid) == Counter({c: 101 for c in corpus})
     for filename in ("classifier.jsonl", "classifier-recovery.jsonl"):
         assert Counter(r["case"] for r in load(root / filename)) == Counter({c: 1 for c in corpus})
+    quality = load(root / "quality-ablations.jsonl")
+    plan = json.loads((root / "quality-protocol.json").read_text())
+    assert Counter((r["case"], r["condition"]) for r in quality) == Counter({
+        (c, condition["id"]): 1 for c in plan["cases"] for condition in plan["conditions"]})
+    assert len(quality) == 128 and all("main_error" not in r and r.get("main") for r in quality)
     result = {"passed": True, "requests": len(requests), "chunks_checked": count, "traces": len(traces),
               "ablation_rows": len(grid), "exact_full_source_reconstruction": True,
+              "focused_quality_requests": len(quality),
               "raw_file_sha256": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(root.glob("*.jsonl"))}}
     (root / "integrity.json").write_text(json.dumps(result, indent=2) + "\n")
     return result

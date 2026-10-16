@@ -163,6 +163,23 @@ source reconstruction, actual-tokenizer budgets, query-specific chunk provenance
 bounded recovery, full trace/grid coverage, and raw-file hashes. It uses no model
 calls and writes `integrity.json` only after all checks pass.
 
+The focused quality replay uses the first and last held-out ID in each category
+(16 cases, eight conditions, 128 additional main calls). Freeze its ID-based
+protocol with `python -m experiments.specprefill.quality OUTPUT --freeze-protocol`.
+After the primary server has exited, run the same module with
+`--experiment-enabled`, `--speculator`, `--main-tokenizer`, `--main-launch-json`,
+`--main-url`, and `--main-model` set to the primary values. The launch JSON is
+required so the same resident student warmup and main-cache sizing are repeated.
+Then regenerate the report, token audit, and integrity check. The replay compares
+full context, primary 64-token pooled selection, zero look-ahead, unpooled
+64-token selection, pooled 32/128-token chunks, raw-token selection, and the
+adaptive task threshold. No retrieval is used: this isolates selection quality.
+
+Stored attention scores are reused in this replay; its main-only timings do
+not represent complete router TTFT. The subset protocol was specified during
+primary collection after preliminary category summaries, so it is descriptive,
+not an independent confirmatory test or a basis for tuning primary thresholds.
+
 The corpus follows ORCHID's tool-log, decision, configuration, and exact-table
 patterns using synthetic text only. Its dense cases exercise exact arithmetic;
 it does not establish performance on arbitrary code or comprehensive prose
@@ -176,3 +193,14 @@ GPU memory with a 700 MiB reserve. Its raw records remain in the operator's
 private experiment directory; the public environment record identifies the
 failure. The controlled rerun starts from scratch with 4,096 MiB headroom and
 unchanged algorithms, thresholds, corpus, and generation settings.
+
+A subsequent complete run exposed a timing-scope gap: candidate chunks were
+prepared once outside each request stopwatch. Its primary latency records are
+excluded from the final comparison. The final run repeats all 128 cases and
+six arms with fresh candidate preparation inside every request timer, alongside
+ingestion, routing, evaluation, and retrieval. A regression test delays candidate
+preparation and verifies that forwarding starts its timer before that work.
+The excluded run's stored attention vectors remain valid for the descriptive
+answer-quality replay, which does not claim end-to-end latency. Its 16 source
+traces are retained separately with their provenance rather than mixing primary
+request records from different measurement scopes.
