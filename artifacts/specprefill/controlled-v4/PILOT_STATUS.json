@@ -1,0 +1,15 @@
+{
+  "status": "stopped_exploratory_pilot",
+  "completed_cases": 42,
+  "planned_cases": 128,
+  "completed_primary_requests": 252,
+  "complete_case_boundary": true,
+  "main_errors": 0,
+  "reason": "Redirected to a faithful SpecPrefill-first reproduction before adding ORCHID features. Not a final benchmark finding.",
+  "primary_request_sha256": "0cb93774ea750666c10b560587c8dc92ff36f8b67e4235a278e768f0dd4c4229",
+  "all_experiment_servers_stopped": true,
+  "server_port_checks": {
+    "18583": "closed",
+    "18584": "closed"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "cases": [
+    "redundant-08",
+    "redundant-15",
+    "needle-08",
+    "needle-15",
+    "multi_hop-08",
+    "multi_hop-15",
+    "temporal-08",
+    "temporal-15",
+    "dense-08",
+    "dense-15",
+    "multi_turn-08",
+    "multi_turn-15",
+    "false_confidence-08",
+    "false_confidence-15",
+    "unanswerable-08",
+    "unanswerable-15"
+  ],
+  "conditions": [
+    {
+      "id": "full",
+      "chunk": 64,
+      "lookahead": 8,
+      "pool": true,
+      "keep": 1.0
+    },
+    {
+      "id": "look8_chunk64_pool",
+      "chunk": 64,
+      "lookahead": 8,
+      "pool": true,
+      "keep": 0.5
+    },
+    {
+      "id": "look0_chunk64_pool",
+      "chunk": 64,
+      "lookahead": 0,
+      "pool": true,
+      "keep": 0.5
+    },
+    {
+      "id": "look8_chunk64_raw",
+      "chunk": 64,
+      "lookahead": 8,
+      "pool": false,
+      "keep": 0.5
+    },
+    {
+      "id": "look8_chunk32_pool",
+      "chunk": 32,
+      "lookahead": 8,
+      "pool": true,
+      "keep": 0.5
+    },
+    {
+      "id": "look8_chunk128_pool",
+      "chunk": 128,
+      "lookahead": 8,
+      "pool": true,
+      "keep": 0.5
+    },
+    {
+      "id": "look8_token_raw",
+      "chunk": 1,
+      "lookahead": 8,
+      "pool": false,
+      "keep": 0.5
+    },
+    {
+      "id": "adaptive_task_threshold",
+      "chunk": 64,
+      "lookahead": 8,
+      "pool": true,
+      "keep": 0.5,
+      "adaptive": true
+    }
+  ],
+  "keep_ratio_primary": 0.5,
+  "purpose": "Focused answer-quality ablations, not parameter tuning or a second optimization project.",
+  "selection": "First and last held-out ID in every category; one ordinary and one longer case. Chosen by ID, not outcomes.",
+  "timing": "Stored-score replay: main-only times are observable; end-to-end router TTFT is not measured here.",
+  "primary_decision": "Unchanged: all 64 held-out cases in requests.jsonl. This 16-case replay is descriptive."
+}
