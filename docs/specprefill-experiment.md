@@ -114,6 +114,8 @@ python -m experiments.specprefill.run --experiment-enabled \
   --legacy-url http://127.0.0.1:18584/v1 \
   --legacy-model orchid-legacy-4b --legacy-timeout 8
 python -m experiments.specprefill.report artifacts/specprefill/new-run
+python -m experiments.specprefill.audit artifacts/specprefill/new-run \
+  --student-tokenizer /path/to/Qwen3.5-0.8B/tokenizer.json
 ```
 
 For automatic main-server startup and cleanup, `--main-launch-json` accepts a
@@ -130,6 +132,13 @@ does not reproduce its historical asynchronous service scheduling or cloud
 provider latency. Deadline failures forward full context and remain failures
 in the report. Provider usage from canceled calls is censored; completed-call
 token totals alone are lower bounds.
+`token-audit.json` separates primary student work from auxiliary grid traces,
+classifier evaluations, prior-query replay, and post-answer main-model calls.
+Prior-query input counts are reconstructed from exact prompts and tokenizer;
+they are labeled separately from observed provider usage. An optional
+`--legacy-log` adds completed-task timing totals from the local server, without
+copying its log into the shared artifacts. The environment record's initial
+log byte offset must be captured before the first measured request.
 
 The corpus follows ORCHID's tool-log, decision, configuration, and exact-table
 patterns using synthetic text only. Its dense cases exercise exact arithmetic;
