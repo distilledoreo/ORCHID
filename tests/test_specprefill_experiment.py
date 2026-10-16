@@ -126,3 +126,27 @@ def test_experimental_imports_do_not_load_model_dependencies_in_production():
     script = "import sys; import memory_gateway.gateway; print(int('torch' in sys.modules), int('transformers' in sys.modules))"
     result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, check=True)
     assert result.stdout.strip() == "0 0"
+
+
+def test_insufficiency_metrics_count_false_sufficient_decisions():
+    from experiments.specprefill.report import calibration, detection
+    rows = [{"decision": "SUFFICIENT", "initially_sufficient": False, "probabilities": [1, 0, 0]},
+            {"decision": "RETRIEVE", "initially_sufficient": False, "probabilities": [0, 1, 0]},
+            {"decision": "RETRIEVE", "initially_sufficient": True, "probabilities": [0, 1, 0]}]
+    metrics = detection(rows)
+    assert metrics["false_sufficient"] == 1 and metrics["needed_retrieval"] == 2
+    assert metrics["false_sufficient_rate"] == 0.5
+    assert metrics["false_retrieve"] == 1
+    assert calibration(rows)["brier_sufficient"] == pytest.approx(2 / 3)
+    assert calibration(rows)["calibrated"] is False
+
+
+def test_latency_comparison_uses_paired_cases():
+    from experiments.specprefill.report import paired
+    rows = [{"case": "one", "arm": "A", "end_to_end_ttft_ms": 100},
+            {"case": "one", "arm": "E", "end_to_end_ttft_ms": 80},
+            {"case": "unpaired", "arm": "A", "end_to_end_ttft_ms": 10000}]
+    result = paired(rows, "E")
+    assert result["pairs"] == 1
+    assert result["relative_mean_improvement"] == 0.2
+    assert result["bootstrap_95_interval_ms"] == [20, 20]
