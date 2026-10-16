@@ -2,7 +2,8 @@
 
 Implemented in an isolated worktree from `protocol-hardened-continuation` and
 its reviewed runtime fixes. Original uncommitted work and unrelated benchmark
-changes were preserved. The stacked draft PRs are not merged or deployed.
+changes were archived separately during repository cleanup. The PR links below
+record integration status; merging does not imply deployment.
 
 | Change | PR | Result |
 | --- | --- | --- |
