@@ -14,6 +14,14 @@ messages with prefix/suffix excerpts and recoverable handles. `observer.py`
 maintains evidence-linked durable memory; it is not SpecPrefill. `raw_recall.py`
 provides scoped FTS5 search and bounded exact character-range recovery.
 
+PR #12 supplies the evidence-linked observer and reflection foundation; its
+generative observations are not attention importance scores. PR #13 supplies
+the scoped raw-recall path reused here. PR #14 supplies optional coding views,
+lossless payload offload, and the file ledger: useful pre-forward interception
+foundations, but broader than this replay needs. The experiment reuses the
+authoritative event store and exact recall rather than importing the coding
+controller or replacing the observer.
+
 Reuse SQLiteStore and RawRecall in an isolated replay. Add query-specific
 selection metadata outside production capsules. Preserve every source and its
 ordering; count retained text with the actual main tokenizer. Keep governing
@@ -49,6 +57,12 @@ pool comes from the inspected reference configuration. Chunk sizes 32/64/128
 are experiment settings. In this experiment eight look-ahead means eight new
 positions plus the original final prompt position; the reference counts eight
 total positions. Report actual row count and EOS truncation.
+
+Speculator-token scores are projected onto main-token chunks using character
+overlap weights. This is a cross-tokenizer adaptation rather than the paper's
+same-tokenizer chunk mean. Budgets include rendered range headers; the compact
+source inventory is fixed overhead outside the eligible-source budget. Actual
+forwarded input counts include that inventory and the complete active request.
 
 The local Qwen3.5-0.8B has six full-attention layers and eighteen recurrent
 layers. Only the six full-attention layers provide these scores. This is a
@@ -103,6 +117,9 @@ reasoning disabled, with `GGML_VK_DISABLE_FUSION=1`,
 `GGML_VK_DISABLE_GRAPH_OPTIMIZE=1`, and `GGML_VK_DISABLE_MULTI_ADD=1`.
 The main runtime may choose a smaller expert cache under colocation; these
 results therefore apply to that deployment, not an independently sized engine.
+This includes the full-context and lexical arms: their main cache is not resized
+to exploit memory that unloading the student would free. The experiment does
+not measure that memory opportunity cost.
 
 ```bash
 python -m experiments.specprefill.run --experiment-enabled \
@@ -116,6 +133,8 @@ python -m experiments.specprefill.run --experiment-enabled \
 python -m experiments.specprefill.report artifacts/specprefill/new-run
 python -m experiments.specprefill.audit artifacts/specprefill/new-run \
   --student-tokenizer /path/to/Qwen3.5-0.8B/tokenizer.json
+python -m experiments.specprefill.validate artifacts/specprefill/new-run \
+  --main-tokenizer /path/to/main/tokenizer.json
 ```
 
 For automatic main-server startup and cleanup, `--main-launch-json` accepts a
@@ -139,6 +158,10 @@ they are labeled separately from observed provider usage. An optional
 `--legacy-log` adds completed-task timing totals from the local server, without
 copying its log into the shared artifacts. The environment record's initial
 log byte offset must be captured before the first measured request.
+The validator checks the sealed 128-case, six-arm Qwen3.5-0.8B study: original
+source reconstruction, actual-tokenizer budgets, query-specific chunk provenance,
+bounded recovery, full trace/grid coverage, and raw-file hashes. It uses no model
+calls and writes `integrity.json` only after all checks pass.
 
 The corpus follows ORCHID's tool-log, decision, configuration, and exact-table
 patterns using synthetic text only. Its dense cases exercise exact arithmetic;

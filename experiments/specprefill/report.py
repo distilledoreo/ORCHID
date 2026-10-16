@@ -17,6 +17,11 @@ def load(path):
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()] if path.exists() else []
 
 
+def legacy_censored(row):
+    usage = row.get("legacy") or {}
+    return bool(usage.get("usage_censored") or usage.get("status", "").startswith("failed_full_fallback"))
+
+
 def detection(rows):
     tp = fp = fn = tn = 0
     confusion = defaultdict(int)
@@ -90,11 +95,12 @@ def arm_summary(rows):
               "mean_qk_extraction_ms": mean([r["router"]["attention_extraction_ms"] for r in rows if r.get("router")]),
               "support_input_tokens_reported": sum(((r.get("router") or {}).get("input_tokens") or 0) + (r.get("legacy", {}).get("input_tokens") or 0) for r in rows),
               "support_output_tokens_reported": sum(((r.get("router") or {}).get("output_tokens") or 0) + (r.get("legacy", {}).get("output_tokens") or 0) for r in rows),
-              "legacy_usage_censored_requests": sum(bool(r.get("legacy", {}).get("usage_censored")) for r in rows),
+              "legacy_usage_censored_requests": sum(legacy_censored(r) for r in rows),
               "legacy_completed_requests": sum(r.get("legacy", {}).get("status") == "succeeded" for r in rows),
               "legacy_full_fallback_requests": sum(r.get("legacy", {}).get("status", "").startswith("failed_full_fallback") for r in rows),
               "retrieval_rate": mean([bool((r.get("retrieval") or {}).get("rounds")) for r in rows]),
-              "full_fallback_rate": mean([(r.get("retrieval") or {}).get("full_fallback", False) for r in rows]),
+              "full_fallback_rate": mean([bool((r.get("retrieval") or {}).get("full_fallback")) or
+                  (r["arm"] == "B" and (r.get("legacy") or {}).get("status") != "succeeded") for r in rows]),
               "mean_retrieval_ms": mean([sum(round_["elapsed_ms"] for round_ in (r.get("retrieval") or {}).get("rounds", [])) for r in rows]),
               "mean_evaluator_ms": mean([sum(d.get("elapsed_ms", 0) for d in (r.get("retrieval") or {}).get("decisions", [])) for r in rows]),
               "unsupported_non_unknown_answer_rate": mean([r["main"]["answer"] != "UNKNOWN" and
@@ -104,6 +110,10 @@ def arm_summary(rows):
     recoverable = [r for r in rows if r["category"] != "unanswerable" and r["initially_sufficient"] is False]
     result["recovery_success_rate_including_fallback"] = mean([r["finally_sufficient"] for r in recoverable])
     result["recovery_cases"] = len(recoverable)
+    attempted = [r for r in recoverable if (r.get("retrieval") or {}).get("rounds")]
+    result["needed_retrieval_attempts"] = len(attempted)
+    result["retrieval_success_before_full_fallback"] = mean([
+        r["retrieval"].get("before_fallback_evidence_recall") == 1 for r in attempted])
     return result
 
 
@@ -140,7 +150,9 @@ def generate(root):
     expected_pairs = {(case["id"], arm) for case in corpus for arm in "ABCDEF"}
     complete = (len(requests) == 128 * 6 and len(requests) == len(expected_pairs)
                 and {(r["case"], r["arm"]) for r in requests} == expected_pairs
-                and all(r.get("main") and not r.get("main_error") for r in requests))
+                and all(r.get("main") and not r.get("main_error")
+                        and r.get("end_to_end_ttft_ms") is not None
+                        and r["main"].get("usage", {}).get("prompt_tokens") is not None for r in requests))
     simpler = bool(e["answer_accuracy"] is not None and f["answer_accuracy"] is not None
                    and f["answer_accuracy"] >= e["answer_accuracy"] - 0.02
                    and e["required_evidence_recall"] is not None and f["required_evidence_recall"] is not None
@@ -197,6 +209,12 @@ def generate(root):
     for category in categories:
         vals = [summary["by_category"].get(f"held_out|{category}|{arm}", {}) for arm in "AEF"]
         lines.append(f"| {category} | {fmt(vals[0].get('answer_accuracy'), True)} | {fmt(vals[1].get('answer_accuracy'), True)} | {fmt(vals[2].get('answer_accuracy'), True)} | {fmt(vals[1].get('required_evidence_recall'), True)} |")
+    lines += ["", "| Workload | Arm | Accuracy | Evidence recall | Actual input tokens | End-to-end TTFT ms |",
+              "|---|---|---:|---:|---:|---:|"]
+    for workload, arms in summary["workload_groups"].items():
+        for arm in "AEF":
+            values = arms[arm]
+            lines.append(f"| {workload} | {arm} | {fmt(values['answer_accuracy'], True)} | {fmt(values['required_evidence_recall'], True)} | {fmt(values['mean_actual_main_input_tokens'])} | {fmt(values['mean_end_to_end_ttft_ms'])} |")
     lines += ["", "## Paired latency and controller costs", "",
               "Positive paired improvement means faster than full context. Intervals are fixed-seed case bootstrap intervals, not independent-request confidence bounds.", "",
               "| Arm | Paired TTFT improvement ms | 95% bootstrap interval ms | Router ms | Evaluator ms | Retrieval ms |", "|---|---:|---:|---:|---:|---:|"]
@@ -227,6 +245,7 @@ def generate(root):
               "Evidence recall is a supporting-span metric, not an answer-quality substitute. Final correctness uses sealed exact-answer rubrics. Full fallback can raise recall while removing savings. Unsupported-answer rates in summary.json combine correctness with the required-evidence rubric; raw request records also retain their narrower evidence-coverage proxy.", "",
               "The untrained three-label classifier is evaluated separately. Its softmax scores are uncalibrated; held-out Brier/ECE are descriptive and did not select thresholds. The small held-out sample cannot establish a sub-1% population error bound, even if an empirical count is zero.", "",
               "Q/K extraction uses FP32 selected-query scoring and SDPA for normal model execution. The 0.8B hybrid contributes six full-attention layers; recurrent layers have no attention rows. Transformers uses reference GDN kernels. Attention and main inference share the P100; the legacy 4B uses the RX 580. This is not an RX-580 attention implementation or an engine-level position-restoration experiment.", "",
+              "Every arm, including full context and lexical selection, uses the same reduced main-engine cache with the student resident. The experiment does not measure the memory opportunity cost against an independently sized main engine with the student unloaded. Conditional paired gains here do not establish a speedup over that deployment. A single sequential run with alternating arm order also cannot eliminate expert-cache or OS noise.", "",
               "TTFT is measured to the first nonempty content delta, using a wall clock beginning before immutable ingestion. Main-only timing is separate. All arms use the same main model and generation settings; alternating arm order and per-request nonces prevent long-prefix cache reuse. Provider cache counters, router/evaluator/retrieval costs and censoring are retained in JSON. Startup/model load is outside request timings.", "",
               "Ablation JSON measures evidence retention across 10/30/50/70/100% budgets, 0/8 look-ahead, raw tokens and 32/64/128-token chunks, aggregate-first and reference pool-first smoothing. It does not claim end-task answer accuracy for every grid point. Post-answer recovery uses UNKNOWN as the main model's request for more evidence; it is a bounded control, not a general agent tool-use evaluation.", "",
               "No production behavior was changed. Stop at this experiment; do not enable the controller or start a compensating kernel/engine optimization based on these results.", ""]

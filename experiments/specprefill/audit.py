@@ -5,7 +5,7 @@ import json
 import re
 from pathlib import Path
 
-from .report import load
+from .report import legacy_censored, load
 
 
 def audit(root, *, legacy_log=None, student_tokenizer=None):
@@ -46,7 +46,7 @@ def audit(root, *, legacy_log=None, student_tokenizer=None):
         "prior_query_note": "Exact prompt/tokenizer reconstruction; not provider-observed usage. Zero look-ahead outputs.",
         "legacy_provider_input_tokens_lower_bound": legacy_input,
         "legacy_provider_output_tokens_lower_bound": legacy_output,
-        "legacy_usage_censored_requests": sum(bool((r.get("legacy") or {}).get("usage_censored")) for r in requests),
+        "legacy_usage_censored_requests": sum(legacy_censored(r) for r in requests),
         "all_support_input_tokens_lower_bound": primary_student_input + auxiliary_input + legacy_input + (prior_tokens or 0),
         "all_support_output_tokens_lower_bound": primary_student_output + auxiliary_output + legacy_output,
         "exact_support_total_available": False,
@@ -55,6 +55,10 @@ def audit(root, *, legacy_log=None, student_tokenizer=None):
         "main_primary_output_tokens": sum(r.get("main", {}).get("usage", {}).get("completion_tokens", 0) for r in requests),
         "main_post_answer_input_tokens": sum(r.get("post_answer_final", {}).get("usage", {}).get("prompt_tokens", 0) for r in requests),
         "main_post_answer_output_tokens": sum(r.get("post_answer_final", {}).get("usage", {}).get("completion_tokens", 0) for r in requests),
+        "main_native_draft_tokens_reported": sum(r.get("main", {}).get("timings", {}).get("draft_n", 0) or 0 for r in requests),
+        "main_native_accepted_draft_tokens_reported": sum(r.get("main", {}).get("timings", {}).get("draft_n_accepted", 0) or 0 for r in requests),
+        "post_answer_native_draft_tokens_reported": sum(r.get("post_answer_final", {}).get("timings", {}).get("draft_n", 0) or 0 for r in requests),
+        "native_draft_note": "Main-engine MTP-head proposals, not full student forwards; separate from support totals. Identical native settings for every arm.",
     }
     if legacy_log:
         with Path(legacy_log).open("rb") as handle:
