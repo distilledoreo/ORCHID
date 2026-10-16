@@ -1,0 +1,104 @@
+{
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+  "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+  "targets": [
+    2000,
+    4000
+  ],
+  "events_used": 12,
+  "endpoint": "http://127.0.0.1:1234/v1",
+  "model": "qwen3.5-4b@q6_k",
+  "timeout_seconds": 180.0,
+  "max_output_tokens": null,
+  "full_window": false,
+  "results": [
+    {
+      "target_tokens": 2000,
+      "model": "qwen3.5-4b@q6_k",
+      "endpoint": "http://127.0.0.1:1234/v1",
+      "timeout_seconds": 180.0,
+      "max_output_tokens": null,
+      "full_window": false,
+      "source_event_count": 2,
+      "source_tokens": 1728,
+      "batch_count": 1,
+      "wall_ms": 23501.757999998517,
+      "source_tokens_per_second": 73.52641449206094,
+      "status": "FAILED",
+      "error": "canonicalizer returned unknown cited source reference(s): replay_evt_000002",
+      "batches": [
+        {
+          "batch_index": 0,
+          "target_tokens": 2000,
+          "source_event_count": 2,
+          "source_refs": [
+            "replay_evt_000001",
+            "replay_evt_000002::span::000000"
+          ],
+          "estimated_input_tokens": 1728,
+          "wall_ms": 23500.980900018476,
+          "input_tokens": 1790,
+          "output_tokens": 163,
+          "ttft_ms": 23500.741099996958,
+          "finish_reason": "stop",
+          "status": "FAILED",
+          "error": "canonicalizer returned unknown cited source reference(s): replay_evt_000002",
+          "timeout": false,
+          "structured_output_valid": false,
+          "source_payload_estimated_tokens": 1733,
+          "system_prompt_estimated_tokens": 75,
+          "response_schema_estimated_tokens": 77,
+          "wrapper_estimated_tokens": 12,
+          "source_payload_chars": 6933,
+          "prompt_hash": "fc60597f60ef9bb9d165872d4974623c7a19c30a0ff680cb2d8a374675684368",
+          "source_tokens_per_second": 73.52884576824798
+        }
+      ]
+    },
+    {
+      "target_tokens": 4000,
+      "model": "qwen3.5-4b@q6_k",
+      "endpoint": "http://127.0.0.1:1234/v1",
+      "timeout_seconds": 180.0,
+      "max_output_tokens": null,
+      "full_window": false,
+      "source_event_count": 4,
+      "source_tokens": 3648,
+      "batch_count": 1,
+      "wall_ms": 52382.439399982104,
+      "source_tokens_per_second": 69.6416593382485,
+      "status": "SUCCEEDED",
+      "error": null,
+      "batches": [
+        {
+          "batch_index": 0,
+          "target_tokens": 4000,
+          "source_event_count": 4,
+          "source_refs": [
+            "replay_evt_000001",
+            "replay_evt_000002::span::000000",
+            "replay_evt_000002::span::000001",
+            "replay_evt_000002::span::000002"
+          ],
+          "estimated_input_tokens": 3648,
+          "wall_ms": 52381.68049999513,
+          "input_tokens": 3582,
+          "output_tokens": 458,
+          "ttft_ms": 52381.470499996794,
+          "finish_reason": "stop",
+          "status": "SUCCEEDED",
+          "error": null,
+          "timeout": false,
+          "structured_output_valid": true,
+          "source_payload_estimated_tokens": 3655,
+          "system_prompt_estimated_tokens": 75,
+          "response_schema_estimated_tokens": 77,
+          "wrapper_estimated_tokens": 12,
+          "source_payload_chars": 14623,
+          "prompt_hash": "06a7020affd90bd234d376516f3b81041bb76179dc2f9aaf93b9ee36e77ee53f",
+          "source_tokens_per_second": 69.64266829889773
+        }
+      ]
+    }
+  ]
+}

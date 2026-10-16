@@ -1,0 +1,147 @@
+{
+  "backend_plan_sha256": "45a06f9caa36761322f83a258777618706bab8f4010afc52d906f78a2c9db914",
+  "baseline_reference": {
+    "prompt_eval_tok_s": 184.5,
+    "source": "panoref backend shootout direct full Vulkan arm",
+    "ttft_ms": 8359.0
+  },
+  "created_at": "2026-08-23T03:41:37.824+00:00",
+  "default_runtime": {
+    "batch_size": 2048,
+    "ctx_size": 8192,
+    "flash_attn": "on",
+    "n_gpu_layers": 999,
+    "no_cache_prompt": true,
+    "no_cont_batching": true,
+    "parallel": 1,
+    "threads": 6,
+    "threads_batch": 6,
+    "ubatch_size": 512
+  },
+  "experiments": {
+    "baseline_full_vulkan": {
+      "batch_size": 2048,
+      "ctx_size": 8192,
+      "description": "Pinned direct full-Vulkan reference",
+      "flash_attn": "on",
+      "kv_offload": false,
+      "kv_unified": false,
+      "load_mode": null,
+      "port": 18101,
+      "repetitions": 5,
+      "threads": 6,
+      "threads_batch": 6,
+      "ubatch_size": 512
+    },
+    "batch_1024": {
+      "batch_size": 1024,
+      "description": "Logical batch size 1024",
+      "port": 18102,
+      "repetitions": 3
+    },
+    "batch_4096": {
+      "batch_size": 4096,
+      "description": "Logical batch size 4096",
+      "port": 18103,
+      "repetitions": 3
+    },
+    "ctx_32768": {
+      "ctx_size": 32768,
+      "description": "Context allocation 32768",
+      "port": 18109,
+      "repetitions": 3
+    },
+    "flash_attention_off": {
+      "description": "Flash Attention disabled",
+      "flash_attn": "off",
+      "port": 18108,
+      "repetitions": 3
+    },
+    "kv_unified_on": {
+      "description": "KV offload and unified KV enabled",
+      "kv_offload": true,
+      "kv_unified": true,
+      "port": 18110,
+      "repetitions": 3
+    },
+    "mmap_mlock": {
+      "description": "mmap plus mlock model loading",
+      "load_mode": "mmap+mlock",
+      "port": 18111,
+      "repetitions": 3
+    },
+    "threads_batch_12": {
+      "description": "CPU-side prompt batch threads 12",
+      "port": 18107,
+      "repetitions": 3,
+      "threads_batch": 12
+    },
+    "threads_batch_3": {
+      "description": "CPU-side prompt batch threads 3",
+      "port": 18106,
+      "repetitions": 3,
+      "threads_batch": 3
+    },
+    "ubatch_1024": {
+      "description": "Physical micro-batch size 1024",
+      "port": 18105,
+      "repetitions": 3,
+      "ubatch_size": 1024
+    },
+    "ubatch_256": {
+      "description": "Physical micro-batch size 256",
+      "port": 18104,
+      "repetitions": 3,
+      "ubatch_size": 256
+    }
+  },
+  "gpu_target": "AMD Radeon RX 580 Series; PCI VEN_1002 DEV_67DF",
+  "llama_server_binary": "C:\\Users\\disti\\.lmstudio\\extensions\\backends\\llama.cpp-win-x86_64-vulkan-avx2-2.28.2\\llama-server.exe",
+  "llama_server_binary_sha256": "b7346fdf06749e2b4265320b4d080e522dce14f77d3e263651ef91f12c7dc43c",
+  "llama_server_version": "fe2adf0",
+  "model": "qwen3.5-4b@q6_k",
+  "model_path": "D:\\FromC\\Users\\disti\\.lmstudio\\models\\lmstudio-community\\Qwen3.5-4B-GGUF\\Qwen3.5-4B-Q6_K.gguf",
+  "model_sha256": "12a6d0136484ecbd85f91860924b1bf571da66e2cebfa507522efc01f9b7d1d9",
+  "plan_sha256": "24a85266cf47aa99122b21f7522d4438777676f346ca4ae18d7641b2959637f7",
+  "prompt_request": {
+    "filler_unit": "inert prefill scaling unit ",
+    "generation": {
+      "reasoning_effort": "none",
+      "stream": true,
+      "stream_options": {
+        "include_usage": true
+      },
+      "temperature": 0,
+      "top_p": 1
+    },
+    "nonce_policy": "same rx580-fixed nonce sequence across arms; direct prompt cache disabled",
+    "system_prompt": "You are a deterministic diagnostic endpoint. Reply with exactly OK and nothing else.",
+    "target_estimate": 2000,
+    "user_prefix": "Prompt-scaling diagnostic payload. Ignore its meaning and reply with exactly OK.\n",
+    "user_suffix": "\nEND_DIAGNOSTIC_PAYLOAD"
+  },
+  "repetitions": {
+    "baseline_full_vulkan": 5,
+    "batch_1024": 3,
+    "batch_4096": 3,
+    "ctx_32768": 3,
+    "flash_attention_off": 3,
+    "kv_unified_on": 3,
+    "mmap_mlock": 3,
+    "threads_batch_12": 3,
+    "threads_batch_3": 3,
+    "ubatch_1024": 3,
+    "ubatch_256": 3
+  },
+  "safety": {
+    "no_driver_change": true,
+    "no_power_setting_change": true,
+    "no_production_orchid_change": true,
+    "no_reboot": true,
+    "no_retries": true,
+    "serial": true
+  },
+  "scaling_plan_sha256": "265d64e8759bdd217c467104d77d3225bf7c6f56de2ee0eb859170cc9d158772",
+  "schema_version": "rx580-vulkan-optimization-audit-plan-v1",
+  "source_commit": "165788062179d0474fcb7d1f217279c3bd54e8de"
+}

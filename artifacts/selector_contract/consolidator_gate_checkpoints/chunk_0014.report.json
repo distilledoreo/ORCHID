@@ -1,0 +1,39 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 15,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "item mem_c0cc1fd7089a67e21261682e text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The app is running locally at 127.0.0.1:4173 (process 33292). All automated checks passed: 371 unit/integration tests across both optimizer modes over 101,250 triangles, TypeScript compilation, production build, and real WebGL compile/pixel checks. Playwright e2e tests were launched with a 900-second timeout and are currently running.",
+      "envelope_json": "{\"generation\":15,\"items\":[{\"evidence\":[{\"excerpt\":\"LocalAddress         LocalPort         OwningProcess\\n------------         ---------         -------------\\n127.0.0.1         4173         33292\",\"source_id\":\"panoref_evt_000936\"}],\"id\":\"mem_103899e2f9289886f15379fb\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"App server is running at http://127.0.0.1:4173 (process 33292)\"},{\"evidence\":[{\"excerpt\":\"The complete automated gate is green: 371 unit/integration tests (including both optimizer modes over 101,250 triangles), TypeScript, production build, and the real WebGL compile/pixel checks all pass. I’m moving through the app-level browser workflow next.\",\"source_id\":\"panoref_evt_000937\"}],\"id\":\"mem_0be30f1520a45487893243e3\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"Automated gate green: 371 tests, TypeScript, build, and WebGL checks passed\"},{\"evidence\":[{\"excerpt\":\"Script running with cell ID 323\\nWall time 10.0 seconds\\nOutput:\\n\",\"source_id\":\"panoref_evt_000939\"},{\"excerpt\":\"Script running with cell ID 323\\nWall time 30.0 seconds\\nOutput:\\n\",\"source_id\":\"panoref_evt_000941\"}],\"id\":\"mem_c0cc1fd7089a67e21261682e\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Playwright e2e tests are running with a 900-second timeout\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 15,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "item mem_c0cc1fd7089a67e21261682e text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

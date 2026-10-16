@@ -7,7 +7,6 @@ from hashlib import sha256
 from typing import Any, Protocol
 from urllib.parse import urlsplit, urlunsplit
 
-
 DIAGNOSTIC_EXCERPT_LIMIT = 2_000
 
 

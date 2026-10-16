@@ -1,0 +1,55 @@
+{
+  "generation": 63,
+  "content": "Test suite verifies floor triangle index building, memory bounds (indices >100k, packed bytes <3MB), acceleration raycasting, and projection coverage optimization in both fixed-first and joint-pair modes. Fixed mode uses origin [2.5, 1.6, 2.5]; both modes produce 256 samples, >2 candidates, finite origins, origin separation >=4, and reachableCoverage >= combinedCoverage.",
+  "events": [
+    {
+      "id": "panoref_evt_001006::span::000004",
+      "sequence": 1006,
+      "content": "r\\n    for (let triangleIndex = 0; triangleIndex < scene.floorTriangleIndices.length; triangleIndex += 1) {\\r\\n      scene.floorTriangleIndices[triangleIndex] = triangleIndex;\\r\\n      const indexOffset = triangleIndex * 3;\\r\\n      const a = scene.indices[indexOffset] * 3;\\r\\n      const b = scene.indices[indexOffset + 1] * 3;\\r\\n      const c = scene.indices[indexOffset + 2] * 3;\\r\\n      scene.floorBounds.set([\\r\\n        Math.min(scene.positions[a], scene.positions[b], scene.positions[c]),\\r\\n        Math.max(scene.positions[a], scene.positions[b], scene.positions[c]),\\r\\n        Math.min(scene.positions[a + 2], scene.positions[b + 2], scene.positions[c + 2]),\\r\\n        Math.max(scene.positions[a + 2], scene.positions[b + 2], scene.positions[c + 2]),\\r\\n      ], triangleIndex * 4);\\r\\n    }\\r\\n    const packedBytes = positions.byteLength + indices.byteLength\\r\\n      + scene.triangleMeshIds.byteLength + scene.meshMatrices.byteLength;\\r\\n    expect(indices.length / 3).toBeGreaterThan(100_000);\\r\\n    expect(packedBytes).toBeLessThan(3_000_000);\\r\\n    const acceleration = buildSceneAcceleration(scene);\\r\\n    expect(acceleration.distanceToGeometry([11, 1.6, 11])).toBeCloseTo(1.6, 3);\\r\\n    const options = resolveCoverageOptions(scene, {\\r\\n      candidateSpacing: 5,\\r\\n      maximumCandidateCount: 16,\\r\\n      cameraClearanceRadius: 0.3,\\r\\n      minimumOriginSeparation: 4,\\r\\n      coarseSampleCount: 128,\\r\\n      fineSampleCount: 256,\\r\\n      coarsePairSeedCount: 4,\\r\\n      localRefinementLevels: 1,\\r\\n      minimumTexelDensity: 0,\\r\\n      targetTexelDensity: 1,\\r\\n    });\\r\\n    const fixed = optimizeProjectionCoverage({\\r\\n      mode: 'fixed-first',\\r\\n      scene,\\r\\n      firstOrigin: [2.5, 1.6, 2.5],\\r\\n      options,\\r\\n    });\\r\\n    const joint = optimizeProjectionCoverage({ mode: 'joint-pair', scene, options });\\r\\n    for (const result of [fixed, joint]) {\\r\\n      expect(result.sampleCount).toBe(256);\\r\\n      expect(result.candidateCount).toBeGreaterThan(2);\\r\\n      expect(result.reachableCoverage).toBeGreaterThanOrEqual(result.combinedCoverage);\\r\\n      expect(result.originA.every(Number.isFinite)).toBe(true);\\r\\n      expect(result.originB.every(Number.isFinite)).toBe(true);\\r\\n      expect(Math.hypot(\\r\\n        result.originA[0] - result.originB[0],\\r\\n        result.originA[1] - result.originB[1],\\r\\n        result.originA[2] - result.originB[2],\\r\\n      )).toBeGreaterThanOrEqual(4);\\r\\n    }\\r\\n  }, 60_000);\\r\\n});\\r\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+      "content_hash": "263fb8115a624825261a59e0dc2ec6d58842bbe6c8a787f2d6d5cf2ec8cf24ff",
+      "event_type": "custom_tool_call_output",
+      "role": "tool"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "expect(indices.length / 3).toBeGreaterThan(100_000);",
+          "source_id": "panoref_evt_001006::span::000004"
+        },
+        {
+          "excerpt": "expect(packedBytes).toBeLessThan(3_000_000);",
+          "source_id": "panoref_evt_001006::span::000004"
+        },
+        {
+          "excerpt": "expect(acceleration.distanceToGeometry([11, 1.6, 11])).toBeCloseTo(1.6, 3);",
+          "source_id": "panoref_evt_001006::span::000004"
+        },
+        {
+          "excerpt": "const fixed = optimizeProjectionCoverage({ mode: 'fixed-first', scene, firstOrigin: [2.5, 1.6, 2.5], options });",
+          "source_id": "panoref_evt_001006::span::000004"
+        },
+        {
+          "excerpt": "const joint = optimizeProjectionCoverage({ mode: 'joint-pair', scene, options });",
+          "source_id": "panoref_evt_001006::span::000004"
+        },
+        {
+          "excerpt": "expect(result.sampleCount).toBe(256);",
+          "source_id": "panoref_evt_001006::span::000004"
+        },
+        {
+          "excerpt": "expect(Math.hypot(\\n        result.originA[0] - result.originB[0],\\n        result.originA[1] - result.originB[1],\\n        result.originA[2] - result.originB[2],\\n      )).toBeGreaterThanOrEqual(4);",
+          "source_id": "panoref_evt_001006::span::000004"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Floor geometry test: indices > 100k triangles, packed memory < 3MB; acceleration distance test uses reference point [11, 1.6, 11]; projection coverage tested in fixed-first (firstOrigin [2.5, 1.6, 2.5]) and joint-pair modes with 256 samples, >2 candidates, finite origins, and minimum origin separation of 4."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_001006::span::000004"
+  ]
+}

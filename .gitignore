@@ -8,3 +8,15 @@ data/
 *.db-shm
 *.egg-info/
 *.log
+
+# Local benchmark launchers, logs, and hidden-evaluation helpers.
+benchmark_controller_private/
+
+# Generated local outputs and downloaded experiment assets.
+.coverage*
+coverage.xml
+htmlcov/
+.hypothesis/
+.ruff_cache/
+**/repository_final/
+/artifacts/**/model/

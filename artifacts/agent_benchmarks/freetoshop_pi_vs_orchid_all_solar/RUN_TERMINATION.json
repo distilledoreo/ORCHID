@@ -1,0 +1,10 @@
+{
+  "status": "STOPPED_UNDER_PREDECLARED_CONDITION",
+  "recorded_at": "2026-08-23T20:58:39+00:00",
+  "reason": "resource exhaustion invalidating comparison",
+  "detail": "Four ORCHID compaction failures were recorded, including repeated canonicalizer/provenance failure and a 524288-token provider context rejection; generation 6 remained running when the controller and private gateway were stopped.",
+  "manual_rescue": false,
+  "controller_restart_count": 0,
+  "os_restarted": false,
+  "user_processes_touched": false
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 139,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001176' for item mem_f7d0ea46f524b59b0a068840",
+        "excerpt not found in source 'panoref_evt_001176' for item mem_f7d0ea46f524b59b0a068840",
+        "excerpt not found in source 'panoref_evt_001176' for item mem_f7d0ea46f524b59b0a068840"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "GitHub PR #23 (https://github.com/distilledoreo/PanoRef/pull/23) is MERGEABLE with mergeStateStatus=CLEAN, commit headRefOid=80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a. All status checks passed at 2026-07-19T13:48:03Z (netlify/panoref/deploy-preview state=SUCCESS) and three Netlify checks concluded NEUTRAL. Local `npm test` reports 303/303 tests passed. Branch t3code/projector-occlusion is at 80882e33, origin/main is at 3a901743, indicating the branch is ahead by one commit.",
+      "envelope_json": "{\"generation\":139,\"items\":[{\"evidence\":[{\"excerpt\":\"\\\"\\\\\\\"headRefOid\\\\\\\":\\\\\\\"80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\\\\\\",\\\\\\\"mergeStateStatus\\\\\\\":\\\\\\\"CLEAN\\\\\\\",\\\\\\\"mergeable\\\\\\\":\\\\\\\"MERGEABLE\\\\\\\"\\\"\",\"source_id\":\"panoref_evt_001176\"},{\"excerpt\":\"\\\"{\\\\\\\"__typename\\\\\\\":\\\\\\\"StatusContext\\\\\\\",\\\\\\\"context\\\\\\\":\\\\\\\"netlify/panoref/deploy-preview\\\\\\\",\\\\\\\"state\\\\\\\":\\\\\\\"SUCCESS\\\\\\\"\\\"\",\"source_id\":\"panoref_evt_001176\"},{\"excerpt\":\"\\\"docs\\\\\\\\ui-revamp-regression-audit.md:298:| \\\\`npm test\\\\` | 303/303 passed |\\\"\",\"source_id\":\"panoref_evt_001176\"},{\"excerpt\":\"\\\"80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\\\trefs/heads/t3code/projector-occlusion\\\\n3a9017438ef6ecccd4d029bc8b10f9eec4352c66\\\\trefs/heads/main\\\"\",\"source_id\":\"panoref_evt_001176\"}],\"id\":\"mem_f7d0ea46f524b59b0a068840\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"PR #23 is mergeable and all checks pass; tests 303/303 passed.\"},{\"evidence\":[{\"excerpt\":\"\\\"80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\\\trefs/heads/t3code/projector-occlusion\\\\n3a9017438ef6ecccd4d029bc8b10f9eec4352c66\\\\trefs/heads/main\\\"\",\"source_id\":\"panoref_evt_001176\"}],\"id\":\"mem_8df81e2fb5d444e59a797d4b\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Branch t3code/projector-occlusion is one commit ahead of origin/main.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 139,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001176' for item mem_f7d0ea46f524b59b0a068840",
+        "excerpt not found in source 'panoref_evt_001176' for item mem_f7d0ea46f524b59b0a068840",
+        "excerpt not found in source 'panoref_evt_001176' for item mem_f7d0ea46f524b59b0a068840"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

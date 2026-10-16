@@ -1,0 +1,142 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 5,
+  "accepted": 1,
+  "rejected": 4,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 1,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_48500c03f212d2f5f3e2e4c2",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_400556095cd8bf1a108b41db",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_6c3ea7cd6faca7d888b97c91",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_cf2d32b235ec15e7f5460142"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The implementation is a real, non-trivial algorithm (joint mode, shared engine, deterministic sampling, full tests). Architecture: 8/10, search correctness: 7.5/10, complex imported-set readiness: 4/10. Not production-ready due to two blockers: (1) candidate rejection uses per-imported-object AABBs, so origins inside large room-sized AABBs are zero-clearance and rejected; fix by using geometry-level clearance (point/triangle or capsule/triangle via BVH) and adding a regression test with an empty-interior imported object, (2) geometry representation (per-triangle expansion) will not scale to heavy imports.",
+      "envelope_json": "{\"generation\":1,\"items\":[{\"evidence\":[{\"excerpt\":\"Yes—this is now a real implementation of the algorithm, not merely the occlusion foundation.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_0a3cac8702638773e97e7864\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Implementation exists with coverage-engine files, worker, UI, and tests.\"},{\"evidence\":[{\"excerpt\":\"Joint mode genuinely evaluates candidate pairs rather than greedily selecting the best first origin.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_765a80bf8bb633337942c4fe\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Joint-pair mode checks every legal coarse pair, ranks by bitset union, then applies quality/contribution tie-breakers; it does not discard complementary origins prematurely.\"},{\"evidence\":[{\"excerpt\":\"Algorithm architecture for normal graybox sets: 8/10 Correctness of the two search modes: 7.5/10 Readiness for complex imported sets: 4/10 Overall: promising, but I would not merge it as production-ready yet.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_48500c03f212d2f5f3e2e4c2\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Architecture rated 8/10, search modes 7.5/10, imported-sets readiness 4/10; not production-ready.\"},{\"evidence\":[{\"excerpt\":\"The blockers are implementation scale and one dangerous workflow decision.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_daf8a4ba9ff13eeaebb81e63\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Two blockers: imported sets can produce zero legal candidates due to AABB-based clearance; geometry representation will not scale to heavy imports.\"},{\"evidence\":[{\"excerpt\":\"For every non-floor scene object, the extractor stores the entire object’s axis-aligned bounding box as an obstacle. Candidate clearance is then the distance from the origin point to those bounding boxes, and candidates within 0.3 meters are rejected. A point anywhere inside an AABB has a distance of zero.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_400556095cd8bf1a108b41db\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Current candidate clearance uses per-object AABBs; points inside an AABB have zero distance and are rejected.\"},{\"evidence\":[{\"excerpt\":\"This can affect: a complete Maya set imported as one GLB, a room shell and furniture combined into one mesh, concave geometry, L-shaped walls, any large model whose AABB contains empty navigable space.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_6c3ea7cd6faca7d888b97c91\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"AABB clearance issue affects common imported configurations with empty navigable interior.\"},{\"evidence\":[{\"excerpt\":\"Fix: Use actual geometry clearance, not object AABBs: candidate valid = camera sphere/capsule does not intersect nearby triangles. The coverage BVH can support this through point-to-triangle distance, sphere intersection, or a shapecast. At minimum, obstacle bounds should be per connected mesh or spatial cluster—not per imported set object. Add a regression test with one imported object containing a room floor, walls, and empty interior.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_cf2d32b235ec15e7f5460142\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Replace AABB clearance with triangle-level clearance (BVH-supported point/sphere/capsule tests); limit obstacle bounds to connected meshes/spatial clusters; add regression test with empty-interior imported object.\"},{\"evidence\":[{\"excerpt\":\"Every triangle is expanded in\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_8dbfdf11b831c88a68c6ca63\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Geometry representation (per-triangle expansion) will not scale to heavy imports.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 6,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000923::span::000001' for item mem_abe41804746815ae18b22aa6"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Projected panorama shader implements dual-projector blending with continuous visibility scores and winner-takes-most weighting. Blend mode 1 disables primary (secondary-only), blend mode 0 disables secondary (primary-only), blend mode 2 boosts primary dominance (1.15x), blend mode 3 boosts secondary dominance (1.15x). Quality falloff computed via projectedQualityAt per projector. Coverage diagnostic available when projectedDebugCoverage=1. Primary/secondary weights raised to power 4.0 for sharp transitions. Secondary sample only active when projectedUseSecondary==1 and secondaryValid>0.5.",
+      "envelope_json": "{\"generation\":6,\"items\":[{\"evidence\":[{\"excerpt\":\"float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float primaryEnabled = projectedBlendMode == 1 ? 0.0 : 1.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float secondaryEnabled = projectedBlendMode == 0 ? 0.0 : hasSecondary;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_b821e0df8f8e9b0d706e499b\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Dual-projector panorama blending uses blend modes: 0=primary only, 1=secondary only, 2=primary-dominant, 3=secondary-dominant. Secondary projector gated by projectedUseSecondary and secondaryValid check.\"},{\"evidence\":[{\"excerpt\":\"float primaryWeight = pow(primaryScore, 4.0);\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float secondaryWeight = pow(secondaryScore, 4.0);\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float primaryDominance = projectedBlendMode == 2 ? 1.15 : 1.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float secondaryDominance = projectedBlendMode == 3 ? 1.15 : 1.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_774e20b7f8a7c075fb8f8b01\",\"kind\":\"constraint\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Winner-takes-most weighting applies power-4.0 exponent to composite scores. Dominance boost of 1.15x applied in blend modes 2 (primary) and 3 (secondary).\"},{\"evidence\":[{\"excerpt\":\"// --- Continuous visibility scores (no hard 0.5 thresholding) ---\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float coverage = max(primaryScore, secondaryScore);\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"if (projectedDebugCoverage == 1) {\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_abe41804746815ae18b22aa6\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Continuous visibility scoring without hard thresholding. Coverage diagnostic outputs four-state color coding when projectedDebugCoverage enabled.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 10,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_48f49eba45fecb92faa32743",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_d85978e14b693880e35ab4d2",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_297707574f9ed7859f63f240",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_5ff0581642ab9fb1562aefea",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_cdac3d8d5014508a7e59ca96",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_132df64c066c19953143b65c",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_5c55a56881f20bc4b44e0499",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_6fdbf83cba0cad3fcbb6659f",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_220274fb3baa027bb786f218",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_812865e5daa28956eea7dbc8",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_c898e808ad6203145efabd58",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_fb90735cf58163aa2d798273",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_506d823715249e3fb941a502",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_41c3bf87eda6fe5dd0b2af7c",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_d10ec1af473719030ea47067"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Test suite passed: 176 tests across 14 test files (vitest v3.2.6) in C:/Users/disti/.t3/worktrees/PanoRef/t3code-aefd2138; exit code 0.",
+      "envelope_json": "{\"generation\":10,\"items\":[{\"evidence\":[{\"excerpt\":\"✓ tests/uiFidelity.test.ts (40 tests) 62ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_48f49eba45fecb92faa32743\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/uiFidelity.test.ts: 40 tests passed in 62ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/modelAssetStore.test.ts (5 tests) 50ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_d85978e14b693880e35ab4d2\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/modelAssetStore.test.ts: 5 tests passed in 50ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/sceneObjects.test.ts (4 tests) 24ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_297707574f9ed7859f63f240\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/sceneObjects.test.ts: 4 tests passed in 24ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/cameraMoveCubemap.test.ts (5 tests) 29ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_5ff0581642ab9fb1562aefea\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/cameraMoveCubemap.test.ts: 5 tests passed in 29ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/humanMannequinModel.test.ts (3 tests) 92ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_cdac3d8d5014508a7e59ca96\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/humanMannequinModel.test.ts: 3 tests passed in 92ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/transformGizmo.test.ts (12 tests) 31ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_132df64c066c19953143b65c\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/transformGizmo.test.ts: 12 tests passed in 31ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/renderOutput.test.ts (11 tests) 35ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_5c55a56881f20bc4b44e0499\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/renderOutput.test.ts: 11 tests passed in 35ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/packageExport.test.ts (4 tests) 30ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_6fdbf83cba0cad3fcbb6659f\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/packageExport.test.ts: 4 tests passed in 30ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/shotThumbnailComponent.test.tsx (2 tests) 17ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_220274fb3baa027bb786f218\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/shotThumbnailComponent.test.tsx: 2 tests passed in 17ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/sandbox.test.ts (16 tests) 29ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_812865e5daa28956eea7dbc8\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/sandbox.test.ts: 16 tests passed in 29ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/projectWorkflow.test.ts (25 tests) 29ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_c898e808ad6203145efabd58\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/projectWorkflow.test.ts: 25 tests passed in 29ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/buildClipboard.test.ts (7 tests) 14ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_fb90735cf58163aa2d798273\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/buildClipboard.test.ts: 7 tests passed in 14ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/projectorOcclusion.test.ts (31 tests) 15ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_506d823715249e3fb941a502\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/projectorOcclusion.test.ts: 31 tests passed in 15ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/buildEditorStore.test.ts (4 tests) 14ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_41c3bf87eda6fe5dd0b2af7c\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/buildEditorStore.test.ts: 4 tests passed in 14ms\"},{\"evidence\":[{\"excerpt\":\"✓ tests/modelImport.test.ts (17 tests) 563ms\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_d10ec1af473719030ea47067\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"tests/modelImport.test.ts: 17 tests passed in 563ms\"},{\"evidence\":[{\"excerpt\":\"Exit code: 0\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_fe45600f9d61bba482794c2b\",\"kind\":\"decision\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"vitest run --run completed successfully with exit code 0\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 15,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000937' for item mem_8e00e0185ffa1175ed42bff9",
+        "excerpt not found in source 'panoref_evt_000936' for item mem_7f2c1bacf87f7ddad04bcd5f",
+        "item mem_7f2c1bacf87f7ddad04bcd5f text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Playwright E2E tests started against local address 127.0.0.1:4173. The test runner is currently in progress; the system issued repeated wait commands while the shell cell (cell_id 323) accumulated wall time of at least 30 seconds.",
+      "envelope_json": "{\"generation\":15,\"items\":[{\"evidence\":[{\"excerpt\":\"The complete automated gate is green: 371 unit/integration tests... all pass. I’m moving through the app-level browser workflow next.\",\"source_id\":\"panoref_evt_000937\"}],\"id\":\"mem_8e00e0185ffa1175ed42bff9\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Gate is green and E2E browser workflow has begun\"},{\"evidence\":[{\"excerpt\":\"LocalAddress 127.0.0.1         4173\",\"source_id\":\"panoref_evt_000936\"},{\"excerpt\":\"PLAYWRIGHT_BASE_URL='http://127.0.0.1:4173'\",\"source_id\":\"panoref_evt_000938\"}],\"id\":\"mem_7f2c1bacf87f7ddad04bcd5f\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"App server is listening on 127.0.0.1:4173 for Playwright E2E tests\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 20,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "Git diagnostics executed in worktree C:\\Users\\disti\\.t3\\worktrees\\PanoRef\\t3code-aefd2138: checks for unstaged/staged changes (git diff --stat), commit-style violations (git diff --check), unresolved merge conflict markers (rg), ancestry against origin/main (git merge-base --is-ancestor), short status, and last 10 commits (git log --oneline). Tool call completed successfully.",
+      "envelope_json": "{\"generation\":20,\"items\":[{\"evidence\":[{\"excerpt\":\"\\\"status\\\": \\\"completed\\\"\",\"source_id\":\"panoref_evt_000958\"}],\"id\":\"mem_8cc952cc7d65fe0d10c9f62f\",\"kind\":\"next_action\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"Completed git diagnostic command to inspect diff, merge-conflict markers, branch ancestry, status, and recent history.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 1,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_48500c03f212d2f5f3e2e4c2",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_400556095cd8bf1a108b41db",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_6c3ea7cd6faca7d888b97c91",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_cf2d32b235ec15e7f5460142"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 6,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000923::span::000001' for item mem_abe41804746815ae18b22aa6"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 10,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_48f49eba45fecb92faa32743",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_d85978e14b693880e35ab4d2",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_297707574f9ed7859f63f240",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_5ff0581642ab9fb1562aefea",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_cdac3d8d5014508a7e59ca96",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_132df64c066c19953143b65c",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_5c55a56881f20bc4b44e0499",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_6fdbf83cba0cad3fcbb6659f",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_220274fb3baa027bb786f218",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_812865e5daa28956eea7dbc8",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_c898e808ad6203145efabd58",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_fb90735cf58163aa2d798273",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_506d823715249e3fb941a502",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_41c3bf87eda6fe5dd0b2af7c",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_d10ec1af473719030ea47067"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 15,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000937' for item mem_8e00e0185ffa1175ed42bff9",
+        "excerpt not found in source 'panoref_evt_000936' for item mem_7f2c1bacf87f7ddad04bcd5f",
+        "item mem_7f2c1bacf87f7ddad04bcd5f text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 5,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

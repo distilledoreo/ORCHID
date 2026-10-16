@@ -1,0 +1,540 @@
+{
+  "by_mode_and_corpus": {
+    "off:100": {
+      "cold_retrieval_ms": {
+        "count": 0,
+        "max": 0.0,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 6.535,
+        "mean": 2.499139,
+        "p50": 2.2076,
+        "p95": 4.448,
+        "p99": 5.2868
+      },
+      "corpus_size": 100,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "off",
+      "retrieval_stage_ms": {
+        "db_checkout_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "fts_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "query_construction_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "ranking_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "retrieval_total_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "telemetry_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "token_budget_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        }
+      },
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 0,
+      "would_inject_sample_rate": 0.0
+    },
+    "off:200": {
+      "cold_retrieval_ms": {
+        "count": 0,
+        "max": 0.0,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 31.1444,
+        "mean": 3.134989,
+        "p50": 2.7121,
+        "p95": 4.3008,
+        "p99": 5.3577
+      },
+      "corpus_size": 200,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "off",
+      "retrieval_stage_ms": {
+        "db_checkout_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "fts_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "query_construction_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "ranking_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "retrieval_total_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "telemetry_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "token_budget_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        }
+      },
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 0,
+      "would_inject_sample_rate": 0.0
+    },
+    "off:25": {
+      "cold_retrieval_ms": {
+        "count": 0,
+        "max": 0.0,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 24.3092,
+        "mean": 2.233938,
+        "p50": 1.8907,
+        "p95": 4.9601,
+        "p99": 5.7901
+      },
+      "corpus_size": 25,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "off",
+      "retrieval_stage_ms": {
+        "db_checkout_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "fts_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "query_construction_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "ranking_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "retrieval_total_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "telemetry_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "token_budget_ms": {
+          "count": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        }
+      },
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 0,
+      "would_inject_sample_rate": 0.0
+    },
+    "shadow:100": {
+      "cold_retrieval_ms": {
+        "count": 520,
+        "max": 7.1465,
+        "mean": 1.39346,
+        "p50": 1.3821,
+        "p95": 2.076,
+        "p99": 2.3234
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 30.906,
+        "mean": 19.445568,
+        "p50": 20.0362,
+        "p95": 25.1965,
+        "p99": 28.048
+      },
+      "corpus_size": 100,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "shadow",
+      "retrieval_stage_ms": {
+        "db_checkout_ms": {
+          "count": 520,
+          "max": 6.793,
+          "mean": 0.831991,
+          "p50": 0.8093,
+          "p95": 1.0823,
+          "p99": 1.4488
+        },
+        "fts_ms": {
+          "count": 520,
+          "max": 0.9651,
+          "mean": 0.411168,
+          "p50": 0.4222,
+          "p95": 0.6542,
+          "p99": 0.8206
+        },
+        "query_construction_ms": {
+          "count": 520,
+          "max": 0.0849,
+          "mean": 0.027675,
+          "p50": 0.028,
+          "p95": 0.036,
+          "p99": 0.0433
+        },
+        "ranking_ms": {
+          "count": 520,
+          "max": 0.3166,
+          "mean": 0.062433,
+          "p50": 0.0522,
+          "p95": 0.1479,
+          "p99": 0.2821
+        },
+        "retrieval_total_ms": {
+          "count": 520,
+          "max": 17.3224,
+          "mean": 7.997302,
+          "p50": 8.5839,
+          "p95": 11.2919,
+          "p99": 12.8615
+        },
+        "telemetry_ms": {
+          "count": 520,
+          "max": 16.0525,
+          "mean": 6.603737,
+          "p50": 7.1154,
+          "p95": 9.6681,
+          "p99": 10.9959
+        },
+        "token_budget_ms": {
+          "count": 520,
+          "max": 0.032,
+          "mean": 0.001798,
+          "p50": 0.0016,
+          "p95": 0.0029,
+          "p99": 0.004
+        }
+      },
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 260,
+      "would_inject_sample_rate": 0.461538
+    },
+    "shadow:200": {
+      "cold_retrieval_ms": {
+        "count": 520,
+        "max": 6.024,
+        "mean": 1.3593,
+        "p50": 1.3539,
+        "p95": 1.8551,
+        "p99": 2.5181
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 36.6204,
+        "mean": 19.971209,
+        "p50": 21.0236,
+        "p95": 23.7207,
+        "p99": 26.9063
+      },
+      "corpus_size": 200,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "shadow",
+      "retrieval_stage_ms": {
+        "db_checkout_ms": {
+          "count": 520,
+          "max": 5.5038,
+          "mean": 0.798858,
+          "p50": 0.7978,
+          "p95": 0.9502,
+          "p99": 1.211
+        },
+        "fts_ms": {
+          "count": 520,
+          "max": 1.2955,
+          "mean": 0.413239,
+          "p50": 0.4066,
+          "p95": 0.5968,
+          "p99": 1.1906
+        },
+        "query_construction_ms": {
+          "count": 520,
+          "max": 0.059,
+          "mean": 0.027163,
+          "p50": 0.0276,
+          "p95": 0.0339,
+          "p99": 0.0392
+        },
+        "ranking_ms": {
+          "count": 520,
+          "max": 0.317,
+          "mean": 0.061257,
+          "p50": 0.0518,
+          "p95": 0.148,
+          "p99": 0.2772
+        },
+        "retrieval_total_ms": {
+          "count": 520,
+          "max": 18.5791,
+          "mean": 7.86925,
+          "p50": 8.5471,
+          "p95": 10.8427,
+          "p99": 11.7507
+        },
+        "telemetry_ms": {
+          "count": 520,
+          "max": 17.1891,
+          "mean": 6.509846,
+          "p50": 7.1164,
+          "p95": 9.2199,
+          "p99": 10.0544
+        },
+        "token_budget_ms": {
+          "count": 520,
+          "max": 0.0036,
+          "mean": 0.001615,
+          "p50": 0.0015,
+          "p95": 0.0026,
+          "p99": 0.0032
+        }
+      },
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 260,
+      "would_inject_sample_rate": 0.461538
+    },
+    "shadow:25": {
+      "cold_retrieval_ms": {
+        "count": 520,
+        "max": 2.1214,
+        "mean": 1.354421,
+        "p50": 1.394,
+        "p95": 1.7733,
+        "p99": 1.8154
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 62.6143,
+        "mean": 18.463474,
+        "p50": 19.1249,
+        "p95": 23.4601,
+        "p99": 26.4455
+      },
+      "corpus_size": 25,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "shadow",
+      "retrieval_stage_ms": {
+        "db_checkout_ms": {
+          "count": 520,
+          "max": 1.3891,
+          "mean": 0.804869,
+          "p50": 0.8195,
+          "p95": 0.9408,
+          "p99": 1.1204
+        },
+        "fts_ms": {
+          "count": 520,
+          "max": 0.7955,
+          "mean": 0.40458,
+          "p50": 0.4252,
+          "p95": 0.5461,
+          "p99": 0.6372
+        },
+        "query_construction_ms": {
+          "count": 520,
+          "max": 0.0615,
+          "mean": 0.026877,
+          "p50": 0.0273,
+          "p95": 0.0338,
+          "p99": 0.0368
+        },
+        "ranking_ms": {
+          "count": 520,
+          "max": 0.3369,
+          "mean": 0.059623,
+          "p50": 0.0497,
+          "p95": 0.1478,
+          "p99": 0.2439
+        },
+        "retrieval_total_ms": {
+          "count": 520,
+          "max": 18.4459,
+          "mean": 7.787832,
+          "p50": 8.5501,
+          "p95": 10.6953,
+          "p99": 11.5323
+        },
+        "telemetry_ms": {
+          "count": 520,
+          "max": 16.9949,
+          "mean": 6.433312,
+          "p50": 7.0464,
+          "p95": 9.3241,
+          "p99": 10.0062
+        },
+        "token_budget_ms": {
+          "count": 520,
+          "max": 0.0062,
+          "mean": 0.001744,
+          "p50": 0.002,
+          "p95": 0.0028,
+          "p99": 0.0035
+        }
+      },
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 300,
+      "would_inject_sample_rate": 0.5
+    }
+  },
+  "paired_shadow_minus_off_ms": {
+    "100": {
+      "count": 520,
+      "max": 28.5356,
+      "mean": 16.946429,
+      "p50": 17.6647,
+      "p95": 22.3374,
+      "p99": 25.8907
+    },
+    "200": {
+      "count": 520,
+      "max": 33.9129,
+      "mean": 16.83622,
+      "p50": 17.8514,
+      "p95": 20.8492,
+      "p99": 23.7733
+    },
+    "25": {
+      "count": 520,
+      "max": 60.7361,
+      "mean": 16.229535,
+      "p50": 17.0793,
+      "p95": 21.3828,
+      "p99": 24.6696
+    }
+  }
+}

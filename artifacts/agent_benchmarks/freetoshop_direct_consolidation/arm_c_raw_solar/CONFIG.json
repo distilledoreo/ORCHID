@@ -1,0 +1,15 @@
+{
+  "arm": "ARM_C_RAW_SOLAR",
+  "batch_policy_hash": "9b16d38da818d8ee2736bb69a116986fd7d25a954f86d8f203f38e4a8b84b46e",
+  "canonicalizer": false,
+  "direct_solar_target_tokens": 12000,
+  "generation": {
+    "reasoning_effort": "none",
+    "stream": false,
+    "temperature": 0,
+    "top_p": 1
+  },
+  "selector": false,
+  "solar_model": "upstage/solar-pro4",
+  "solar_timeout_seconds": 180.0
+}

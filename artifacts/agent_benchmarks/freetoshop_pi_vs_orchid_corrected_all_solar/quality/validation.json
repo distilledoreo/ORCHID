@@ -1,0 +1,38 @@
+{
+  "PI_NATIVE": {
+    "arm": "PI_NATIVE",
+    "cwd": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi",
+    "commands": {
+      "typecheck": {
+        "exit_code": 2,
+        "wall_ms": 1549.0843000006862,
+        "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_corrected_all_solar\\quality\\pi_native_typecheck.log",
+        "tail": "\n> freetoshop@0.1.0 typecheck\n> tsc -b\n\npackages/raster-engine/src/cloneStamp.ts(1,33): error TS2307: Cannot find module '../index.js' or its corresponding type declarations.\npackages/raster-engine/src/index.ts(10,3): error TS2440: Import declaration conflicts with local declaration of 'PixelPatch'.\n"
+      },
+      "build": {
+        "exit_code": 1,
+        "wall_ms": 5629.072999989148,
+        "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_corrected_all_solar\\quality\\pi_native_build.log",
+        "tail": "\n> freetoshop@0.1.0 build\n> npm run build --workspaces --if-present\n\n\n> @freetoshop/web@0.1.0 build\n> tsc -b && vite build\n\n../../packages/raster-engine/src/cloneStamp.ts(1,33): error TS2307: Cannot find module '../index.js' or its corresponding type declarations.\n../../packages/raster-engine/src/index.ts(10,3): error TS2440: Import declaration conflicts with local declaration of 'PixelPatch'.\n\n> @freetoshop/benchmarks@0.1.0 build\n> tsc -b\n\n../raster-engine/src/cloneStamp.ts(1,33): error TS2307: Cannot find module '../index.js' or its corresponding type declarations.\n../raster-engine/src/index.ts(10,3): error TS2440: Import declaration conflicts with local declaration of 'PixelPatch'.\n\n> @freetoshop/command-history@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/compositor@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/core-document@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/file-codecs@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/filter-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/persistence@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/pixel-storage@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/raster-engine@0.1.0 build\n> tsc -b\n\nsrc/cloneStamp.ts(1,33): error TS2307: Cannot find module '../index.js' or its corresponding type declarations.\nsrc/index.ts(10,3): error TS2440: Import declaration conflicts with local declaration of 'PixelPatch'.\n\n> @freetoshop/renderer@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/selection-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/text-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/transform-engine@0.1.0 build\n> tsc -b\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 2\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\apps\\web\nnpm error workspace @freetoshop/web@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\apps\\web\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b && vite build\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 2\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\packages\\benchmarks\nnpm error workspace @freetoshop/benchmarks@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\packages\\benchmarks\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 1\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\packages\\raster-engine\nnpm error workspace @freetoshop/raster-engine@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\packages\\raster-engine\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b\n\n"
+      }
+    }
+  },
+  "ORCHID": {
+    "arm": "ORCHID",
+    "cwd": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid",
+    "commands": {
+      "typecheck": {
+        "exit_code": 2,
+        "wall_ms": 1512.1058000077028,
+        "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_corrected_all_solar\\quality\\orchid_typecheck.log",
+        "tail": "\n> freetoshop@0.1.0 typecheck\n> tsc -b\n\npackages/raster-engine/src/index.test.ts(926,1): error TS1005: ']' expected.\n"
+      },
+      "build": {
+        "exit_code": 1,
+        "wall_ms": 5830.086300004041,
+        "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_corrected_all_solar\\quality\\orchid_build.log",
+        "tail": "\n> freetoshop@0.1.0 build\n> npm run build --workspaces --if-present\n\n\n> @freetoshop/web@0.1.0 build\n> tsc -b && vite build\n\n../../packages/raster-engine/src/index.test.ts(926,1): error TS1005: ']' expected.\n\n> @freetoshop/benchmarks@0.1.0 build\n> tsc -b\n\n../raster-engine/src/index.test.ts(926,1): error TS1005: ']' expected.\n\n> @freetoshop/command-history@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/compositor@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/core-document@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/file-codecs@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/filter-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/persistence@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/pixel-storage@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/raster-engine@0.1.0 build\n> tsc -b\n\nsrc/index.test.ts(926,1): error TS1005: ']' expected.\n\n> @freetoshop/renderer@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/selection-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/text-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/transform-engine@0.1.0 build\n> tsc -b\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 2\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\apps\\web\nnpm error workspace @freetoshop/web@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\apps\\web\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b && vite build\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 2\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\packages\\benchmarks\nnpm error workspace @freetoshop/benchmarks@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\packages\\benchmarks\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 1\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\packages\\raster-engine\nnpm error workspace @freetoshop/raster-engine@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\packages\\raster-engine\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b\n\n"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "capture_db": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_20260820\\orchid-state-actual-2\\memory.db",
+  "targets": [
+    8000,
+    16000,
+    32000,
+    64000
+  ],
+  "pipeline_mode": "real snapshot/lease/CAS pipeline with deterministic provider-free control engine",
+  "dense_production_injection": false
+}

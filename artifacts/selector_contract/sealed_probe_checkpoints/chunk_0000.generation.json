@@ -1,0 +1,91 @@
+{
+  "generation": 1,
+  "content": "The normal graybox coverage algorithm implementation (8/10 architecture, 7.5/10 correctness) is not production-ready due to two blockers: (1) imported sets can produce zero legal candidates because clearance uses entire object AABBs—points inside a room's bounding box are rejected—and (2) the triangle-based geometry representation will not scale to heavy imports.",
+  "events": [
+    {
+      "id": "panoref_evt_000582::span::000000",
+      "sequence": 582,
+      "content": "{\"content\": [{\"text\": \"Yes—this is now a real implementation of the algorithm, not merely the occlusion foundation. The latest head adds 17 coverage-engine files, a worker, UI, and tests. Joint mode genuinely evaluates candidate pairs rather than greedily selecting the best first origin.\\n\\nRevised verdict\\n\\nAlgorithm architecture for normal graybox sets: 8/10\\n\\nCorrectness of the two search modes: 7.5/10\\n\\nReadiness for complex imported sets: 4/10\\n\\nOverall: promising, but I would not merge it as production-ready yet.\\n\\n\\nThe math/search design is mostly right. The blockers are implementation scale and one dangerous workflow decision.\\n\\nWhat it got right\\n\\nThe surface sampler is deterministic and correctly samples triangles in proportion to world-space area using barycentric coordinates.\\n\\nOrigin evaluation includes:\\n\\nactual segment occlusion,\\n\\ngeometric face normals,\\n\\nviewing angle,\\n\\napproximate projected texel density,\\n\\nseparate visibility and usable-coverage bitsets,\\n\\ncontinuous quality values.\\n\\n\\nThat closely follows the algorithm we designed.\\n\\nThe joint-pair mode is genuinely joint. It checks every legal coarse pair, ranks them by bitset union, and only then applies quality and contribution tie-breakers. It does not discard individually mediocre but complementary origins prematurely.\\n\\nThe shared coarse-to-fine engine is also sensibly organized:\\n\\n4,096 coarse samples,\\n\\n256 candidates,\\n\\nretained pair seeds,\\n\\n24,576 fine samples,\\n\\nlocal offsets,\\n\\nseparate fixed-first and joint branches.\\n\\n\\nThe tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes.\\n\\nBlockers\\n\\n1. Imported sets can produce zero legal candidates\\n\\nThis is the biggest correctness issue.\\n\\nFor every non-floor scene object, the extractor stores the entire object’s axis-aligned bounding box as an obstacle.\\n\\nCandidate clearance is then the distance from the origin point to those bounding boxes, and candidates within 0.3 meters are rejected. A point anywhere inside an AABB has a distance of zero.\\n\\nConsider a typical imported model:\\n\\nImported Set\\n├── floor\\n├── walls\\n├── furniture\\n└── props\\n\\nPanoRef represents that as one imported SceneObject. Its AABB may enclose the entire room. Every sensible camera origin inside the room is therefore “inside the obstacle bounds,” gets zero clearance, and is rejected.\\n\\nThis can affect:\\n\\na complete Maya set imported as one GLB,\\n\\na room shell and furniture combined into one mesh,\\n\\nconcave geometry,\\n\\nL-shaped walls,\\n\\nany large model whose AABB contains empty navigable space.\\n\\n\\nFix\\n\\nUse actual geometry clearance, not object AABBs:\\n\\ncandidate valid =\\n    camera sphere/capsule does not intersect nearby triangles\\n\\nThe coverage BVH can support this through point-to-triangle distance, sphere intersection, or a shapecast. At minimum, obstacle bounds should be per connected mesh or spatial cluster—not per imported set object.\\n\\nAdd a regression test with one imported object containing a room floor, walls, and empty interior.\\n\\n2. The geometry representation will not scale to heavy imports\\n\\nEvery triangle is expanded in",
+      "content_hash": "d1455864305e01d2485272bd31b529e9f65fd2283626f1b4e3553fabae7c549a",
+      "event_type": "message",
+      "role": "user"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "Algorithm architecture for normal graybox sets: 8/10",
+          "source_id": "panoref_evt_000582::span::000000"
+        },
+        {
+          "excerpt": "Correctness of the two search modes: 7.5/10",
+          "source_id": "panoref_evt_000582::span::000000"
+        },
+        {
+          "excerpt": "Overall: promising, but I would not merge it as production-ready yet.",
+          "source_id": "panoref_evt_000582::span::000000"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Algorithm implementation rated 8/10 architecture and 7.5/10 correctness; not ready for production merge."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "Imported sets can produce zero legal candidates",
+          "source_id": "panoref_evt_000582::span::000000"
+        },
+        {
+          "excerpt": "the extractor stores the entire object’s axis-aligned bounding box as an obstacle. Candidate clearance is then the distance from the origin point to those bounding boxes, and candidates within 0.3 meters are rejected. A point anywhere inside an AABB has a distance of zero.",
+          "source_id": "panoref_evt_000582::span::000000"
+        },
+        {
+          "excerpt": "This can affect: a complete Maya set imported as one GLB, a room shell and furniture combined into one mesh, concave geometry, L-shaped walls, any large model whose AABB contains empty navigable space.",
+          "source_id": "panoref_evt_000582::span::000000"
+        }
+      ],
+      "kind": "blocker",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Blocker: Imported sets produce zero legal candidates because clearance uses object AABBs instead of actual geometry; points inside AABBs (e.g., inside a room mesh) are incorrectly rejected."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "Use actual geometry clearance, not object AABBs: candidate valid = camera sphere/capsule does not intersect nearby triangles",
+          "source_id": "panoref_evt_000582::span::000000"
+        },
+        {
+          "excerpt": "At minimum, obstacle bounds should be per connected mesh or spatial cluster—not per imported set object.",
+          "source_id": "panoref_evt_000582::span::000000"
+        },
+        {
+          "excerpt": "Add a regression test with one imported object containing a room floor, walls, and empty interior.",
+          "source_id": "panoref_evt_000582::span::000000"
+        }
+      ],
+      "kind": "next_action",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Fix blocker 1: Replace AABB clearance with actual triangle/shapecast-based collision detection using the coverage BVH; restrict obstacle bounds to per connected-mesh or spatial-cluster; add regression test for room-shaped single-object import."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "The geometry representation will not scale to heavy imports",
+          "source_id": "panoref_evt_000582::span::000000"
+        }
+      ],
+      "kind": "blocker",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Blocker 2: Current per-triangle geometry representation will not scale to heavy imports."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_000582::span::000000"
+  ]
+}

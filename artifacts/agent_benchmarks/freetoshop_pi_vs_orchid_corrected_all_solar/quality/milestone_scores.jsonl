@@ -1,0 +1,2 @@
+{"arm": "PI_NATIVE", "assistant_messages": 43, "tool_calls": 73, "tool_failures": 3, "files_changed": 4, "typecheck_exit": 2, "build_exit": 1, "hidden_exit": 1}
+{"arm": "ORCHID", "assistant_messages": 57, "tool_calls": 73, "tool_failures": 9, "files_changed": 5, "typecheck_exit": 2, "build_exit": 1, "hidden_exit": 1}

@@ -1,0 +1,112 @@
+{
+  "benchmark": "FreetoShop Long-Horizon Memory A/B",
+  "run_id": "freetoshop_pi_vs_orchid_20260820",
+  "status": "terminated_early_arm_specific_failure",
+  "design": "exploratory paired run, n=1",
+  "start_commit": "db24908e582c1642a001abd2feca4ec47b1947f8",
+  "target_commit": "71ed699e605ddfcec6f172d529040f39544dcc8f",
+  "target_is_hidden_from_agents": true,
+  "canonical_source_fingerprint": {
+    "target_tree": "032d926eeed1bdff5586f9aeb0d063ea6d876284",
+    "start_tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+    "start_is_ancestor": true
+  },
+  "public_goal": {
+    "path": "BENCHMARK_GOAL.md",
+    "sha256": "D789F01C840878946C1CD885BCD48DFB4F96B4DB2EAFB82615DFDD4064290E7E",
+    "byte_identical_between_arms": true
+  },
+  "sealed_arms": {
+    "arm_a_pi": {
+      "name": "PI_NATIVE",
+      "baseline_commit": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa",
+      "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+      "remote": null,
+      "model": "openrouter/upstage/solar-pro4",
+      "native_compaction": true
+    },
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "baseline_commit": "ef22afee503843305c28d47dbf966cd644f52401",
+      "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+      "remote": null,
+      "model": "orchid/upstage/solar-pro4",
+      "native_compaction": false
+    }
+  },
+  "pi": {
+    "version": "0.84.2",
+    "mode": "rpc",
+    "extensions": "disabled",
+    "skills": "disabled",
+    "context_files": "disabled",
+    "prompt_templates": "disabled",
+    "thinking": "medium",
+    "goal_mode": "disabled_for_both_arms",
+    "goal_mode_reason": "Installed Pi has no Goal-mode extension and control-origin semantics could not be established safely; asymmetric Goal mode was not allowed."
+  },
+  "solar": {
+    "provider": "OpenRouter",
+    "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+    "model": "upstage/solar-pro4",
+    "context_window": 524288,
+    "max_output_tokens": 128000,
+    "temperature": "Pi/provider default; not overridden by controller",
+    "api_key": "user environment OPENROUTER_API_KEY; value excluded",
+    "provider_documentation": "https://openrouter.ai/upstage/solar-pro4?view=api"
+  },
+  "orchid": {
+    "commit": "42029bdf5afe06a650d05d4fed89b3116eed7fd5",
+    "working_tree_dirty_at_preflight": true,
+    "database": "fresh benchmark-only state orchid-state-actual-2/memory.db, created after all provider and RPC smoke tests and invalid attempt 01",
+    "database_initial_counts": {"events": 0, "threads": 0, "long_term_memories": 0},
+    "cold_memory_mode": "inject",
+    "cold_memory_timeout_ms": 50,
+    "cold_memory_token_budget": 512,
+    "cold_memory_max_injected": 3,
+    "dense_production_injection": false,
+    "dense_reranker_production_injection": false,
+    "rrf": false,
+    "graph_retrieval": false,
+    "buffered_telemetry": true,
+    "fail_open": true
+  },
+  "run_policy": {
+    "max_wall_clock_ms_per_arm": 21600000,
+    "checkpoint_interval_ms": 900000,
+    "launch": "paired, as close together as practical",
+    "automatic_restart_limit": 1,
+    "human_intervention": "none planned",
+    "continuation_messages": "same exact RPC follow-up sent to both arms; Goal mode is disabled, so these are ordinary harness prompts",
+    "valid_attempt": 2,
+    "valid_attempt_started_at": "2026-08-20T16:49:03Z",
+    "valid_attempt_ended_at": "2026-08-20T18:19:20Z",
+    "valid_attempt_observed_wall_clock_ms": 5420000,
+    "termination_reason": "ORCHID Pi RPC remained OS-responsive but produced no new RPC or gateway request for approximately 43 minutes after a provider stream error and an accepted predeclared follow-up. No manual prompt or restart was used.",
+    "invalid_attempt_artifact": "prelaunch_invalid_attempt_01.json"
+  },
+  "preflight_smoke": {
+    "direct_openrouter_model": "upstage/solar-pro4",
+    "direct_openrouter_reply": "READY",
+    "pi_native_openrouter_reply": "READY",
+    "orchid_openrouter_reply": "READY",
+    "driver_rpc_smoke": "both arms produced provider messages without tool calls"
+  },
+  "known_limitations": [
+    "Agent subprocess outbound network access is not firewall-denied; remotes and hidden refs were removed, and the limitation is recorded for this exploratory run.",
+    "The Pi installation has no Goal-mode extension, so the common safe configuration is Goal mode disabled for both arms.",
+    "Solar pricing, provider routing, and availability may change; the exact slug and endpoint are frozen in this manifest.",
+    "The ORCHID checkout contains pre-existing user working-tree changes; only its recorded implementation state is used, and private benchmark harness files are outside sealed agent repositories."
+  ],
+  "artifacts": {
+    "goal": "BENCHMARK_GOAL.md",
+    "preflight": "PRE_FLIGHT_REPORT.md",
+    "baseline": "baseline_test_results.json",
+    "runtime_logs": "agent_runtime_attempt_02/",
+    "checkpoints": "checkpoints_attempt_02/",
+    "hidden_evaluation": "hidden_evaluation/",
+    "final_report": "FINAL_REPORT.md",
+    "summary": "SUMMARY.json",
+    "post_run_metrics": "post_run_metrics.json"
+  }
+}

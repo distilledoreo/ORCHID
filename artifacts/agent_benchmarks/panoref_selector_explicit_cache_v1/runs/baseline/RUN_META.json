@@ -1,0 +1,29 @@
+{
+  "backend_instance_at_start": {
+    "config": {
+      "context_checkpoints": 32,
+      "context_length": 32768,
+      "eval_batch_size": 2048,
+      "flash_attention": true,
+      "offload_kv_cache_to_gpu": true,
+      "parallel": 1,
+      "physical_batch_size": 512,
+      "reasoning_budget_message": "",
+      "speculative_draft_max_tokens": 16,
+      "speculative_draft_min_continue_probability": 0.75,
+      "speculative_draft_min_tokens": 0,
+      "speculative_draft_model": "",
+      "speculative_draft_mtp": false,
+      "speculative_draft_simple": false
+    },
+    "id": "qwen3.5-4b@q6_k"
+  },
+  "condition": "BASELINE_CURRENT_32",
+  "no_concurrency": true,
+  "no_retries": true,
+  "plan_sha256": "fd1a2f332ccee1f894f1408cbdbcaa9369bde6d654c81ca1cd7c2c0fcb9d21e8",
+  "schema_version": "panoref-selector-explicit-cache-run-v1",
+  "source_commit": "7ddac7b628ab4303053af16b72dd69b7a9de2437",
+  "started_at": "2026-08-22T22:02:38.489+00:00",
+  "timeout_seconds": 180.0
+}

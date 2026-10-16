@@ -1,0 +1,52 @@
+{
+  "capsule_max_tokens": 2048,
+  "shadow_only": true,
+  "generations": [
+    {
+      "generation": 1,
+      "content": "Owner: Disti.",
+      "events": [
+        {
+          "id": "evt_1",
+          "sequence": 1,
+          "role": "user",
+          "event_type": "user_message",
+          "content": "Owner: Disti."
+        }
+      ],
+      "items": [
+        {
+          "kind": "state",
+          "status": "active",
+          "text": "Owner: Disti.",
+          "evidence": [
+            {"source_id": "evt_1", "excerpt": "Owner: Disti."}
+          ]
+        }
+      ]
+    },
+    {
+      "generation": 2,
+      "content": "Owner: Alice.",
+      "events": [
+        {
+          "id": "evt_1",
+          "sequence": 1,
+          "role": "user",
+          "event_type": "user_message",
+          "content": "Owner: Disti."
+        }
+      ],
+      "items": [
+        {
+          "kind": "state",
+          "status": "active",
+          "text": "Owner: Alice.",
+          "evidence": [
+            {"source_id": "evt_1", "excerpt": "Owner: Disti."}
+          ]
+        }
+      ]
+    }
+  ]
+}

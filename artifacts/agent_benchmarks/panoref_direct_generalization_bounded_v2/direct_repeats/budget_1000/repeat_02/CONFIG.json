@@ -1,0 +1,18 @@
+{
+  "arm": "RECURSIVE_RAW_SOLAR_PLAIN_TEXT",
+  "replay_sha256": "aa0e7326c2514501a8c53a5a2c4669b1512383507989e71403d4e6f00f7eaf07",
+  "semantic_oracle_manifest_sha256": "88e37b2803c028bbc50b0ebaf6a1ed62c639a9776a50d4b400b7b14f0a6ef323",
+  "batch_plan_hash": "0e4ef153c1ab8658aaf3d087203736a5873d060c2f350fe76b26d3f264da2419",
+  "solar_endpoint": "https://openrouter.ai/api",
+  "solar_model": "upstage/solar-pro4",
+  "solar_timeout_seconds": 180.0,
+  "generation": {
+    "temperature": 0,
+    "top_p": 1,
+    "stream": false,
+    "reasoning_effort": "none"
+  },
+  "response_format": null,
+  "plain_text_capsule": true,
+  "recursive_base_capsule": true
+}

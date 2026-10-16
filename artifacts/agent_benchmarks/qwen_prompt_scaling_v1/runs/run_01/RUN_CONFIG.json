@@ -1,0 +1,19 @@
+{
+  "no_retries": true,
+  "plan_sha256": "265d64e8759bdd217c467104d77d3225bf7c6f56de2ee0eb859170cc9d158772",
+  "repetitions": 6,
+  "run_id": "run_01",
+  "schema_version": "qwen-prompt-scaling-run-v1",
+  "serial": true,
+  "source_commit": "c4458ffeca7f1e02f9c4d4e571bab979b5ecaecd",
+  "targets": [
+    128,
+    256,
+    512,
+    1000,
+    1500,
+    2000,
+    4000
+  ],
+  "warmups": 3
+}

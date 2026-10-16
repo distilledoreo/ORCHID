@@ -1,0 +1,103 @@
+{
+  "generation": 25,
+  "content": "extractCoverageScene uses forEachProjectMesh to iterate visible non-helper non-sun_marker objects, creates Object3D roots, extracts triangles-only THREE.Mesh instances with position attributes, visits each mesh indicating whether the object is a floor, and disposes roots after traversal; work is chunked via yieldToMainThread to avoid monopolizing the browser event loop. copyPositionAttribute copies position data in chunks of COPY_CHUNK_VALUES values for unnormalized non-interleaved itemSize-3 attributes, otherwise copies per vertex in chunks of COPY_CHUNK_VALUES/3 vertices, yielding to the main thread between chunks.",
+  "events": [
+    {
+      "id": "panoref_evt_000961::span::000002",
+      "sequence": 961,
+      "content": "}\\r\\n\\r\\nfunction yieldToMainThread(): Promise<void> {\\r\\n  return new Promise((resolve) => setTimeout(resolve, 0));\\r\\n}\\r\\n\\r\\nasync function forEachProjectMesh(\\r\\n  project: LocationProject,\\r\\n  visit: (mesh: THREE.Mesh, explicitFloor: boolean) => Promise<void> | void,\\r\\n  onProgress?: CoverageExtractionProgress,\\r\\n  progressStart = 0,\\r\\n  progressSpan = 1,\\r\\n): Promise<void> {\\r\\n  const objects = project.scene.objects.filter(\\r\\n    (object) => object.visible && object.type !== 'sun_marker' && object.category !== 'helper',\\r\\n  );\\r\\n  for (let objectIndex = 0; objectIndex < objects.length; objectIndex += 1) {\\r\\n    const object = objects[objectIndex];\\r\\n    const root = createObject3D(object, false, 'light', project.assets);\\r\\n    root.updateMatrixWorld(true);\\r\\n    const meshes: THREE.Mesh[] = [];\\r\\n    root.traverse((child) => {\\r\\n      const mesh = child as THREE.Mesh;\\r\\n      if (mesh.isMesh && mesh.geometry.getAttribute('position')) meshes.push(mesh);\\r\\n    });\\r\\n    for (const mesh of meshes) await visit(mesh, object.type === 'floor');\\r\\n    disposeExtractedNode(root);\\r\\n    onProgress?.(\\r\\n      progressStart + progressSpan * ((objectIndex + 1) / Math.max(1, objects.length)),\\r\\n      'Preparing indexed scene geometry…',\\r\\n    );\\r\\n    await yieldToMainThread();\\r\\n  }\\r\\n}\\r\\n\\r\\nasync function copyPositionAttribute(\\r\\n  target: Float32Array,\\r\\n  targetOffset: number,\\r\\n  attribute: THREE.BufferAttribute | THREE.InterleavedBufferAttribute,\\r\\n): Promise<void> {\\r\\n  if (!attribute.normalized && !(attribute instanceof THREE.InterleavedBufferAttribute) && attribute.itemSize === 3) {\\r\\n    const source = attribute.array;\\r\\n    for (let offset = 0; offset < source.length; offset += COPY_CHUNK_VALUES) {\\r\\n      const end = Math.min(source.length, offset + COPY_CHUNK_VALUES);\\r\\n      target.set(source.subarray(offset, end), targetOffset + offset);\\r\\n      if (end < source.length) await yieldToMainThread();\\r\\n    }\\r\\n    return;\\r\\n  }\\r\\n  for (let vertex = 0; vertex < attribute.count; vertex += 1) {\\r\\n    const offset = targetOffset + vertex * 3;\\r\\n    target[offset] = attribute.getX(vertex);\\r\\n    target[offset + 1] = attribute.getY(vertex);\\r\\n    target[offset + 2] = attribute.getZ(vertex);\\r\\n    if (vertex > 0 && vertex % (COPY_CHUNK_VALUES / 3) === 0) await yieldToMainThread();\\r\\n  }\\r\\n}\\r\\n\\r\\n/**\\r\\n * Extract indexed mesh buffers without expanding triangles. Work is chunked\\r\\n * between objects and large buffer ranges so complex imports do not monopolize\\r\\n * the browser event loop before worker optimization begins.\\r\\n */\\r\\nexport async function extractCoverageScene(\\r\\n  project: LocationProject,\\r\\n  onProgress?: CoverageExtractionProgress,\\r\\n): Promise<CoverageSceneData> {\\r\\n  let vertexCount = 0;\\r\\n  let indexCount = 0;\\r\\n  let meshCount = 0;\\r\\n  const sceneBounds = new THREE.Box3();\\r\\n\\r\\n  await forEachProjectMesh(project, (mesh) => {\\r\\n    const position = mesh.geometry.getAttribute('position');\\r\\n    const index = mesh.geometry.index;\\r\\n    const meshIndexCount = index ? Math.floor(index.count / 3) * 3 : Math.floor(position.count / 3) * 3;",
+      "content_hash": "82f5c3844ada8cffbbb5cea8aae4f07f4a843681858e57ed23a84a801b88bdbe",
+      "event_type": "custom_tool_call_output",
+      "role": "tool"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "const objects = project.scene.objects.filter((object) => object.visible && object.type !== 'sun_marker' && object.category !== 'helper',);",
+          "source_id": "panoref_evt_000961::span::000002"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "forEachProjectMesh iterates only visible objects that are not sun_marker and do not have category 'helper'."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "for (const mesh of meshes) await visit(mesh, object.type === 'floor');",
+          "source_id": "panoref_evt_000961::span::000002"
+        },
+        {
+          "excerpt": "const root = createObject3D(object, false, 'light', project.assets);",
+          "source_id": "panoref_evt_000961::span::000002"
+        },
+        {
+          "excerpt": "disposeExtractedNode(root);",
+          "source_id": "panoref_evt_000961::span::000002"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "For each project object, extractCoverageScene creates an Object3D root, traverses it to collect THREE.Mesh children that have a position attribute, visits each resulting mesh with explicitFloor=true when object.type==='floor', and disposes the temporary root afterward."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "async function copyPositionAttribute(target: Float32Array, targetOffset: number, attribute: THREE.BufferAttribute | THREE.InterleavedBufferAttribute): Promise<void> {",
+          "source_id": "panoref_evt_000961::span::000002"
+        },
+        {
+          "excerpt": "if (!attribute.normalized && !(attribute instanceof THREE.InterleavedBufferAttribute) && attribute.itemSize === 3) {",
+          "source_id": "panoref_evt_000961::span::000002"
+        },
+        {
+          "excerpt": "for (let offset = 0; offset < source.length; offset += COPY_CHUNK_VALUES) {",
+          "source_id": "panoref_evt_000961::span::000002"
+        },
+        {
+          "excerpt": "if (end < source.length) await yieldToMainThread();",
+          "source_id": "panoref_evt_000961::span::000002"
+        },
+        {
+          "excerpt": "for (let vertex = 0; vertex < attribute.count; vertex += 1) {",
+          "source_id": "panoref_evt_000961::span::000002"
+        },
+        {
+          "excerpt": "if (vertex > 0 && vertex % (COPY_CHUNK_VALUES / 3) === 0) await yieldToMainThread();",
+          "source_id": "panoref_evt_000961::span::000002"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "copyPositionAttribute handles copying position buffer data in two paths: a direct typed-array copy path for simple unnormalized non-interleaved 3-component attributes using COPY_CHUNK_VALUES-sized ranges, and a per-vertex accessor path for other attributes using chunks of COPY_CHUNK_VALUES/3 vertices, with main-thread yields between chunks in both paths."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "Work is chunked between objects and large buffer ranges so complex imports do not monopolize the browser event loop before worker optimization begins.",
+          "source_id": "panoref_evt_000961::span::000002"
+        },
+        {
+          "excerpt": "await yieldToMainThread();",
+          "source_id": "panoref_evt_000961::span::000002"
+        },
+        {
+          "excerpt": "return new Promise((resolve) => setTimeout(resolve, 0));",
+          "source_id": "panoref_evt_000961::span::000002"
+        }
+      ],
+      "kind": "constraint",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "extractCoverageScene yields to the main thread between processed objects and within large attribute copies via setTimeout(0) to prevent monopolizing the browser event loop."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_000961::span::000002"
+  ]
+}

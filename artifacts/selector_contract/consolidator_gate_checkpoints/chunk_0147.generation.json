@@ -1,0 +1,55 @@
+{
+  "generation": 148,
+  "content": "projector-occlusion PR #23 is MERGEABLE/CLEAN with successful Netlify checks after rebasing onto origin/main; adds world-space allowed-floor regions, connected-component filtering, candidate/refinement enforcement, validation, and stale-analysis protection; final commit c1f6c8d published; README updated and coverage benchmark guide added; 42 files, 373/373 tests passed; TypeScript and production build passed; 22 full browser scenarios passed including final allowed-floor workflow on desktop and phone; real WebGL shader compilation and pixel-readback tests passed; real Blender production set verification passed: 171.2 MB, 191 mesh nodes, 36,788 triangles, 24,576 fine samples in 36.9 seconds, no browser errors; final build→reference→shots→export smoke produced valid 33,120,308-byte package; six adversarial audit rounds completed, four found actionable gaps fixed, rounds five and six found no remaining concrete holes; 688,000 tokens used over approximately 1 hour 4 minutes.",
+  "events": [
+    {
+      "id": "panoref_evt_001195",
+      "sequence": 1195,
+      "content": "{\"content\": [{\"text\": \"## Implementation\\n\\n- Rebased `t3code/projector-occlusion` onto current `origin/main`, preserving main’s multi-origin behavior and the occlusion/coverage implementation.\\n- Added explicit world-space X/Y/Z allowed-floor regions, connected-component filtering, exact candidate/refinement enforcement, validation, and stale-analysis protection.\\n- Published final commit `c1f6c8d`. [PR #23](https://github.com/distilledoreo/PanoRef/pull/23) is `MERGEABLE/CLEAN` with successful Netlify checks.\\n\\n## Documentation\\n\\nUpdated [README.md](C:/Users/disti/.t3/worktrees/PanoRef/t3code-aefd2138/README.md) and added the repeatable [coverage benchmark guide](C:/Users/disti/.t3/worktrees/PanoRef/t3code-aefd2138/docs/coverage-optimizer-benchmark.md).\\n\\n## Tests\\n\\n- 42 files, 373/373 tests passed.\\n- Full fixed-first and joint optimization over 101,250 triangles passed.\\n- TypeScript and production build passed.\\n- 22 full browser scenarios passed; the final allowed-floor workflow passed on desktop and phone.\\n- Real WebGL shader compilation and pixel-readback tests passed.\\n\\n## Runtime verification\\n\\n- Real Blender production set: 171.2 MB, 191 mesh nodes, 36,788 triangles.\\n- Full optimizer: 24,576 fine samples in 36.9 seconds, with no browser errors.\\n- Final build→reference→shots→export smoke produced a valid 33,120,308-byte package.\\n\\nSix adversarial audit rounds were completed. Four rounds found actionable gaps, all were fixed; rounds five and six found no remaining concrete holes.\\n\\nGoal usage: 688,000 tokens over approximately 1 hour 4 minutes.\\n\\n::git-commit{cwd=\\\"C:\\\\Users\\\\disti\\\\.t3\\\\worktrees\\\\PanoRef\\\\t3code-aefd2138\\\"}\\n\\n::git-push{cwd=\\\"C:\\\\Users\\\\disti\\\\.t3\\\\worktrees\\\\PanoRef\\\\t3code-aefd2138\\\" branch=\\\"t3code/projector-occlusion\\\"}\", \"type\": \"output_text\"}], \"id\": \"msg_0cc9ec57757b3be5016a5cd696204881948b93c3145c262c7e\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"phase\": \"final_answer\", \"role\": \"assistant\", \"type\": \"message\"}",
+      "content_hash": "2583e535166badb69fc95103e670d0b0ff63992fdc2a18b56a1abbb9338f590b",
+      "event_type": "message",
+      "role": "assistant"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "Published final commit `c1f6c8d`. [PR #23](https://github.com/distilledoreo/PanoRef/pull/23) is `MERGEABLE/CLEAN` with successful Netlify checks.",
+          "source_id": "panoref_evt_001195"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "projector-occlusion PR #23 is MERGEABLE/CLEAN with successful Netlify checks; final commit c1f6c8d published."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "Real Blender production set: 171.2 MB, 191 mesh nodes, 36,788 triangles.\n- Full optimizer: 24,576 fine samples in 36.9 seconds, with no browser errors.\n- Final build→reference→shots→export smoke produced a valid 33,120,308-byte package.",
+          "source_id": "panoref_evt_001195"
+        }
+      ],
+      "kind": "decision",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Real Blender production set verification passed: 171.2 MB, 191 mesh nodes, 36,788 triangles; 24,576 fine samples in 36.9 seconds, no browser errors; final build→reference→shots→export smoke produced valid 33,120,308-byte package."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "Four rounds found actionable gaps, all were fixed; rounds five and six found no remaining concrete holes.",
+          "source_id": "panoref_evt_001195"
+        }
+      ],
+      "kind": "completed",
+      "status": "resolved",
+      "supersedes_item_ids": [],
+      "text": "Six adversarial audit rounds completed; four rounds found actionable gaps fixed; rounds five and six found no remaining concrete holes."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_001195"
+  ]
+}

@@ -1,0 +1,629 @@
+{
+  "condition": "recursive_raw_solar_plain_text_budget_instruction",
+  "repeats": 3,
+  "budgets": [
+    1000,
+    2000
+  ],
+  "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+  "raw_plan_sha256": "b50194fb9a7af32c096a9b5dbb5ab88905aa8e9b992903b054346cf1b60755aa",
+  "oracle_sha256": "9c5b7f4f9e6c0bc7af514901666e91ce1e47fb047ccaa7b6bb9db6f5f195cd0c",
+  "arms": {
+    "1000": {
+      "run_count": 3,
+      "full_trace_successes": 2,
+      "full_trace_rate": 0.6666666666666666,
+      "timeouts": 1,
+      "failures": 1,
+      "metrics": {
+        "wall_ms": {
+          "median": 857180.5753000008,
+          "min": 732236.3341000018,
+          "max": 937060.7536000025
+        },
+        "source_tokens_per_second": {
+          "median": 216.3797803088351,
+          "min": 175.71676766856834,
+          "max": 276.9064993875445
+        },
+        "solar_input_tokens": {
+          "median": 311674.0,
+          "min": 241402.0,
+          "max": 324092.0
+        },
+        "solar_output_tokens": {
+          "median": 34641.0,
+          "min": 21790.0,
+          "max": 37913.0
+        }
+      },
+      "full_trace_metrics": {
+        "wall_ms": {
+          "median": 834648.5438500021,
+          "min": 732236.3341000018,
+          "max": 937060.7536000025
+        },
+        "source_tokens_per_second": {
+          "median": 246.6431398481898,
+          "min": 216.3797803088351,
+          "max": 276.9064993875445
+        },
+        "solar_input_tokens": {
+          "median": 317883.0,
+          "min": 311674.0,
+          "max": 324092.0
+        },
+        "solar_output_tokens": {
+          "median": 28215.5,
+          "min": 21790.0,
+          "max": 34641.0
+        }
+      },
+      "semantic_all_evaluated": {
+        "evaluated": 468,
+        "pass": 350,
+        "fail": 118
+      },
+      "semantic_full_trace_only": {
+        "evaluated": 356,
+        "pass": 260,
+        "fail": 96
+      },
+      "semantic_final_checkpoint_full_trace_only": {
+        "evaluated": 38,
+        "pass": 34,
+        "fail": 4
+      },
+      "run_records": [
+        {
+          "arm": "RECURSIVE_RAW_SOLAR_PLAIN_TEXT",
+          "status": "FAILED",
+          "error": "TimeoutError",
+          "event_count": 199,
+          "source_item_count": 317,
+          "planned_source_tokens": 202761,
+          "source_tokens_retired": 150621,
+          "planned_generations": 18,
+          "completed_generations": 13,
+          "wall_ms": 857180.5753000008,
+          "source_tokens_per_second": 175.71676766856834,
+          "margin_vs_arrival": 116.56876766856834,
+          "solar_calls": 14,
+          "solar_input_tokens": 241402,
+          "solar_output_tokens": 37913,
+          "solar_estimated_cost_usd": 0.011791619999999997,
+          "timeout_count": 1,
+          "batch_plan_hash": "30268cde0a16f05d0ef55337f1c774f3cc7ae6b6cd60dd76aff0e9e390083e17",
+          "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+          "system_prompt_hash": "fc1514407afb0500471ee23713dc368217312d184bfd1a36f115a0499b9b4d5b",
+          "generation_hash": "ce988d31aebd207dd029c1e5b8c8d7eb940750d7192cf692ae24bfab1014dd70",
+          "response_format": null,
+          "repeat": 1,
+          "budget": 1000,
+          "condition": "recursive_raw_solar_plain_text_budget_instruction",
+          "no_retry_within_run": true,
+          "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+          "raw_plan": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\arm_c_raw_solar\\batch_plan.json",
+          "oracle": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\semantic_oracle\\deterministic_checks.jsonl",
+          "raw_plan_sha256": "b50194fb9a7af32c096a9b5dbb5ab88905aa8e9b992903b054346cf1b60755aa",
+          "oracle_sha256": "9c5b7f4f9e6c0bc7af514901666e91ce1e47fb047ccaa7b6bb9db6f5f195cd0c",
+          "phase3_oracle_manifest_sha256": "8fb7696c32206bb156f725e1dec2ca04f42ed97fe2dda2dde275c1b812931add",
+          "system_prompt_sha256": "a77b3a89421b497d11eb9c4cfe8f8b5142be53547cf4177e54e304517636f621",
+          "base_system_prompt_sha256": "2bbf1efc4212723633749ae52fba0e19ab96a0a9d6833c831962cb684ff66a35",
+          "runner_error": null,
+          "output": "artifacts\\agent_benchmarks\\freetoshop_recursive_raw_solar_evidence\\repeat_01\\capsule_1000t",
+          "semantic_pass": 90,
+          "semantic_fail": 22,
+          "semantic_evaluated": 112,
+          "semantic_final": {
+            "generation": 12,
+            "evaluated": 10,
+            "pass": 8,
+            "fail": 2
+          }
+        },
+        {
+          "arm": "RECURSIVE_RAW_SOLAR_PLAIN_TEXT",
+          "status": "SUCCEEDED",
+          "error": null,
+          "event_count": 199,
+          "source_item_count": 317,
+          "planned_source_tokens": 202761,
+          "source_tokens_retired": 202761,
+          "planned_generations": 18,
+          "completed_generations": 18,
+          "wall_ms": 937060.7536000025,
+          "source_tokens_per_second": 216.3797803088351,
+          "margin_vs_arrival": 157.2317803088351,
+          "solar_calls": 18,
+          "solar_input_tokens": 324092,
+          "solar_output_tokens": 34641,
+          "solar_estimated_cost_usd": 0.013879680000000002,
+          "timeout_count": 0,
+          "batch_plan_hash": "30268cde0a16f05d0ef55337f1c774f3cc7ae6b6cd60dd76aff0e9e390083e17",
+          "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+          "system_prompt_hash": "fc1514407afb0500471ee23713dc368217312d184bfd1a36f115a0499b9b4d5b",
+          "generation_hash": "ce988d31aebd207dd029c1e5b8c8d7eb940750d7192cf692ae24bfab1014dd70",
+          "response_format": null,
+          "repeat": 2,
+          "budget": 1000,
+          "condition": "recursive_raw_solar_plain_text_budget_instruction",
+          "no_retry_within_run": true,
+          "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+          "raw_plan": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\arm_c_raw_solar\\batch_plan.json",
+          "oracle": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\semantic_oracle\\deterministic_checks.jsonl",
+          "raw_plan_sha256": "b50194fb9a7af32c096a9b5dbb5ab88905aa8e9b992903b054346cf1b60755aa",
+          "oracle_sha256": "9c5b7f4f9e6c0bc7af514901666e91ce1e47fb047ccaa7b6bb9db6f5f195cd0c",
+          "phase3_oracle_manifest_sha256": "8fb7696c32206bb156f725e1dec2ca04f42ed97fe2dda2dde275c1b812931add",
+          "system_prompt_sha256": "a77b3a89421b497d11eb9c4cfe8f8b5142be53547cf4177e54e304517636f621",
+          "base_system_prompt_sha256": "2bbf1efc4212723633749ae52fba0e19ab96a0a9d6833c831962cb684ff66a35",
+          "runner_error": null,
+          "output": "artifacts\\agent_benchmarks\\freetoshop_recursive_raw_solar_evidence\\repeat_02\\capsule_1000t",
+          "semantic_pass": 143,
+          "semantic_fail": 35,
+          "semantic_evaluated": 178,
+          "semantic_final": {
+            "generation": 17,
+            "evaluated": 19,
+            "pass": 16,
+            "fail": 3
+          }
+        },
+        {
+          "arm": "RECURSIVE_RAW_SOLAR_PLAIN_TEXT",
+          "status": "SUCCEEDED",
+          "error": null,
+          "event_count": 199,
+          "source_item_count": 317,
+          "planned_source_tokens": 202761,
+          "source_tokens_retired": 202761,
+          "planned_generations": 18,
+          "completed_generations": 18,
+          "wall_ms": 732236.3341000018,
+          "source_tokens_per_second": 276.9064993875445,
+          "margin_vs_arrival": 217.7584993875445,
+          "solar_calls": 18,
+          "solar_input_tokens": 311674,
+          "solar_output_tokens": 21790,
+          "solar_estimated_cost_usd": 0.011965019999999996,
+          "timeout_count": 0,
+          "batch_plan_hash": "30268cde0a16f05d0ef55337f1c774f3cc7ae6b6cd60dd76aff0e9e390083e17",
+          "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+          "system_prompt_hash": "fc1514407afb0500471ee23713dc368217312d184bfd1a36f115a0499b9b4d5b",
+          "generation_hash": "ce988d31aebd207dd029c1e5b8c8d7eb940750d7192cf692ae24bfab1014dd70",
+          "response_format": null,
+          "repeat": 3,
+          "budget": 1000,
+          "condition": "recursive_raw_solar_plain_text_budget_instruction",
+          "no_retry_within_run": true,
+          "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+          "raw_plan": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\arm_c_raw_solar\\batch_plan.json",
+          "oracle": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\semantic_oracle\\deterministic_checks.jsonl",
+          "raw_plan_sha256": "b50194fb9a7af32c096a9b5dbb5ab88905aa8e9b992903b054346cf1b60755aa",
+          "oracle_sha256": "9c5b7f4f9e6c0bc7af514901666e91ce1e47fb047ccaa7b6bb9db6f5f195cd0c",
+          "phase3_oracle_manifest_sha256": "8fb7696c32206bb156f725e1dec2ca04f42ed97fe2dda2dde275c1b812931add",
+          "system_prompt_sha256": "a77b3a89421b497d11eb9c4cfe8f8b5142be53547cf4177e54e304517636f621",
+          "base_system_prompt_sha256": "2bbf1efc4212723633749ae52fba0e19ab96a0a9d6833c831962cb684ff66a35",
+          "runner_error": null,
+          "output": "artifacts\\agent_benchmarks\\freetoshop_recursive_raw_solar_evidence\\repeat_03\\capsule_1000t",
+          "semantic_pass": 117,
+          "semantic_fail": 61,
+          "semantic_evaluated": 178,
+          "semantic_final": {
+            "generation": 17,
+            "evaluated": 19,
+            "pass": 18,
+            "fail": 1
+          }
+        }
+      ],
+      "misses": {
+        "by_category": {
+          "BLOCKER_PRESERVATION": 2,
+          "CONTINUATION_SUFFICIENCY": 9,
+          "CURRENT_FACT_PRESERVATION": 35,
+          "CURRENT_INTENT_PRESERVATION": 72
+        },
+        "by_checkpoint": {
+          "architecture-baseline": 35,
+          "clone-progress": 2,
+          "intent-start": 81
+        },
+        "by_check": {
+          "spot-002": {
+            "count": 23,
+            "category": "CURRENT_INTENT_PRESERVATION",
+            "checkpoint": "intent-start",
+            "missing_terms": {
+              "copy-on-write": 23,
+              "tiled": 10
+            }
+          },
+          "spot-003": {
+            "count": 49,
+            "category": "CURRENT_INTENT_PRESERVATION",
+            "checkpoint": "intent-start",
+            "missing_terms": {
+              "real functionality": 49,
+              "real behavior": 49,
+              "not decorative": 49
+            }
+          },
+          "spot-004": {
+            "count": 9,
+            "category": "CONTINUATION_SUFFICIENCY",
+            "checkpoint": "intent-start",
+            "missing_terms": {
+              "undo": 9,
+              "save/reopen": 9,
+              "recovery": 9
+            }
+          },
+          "spot-005": {
+            "count": 9,
+            "category": "CURRENT_FACT_PRESERVATION",
+            "checkpoint": "architecture-baseline",
+            "missing_terms": {
+              "sparse": 9,
+              "tiledpixelstore": 9,
+              "tiled pixel": 9
+            }
+          },
+          "spot-006": {
+            "count": 26,
+            "category": "CURRENT_FACT_PRESERVATION",
+            "checkpoint": "architecture-baseline",
+            "missing_terms": {
+              "bounded": 26,
+              "region-local": 26,
+              "region local": 26,
+              "tile-sized": 26
+            }
+          },
+          "spot-015": {
+            "count": 2,
+            "category": "BLOCKER_PRESERVATION",
+            "checkpoint": "clone-progress",
+            "missing_terms": {
+              "run the tests": 2,
+              "add unit tests": 2,
+              "verify": 2
+            }
+          }
+        },
+        "missing_terms": {
+          "not decorative": 49,
+          "real behavior": 49,
+          "real functionality": 49,
+          "bounded": 26,
+          "region local": 26,
+          "region-local": 26,
+          "tile-sized": 26,
+          "copy-on-write": 23,
+          "tiled": 10,
+          "recovery": 9,
+          "save/reopen": 9,
+          "sparse": 9,
+          "tiled pixel": 9,
+          "tiledpixelstore": 9,
+          "undo": 9,
+          "add unit tests": 2,
+          "run the tests": 2,
+          "verify": 2
+        }
+      }
+    },
+    "2000": {
+      "run_count": 3,
+      "full_trace_successes": 1,
+      "full_trace_rate": 0.3333333333333333,
+      "timeouts": 2,
+      "failures": 2,
+      "metrics": {
+        "wall_ms": {
+          "median": 682390.2345000023,
+          "min": 511274.14249999856,
+          "max": 1315076.3106000014
+        },
+        "source_tokens_per_second": {
+          "median": 118.73851046442508,
+          "min": 68.06328954920716,
+          "max": 154.18192721264262
+        },
+        "solar_input_tokens": {
+          "median": 128606.0,
+          "min": 49049.0,
+          "max": 339772.0
+        },
+        "solar_output_tokens": {
+          "median": 23393.0,
+          "min": 7749.0,
+          "max": 51417.0
+        }
+      },
+      "full_trace_metrics": {
+        "wall_ms": {
+          "median": 1315076.3106000014,
+          "min": 1315076.3106000014,
+          "max": 1315076.3106000014
+        },
+        "source_tokens_per_second": {
+          "median": 154.18192721264262,
+          "min": 154.18192721264262,
+          "max": 154.18192721264262
+        },
+        "solar_input_tokens": {
+          "median": 339772.0,
+          "min": 339772.0,
+          "max": 339772.0
+        },
+        "solar_output_tokens": {
+          "median": 51417.0,
+          "min": 51417.0,
+          "max": 51417.0
+        }
+      },
+      "semantic_all_evaluated": {
+        "evaluated": 242,
+        "pass": 216,
+        "fail": 26
+      },
+      "semantic_full_trace_only": {
+        "evaluated": 178,
+        "pass": 163,
+        "fail": 15
+      },
+      "semantic_final_checkpoint_full_trace_only": {
+        "evaluated": 19,
+        "pass": 18,
+        "fail": 1
+      },
+      "run_records": [
+        {
+          "arm": "RECURSIVE_RAW_SOLAR_PLAIN_TEXT",
+          "status": "FAILED",
+          "error": "TimeoutError",
+          "event_count": 199,
+          "source_item_count": 317,
+          "planned_source_tokens": 202761,
+          "source_tokens_retired": 81026,
+          "planned_generations": 18,
+          "completed_generations": 7,
+          "wall_ms": 682390.2345000023,
+          "source_tokens_per_second": 118.73851046442508,
+          "margin_vs_arrival": 59.59051046442507,
+          "solar_calls": 8,
+          "solar_input_tokens": 128606,
+          "solar_output_tokens": 23393,
+          "solar_estimated_cost_usd": 0.00666534,
+          "timeout_count": 1,
+          "batch_plan_hash": "30268cde0a16f05d0ef55337f1c774f3cc7ae6b6cd60dd76aff0e9e390083e17",
+          "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+          "system_prompt_hash": "eb2f6daadfa439ad9c5ce43a1ed2c64320469feb24fc4dfc115aa57bb6ab2097",
+          "generation_hash": "ce988d31aebd207dd029c1e5b8c8d7eb940750d7192cf692ae24bfab1014dd70",
+          "response_format": null,
+          "repeat": 1,
+          "budget": 2000,
+          "condition": "recursive_raw_solar_plain_text_budget_instruction",
+          "no_retry_within_run": true,
+          "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+          "raw_plan": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\arm_c_raw_solar\\batch_plan.json",
+          "oracle": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\semantic_oracle\\deterministic_checks.jsonl",
+          "raw_plan_sha256": "b50194fb9a7af32c096a9b5dbb5ab88905aa8e9b992903b054346cf1b60755aa",
+          "oracle_sha256": "9c5b7f4f9e6c0bc7af514901666e91ce1e47fb047ccaa7b6bb9db6f5f195cd0c",
+          "phase3_oracle_manifest_sha256": "8fb7696c32206bb156f725e1dec2ca04f42ed97fe2dda2dde275c1b812931add",
+          "system_prompt_sha256": "7140c156c0599f7f5252af6b584603873288a603ba3a14b2cf9a0ee0d290e14a",
+          "base_system_prompt_sha256": "2bbf1efc4212723633749ae52fba0e19ab96a0a9d6833c831962cb684ff66a35",
+          "runner_error": null,
+          "output": "artifacts\\agent_benchmarks\\freetoshop_recursive_raw_solar_evidence\\repeat_01\\capsule_2000t",
+          "semantic_pass": 45,
+          "semantic_fail": 7,
+          "semantic_evaluated": 52,
+          "semantic_final": {
+            "generation": 6,
+            "evaluated": 10,
+            "pass": 9,
+            "fail": 1
+          }
+        },
+        {
+          "arm": "RECURSIVE_RAW_SOLAR_PLAIN_TEXT",
+          "status": "SUCCEEDED",
+          "error": null,
+          "event_count": 199,
+          "source_item_count": 317,
+          "planned_source_tokens": 202761,
+          "source_tokens_retired": 202761,
+          "planned_generations": 18,
+          "completed_generations": 18,
+          "wall_ms": 1315076.3106000014,
+          "source_tokens_per_second": 154.18192721264262,
+          "margin_vs_arrival": 95.03392721264262,
+          "solar_calls": 18,
+          "solar_input_tokens": 339772,
+          "solar_output_tokens": 51417,
+          "solar_estimated_cost_usd": 0.016363200000000005,
+          "timeout_count": 0,
+          "batch_plan_hash": "30268cde0a16f05d0ef55337f1c774f3cc7ae6b6cd60dd76aff0e9e390083e17",
+          "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+          "system_prompt_hash": "eb2f6daadfa439ad9c5ce43a1ed2c64320469feb24fc4dfc115aa57bb6ab2097",
+          "generation_hash": "ce988d31aebd207dd029c1e5b8c8d7eb940750d7192cf692ae24bfab1014dd70",
+          "response_format": null,
+          "repeat": 2,
+          "budget": 2000,
+          "condition": "recursive_raw_solar_plain_text_budget_instruction",
+          "no_retry_within_run": true,
+          "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+          "raw_plan": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\arm_c_raw_solar\\batch_plan.json",
+          "oracle": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\semantic_oracle\\deterministic_checks.jsonl",
+          "raw_plan_sha256": "b50194fb9a7af32c096a9b5dbb5ab88905aa8e9b992903b054346cf1b60755aa",
+          "oracle_sha256": "9c5b7f4f9e6c0bc7af514901666e91ce1e47fb047ccaa7b6bb9db6f5f195cd0c",
+          "phase3_oracle_manifest_sha256": "8fb7696c32206bb156f725e1dec2ca04f42ed97fe2dda2dde275c1b812931add",
+          "system_prompt_sha256": "7140c156c0599f7f5252af6b584603873288a603ba3a14b2cf9a0ee0d290e14a",
+          "base_system_prompt_sha256": "2bbf1efc4212723633749ae52fba0e19ab96a0a9d6833c831962cb684ff66a35",
+          "runner_error": null,
+          "output": "artifacts\\agent_benchmarks\\freetoshop_recursive_raw_solar_evidence\\repeat_02\\capsule_2000t",
+          "semantic_pass": 163,
+          "semantic_fail": 15,
+          "semantic_evaluated": 178,
+          "semantic_final": {
+            "generation": 17,
+            "evaluated": 19,
+            "pass": 18,
+            "fail": 1
+          }
+        },
+        {
+          "arm": "RECURSIVE_RAW_SOLAR_PLAIN_TEXT",
+          "status": "FAILED",
+          "error": "TimeoutError",
+          "event_count": 199,
+          "source_item_count": 317,
+          "planned_source_tokens": 202761,
+          "source_tokens_retired": 34799,
+          "planned_generations": 18,
+          "completed_generations": 3,
+          "wall_ms": 511274.14249999856,
+          "source_tokens_per_second": 68.06328954920716,
+          "margin_vs_arrival": 8.915289549207152,
+          "solar_calls": 4,
+          "solar_input_tokens": 49049,
+          "solar_output_tokens": 7749,
+          "solar_estimated_cost_usd": 0.00240135,
+          "timeout_count": 1,
+          "batch_plan_hash": "30268cde0a16f05d0ef55337f1c774f3cc7ae6b6cd60dd76aff0e9e390083e17",
+          "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+          "system_prompt_hash": "eb2f6daadfa439ad9c5ce43a1ed2c64320469feb24fc4dfc115aa57bb6ab2097",
+          "generation_hash": "ce988d31aebd207dd029c1e5b8c8d7eb940750d7192cf692ae24bfab1014dd70",
+          "response_format": null,
+          "repeat": 3,
+          "budget": 2000,
+          "condition": "recursive_raw_solar_plain_text_budget_instruction",
+          "no_retry_within_run": true,
+          "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+          "raw_plan": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\arm_c_raw_solar\\batch_plan.json",
+          "oracle": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\semantic_oracle\\deterministic_checks.jsonl",
+          "raw_plan_sha256": "b50194fb9a7af32c096a9b5dbb5ab88905aa8e9b992903b054346cf1b60755aa",
+          "oracle_sha256": "9c5b7f4f9e6c0bc7af514901666e91ce1e47fb047ccaa7b6bb9db6f5f195cd0c",
+          "phase3_oracle_manifest_sha256": "8fb7696c32206bb156f725e1dec2ca04f42ed97fe2dda2dde275c1b812931add",
+          "system_prompt_sha256": "7140c156c0599f7f5252af6b584603873288a603ba3a14b2cf9a0ee0d290e14a",
+          "base_system_prompt_sha256": "2bbf1efc4212723633749ae52fba0e19ab96a0a9d6833c831962cb684ff66a35",
+          "runner_error": null,
+          "output": "artifacts\\agent_benchmarks\\freetoshop_recursive_raw_solar_evidence\\repeat_03\\capsule_2000t",
+          "semantic_pass": 8,
+          "semantic_fail": 4,
+          "semantic_evaluated": 12,
+          "semantic_final": {
+            "generation": 2,
+            "evaluated": 4,
+            "pass": 2,
+            "fail": 2
+          }
+        }
+      ],
+      "misses": {
+        "by_category": {
+          "CURRENT_INTENT_PRESERVATION": 26
+        },
+        "by_checkpoint": {
+          "intent-start": 26
+        },
+        "by_check": {
+          "spot-002": {
+            "count": 16,
+            "category": "CURRENT_INTENT_PRESERVATION",
+            "checkpoint": "intent-start",
+            "missing_terms": {
+              "copy-on-write": 16
+            }
+          },
+          "spot-003": {
+            "count": 10,
+            "category": "CURRENT_INTENT_PRESERVATION",
+            "checkpoint": "intent-start",
+            "missing_terms": {
+              "real functionality": 10,
+              "real behavior": 10,
+              "not decorative": 10
+            }
+          }
+        },
+        "missing_terms": {
+          "copy-on-write": 16,
+          "not decorative": 10,
+          "real behavior": 10,
+          "real functionality": 10
+        }
+      }
+    }
+  },
+  "direct_vs_selector": {
+    "same_replay": true,
+    "same_replay_hash_verified": false,
+    "same_replay_basis": "historical selector arm is documented as using the same frozen FreetoShop replay; its SUMMARY.json does not persist replay_sha256",
+    "same_oracle": true,
+    "selector": {
+      "source": "historical_same_replay_selector_arm",
+      "replay_sha256": null,
+      "status": "SUCCEEDED",
+      "source_tokens_retired": 198390,
+      "planned_source_tokens": 202761,
+      "wall_seconds": 2884.9140450999994,
+      "source_tokens_per_second": 68.7680800531869,
+      "solar_input_tokens": 405044.0,
+      "solar_output_tokens": 26374.0,
+      "semantic_pass": 131,
+      "semantic_fail": 54,
+      "final_checkpoint_pass": 11,
+      "final_checkpoint_fail": 8
+    },
+    "direct": {
+      "1000": {
+        "source": "repeated_direct_raw_runs",
+        "median_wall_seconds": 834.648543850002,
+        "median_source_tokens_per_second": 246.6431398481898,
+        "median_solar_input_tokens": 317883.0,
+        "full_trace_run_count": 2,
+        "semantic_full_trace": {
+          "evaluated": 356,
+          "pass": 260,
+          "fail": 96
+        },
+        "semantic_final_checkpoint_full_trace": {
+          "evaluated": 38,
+          "pass": 34,
+          "fail": 4
+        },
+        "semantic_all_evaluated": {
+          "evaluated": 468,
+          "pass": 350,
+          "fail": 118
+        }
+      },
+      "2000": {
+        "source": "repeated_direct_raw_runs",
+        "median_wall_seconds": 1315.0763106000013,
+        "median_source_tokens_per_second": 154.18192721264262,
+        "median_solar_input_tokens": 339772.0,
+        "full_trace_run_count": 1,
+        "semantic_full_trace": {
+          "evaluated": 178,
+          "pass": 163,
+          "fail": 15
+        },
+        "semantic_final_checkpoint_full_trace": {
+          "evaluated": 19,
+          "pass": 18,
+          "fail": 1
+        },
+        "semantic_all_evaluated": {
+          "evaluated": 242,
+          "pass": 216,
+          "fail": 26
+        }
+      }
+    },
+    "caveat": "The selector arm is the preserved same-replay/oracle historical run, not a same-minute rerun; provider variance remains a limitation. Direct semantic totals include only evaluated prefixes unless marked full-trace-only."
+  },
+  "additional_trace_status": "NOT_RUN: no second frozen coding replay and candidate-independent oracle exists in this checkout"
+}

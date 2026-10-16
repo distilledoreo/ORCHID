@@ -1,0 +1,28 @@
+{
+  "benchmark_goal_sha256": "d789f01c840878946c1cd885bcd48dfb4f96b4db2eafb82615dfdd4064290e7e",
+  "benchmark_manifest_sha256": "a01d1c0cb184e94967ca8e5837a2185c2f06694cdae932e5f2e69922f8ab7178",
+  "config_pi_native_sha256": "bd24f9c651b4f97aea5534310e0a7afae4534161a2a44db1c597255ef3e4e84e",
+  "config_orchid_sha256": "bcbb3a7dccf3092d562fefd1e5e3916de809d3c07a4d7c2c6d7053c910c26e7b",
+  "implementation_commit": "a873b53feb7e3458477a67fa6f12bfc6bbbeb2c2",
+  "implementation_tree": "5e9bf924fa98290bf2cb0c001aaa0e42d6dcc108",
+  "implementation_file_sha256": {
+    "memory_gateway/compaction.py": "3951238328099a2a9b7c1331383f21e2e82a4f7ca400acc1294fc3755e1d977a",
+    "memory_gateway/config.py": "9440256a26ff3b89387fe44dffdbd11320e1aaf7eda2c236f8724d1bf1ec683c",
+    "memory_gateway/context.py": "80f1cbba0bab1d0fb0c5f783133fb6b5939c0996649dcf25934bb8b6a201c82b",
+    "memory_gateway/db.py": "dc336110b9683cc09a197fe4825a6d756a88afca6d2b885c32a56fe2c98a69b2",
+    "memory_gateway/foreground_telemetry.py": "7a9dad0332dc7d63689aff8c51feadbb5ac6c373870436248363a49c1e2041ab",
+    "memory_gateway/gateway.py": "5a2153ced4738a7c598f3095b023aefabd2277bc8723be43a9c87ac49f692ec4",
+    "memory_gateway/ingestion.py": "6072c7f8cb6d5d6c5478f90043bafccf96497f9344b9a669cd635237c837ecf8",
+    "memory_gateway/pipeline.py": "9070e3bad0a651852f6cdc9e8c1ed6d6976a588a520257fc8544b196bcc1f7c7",
+    "memory_gateway/pipeline_adapters.py": "19899eb0ac5089ffd14b47bbf9a5724c9d4f89ec8d9b1bea97bf9a52140a68c4",
+    "memory_gateway/scheduler.py": "2daa7a28df8f5ffee9dead6850f1b1991fd53de51f9c141d8623f654312b27c0",
+    "memory_gateway/source_projection.py": "b46cf7958e68d3481eb966ac6282f797699c9e2cfe180696446e96b9b87fb9a7",
+    "tools/benchmark_freetoshop_corrected_all_solar.py": "e82723f1c6932a40618ef3d6e827bbff726948f6eebd5adb4bdab95671067f99",
+    "tools/finalize_freetoshop_corrected_all_solar.py": "2d7069ab4320aa2236b48463ab322d9a9c354ae92301671af1390c066eebcacb",
+    "tools/freetoshop_corrected_all_solar_driver.mjs": "9c4e3089c78e9a9e0ce21553bafa8d0367c67f44ec942f22f6a58c2176aec6b3",
+    "tools/pi_continuation_policy.mjs": "5fb231e449c50cb7cf74767d7b09625360131f91afd4c8a29bf61ac3a9329ca5",
+    "tools/recover_freetoshop_benchmark_inputs.py": "dc6ff3babd836ce00437103a774719c081b6cea18c143e3d713102b866dde0a1",
+    "tools/start_freetoshop_corrected_all_solar.ps1": "012723e129daf9795334522190d2c620204e9140ae59a2779c4b1be51500a060",
+    "tools/start_freetoshop_corrected_all_solar.sh": "4bc3bd48435e890df6f04b6d019e993ebdc22a479418bd500fb44fe83eff091c"
+  }
+}

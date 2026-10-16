@@ -2,21 +2,21 @@ from __future__ import annotations
 
 import asyncio
 import json
-import sqlite3
 import threading
+import time
+from collections.abc import Iterator
 from contextlib import contextmanager
 from hashlib import sha256
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Iterator
 
 import pytest
 
 from memory_gateway.compaction import CompactionWorker, Event
 from memory_gateway.config import RuntimeConfig
 from memory_gateway.db import SQLiteStore
-from memory_gateway.openai_adapter import ModelProtocolError
-from memory_gateway.pipeline import build_lossless_packet
+from memory_gateway.openai_adapter import ModelProtocolError, ModelTransportError
+from memory_gateway.pipeline import LosslessCompactionEngine, build_lossless_packet
 from memory_gateway.pipeline_adapters import (
     OpenAICompatCanonicalizerEngine,
     OpenAICompatConsolidatorEngine,
@@ -29,6 +29,7 @@ from memory_gateway.telemetry import TelemetryPersistenceError
 
 class StageHandler(BaseHTTPRequestHandler):
     mode = "valid"
+    delay_seconds = 0.0
     requests: list[dict] = []
 
     def log_message(self, *_args) -> None:
@@ -48,16 +49,39 @@ class StageHandler(BaseHTTPRequestHandler):
             "--- BEGIN INPUT ---\n", 1
         )[1].split("\n--- END INPUT ---", 1)[0]
         input_payload = json.loads(input_json)
+        if type(self).mode == "delay":
+            time.sleep(type(self).delay_seconds)
         first_id = (
             input_payload.get("events", [{}])[0].get("id")
-            or input_payload.get("selected_events", [{}])[0].get("id")
+            or input_payload.get("lossless_packet", {})
+            .get("authoritative_events", [{}])[0]
+            .get("id")
         )
 
         if type(self).mode == "canonicalizer-malformed" and schema_name == "canonicalizer_response_v1":
             content = "not-json"
         elif type(self).mode == "consolidator-malformed" and schema_name == "consolidator_response_v1":
             content = "not-json"
-        elif type(self).mode == "selector-invalid":
+        elif (
+            type(self).mode == "consolidator-short-then-valid"
+            and schema_name == "consolidator_response_v1"
+            and sum(
+                1
+                for request in type(self).requests
+                if request.get("response_format", {})
+                .get("json_schema", {})
+                .get("name")
+                == "consolidator_response_v1"
+            )
+            == 1
+        ):
+            content = json.dumps(
+                {"content": "short", "evidence_event_ids": [first_id]}
+            )
+        elif type(self).mode == "selector-invalid" or (
+            type(self).mode == "selector-invalid-after-first"
+            and len(type(self).requests) == 2
+        ):
             content = json.dumps({"selected_event_ids": ["missing"]})
         elif schema_name == "selector_response_v1":
             content = json.dumps({"selected_event_ids": [first_id]})
@@ -65,7 +89,10 @@ class StageHandler(BaseHTTPRequestHandler):
             content = json.dumps({"canonical_text": "canonical"})
         elif schema_name == "consolidator_response_v1":
             content = json.dumps(
-                {"content": "rendered", "evidence_event_ids": [first_id]}
+                {
+                    "content": "valid rendered state " * 12,
+                    "evidence_event_ids": [first_id],
+                }
             )
         else:
             content = json.dumps({})
@@ -88,12 +115,16 @@ class StageHandler(BaseHTTPRequestHandler):
         self.send_header("content-type", "application/json")
         self.send_header("content-length", str(len(encoded)))
         self.end_headers()
-        self.wfile.write(encoded)
+        try:
+            self.wfile.write(encoded)
+        except (BrokenPipeError, ConnectionAbortedError):
+            return
 
 
 @contextmanager
-def stage_server(mode: str = "valid") -> Iterator[str]:
+def stage_server(mode: str = "valid", delay_seconds: float = 0.0) -> Iterator[str]:
     StageHandler.mode = mode
+    StageHandler.delay_seconds = delay_seconds
     StageHandler.requests = []
     server = ThreadingHTTPServer(("127.0.0.1", 0), StageHandler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -101,6 +132,8 @@ def stage_server(mode: str = "valid") -> Iterator[str]:
     try:
         yield f"http://127.0.0.1:{server.server_port}/v1"
     finally:
+        StageHandler.mode = "valid"
+        StageHandler.delay_seconds = 0.0
         server.shutdown()
         server.server_close()
         thread.join(timeout=2)
@@ -191,7 +224,18 @@ def test_successful_selector_canonicalizer_and_consolidator_runs_persist(
             )
         )
 
+        consolidator_request = StageHandler.requests[-1]
+        user_content = consolidator_request["messages"][1]["content"]
+        consolidator_input = json.loads(
+            user_content.split("--- BEGIN INPUT ---\n", 1)[1].split(
+                "\n--- END INPUT ---", 1
+            )[0]
+        )
+
     assert selection.selected_event_ids == ("event-0",)
+    assert "selected_events" not in consolidator_input
+    authoritative = consolidator_input["lossless_packet"]["authoritative_events"]
+    assert [item["id"] for item in authoritative] == ["event-0"]
     rows = store.list_model_runs()
     assert [row["stage"] for row in rows] == [
         "selector",
@@ -206,6 +250,12 @@ def test_successful_selector_canonicalizer_and_consolidator_runs_persist(
     assert all(row["reasoning_tokens"] == 0 for row in rows)
     assert all(row["raw_response_hash"] for row in rows)
     assert all("Authorization" not in row["metadata_json"] for row in rows)
+    for row in rows:
+        metadata = json.loads(row["metadata_json"])
+        assert metadata["request_profile"]["input_payload_chars"] > 0
+        assert metadata["request_profile"]["system_prompt_chars"] > 0
+        assert metadata["request_profile"]["response_schema_chars"] > 0
+        assert metadata["request_profile"]["input_payload_hash"]
     assert json.loads(rows[0]["source_refs_json"]) == ["event-0", "event-1"]
     assert json.loads(rows[1]["source_refs_json"]) == ["event-0"]
     assert json.loads(rows[2]["source_refs_json"]) == ["event-0"]
@@ -244,6 +294,9 @@ def test_worker_attaches_job_context_to_all_persistent_stage_runs(
         )
         engine = build_lossless_engine(config, telemetry_recorder=store)
         assert engine is not None
+        assert "exact supplied item IDs" in engine.canonicalizer.client.system_prompt
+        assert "complete ID including the ::span:: suffix" in engine.canonicalizer.client.system_prompt
+        assert "never cite its parent_event_id" in engine.canonicalizer.client.system_prompt
         assert (
             asyncio.run(
                 CompactionWorker(store, engine, "telemetry-worker").run_once()
@@ -354,6 +407,26 @@ def test_telemetry_persistence_failure_is_a_model_failure() -> None:
     )
 
 
+def test_total_request_deadline_records_timeout_and_next_call_progresses() -> None:
+    with stage_server(mode="delay", delay_seconds=0.2) as endpoint:
+        client = OpenAICompatStructuredClient(
+            endpoint=endpoint,
+            model="model",
+            prompt_version="prompt-v1",
+            system_prompt="Return JSON.",
+            timeout=0.05,
+        )
+        with pytest.raises(ModelTransportError, match="timed out"):
+            asyncio.run(client.complete_json({"events": [{"id": "event-0"}]}))
+        assert client.last_telemetry["error_category"] == "timeout"
+        assert client.last_telemetry["failure_phase"] == "total_request_deadline"
+
+        StageHandler.mode = "valid"
+        client.timeout = 1.0
+        result = asyncio.run(client.complete_json({"events": [{"id": "event-1"}]}))
+        assert result == {}
+
+
 def test_legacy_model_runs_table_migrates_without_losing_rows(
     tmp_path: Path,
 ) -> None:
@@ -420,3 +493,278 @@ def test_legacy_model_runs_table_migrates_without_losing_rows(
     assert rows[0]["stage"] == "selector"
     assert rows[0]["thread_id"] == "thread"
     assert rows[0]["generation"] == 1
+
+
+def test_selector_exact_retry_skips_http_and_records_cache_hit(tmp_path: Path) -> None:
+    store, job_id = make_store(tmp_path)
+    events = fixture_events()
+    with stage_server() as endpoint:
+        first = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job_id)
+        )
+        first_result = asyncio.run(first.select(events=events))
+        live_requests = len(StageHandler.requests)
+        assert live_requests >= 1
+
+        second = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job_id)
+        )
+        second_result = asyncio.run(second.select(events=events))
+
+    assert second_result.selected_event_ids == first_result.selected_event_ids
+    assert len(StageHandler.requests) == live_requests
+    cached_rows = [
+        row
+        for row in store.list_model_runs()
+        if row["stage"] == "selector"
+        and json.loads(row["metadata_json"]).get("cache_hit")
+    ]
+    assert cached_rows
+    assert all(row["input_tokens"] == 0 and row["output_tokens"] == 0 for row in cached_rows)
+    assert all(row["finish_reason"] == "cache_hit" for row in cached_rows)
+
+
+def test_selector_restart_reuses_completed_chunks_and_only_retries_unfinished_chunk(
+    tmp_path: Path,
+) -> None:
+    store, job_id = make_store(tmp_path)
+    events = fixture_events()
+    with stage_server(mode="selector-invalid-after-first") as endpoint:
+        first = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job_id),
+            chunk_target_tokens=1,
+        )
+        with pytest.raises(ModelProtocolError):
+            asyncio.run(first.select(events=events))
+        assert len(StageHandler.requests) == 2
+
+        StageHandler.mode = "valid"
+        restarted = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job_id),
+            chunk_target_tokens=1,
+        )
+        result = asyncio.run(restarted.select(events=events))
+
+    assert result.selected_event_ids == ("event-0", "event-1")
+    # The validated first chunk survived the engine restart. Only the failed
+    # second chunk incurred another HTTP request.
+    assert len(StageHandler.requests) == 3
+    assert restarted.chunk_telemetry[0]["cache_hit"] is True
+    assert restarted.chunk_telemetry[1]["cache_hit"] is False
+
+
+def test_stage_result_cache_read_failure_blocks_paid_model_call() -> None:
+    class FailingCacheRecorder:
+        def lookup_stage_result(self, **_identity: object) -> dict | None:
+            raise RuntimeError("cache database unavailable")
+
+        def record_model_run(self, _record: dict) -> str:
+            raise AssertionError("model call must not start")
+
+    client = OpenAICompatStructuredClient(
+        endpoint="http://127.0.0.1:9/v1",
+        model="selector-model",
+        prompt_version="selector-prompt-v1",
+        system_prompt="Return JSON.",
+        telemetry_recorder=FailingCacheRecorder(),
+    )
+    client.set_call_context(stage="selector", source_refs=("event-0",))
+
+    with pytest.raises(TelemetryPersistenceError, match="read validated"):
+        asyncio.run(client.complete_json({"events": [{"id": "event-0"}]}))
+
+
+def test_stage_result_cache_write_failure_rejects_validated_stage_result(
+    tmp_path: Path,
+) -> None:
+    class FailingCacheStore(SQLiteStore):
+        def store_stage_result(self, **_payload: object) -> None:
+            raise RuntimeError("cache database unavailable")
+
+    store = FailingCacheStore(tmp_path / "memory.db")
+    store.create_project("project")
+    store.create_thread("thread", "project")
+    job_id = store.create_compaction_job(
+        thread_id="thread",
+        base_capsule_id=None,
+        snapshot_start_event_id=None,
+        snapshot_end_event_id=None,
+    )
+    with stage_server() as endpoint:
+        selector = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job_id)
+        )
+        with pytest.raises(TelemetryPersistenceError, match="persist validated"):
+            asyncio.run(selector.select(events=fixture_events()))
+
+    runs = store.list_model_runs(job_id=job_id)
+    assert len(runs) == 1
+    assert runs[0]["status"] == "FAILED"
+
+
+def test_canonicalizer_exact_retry_skips_http(tmp_path: Path) -> None:
+    store, job_id = make_store(tmp_path)
+    events = fixture_events()[:1]
+    with stage_server() as endpoint:
+        first = OpenAICompatCanonicalizerEngine(
+            stage_client(endpoint, store, "canonicalizer-model", job_id)
+        )
+        first_result = asyncio.run(first.canonicalize(events=events))
+        live_requests = len(StageHandler.requests)
+        second = OpenAICompatCanonicalizerEngine(
+            stage_client(endpoint, store, "canonicalizer-model", job_id)
+        )
+        second_result = asyncio.run(second.canonicalize(events=events))
+    assert second_result.canonical_text == first_result.canonical_text
+    assert len(StageHandler.requests) == live_requests
+    cached_rows = [
+        row
+        for row in store.list_model_runs()
+        if row["stage"] == "canonicalizer"
+        and json.loads(row["metadata_json"]).get("cache_hit")
+    ]
+    assert cached_rows
+
+
+def test_selector_protocol_failure_is_not_cached(tmp_path: Path) -> None:
+    store, job_id = make_store(tmp_path)
+    events = fixture_events()
+    with stage_server(mode="selector-invalid") as endpoint:
+        client = stage_client(endpoint, store, "selector-model", job_id)
+        with pytest.raises(ModelProtocolError):
+            asyncio.run(OpenAICompatSelectorEngine(client).select(events=events))
+        failed_requests = len(StageHandler.requests)
+        StageHandler.mode = "valid"
+        recovered = asyncio.run(
+            OpenAICompatSelectorEngine(
+                stage_client(endpoint, store, "selector-model", job_id)
+            ).select(events=events)
+        )
+    assert recovered.selected_event_ids
+    assert len(StageHandler.requests) > failed_requests
+
+
+def test_consolidator_exact_retry_skips_http(tmp_path: Path) -> None:
+    store, job_id = make_store(tmp_path)
+    events = fixture_events()[:1]
+    with stage_server() as endpoint:
+        canonical = asyncio.run(
+            OpenAICompatCanonicalizerEngine(
+                stage_client(endpoint, store, "canonicalizer-model", job_id)
+            ).canonicalize(events=events)
+        )
+        packet = build_lossless_packet(canonical, events)
+        first = OpenAICompatConsolidatorEngine(
+            stage_client(endpoint, store, "consolidator-model", job_id)
+        )
+        first_result = asyncio.run(
+            first.consolidate(
+                base_capsule=None,
+                events=events,
+                snapshot_end_event_id=events[0].id,
+                packet=packet,
+            )
+        )
+        first.remember_validated_result()
+        live_requests = len(StageHandler.requests)
+        second = OpenAICompatConsolidatorEngine(
+            stage_client(endpoint, store, "consolidator-model", job_id)
+        )
+        second_result = asyncio.run(
+            second.consolidate(
+                base_capsule=None,
+                events=events,
+                snapshot_end_event_id=events[0].id,
+                packet=packet,
+            )
+        )
+    assert second_result.content == first_result.content
+    assert second_result.evidence_event_ids == first_result.evidence_event_ids
+    assert len(StageHandler.requests) == live_requests
+    cached_rows = [
+        row
+        for row in store.list_model_runs()
+        if row["stage"] == "consolidator"
+        and json.loads(row["metadata_json"]).get("cache_hit")
+    ]
+    assert cached_rows
+
+
+def test_rejected_consolidator_candidate_is_not_cached_for_retry(
+    tmp_path: Path,
+) -> None:
+    store = SQLiteStore(tmp_path / "memory.db")
+    store.create_project("project")
+    store.create_thread("thread", "project")
+    events: list[Event] = []
+    for index in range(10):
+        content = f"durable event {index}"
+        event = store.append_event(
+            project_id="project",
+            thread_id="thread",
+            event_type="user_message",
+            role="user",
+            content=content,
+            event_id=f"event-{index}",
+        )
+        events.append(Event.from_row(event))
+    job_id = store.create_compaction_job(
+        thread_id="thread",
+        base_capsule_id=None,
+        snapshot_start_event_id=events[0].id,
+        snapshot_end_event_id=events[-1].id,
+    )
+
+    def engine_for(job: str) -> LosslessCompactionEngine:
+        selector = OpenAICompatSelectorEngine(
+            stage_client(endpoint, store, "selector-model", job)
+        )
+        consolidator = OpenAICompatConsolidatorEngine(
+            stage_client(endpoint, store, "consolidator-model", job)
+        )
+        return LosslessCompactionEngine(selector, None, consolidator)
+
+    with stage_server(mode="consolidator-short-then-valid") as endpoint:
+        first_result = asyncio.run(
+            CompactionWorker(
+                store,
+                engine_for(job_id),
+                "retry-worker",
+            ).run_once()
+        )
+        assert first_result == "FAILED"
+        first_consolidator_requests = sum(
+            1
+            for request in StageHandler.requests
+            if request.get("response_format", {})
+            .get("json_schema", {})
+            .get("name")
+            == "consolidator_response_v1"
+        )
+        assert first_consolidator_requests == 1
+
+        retry_job_id = store.request_coalesced_compaction_job(
+            thread_id="thread",
+            base_capsule_id=None,
+            snapshot_start_event_id=events[0].id,
+            snapshot_end_event_id=events[-1].id,
+        )
+        assert retry_job_id is not None
+        second_result = asyncio.run(
+            CompactionWorker(
+                store,
+                engine_for(retry_job_id),
+                "retry-worker",
+            ).run_once()
+        )
+
+    assert second_result == "PROMOTED"
+    assert sum(
+        1
+        for request in StageHandler.requests
+        if request.get("response_format", {})
+        .get("json_schema", {})
+        .get("name")
+        == "consolidator_response_v1"
+    ) == 2
+    assert store.get_active_capsule("thread") is not None

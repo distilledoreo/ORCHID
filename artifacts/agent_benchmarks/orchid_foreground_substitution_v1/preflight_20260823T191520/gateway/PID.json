@@ -1,0 +1,6 @@
+﻿{
+    "port":  7334,
+    "pid":  10800,
+    "database":  "C:\\Users\\disti\\benchmark_work\\orchid_foreground_preflight_20260823T191520\\orchid-state\\memory.db",
+    "started_at":  "2026-08-23T23:15:43.0614627Z"
+}

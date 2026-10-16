@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 48,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "The UI renders a Field for 'Multi-origin blend' with a Select that conditionally appears when dualAvailable is true. When blendMode is not 'primary_only', it shows a 'Secondary panorama' Select with auto-option and candidate list, plus an amber warning if dualReady is false. If eligible.length===0, a graybox hint appears. A 'Geometry occlusion' Toggle (default true) controls whether surfaces hidden behind geometry are excluded.",
+      "envelope_json": "{\"generation\":48,\"items\":[{\"evidence\":[{\"excerpt\":\"{dualAvailable && (\\\\r\\\\n        <>\\r\\\\n          <Field\\r\\\\n            label=\\\\\\\"Multi-origin blend\\\\\\\"\\r\\\\n            hint=\\\\\\\"Dominant modes fill weak regions of the dominant pano using distance from each origin (not true occlusion).\\\\\\\"\\r\\\\n          >\",\"source_id\":\"panoref_evt_001002::span::000004\"}],\"id\":\"mem_ffab4c999e6c356a523aa200\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"UI renders a Field labeled 'Multi-origin blend' with Select only when dualAvailable is true, showing BLEND_OPTIONS map with PROJECTOR_BLEND_MODE_LABELS translation.\"},{\"evidence\":[{\"excerpt\":\"{settings.blendMode !== 'primary_only' && (\\r\\\\n            <Field label=\\\\\\\"Secondary panorama\\\\\\\">\",\"source_id\":\"panoref_evt_001002::span::000004\"}],\"id\":\"mem_386f2a28f5f6a6e867a107a5\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"When settings.blendMode !== 'primary_only', the Secondary panorama Select appears with options including 'Auto (next eligible)' and secondaryCandidates map showing pano.name with isCanonical and origin positions.\"},{\"evidence\":[{\"excerpt\":\"{settings.blendMode !== 'primary_only' && !dualReady && (\\r\\\\n            <p className=\\\\\\\"text-xs text-amber-800 dark:text-amber-200\\\\\\\">\\r\\\\n              Dual blend needs two panoramas with image assets.\",\"source_id\":\"panoref_evt_001002::span::000004\"}],\"id\":\"mem_b678cf1568170ec5fc4759e0\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Amber warning text appears when dualReady is false and blendMode !== 'primary_only', explaining 'Dual blend needs two panoramas with image assets. Import and align a second styled panorama.'\"},{\"evidence\":[{\"excerpt\":\"eligible.length === 0 && (\\r\\\\n        <p className=\\\\\\\"text-xs text-secondary\\\\\\\">\\r\\\\n          Import and align a styled panorama first for best results. Graybox can be selected explicitly if needed.\",\"source_id\":\"panoref_evt_001002::span::000004\"}],\"id\":\"mem_f506d2e249f260616d6b25f2\",\"kind\":\"constraint\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"When eligible.length===0, hint 'Import and align a styled panorama first for best results. Graybox can be selected explicitly if needed.' is displayed.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

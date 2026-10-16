@@ -1,0 +1,145 @@
+{
+  "experiment_completed": true,
+  "completed_through_generation": 200,
+  "arms": [
+    "full_raw",
+    "traditional_recursive_summary",
+    "orchid"
+  ],
+  "raw_tail_policy": {
+    "raw_tail_target_tokens": 80,
+    "minimum_raw_tail_tokens": 1,
+    "source": "endurance harness ContextAssembler(80, 1)"
+  },
+  "traditional_compaction_cadence": "one recursive summary update per benchmark generation",
+  "gen200": {
+    "raw_history_tokens": 52416,
+    "full_raw_resident_tokens": 52416,
+    "traditional_summary_tokens": 138,
+    "traditional_tail_tokens": 78,
+    "traditional_total_resident_tokens": 216,
+    "orchid_active_tokens": 113,
+    "orchid_tail_tokens": 78,
+    "orchid_total_resident_tokens": 191,
+    "resident_size_ratios": {
+      "full_raw_over_traditional": 242.6667,
+      "full_raw_over_orchid": 274.4293,
+      "traditional_over_orchid": 1.1309
+    }
+  },
+  "resident_token_area": {
+    "full_raw": 5252523,
+    "traditional": 42660,
+    "orchid": 37662
+  },
+  "resident_token_area_ratios": {
+    "full_raw_over_traditional": 123.1252,
+    "full_raw_over_orchid": 139.4648,
+    "traditional_over_orchid": 1.1327
+  },
+  "traditional_summary_growth": {
+    "1_50": {
+      "start_generation": 1,
+      "end_generation": 50,
+      "starting_tokens": 101,
+      "ending_tokens": 138,
+      "absolute_growth": 37,
+      "slope_tokens_per_generation": 0.7551020408163265,
+      "mean": 131.16,
+      "median": 137.0,
+      "peak": 138,
+      "minimum": 101
+    },
+    "51_100": {
+      "start_generation": 51,
+      "end_generation": 100,
+      "starting_tokens": 138,
+      "ending_tokens": 138,
+      "absolute_growth": 0,
+      "slope_tokens_per_generation": 0.0,
+      "mean": 138,
+      "median": 138.0,
+      "peak": 138,
+      "minimum": 138
+    },
+    "101_150": {
+      "start_generation": 101,
+      "end_generation": 150,
+      "starting_tokens": 138,
+      "ending_tokens": 138,
+      "absolute_growth": 0,
+      "slope_tokens_per_generation": 0.0,
+      "mean": 138,
+      "median": 138.0,
+      "peak": 138,
+      "minimum": 138
+    },
+    "151_200": {
+      "start_generation": 151,
+      "end_generation": 200,
+      "starting_tokens": 138,
+      "ending_tokens": 138,
+      "absolute_growth": 0,
+      "slope_tokens_per_generation": 0.0,
+      "mean": 138,
+      "median": 138.0,
+      "peak": 138,
+      "minimum": 138
+    },
+    "1_200": {
+      "start_generation": 1,
+      "end_generation": 200,
+      "starting_tokens": 101,
+      "ending_tokens": 138,
+      "absolute_growth": 37,
+      "slope_tokens_per_generation": 0.18592964824120603,
+      "mean": 136.29,
+      "median": 138.0,
+      "peak": 138,
+      "minimum": 101
+    }
+  },
+  "semantic_correctness": {
+    "traditional_gen200_current_fact_loss": true,
+    "orchid_gen200_current_fact_loss": false,
+    "traditional_gen200_resurrection": 0,
+    "orchid_gen200_resurrection": 0,
+    "traditional_gen200_invented_state": false,
+    "orchid_gen200_invented_state": false,
+    "traditional_gen200_residue": 5,
+    "orchid_gen200_residue": 2
+  },
+  "background_token_work": {
+    "traditional_input_tokens": 250984,
+    "traditional_output_tokens": 24801,
+    "orchid_shadow_input_tokens": 1407332,
+    "orchid_shadow_output_tokens": 154829,
+    "full_raw_background_input_tokens": 0,
+    "full_raw_background_output_tokens": 0
+  },
+  "awake_recall": {
+    "full_raw": {
+      "checkpoints_requested": 10,
+      "checkpoints_completed": 3,
+      "checkpoints_skipped_context_limit": 6,
+      "mean_recall_score": 1.0,
+      "perfect_checkpoints": 3
+    },
+    "traditional_recursive_summary": {
+      "checkpoints_requested": 10,
+      "checkpoints_completed": 9,
+      "checkpoints_skipped_context_limit": 0,
+      "mean_recall_score": 1.0,
+      "perfect_checkpoints": 9
+    },
+    "orchid": {
+      "checkpoints_requested": 10,
+      "checkpoints_completed": 10,
+      "checkpoints_skipped_context_limit": 0,
+      "mean_recall_score": 0.925,
+      "perfect_checkpoints": 1
+    }
+  },
+  "raw_only_audit_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\degradation\\raw_only_audit.json",
+  "plots_generated": true
+}

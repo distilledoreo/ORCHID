@@ -1,0 +1,1639 @@
+{
+  "arm": "ARM_A_CURRENT",
+  "status": "SUCCEEDED",
+  "error": null,
+  "source_tokens": 13740,
+  "source_tokens_per_second": 65.90511569120709,
+  "local_model": {
+    "calls": 2,
+    "input_tokens": 7840.0,
+    "output_tokens": 933.0,
+    "reasoning_tokens": 0.0,
+    "wall_ms": 118541.88700000031,
+    "timeouts": 0,
+    "failures": 0,
+    "ttft_observed_count": 0
+  },
+  "solar_model": {
+    "calls": 1,
+    "input_tokens": 42704.0,
+    "output_tokens": 323.0,
+    "reasoning_tokens": 0.0,
+    "wall_ms": 8160.006800000701,
+    "timeouts": 0,
+    "failures": 0,
+    "ttft_observed_count": 0
+  },
+  "stage": {
+    "wall_ms": 208481.53980000006,
+    "engine_telemetry": {
+      "status": "SUCCEEDED",
+      "source_event_count": 12,
+      "source_event_ids": [
+        "replay_evt_000001",
+        "replay_evt_000002",
+        "replay_evt_000003",
+        "replay_evt_000004",
+        "replay_evt_000005",
+        "replay_evt_000006",
+        "replay_evt_000007",
+        "replay_evt_000008",
+        "replay_evt_000009",
+        "replay_evt_000010",
+        "replay_evt_000011",
+        "replay_evt_000012"
+      ],
+      "snapshot_end_event_id": "replay_evt_000012",
+      "selector": {
+        "status": "SUCCEEDED",
+        "wall_ms": 42305.636900000536,
+        "call_count": 18,
+        "calls": [
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000001"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "fc6c7e30f7643cd8cfab4f1d35c7d5c90901ca0b7fe9c52525d9911e77f717ef",
+            "start_timestamp": "2026-08-21T01:20:41.267+00:00",
+            "end_timestamp": "2026-08-21T01:20:43.071+00:00",
+            "input_tokens": 900,
+            "output_tokens": 17,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 1803.2041000005847,
+            "finish_reason": "stop",
+            "raw_response_hash": "b557783edf1855ef7db5e4e59f7631d8f7913a670a2802acb079e43fffc8133d",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3179,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 302,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "fc6c7e30f7643cd8cfab4f1d35c7d5c90901ca0b7fe9c52525d9911e77f717ef",
+              "response_schema_hash": "bdf8e8e27ef2fd72cf5df4d92df3579ba5c630efd019b56a0c1e00c86ae3579d"
+            },
+            "chunk_index": 0,
+            "chunk_event_ids": [
+              "replay_evt_000001"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000001"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 768
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000002::span::000000"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "b4aed1be590726574889cfb9bc790145f1db819fff8041e14ed22984003138c0",
+            "start_timestamp": "2026-08-21T01:20:43.071+00:00",
+            "end_timestamp": "2026-08-21T01:20:45.449+00:00",
+            "input_tokens": 1034,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2378.086599999733,
+            "finish_reason": "stop",
+            "raw_response_hash": "31d7162058fd51aaaface1ac09bb0920a55a535444f888623c8673fcf475bb59",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3976,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "b4aed1be590726574889cfb9bc790145f1db819fff8041e14ed22984003138c0",
+              "response_schema_hash": "f8b9bd23fcce01ba2316a22e5013fc19d1bc3bcad8847bf8dd4c4e0e282e12be"
+            },
+            "chunk_index": 1,
+            "chunk_event_ids": [
+              "replay_evt_000002::span::000000"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000002"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 960
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000002::span::000001"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "81e5b0bcccc9c76512fe25b436643dfb510a219f82199ea96eb7a5eccf89d058",
+            "start_timestamp": "2026-08-21T01:20:45.449+00:00",
+            "end_timestamp": "2026-08-21T01:20:47.863+00:00",
+            "input_tokens": 1021,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2413.8054999993983,
+            "finish_reason": "stop",
+            "raw_response_hash": "8a2ddb1a15b5958a06d89095e946b662d6bae577d6d95f5269e6bd391efc7b54",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3976,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "81e5b0bcccc9c76512fe25b436643dfb510a219f82199ea96eb7a5eccf89d058",
+              "response_schema_hash": "f3d4d17111ad48e50881c9913baae9ad2679aa4399a02dab91652cba538b065e"
+            },
+            "chunk_index": 2,
+            "chunk_event_ids": [
+              "replay_evt_000002::span::000001"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000002"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 960
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000002::span::000002"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "f424a797f19abe6ff3a43a725d0b82ed4ded799afbe350dfe2ffd99bf84197dc",
+            "start_timestamp": "2026-08-21T01:20:47.863+00:00",
+            "end_timestamp": "2026-08-21T01:20:50.241+00:00",
+            "input_tokens": 1029,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2377.456600000187,
+            "finish_reason": "stop",
+            "raw_response_hash": "087b98b2baac8ff0deb79f7daae373b2359487edd392b7245f4aa7bd292f1eb4",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3976,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "f424a797f19abe6ff3a43a725d0b82ed4ded799afbe350dfe2ffd99bf84197dc",
+              "response_schema_hash": "abfc49ccf18cb8f5806497e00640c2ac1efe55eaac6dfbea47536ccd79d0650b"
+            },
+            "chunk_index": 3,
+            "chunk_event_ids": [
+              "replay_evt_000002::span::000002"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000002"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 960
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000002::span::000003"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "94fb18c6d9f226ace111186eb1f9f24951b1cebc0ea0ba0cf19bc7949c02b29d",
+            "start_timestamp": "2026-08-21T01:20:50.241+00:00",
+            "end_timestamp": "2026-08-21T01:20:52.639+00:00",
+            "input_tokens": 1054,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2397.38589999979,
+            "finish_reason": "stop",
+            "raw_response_hash": "2e2be9a0ecb12f0233d375158ea1f53cb9b8deb5d1a85e00ca3329a15618344d",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3976,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "94fb18c6d9f226ace111186eb1f9f24951b1cebc0ea0ba0cf19bc7949c02b29d",
+              "response_schema_hash": "555f1fd6cb79dd94a8c587ce8fac62c040e0f4ef49cc1ac4f70f0eaca54af417"
+            },
+            "chunk_index": 4,
+            "chunk_event_ids": [
+              "replay_evt_000002::span::000003"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000002"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 960
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000002::span::000004",
+                            "replay_evt_000003"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "bf0c89ce4ddfdb610fd2c94f9022d26e7ff0189beb7d56c1726c1b3d5a6a4087",
+            "start_timestamp": "2026-08-21T01:20:52.639+00:00",
+            "end_timestamp": "2026-08-21T01:20:55.922+00:00",
+            "input_tokens": 1187,
+            "output_tokens": 37,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 3283.682499999486,
+            "finish_reason": "stop",
+            "raw_response_hash": "90fc8e1b79aa744cc1b9e228c1d2ba4a1d9c79af01d58e3122639034c50e0a1f",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 4013,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 337,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "bf0c89ce4ddfdb610fd2c94f9022d26e7ff0189beb7d56c1726c1b3d5a6a4087",
+              "response_schema_hash": "fc75b0c94c1f41828b2514227989b6678a311c69cc833f0b20886ebc475e0206"
+            },
+            "chunk_index": 5,
+            "chunk_event_ids": [
+              "replay_evt_000002::span::000004",
+              "replay_evt_000003"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000002",
+              "replay_evt_000003"
+            ],
+            "chunk_event_count": 2,
+            "chunk_estimated_tokens": 959
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000004"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "bbe30c90632dfe88a866904a50dc18b361d8e3a4688e7d55e556095f60315784",
+            "start_timestamp": "2026-08-21T01:20:55.923+00:00",
+            "end_timestamp": "2026-08-21T01:20:57.615+00:00",
+            "input_tokens": 1436,
+            "output_tokens": 17,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 1691.7114999996556,
+            "finish_reason": "stop",
+            "raw_response_hash": "81376e3b9d4d2db22d2df5c3c3bda4eee29c69facc7e1df58840c2c84ceb9789",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 4884,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 302,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "bbe30c90632dfe88a866904a50dc18b361d8e3a4688e7d55e556095f60315784",
+              "response_schema_hash": "4152051e2a74413e445f49e09394964538656e2bf9b011d8acf189dfd069d7ce"
+            },
+            "chunk_index": 6,
+            "chunk_event_ids": [
+              "replay_evt_000004"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000004"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 1194
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000005",
+                            "replay_evt_000006"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "a977aa3cfe30b4b67277a7f14ce01fe0518806eace0b7f77cd863fa83d243ec1",
+            "start_timestamp": "2026-08-21T01:20:57.615+00:00",
+            "end_timestamp": "2026-08-21T01:21:00.221+00:00",
+            "input_tokens": 2549,
+            "output_tokens": 28,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2606.388000000152,
+            "finish_reason": "stop",
+            "raw_response_hash": "61bbb0bdcadfde57ed425f01c6659cc68cabf1d91ea2f6998363a50aabad5570",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 4639,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 323,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "a977aa3cfe30b4b67277a7f14ce01fe0518806eace0b7f77cd863fa83d243ec1",
+              "response_schema_hash": "79c612dbe53c7d366afef0247542458b14fe2d8fe453eeb211fa302ebaa8541f"
+            },
+            "chunk_index": 7,
+            "chunk_event_ids": [
+              "replay_evt_000005",
+              "replay_evt_000006"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000005",
+              "replay_evt_000006"
+            ],
+            "chunk_event_count": 2,
+            "chunk_estimated_tokens": 1122
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000007::span::000000"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "73985f1234d0f3610909faa7679afd21b85db1ba96138fa3b1a86e6472457abe",
+            "start_timestamp": "2026-08-21T01:21:00.222+00:00",
+            "end_timestamp": "2026-08-21T01:21:02.632+00:00",
+            "input_tokens": 1293,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2410.8556999999564,
+            "finish_reason": "stop",
+            "raw_response_hash": "e074e632c389c7827d61b4d116f408963ce8aebad5a8a088c37f7514c152f106",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3976,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "73985f1234d0f3610909faa7679afd21b85db1ba96138fa3b1a86e6472457abe",
+              "response_schema_hash": "4109f4139e2f2d4a7e396e2752d95b2a2c612296be71499eb57b7ad5cd8ff93e"
+            },
+            "chunk_index": 8,
+            "chunk_event_ids": [
+              "replay_evt_000007::span::000000"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000007"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 960
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000007::span::000001"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "a093820e24c539354b3b804de1212a787099c2e95d1dbbeb46e34766ba29dfb6",
+            "start_timestamp": "2026-08-21T01:21:02.633+00:00",
+            "end_timestamp": "2026-08-21T01:21:05.016+00:00",
+            "input_tokens": 1244,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2383.1122999999934,
+            "finish_reason": "stop",
+            "raw_response_hash": "4524f57b02e194ec758125a9f3b064150fdc200c2b803ff0bfeadc108fe8ec88",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3861,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "a093820e24c539354b3b804de1212a787099c2e95d1dbbeb46e34766ba29dfb6",
+              "response_schema_hash": "fda52d6833479fe2f07ac54a98bd2d4a196975e59c29369e5daaa3d11e9efed3"
+            },
+            "chunk_index": 9,
+            "chunk_event_ids": [
+              "replay_evt_000007::span::000001"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000007"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 932
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000008",
+                            "replay_evt_000009"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "e117e670e2d4acf92912ca1e9970c06e5d8dc68eba034c4d0aa5638ac272f35f",
+            "start_timestamp": "2026-08-21T01:21:05.016+00:00",
+            "end_timestamp": "2026-08-21T01:21:07.619+00:00",
+            "input_tokens": 1641,
+            "output_tokens": 28,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2603.117100000418,
+            "finish_reason": "stop",
+            "raw_response_hash": "c45225fc99089ba24bc33c7620288afbaa24126a857190e90f1f7aae3f4b7d79",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3067,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 323,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "e117e670e2d4acf92912ca1e9970c06e5d8dc68eba034c4d0aa5638ac272f35f",
+              "response_schema_hash": "ff46ccbf02a06889350ec1845302273dcc3f648b7f31d8e13a12ecb00eff38dd"
+            },
+            "chunk_index": 10,
+            "chunk_event_ids": [
+              "replay_evt_000008",
+              "replay_evt_000009"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000008",
+              "replay_evt_000009"
+            ],
+            "chunk_event_count": 2,
+            "chunk_estimated_tokens": 728
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000010::span::000000"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "85cd154e60907437a95e5f31297e39a4f0fdb75c06a1d78e211154bae817d0bc",
+            "start_timestamp": "2026-08-21T01:21:07.620+00:00",
+            "end_timestamp": "2026-08-21T01:21:10.022+00:00",
+            "input_tokens": 1181,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2401.751599999443,
+            "finish_reason": "stop",
+            "raw_response_hash": "b3d20d1137a57478701db44c665cda3f76e03fa1458f3909f50a2eb2bf535552",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3976,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "85cd154e60907437a95e5f31297e39a4f0fdb75c06a1d78e211154bae817d0bc",
+              "response_schema_hash": "c020dec8d5778fbdf26f66ecd005c9276f4768a3b1e05edf17c076074ebf93fa"
+            },
+            "chunk_index": 11,
+            "chunk_event_ids": [
+              "replay_evt_000010::span::000000"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000010"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 960
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000010::span::000001"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "139257c9657ddab6ae3ef64b86caa49bc970318d9d824523f2058a57b3489e19",
+            "start_timestamp": "2026-08-21T01:21:10.022+00:00",
+            "end_timestamp": "2026-08-21T01:21:12.415+00:00",
+            "input_tokens": 1181,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2392.9996000006213,
+            "finish_reason": "stop",
+            "raw_response_hash": "80fdc8410b6cb27297929e75b9498566a61d080bff2452d67846613014fd3e18",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3976,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "139257c9657ddab6ae3ef64b86caa49bc970318d9d824523f2058a57b3489e19",
+              "response_schema_hash": "a23bb0b7019f68879f87025144d8d99a6d110cad9478af7ea7481d5cb1d01ae6"
+            },
+            "chunk_index": 12,
+            "chunk_event_ids": [
+              "replay_evt_000010::span::000001"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000010"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 960
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000010::span::000002"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "2504cd503ea2ba6bd660d80d540724df4048dd6ac4d7ef721ae4ed6a059f3d9a",
+            "start_timestamp": "2026-08-21T01:21:12.415+00:00",
+            "end_timestamp": "2026-08-21T01:21:14.779+00:00",
+            "input_tokens": 539,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2363.863499999752,
+            "finish_reason": "stop",
+            "raw_response_hash": "cb27c2bd722e6777ed35582f9830a822f5dc86c4e16cb6b53dcc58bc89c2f2ec",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 1224,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "2504cd503ea2ba6bd660d80d540724df4048dd6ac4d7ef721ae4ed6a059f3d9a",
+              "response_schema_hash": "0179cdb7d4ed3eb3e80480799afec0ef424a4458bae336d8dd8f0f50be93d2a0"
+            },
+            "chunk_index": 13,
+            "chunk_event_ids": [
+              "replay_evt_000010::span::000002"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000010"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 272
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000011::span::000000"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "eebb0055bedce2784d62bd708e600c82c2b58325dca775c73e99c3318ae3b1c2",
+            "start_timestamp": "2026-08-21T01:21:14.779+00:00",
+            "end_timestamp": "2026-08-21T01:21:17.162+00:00",
+            "input_tokens": 1107,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2383.3709000000454,
+            "finish_reason": "stop",
+            "raw_response_hash": "db11747ca31f4d5bfeca1284766b70abb0dbf9c0eb23fc1a9808f5a40101f637",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3975,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "eebb0055bedce2784d62bd708e600c82c2b58325dca775c73e99c3318ae3b1c2",
+              "response_schema_hash": "ff293f6971026c67c8764e08b0d8eaede742d2e05371455d8f05f02bb464bd38"
+            },
+            "chunk_index": 14,
+            "chunk_event_ids": [
+              "replay_evt_000011::span::000000"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000011"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 960
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000011::span::000001"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "2cbaceb66b59c934c45eaac7faf6bfa0ca7e9f000e5cbbb605b3884b3f11dfd9",
+            "start_timestamp": "2026-08-21T01:21:17.163+00:00",
+            "end_timestamp": "2026-08-21T01:21:19.547+00:00",
+            "input_tokens": 1180,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2383.741000000555,
+            "finish_reason": "stop",
+            "raw_response_hash": "9685453ba67a0a85321bcc7dd1dac07de9dab9d9af96f8353355bd4b8ab58e06",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 3976,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "2cbaceb66b59c934c45eaac7faf6bfa0ca7e9f000e5cbbb605b3884b3f11dfd9",
+              "response_schema_hash": "a3c7e57a13ad4018be087d3ab3f72e66b900226ba194adc1f7e2311a18e567a7"
+            },
+            "chunk_index": 15,
+            "chunk_event_ids": [
+              "replay_evt_000011::span::000001"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000011"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 960
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000011::span::000002"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "0ddda84dbf4084b59ec9073909a5fc98e081a6272ad6f961274ce240a72d35e8",
+            "start_timestamp": "2026-08-21T01:21:19.547+00:00",
+            "end_timestamp": "2026-08-21T01:21:21.920+00:00",
+            "input_tokens": 621,
+            "output_tokens": 26,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 2373.479099999713,
+            "finish_reason": "stop",
+            "raw_response_hash": "a198cf97b849e9b4d57f7724ee6fb177811225231a6126d8541a39d422071436",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 1493,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 316,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "0ddda84dbf4084b59ec9073909a5fc98e081a6272ad6f961274ce240a72d35e8",
+              "response_schema_hash": "c019fc8627871c20df0933122bb01fe3804daac699785fecf65c7389f7902e29"
+            },
+            "chunk_index": 16,
+            "chunk_event_ids": [
+              "replay_evt_000011::span::000002"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000011"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 340
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "selector-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "selector_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "selected_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000012"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "selected_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "5d75dc2ccdd16ced6a788636da913909898d61ad6f1e83672085577f820d3b21",
+            "start_timestamp": "2026-08-21T01:21:21.921+00:00",
+            "end_timestamp": "2026-08-21T01:21:23.567+00:00",
+            "input_tokens": 1923,
+            "output_tokens": 17,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 1646.3057000000845,
+            "finish_reason": "stop",
+            "raw_response_hash": "ba389726b9ec7bcff2d7b094cab6d3e75da28ae56a37872e19fc696f4c2e37f8",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 4907,
+              "system_prompt_chars": 212,
+              "response_schema_chars": 302,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "5d75dc2ccdd16ced6a788636da913909898d61ad6f1e83672085577f820d3b21",
+              "response_schema_hash": "f5adf49530e1e8ebf04db756458a926071ebd41d2b4ea854a829fc242b3199f9"
+            },
+            "chunk_index": 17,
+            "chunk_event_ids": [
+              "replay_evt_000012"
+            ],
+            "chunk_parent_event_ids": [
+              "replay_evt_000012"
+            ],
+            "chunk_event_count": 1,
+            "chunk_estimated_tokens": 1200
+          }
+        ]
+      },
+      "selector_to_canonicalizer_software_ms": 6.269099999371974,
+      "canonicalizer": {
+        "status": "SUCCEEDED",
+        "wall_ms": 158001.26140000066,
+        "call_count": 2,
+        "calls": [
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "canonicalizer-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "canonicalizer_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "canonical_text": {
+                        "type": "string"
+                      },
+                      "cited_source_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000001",
+                            "replay_evt_000002::span::000000",
+                            "replay_evt_000002::span::000001",
+                            "replay_evt_000002::span::000002",
+                            "replay_evt_000002::span::000003",
+                            "replay_evt_000002::span::000004",
+                            "replay_evt_000003",
+                            "replay_evt_000004",
+                            "replay_evt_000005",
+                            "replay_evt_000006",
+                            "replay_evt_000007::span::000000",
+                            "replay_evt_000007::span::000001",
+                            "replay_evt_000008",
+                            "replay_evt_000009",
+                            "replay_evt_000010::span::000000"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "canonical_text"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "971063b9bbfa13731134da030d85488be6e52392cb5aee7b61f6d7a0a98e30b8",
+            "start_timestamp": "2026-08-21T01:21:23.576+00:00",
+            "end_timestamp": "2026-08-21T01:22:04.678+00:00",
+            "input_tokens": 14143,
+            "output_tokens": 442,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 41102.39209999963,
+            "finish_reason": "stop",
+            "raw_response_hash": "38eecff14ba73a05798188052498f9e417a517470cf4b36d84b0c75b5d1514e5",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 45925,
+              "system_prompt_chars": 420,
+              "response_schema_chars": 746,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "971063b9bbfa13731134da030d85488be6e52392cb5aee7b61f6d7a0a98e30b8",
+              "response_schema_hash": "f5bd788516a30581c1c7ebb62b05d2210759d2cf53d448ef57c839866a11c3bc"
+            },
+            "batch_index": 0,
+            "batch_covered_source_refs": [
+              "replay_evt_000001",
+              "replay_evt_000002::span::000000",
+              "replay_evt_000002::span::000001",
+              "replay_evt_000002::span::000002",
+              "replay_evt_000002::span::000003",
+              "replay_evt_000002::span::000004",
+              "replay_evt_000003",
+              "replay_evt_000004",
+              "replay_evt_000005",
+              "replay_evt_000006",
+              "replay_evt_000007::span::000000",
+              "replay_evt_000007::span::000001",
+              "replay_evt_000008",
+              "replay_evt_000009",
+              "replay_evt_000010::span::000000"
+            ],
+            "batch_source_event_ids": [
+              "replay_evt_000001",
+              "replay_evt_000002::span::000000",
+              "replay_evt_000002::span::000001",
+              "replay_evt_000002::span::000002",
+              "replay_evt_000002::span::000003",
+              "replay_evt_000002::span::000004",
+              "replay_evt_000003",
+              "replay_evt_000004",
+              "replay_evt_000005",
+              "replay_evt_000006",
+              "replay_evt_000007::span::000000",
+              "replay_evt_000007::span::000001",
+              "replay_evt_000008",
+              "replay_evt_000009",
+              "replay_evt_000010::span::000000"
+            ],
+            "batch_event_count": 15,
+            "batch_estimated_tokens": 11463,
+            "actual_prompt_tokens": 14143,
+            "response_hash": "38eecff14ba73a05798188052498f9e417a517470cf4b36d84b0c75b5d1514e5",
+            "batch_wall_ms": 41104.12409999935,
+            "inference_wall_ms": 41102.39209999963,
+            "queue_wait_ms": null,
+            "retry_count": 0,
+            "structured_output_valid": true,
+            "timeout": false,
+            "batch_output_hash": "78dcce1375db2b212c708e800ecdb2e7272411221580b443a1bec24a1bfa41d6"
+          },
+          {
+            "model_identity": "qwen3.5-4b@q6_k",
+            "endpoint": "http://127.0.0.1:1234/v1",
+            "prompt_version": "canonicalizer-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "canonicalizer_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "canonical_text": {
+                        "type": "string"
+                      },
+                      "cited_source_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "replay_evt_000010::span::000001",
+                            "replay_evt_000010::span::000002",
+                            "replay_evt_000011::span::000000",
+                            "replay_evt_000011::span::000001",
+                            "replay_evt_000011::span::000002",
+                            "replay_evt_000012"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "canonical_text"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "e3b921a52170b75d4fceb3b2ed770fddd08ba909b0fcab3041bee83f3c4c249c",
+            "start_timestamp": "2026-08-21T01:22:04.678+00:00",
+            "end_timestamp": "2026-08-21T01:24:01.574+00:00",
+            "input_tokens": 5917,
+            "output_tokens": 916,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 116895.58130000022,
+            "finish_reason": "stop",
+            "raw_response_hash": "8ce618b1e7a9c9eeb8a309a28a9e174c75af2ba743053f057fa398a723cda061",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 18805,
+              "system_prompt_chars": 420,
+              "response_schema_chars": 515,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "e3b921a52170b75d4fceb3b2ed770fddd08ba909b0fcab3041bee83f3c4c249c",
+              "response_schema_hash": "68cc85c3c36f71e91df83d7e172ec44423e1b8bbf3e048e00539faba1e6f36f9"
+            },
+            "batch_index": 1,
+            "batch_covered_source_refs": [
+              "replay_evt_000010::span::000001",
+              "replay_evt_000010::span::000002",
+              "replay_evt_000011::span::000000",
+              "replay_evt_000011::span::000001",
+              "replay_evt_000011::span::000002",
+              "replay_evt_000012"
+            ],
+            "batch_source_event_ids": [
+              "replay_evt_000010::span::000001",
+              "replay_evt_000010::span::000002",
+              "replay_evt_000011::span::000000",
+              "replay_evt_000011::span::000001",
+              "replay_evt_000011::span::000002",
+              "replay_evt_000012"
+            ],
+            "batch_event_count": 6,
+            "batch_estimated_tokens": 4692,
+            "actual_prompt_tokens": 5917,
+            "response_hash": "8ce618b1e7a9c9eeb8a309a28a9e174c75af2ba743053f057fa398a723cda061",
+            "batch_wall_ms": 116896.3845999997,
+            "inference_wall_ms": 116895.58130000022,
+            "queue_wait_ms": null,
+            "retry_count": 0,
+            "structured_output_valid": true,
+            "timeout": false,
+            "batch_output_hash": "ab557b2f78a5ef39ab61500e4f534d9b016e2052ae25d25247d468a9bcfe1944"
+          }
+        ]
+      },
+      "packet_assembly_ms": 0.6780000003345776,
+      "consolidator": {
+        "status": "SUCCEEDED",
+        "wall_ms": 8162.929299999632,
+        "call_count": 1,
+        "calls": [
+          {
+            "model_identity": "upstage/solar-pro4",
+            "endpoint": "https://openrouter.ai/api",
+            "prompt_version": "consolidator-v1",
+            "generation_settings": {
+              "temperature": 0,
+              "top_p": 1,
+              "stream": false,
+              "reasoning_effort": "none",
+              "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                  "name": "consolidator_response_v1",
+                  "strict": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "string"
+                      },
+                      "evidence_event_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "retire": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "content": {
+                              "type": "string"
+                            },
+                            "memory_type": {
+                              "type": "string"
+                            },
+                            "importance": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1
+                            },
+                            "evidence_event_ids": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "required": [
+                            "content",
+                            "memory_type",
+                            "importance",
+                            "evidence_event_ids"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "content",
+                      "evidence_event_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "input_hash": "9a22fa8e77e47a7c97da553edc11fbbb149cc8e7d40062c2986ef88e2a459072",
+            "start_timestamp": "2026-08-21T01:24:01.578+00:00",
+            "end_timestamp": "2026-08-21T01:24:09.739+00:00",
+            "input_tokens": 42704,
+            "output_tokens": 323,
+            "reasoning_tokens": 0,
+            "ttft_ms": null,
+            "wall_ms": 8160.006800000701,
+            "finish_reason": "stop",
+            "raw_response_hash": "d39c2efd8667e120aa7085fe39f701d9863772cdc2a3ec641fb80c7b1cd92861",
+            "diagnostic_excerpt": null,
+            "stream": false,
+            "status": "SUCCEEDED",
+            "request_profile": {
+              "input_payload_chars": 139103,
+              "system_prompt_chars": 562,
+              "response_schema_chars": 696,
+              "request_wrapper_chars": 48,
+              "input_payload_hash": "9a22fa8e77e47a7c97da553edc11fbbb149cc8e7d40062c2986ef88e2a459072",
+              "response_schema_hash": "0cf14cbb722ead0a9649a60f75589143a5f2a283647d7bdbc61de8380b536d57"
+            }
+          }
+        ]
+      },
+      "validation_ms": 0.0749000000723754,
+      "source_tokens": 13740,
+      "wall_ms": 208476.90499999953,
+      "source_tokens_per_second": 65.90658087522947
+    },
+    "selector": {
+      "calls": 18,
+      "wall_ms": 42294.31719999957
+    },
+    "canonicalizer": {
+      "calls": 2,
+      "wall_ms": 158000.50869999905
+    }
+  },
+  "promotion": {
+    "status": "PROMOTED",
+    "capsule_id": "cap_4405c9015c51461bacca23a6f3cbe32e",
+    "database": "C:\\Users\\disti\\AppData\\Local\\Temp\\orchid_phase3_2_s68sni4o\\memory.db",
+    "ready": true,
+    "promoted": true,
+    "active_tokens": 266,
+    "active_content_hash": "1526868c616c5452e446d891b62e06e2dcdc18594e7036d22c888f739e4a3204"
+  },
+  "quality": {
+    "software_promotion": "PROMOTED",
+    "nonempty_capsule": true,
+    "exact_source_ref_subset": true,
+    "unknown_source_ref_count": 0,
+    "covered_event_count": 12,
+    "expected_event_count": 21,
+    "evidence_parent_count": 4,
+    "semantic_judge": "not_run; no deterministic frozen semantic judge exists for this trace",
+    "current_state_correctness": "not independently scored",
+    "supersession_correctness": "not independently scored",
+    "invention_correctness": "not independently scored"
+  },
+  "selected_source_tokens": 4080,
+  "selected_source_ref_count": 4,
+  "source_item_count": 21,
+  "capsule_tokens": 266,
+  "result": {
+    "content_hash": "1526868c616c5452e446d891b62e06e2dcdc18594e7036d22c888f739e4a3204",
+    "covered_event_ids": [
+      "replay_evt_000001",
+      "replay_evt_000002",
+      "replay_evt_000003",
+      "replay_evt_000004",
+      "replay_evt_000005",
+      "replay_evt_000006",
+      "replay_evt_000007",
+      "replay_evt_000008",
+      "replay_evt_000009",
+      "replay_evt_000010",
+      "replay_evt_000011",
+      "replay_evt_000012"
+    ],
+    "evidence_event_ids": [
+      "replay_evt_000002",
+      "replay_evt_000010",
+      "replay_evt_000011",
+      "replay_evt_000012"
+    ],
+    "evidence_source_ids": [
+      "replay_evt_000002::span::000000",
+      "replay_evt_000010::span::000000",
+      "replay_evt_000011::span::000000",
+      "replay_evt_000012"
+    ]
+  }
+}

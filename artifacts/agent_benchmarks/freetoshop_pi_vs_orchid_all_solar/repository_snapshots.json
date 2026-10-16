@@ -1,0 +1,16 @@
+{
+  "pi_native": {
+    "path": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_all_solar_20260823\\arm-a-pi",
+    "head": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa",
+    "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+    "status": "M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md",
+    "remotes": ""
+  },
+  "orchid_all_solar": {
+    "path": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_all_solar_20260823\\arm-b-orchid",
+    "head": "ef22afee503843305c28d47dbf966cd644f52401",
+    "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+    "status": "M apps/web/src/App.tsx\n M apps/web/src/editor/types.ts\n M apps/web/src/tools/toolRegistry.test.ts\n M apps/web/src/tools/toolRegistry.ts\n M apps/web/src/ui/Icon.tsx\n M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md",
+    "remotes": ""
+  }
+}

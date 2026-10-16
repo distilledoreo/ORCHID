@@ -1,0 +1,39 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 129,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "item mem_4d12bb217df7324662edbfb4 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "UI revamp fidelity surfaces completed 12 items including: export workflow without fly-to-stop, multi-select reconciled with local add-camera, docked CTA footer with shot rows and package summary, capped last-export preview prioritizing key paths, dedicated CTA lane reserving space for camera shutter chrome on shots, CC0 human mannequin GLB bundled for scale references, build drag guidance near gizmo when object selected, floating controls below mobile-safe header, Build tray sized to tools with constrained mobile scroller, theme-aware shot thumbnail fallbacks (polished for missing media, compact without cramped labels in export rows), and theme-aware pano viewer colors with build tray glow tokens. Test run showed 40 passed, 1 failed (679ms duration).",
+      "envelope_json": "{\"generation\":129,\"items\":[{\"evidence\":[{\"excerpt\":\"✓ ui revamp fidelity surfaces > advances video shutter record → stop → export without requiring fly to stop\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > keeps export multi-select reconciled and add-camera local to export\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > keeps export shot rows and composed package summary with a docked CTA footer\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > prioritizes key export output paths in capped last-export preview\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > reserves a dedicated CTA lane so the reference landmark strip does not span underneath\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > reserves space for the camera shutter chrome on shots\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > bundles a CC0 human mannequin glb for person scale references\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > shows build drag guidance near the gizmo when an object is selected\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > keeps Build floating controls below the mobile-safe header\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > sizes the Build tray to its tools while constraining the mobile scroller\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > renders polished theme-aware shot thumbnail fallbacks for missing media\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > uses compact shot thumbnail fallbacks without cramped labels in export rows\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"✓ ui revamp fidelity surfaces > uses theme-aware pano viewer colors and build tray glow tokens\",\"source_id\":\"panoref_evt_001152::span::000002\"},{\"excerpt\":\"Tests 1 failed | 40 passed (41)\",\"source_id\":\"panoref_evt_001152::span::000002\"}],\"id\":\"mem_4d12bb217df7324662edbfb4\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"UI revamp fidelity surfaces: 12 tasks completed across export workflow, CTA/shot layout, reference assets, Build tray/mobile constraints, and theme-aware fallbacks. 1 test failure remains (40/41 passed).\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 129,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "item mem_4d12bb217df7324662edbfb4 text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

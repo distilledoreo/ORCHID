@@ -1,0 +1,1 @@
+{"source": "prior_full_replay", "batch_index": 2, "source_tokens": 11806, "timeout_seconds": 180, "prompt_hash": "96f9480724484aaac60b056057f6807d47ca08d69f1977c937e2b90ada63e591", "classification": "unresolved long-tail timeout; exact isolated replay later succeeded"}

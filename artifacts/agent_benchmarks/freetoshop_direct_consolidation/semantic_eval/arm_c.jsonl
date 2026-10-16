@@ -1,0 +1,1 @@
+{"arm": "ARM_C_RAW_SOLAR", "capsule_generations": 0, "promotion": {"status": "NOT_REACHED"}, "reason": "No successfully parsed candidate capsule was produced.", "semantic_checks": 0, "semantic_fail": 0, "semantic_pass": 0, "status": "NOT_EVALUATED", "structural_fail": 0, "structural_generations": 0, "structural_ok": false, "structural_pass": 0}

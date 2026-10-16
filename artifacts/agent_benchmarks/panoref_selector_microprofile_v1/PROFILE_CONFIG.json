@@ -1,0 +1,43 @@
+{
+  "baseline_generation": {
+    "reasoning_effort": "none",
+    "stream": false,
+    "temperature": 0,
+    "top_p": 1
+  },
+  "chunk_target_tokens": 1200,
+  "config_sha256": "4c4519e2833867c47715b0899696720f5246863468ad2554ed4488cd432c225d",
+  "created_at": "2026-08-22T20:59:48.913+00:00",
+  "endpoint": "http://127.0.0.1:1234/v1",
+  "full_chunk_plan_sha256": "5a104c60e2a5241707cbd9e343bcbdfa66592e34de38bf9c499d9e7726db6f19",
+  "historical_control_metadata": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_control_repeats_v1\\repeat_01\\CONTROL_METADATA.json",
+  "historical_control_metadata_sha256": "baf696fb3729de6b89d8760c55cc3f27dcad20c1923f2fa0bf0ca88ff11e5fc5",
+  "historical_selector_summary": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_control_repeats_v1\\repeat_01\\arm_b_selector_solar\\SUMMARY.json",
+  "historical_selector_summary_sha256": "68af78ade0c3ba69c39a67d12269161519ced0d322c5c0d0ca82bdbf6640966e",
+  "model": "qwen3.5-4b@q6_k",
+  "profile_generation": {
+    "reasoning_effort": "none",
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    },
+    "temperature": 0,
+    "top_p": 1
+  },
+  "prompt_version": "selector-v1",
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_direct_generalization_bounded_v2\\frozen_panoref_replay\\events.jsonl",
+  "replay_sha256": "aa0e7326c2514501a8c53a5a2c4669b1512383507989e71403d4e6f00f7eaf07",
+  "sample_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_microprofile_v1\\FROZEN_SAMPLE.json",
+  "sample_sha256": "fa4083f3fc17978cc255cd52e1a305daed4e10b6573b3b43cdc0d4477f227aa4",
+  "schema_version": "panoref-selector-microprofile-config-v1",
+  "source_commit": "297b80e692777ad7c1dbe7b4198cc44bf3dc9f74",
+  "system_prompt": "You select durable-memory source items. Return JSON only with exactly {\"selected_event_ids\":[\"source-item-id\"]}. Select only whole-event or source-span IDs present in the input; do not summarize or rewrite items.",
+  "timeout_seconds": 180.0,
+  "transport_note": "stream=true is measurement-only; prompt, schema, model, and generation values are otherwise unchanged from the frozen selector control",
+  "universe": {
+    "chunk_count": 148,
+    "estimated_source_tokens": 143670,
+    "event_count": 276,
+    "source_item_count": 346
+  }
+}

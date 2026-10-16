@@ -1,0 +1,29 @@
+{
+  "calibration_query_count": 151,
+  "corpus_size": 100,
+  "dense_production_injection": false,
+  "external_guardrail_query_count": 18,
+  "features": [
+    "top1_score",
+    "top2_score",
+    "margin",
+    "corpus_percentile",
+    "corpus_zscore",
+    "lexical_overlap",
+    "identifier_agreement",
+    "scope_agreement",
+    "activation_prior"
+  ],
+  "fts_policy": "phase1_2_calibrated",
+  "fts_unchanged": true,
+  "holdout_query_count": 150,
+  "iterations": 10,
+  "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+  "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "model_root": "artifacts\\cold_memory\\phase2_0_dense_experiment\\model",
+  "output_root": "artifacts\\cold_memory\\phase2_1_abstention_calibration",
+  "phase": "2.1",
+  "semantic_query_count": 301,
+  "target_accept_precision": 0.99,
+  "warmup": 2
+}

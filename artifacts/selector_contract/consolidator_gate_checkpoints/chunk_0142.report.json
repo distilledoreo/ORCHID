@@ -1,0 +1,39 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 143,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001180' for item mem_3be520da02d20a4a233e98a3"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Updated the docs/ui-revamp-regression-audit.md patch to reflect `npm test -- --run` yielding 373/373 passed (previously `npm test` showed 303/303). The change was committed as c1f6c8d on branch t3code/projector-occlusion and pushed to origin.",
+      "envelope_json": "{\"generation\":143,\"items\":[{\"evidence\":[{\"excerpt\":\"const patch = \\\"*** Begin Patch\\\\n*** Update File: C:\\\\Users\\\\disti\\\\.t3\\\\worktrees\\\\PanoRef\\\\t3code-aefd2138\\\\docs\\\\ui-revamp-regression-audit.md\\\\n@@\\\\n-| `npm test` | 303/303 passed |\\\\n+| `npm test -- --run` | 373/373 passed |\\\\n*** End Patch\\\";\",\"source_id\":\"panoref_evt_001180\"},{\"excerpt\":\"[t3code/projector-occlusion c1f6c8d] Update coverage verification count\\\\n 1 file changed, 1 insertion(+), 1 deletion(-)\",\"source_id\":\"panoref_evt_001183\"},{\"excerpt\":\"To https://github.com/distilledoreo/PanoRef.git\\\\n   80882e3..c1f6c8d  t3code/projector-occlusion -> origin/t3code/projector-occlusion\",\"source_id\":\"panoref_evt_001183\"}],\"id\":\"mem_3be520da02d20a4a233e98a3\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"docs/ui-revamp-regression-audit.md updated with coverage count correction (373/373) and pushed to origin/t3code/projector-occlusion as commit c1f6c8d.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 143,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001180' for item mem_3be520da02d20a4a233e98a3"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

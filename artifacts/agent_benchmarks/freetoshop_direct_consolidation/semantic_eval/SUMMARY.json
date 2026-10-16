@@ -1,0 +1,43 @@
+[
+  {
+    "arm": "ARM_B_SELECTOR_SOLAR",
+    "capsule_generations": 18,
+    "current_fact_losses": 10,
+    "intent_or_blocker_losses": 39,
+    "invention_failures": 0,
+    "promotion": {
+      "active_content_hash": "fa7cd124acf6331558a37da6c972df562a3e306561b5258a3113a540b2c26d9f",
+      "database": "C:\\Users\\disti\\AppData\\Local\\Temp\\orchid_phase3_3_f_d0bvmm\\memory.db",
+      "promoted": true,
+      "raw_event_count": 199,
+      "raw_journal_unchanged": true,
+      "ready": true,
+      "status": "PROMOTED",
+      "validation": "PASSED"
+    },
+    "resurrection_failures": 0,
+    "semantic_checks": 185,
+    "semantic_fail": 54,
+    "semantic_pass": 131,
+    "structural_fail": 0,
+    "structural_generations": 18,
+    "structural_ok": true,
+    "structural_pass": 18
+  },
+  {
+    "arm": "ARM_C_RAW_SOLAR",
+    "capsule_generations": 0,
+    "promotion": {
+      "status": "NOT_REACHED"
+    },
+    "reason": "No successfully parsed candidate capsule was produced.",
+    "semantic_checks": 0,
+    "semantic_fail": 0,
+    "semantic_pass": 0,
+    "status": "NOT_EVALUATED",
+    "structural_fail": 0,
+    "structural_generations": 0,
+    "structural_ok": false,
+    "structural_pass": 0
+  }
+]

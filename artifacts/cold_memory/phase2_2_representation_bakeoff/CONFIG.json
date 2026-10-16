@@ -1,0 +1,41 @@
+{
+  "calibration_count": 151,
+  "calibration_protocol": "memory_gateway.dense_abstention.calibrate_policy",
+  "candidate_models": [
+    {
+      "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "slug": "all_minilm_l6_v2_baseline"
+    },
+    {
+      "model_id": "sentence-transformers/all-MiniLM-L12-v2",
+      "revision": "a50ef00143b4d5391434df20ae11632588ac25be",
+      "slug": "all_minilm_l12_v2"
+    },
+    {
+      "model_id": "sentence-transformers/paraphrase-MiniLM-L3-v2",
+      "revision": "4ca70771034acceecb2e72475f72050fcdde4ddc",
+      "slug": "paraphrase_minilm_l3_v2"
+    },
+    {
+      "model_id": "sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
+      "revision": "b207367332321f8e44f96e224ef15bc607f4dbf0",
+      "slug": "multi_qa_minilm_l6_cos_v1"
+    }
+  ],
+  "corpus_size": 100,
+  "dense_production_injection": false,
+  "external_guardrail_count": 18,
+  "fts_unchanged": true,
+  "holdout_count": 150,
+  "hot_path_state_unchanged": true,
+  "iterations": 5,
+  "output_root": "artifacts\\cold_memory\\phase2_2_representation_bakeoff",
+  "phase": "2.2",
+  "query_corpus": "artifacts\\cold_memory\\phase2_1_abstention_calibration\\QUERY_CORPUS.jsonl",
+  "query_corpus_sha256": "cbcaa9ea29a3c0b93c504f678e66331675f832eb7cce7acfca1467db39856541",
+  "query_count": 319,
+  "semantic_query_count": 301,
+  "target_accept_precision": 0.99,
+  "warmup": 2
+}

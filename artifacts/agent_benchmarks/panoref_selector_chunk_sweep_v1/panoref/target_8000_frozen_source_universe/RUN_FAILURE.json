@@ -1,0 +1,6 @@
+{
+  "error": "selector failed before direct replay: model request timed out after 180.0s",
+  "run_id": "target_8000_frozen_source_universe",
+  "status": "FAILED",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\disti\\orchid_memory_gateway_v1\\tools\\run_panoref_selector_chunk_arm.py\", line 118, in run\n    await harness.execute_arm(\"ARM_B_SELECTOR_SOLAR\")\n  File \"C:\\Users\\disti\\orchid_memory_gateway_v1\\tools\\phase3_3_direct_consolidation.py\", line 443, in execute_arm\n    raise RuntimeError(f\"selector failed before direct replay: {selector_error or 'no selection'}\")\nRuntimeError: selector failed before direct replay: model request timed out after 180.0s\n"
+}

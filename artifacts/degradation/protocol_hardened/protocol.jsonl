@@ -1,0 +1,3 @@
+{"stage": "selector", "protocol_attempt": 1, "recovered": false, "retryable": true, "error": "selector returned ID outside current chunk"}
+{"stage": "selector", "protocol_attempt": 2, "recovered": false, "retryable": true, "error": "selector returned ID outside current chunk"}
+{"stage": "selector", "protocol_attempt": 3, "recovered": false, "retryable": true, "error": "selector returned ID outside current chunk"}

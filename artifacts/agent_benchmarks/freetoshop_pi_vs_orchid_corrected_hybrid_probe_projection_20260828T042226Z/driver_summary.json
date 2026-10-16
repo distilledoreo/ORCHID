@@ -1,0 +1,46 @@
+{
+  "started_at": "2026-08-28T04:22:34.083Z",
+  "ended_at": "2026-08-28T04:31:02.527Z",
+  "reason": "arm_a_pi_provider_response_error",
+  "max_runtime_ms": 1200000,
+  "arms": {
+    "arm_a_pi": {
+      "name": "PI_NATIVE",
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 0,
+      "provider_messages": 39,
+      "tool_calls": 100,
+      "tool_failures": 8,
+      "pi_native_compactions": 0,
+      "request_responses": 1,
+      "errors": [
+        {
+          "at": "2026-08-28T04:30:57.495Z",
+          "category": "provider_response_error",
+          "error": "Stream ended without finish_reason"
+        }
+      ],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": " M apps/web/src/App.tsx\n M apps/web/src/editor/types.ts\n M apps/web/src/shell/ToolOptionsBar.tsx\n M apps/web/src/tools/toolRegistry.ts\n M apps/web/src/ui/Icon.tsx\n M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md\n"
+      }
+    },
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 0,
+      "provider_messages": 24,
+      "tool_calls": 84,
+      "tool_failures": 4,
+      "pi_native_compactions": 0,
+      "request_responses": 2,
+      "errors": [],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": " M apps/web/src/editor/types.ts\n M apps/web/src/tools/toolRegistry.ts\n M apps/web/src/ui/Icon.tsx\n?? BENCHMARK_GOAL.md\n"
+      }
+    }
+  }
+}

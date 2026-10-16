@@ -1,0 +1,13 @@
+{
+  "prior_phase": {
+    "status": "MEASURED",
+    "fixture": "corrected_12k_full12.json",
+    "source_tokens": 16155,
+    "canonicalizer_model_input_tokens": 20060,
+    "canonicalizer_output_tokens": 1534,
+    "canonicalizer_input_amplification": 1.241720829464562,
+    "canonicalizer_output_per_source_token": 0.09495512225317239,
+    "note": "Selector and consolidator amplification are unavailable in this local-only frozen canonicalizer replay; captured provider-backed selector totals are in stage_summary.json."
+  },
+  "note": "No new amplification change was introduced in Phase 3.2."
+}

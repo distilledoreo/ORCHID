@@ -1,0 +1,14 @@
+{
+  "reason": "unrecoverable_controller_continuity_stall_follow_up_queued_while_idle",
+  "requested_at_utc": "2026-08-23T22:22:00Z",
+  "evidence": {
+    "last_orchid_telemetry_at_utc": "2026-08-23T22:12:26.0242118Z",
+    "terminal_event_sequence": [
+      "agent_settled",
+      "queue_update_follow_up_pending",
+      "follow_up_response_success"
+    ],
+    "pi_rpc_semantics": "follow_up queues only; prompt starts an idle turn",
+    "manual_rescue_attempted": false
+  }
+}

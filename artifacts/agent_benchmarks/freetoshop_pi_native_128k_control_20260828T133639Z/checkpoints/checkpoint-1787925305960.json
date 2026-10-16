@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-08-28T13:55:05.952Z",
+  "elapsed_ms": 1080019,
+  "reason": "periodic",
+  "arms": {
+    "arm_a_pi": {
+      "name": "PI_NATIVE",
+      "pid": 822058,
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 0,
+      "provider_messages": 73,
+      "tool_calls": 179,
+      "tool_failures": 8,
+      "pi_native_compactions": 1,
+      "request_responses": 1,
+      "errors": [],
+      "last_usage": {
+        "input": 342,
+        "output": 229,
+        "cacheRead": 81920,
+        "cacheWrite": 0,
+        "reasoning": 40,
+        "totalTokens": 82491,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "last_events": [
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_update",
+        "message_end",
+        "tool_execution_start",
+        "tool_execution_start",
+        "tool_execution_update",
+        "tool_execution_end",
+        "tool_execution_update",
+        "tool_execution_end",
+        "message_start",
+        "message_end",
+        "message_start",
+        "message_end",
+        "turn_end",
+        "turn_start"
+      ],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": " M apps/web/src/App.tsx\n M apps/web/src/editor/types.ts\n M apps/web/src/tools/toolRegistry.test.ts\n M apps/web/src/tools/toolRegistry.ts\n M apps/web/src/ui/Icon.tsx\n M packages/raster-engine/src/index.test.ts\n M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md\n"
+      }
+    }
+  }
+}

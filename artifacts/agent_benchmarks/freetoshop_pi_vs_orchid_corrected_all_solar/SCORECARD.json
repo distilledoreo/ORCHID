@@ -1,0 +1,1013 @@
+{
+  "schema_version": "orchid.benchmark_scorecard.v1",
+  "artifact": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/agent_benchmarks/freetoshop_pi_vs_orchid_corrected_all_solar",
+  "run_id": "freetoshop_pi_vs_orchid_corrected_all_solar_20260823",
+  "validity": {
+    "valid": true,
+    "reasons": []
+  },
+  "pi_native": {
+    "path": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/agent_benchmarks/freetoshop_pi_vs_orchid_corrected_all_solar/pi_native/telemetry.jsonl",
+    "counting_rule": "assistant message_end records with nonzero usage; streaming message_update records excluded",
+    "usage_responses": 43,
+    "input_tokens": 1811513.0,
+    "output_tokens": 71785.0,
+    "cache_read_tokens": 612544.0,
+    "cache_write_tokens": 0.0,
+    "reasoning_tokens": 56918.0,
+    "largest_context_tokens": 88291.0,
+    "mean_context_tokens": 42128.20930232558,
+    "reported_cost_usd": 0.06295959,
+    "calculated_cost_usd": 0.06295959,
+    "foreground_latency_ms": {
+      "median": 9452.0,
+      "p95": 249711.34999999974,
+      "samples": 42
+    },
+    "assistant_timeline": [
+      {
+        "timestamp_ms": 1787521911211,
+        "input_tokens": 4221,
+        "output_tokens": 142
+      },
+      {
+        "timestamp_ms": 1787521931772,
+        "input_tokens": 7348,
+        "output_tokens": 78
+      },
+      {
+        "timestamp_ms": 1787521934415,
+        "input_tokens": 15007,
+        "output_tokens": 156
+      },
+      {
+        "timestamp_ms": 1787521938396,
+        "input_tokens": 15976,
+        "output_tokens": 75
+      },
+      {
+        "timestamp_ms": 1787521940571,
+        "input_tokens": 18839,
+        "output_tokens": 81
+      },
+      {
+        "timestamp_ms": 1787521952025,
+        "input_tokens": 22621,
+        "output_tokens": 181
+      },
+      {
+        "timestamp_ms": 1787521956413,
+        "input_tokens": 8525,
+        "output_tokens": 90
+      },
+      {
+        "timestamp_ms": 1787521960891,
+        "input_tokens": 31367,
+        "output_tokens": 169
+      },
+      {
+        "timestamp_ms": 1787521965477,
+        "input_tokens": 34526,
+        "output_tokens": 257
+      },
+      {
+        "timestamp_ms": 1787521971517,
+        "input_tokens": 33493,
+        "output_tokens": 200
+      },
+      {
+        "timestamp_ms": 1787521986932,
+        "input_tokens": 2626,
+        "output_tokens": 113
+      },
+      {
+        "timestamp_ms": 1787521994652,
+        "input_tokens": 41621,
+        "output_tokens": 455
+      },
+      {
+        "timestamp_ms": 1787522003064,
+        "input_tokens": 43725,
+        "output_tokens": 101
+      },
+      {
+        "timestamp_ms": 1787522006480,
+        "input_tokens": 44656,
+        "output_tokens": 329
+      },
+      {
+        "timestamp_ms": 1787522011410,
+        "input_tokens": 50366,
+        "output_tokens": 385
+      },
+      {
+        "timestamp_ms": 1787522021121,
+        "input_tokens": 54024,
+        "output_tokens": 283
+      },
+      {
+        "timestamp_ms": 1787522026925,
+        "input_tokens": 28696,
+        "output_tokens": 98
+      },
+      {
+        "timestamp_ms": 1787522036375,
+        "input_tokens": 56812,
+        "output_tokens": 445
+      },
+      {
+        "timestamp_ms": 1787522049860,
+        "input_tokens": 52683,
+        "output_tokens": 585
+      },
+      {
+        "timestamp_ms": 1787522059389,
+        "input_tokens": 16843,
+        "output_tokens": 16440
+      },
+      {
+        "timestamp_ms": 1787522317425,
+        "input_tokens": 7698,
+        "output_tokens": 2696
+      },
+      {
+        "timestamp_ms": 1787522379570,
+        "input_tokens": 61718,
+        "output_tokens": 327
+      },
+      {
+        "timestamp_ms": 1787522390828,
+        "input_tokens": 48484,
+        "output_tokens": 117
+      },
+      {
+        "timestamp_ms": 1787522395636,
+        "input_tokens": 6759,
+        "output_tokens": 159
+      },
+      {
+        "timestamp_ms": 1787522401976,
+        "input_tokens": 66651,
+        "output_tokens": 211
+      },
+      {
+        "timestamp_ms": 1787522409844,
+        "input_tokens": 47145,
+        "output_tokens": 16464
+      },
+      {
+        "timestamp_ms": 1787522662488,
+        "input_tokens": 69779,
+        "output_tokens": 937
+      },
+      {
+        "timestamp_ms": 1787522682099,
+        "input_tokens": 70675,
+        "output_tokens": 10415
+      },
+      {
+        "timestamp_ms": 1787523037368,
+        "input_tokens": 71509,
+        "output_tokens": 210
+      },
+      {
+        "timestamp_ms": 1787523043616,
+        "input_tokens": 72714,
+        "output_tokens": 874
+      },
+      {
+        "timestamp_ms": 1787523081064,
+        "input_tokens": 73555,
+        "output_tokens": 66
+      },
+      {
+        "timestamp_ms": 1787523085323,
+        "input_tokens": 73672,
+        "output_tokens": 101
+      },
+      {
+        "timestamp_ms": 1787523097721,
+        "input_tokens": 73822,
+        "output_tokens": 235
+      },
+      {
+        "timestamp_ms": 1787523110251,
+        "input_tokens": 1641,
+        "output_tokens": 84
+      },
+      {
+        "timestamp_ms": 1787523114317,
+        "input_tokens": 4827,
+        "output_tokens": 163
+      },
+      {
+        "timestamp_ms": 1787523125186,
+        "input_tokens": 31628,
+        "output_tokens": 60
+      },
+      {
+        "timestamp_ms": 1787523128962,
+        "input_tokens": 4688,
+        "output_tokens": 4972
+      },
+      {
+        "timestamp_ms": 1787523322953,
+        "input_tokens": 80990,
+        "output_tokens": 382
+      },
+      {
+        "timestamp_ms": 1787523331610,
+        "input_tokens": 82970,
+        "output_tokens": 3457
+      },
+      {
+        "timestamp_ms": 1787523428940,
+        "input_tokens": 86051,
+        "output_tokens": 516
+      },
+      {
+        "timestamp_ms": 1787523438394,
+        "input_tokens": 86569,
+        "output_tokens": 2033
+      },
+      {
+        "timestamp_ms": 1787523466344,
+        "input_tokens": 88291,
+        "output_tokens": 434
+      },
+      {
+        "timestamp_ms": 1787523477803,
+        "input_tokens": 15702,
+        "output_tokens": 6209
+      }
+    ]
+  },
+  "orchid": {
+    "path": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/agent_benchmarks/freetoshop_pi_vs_orchid_corrected_all_solar/orchid/telemetry.jsonl",
+    "counting_rule": "assistant message_end records with nonzero usage; streaming message_update records excluded",
+    "usage_responses": 57,
+    "input_tokens": 7864313.0,
+    "output_tokens": 39284.0,
+    "cache_read_tokens": 80512.0,
+    "cache_write_tokens": 0.0,
+    "reasoning_tokens": 9248.0,
+    "largest_context_tokens": 173929.0,
+    "mean_context_tokens": 137970.40350877194,
+    "reported_cost_usd": 0.0,
+    "calculated_cost_usd": 0.24064346999999997,
+    "foreground_latency_ms": {
+      "median": 11581.0,
+      "p95": 58562.25,
+      "samples": 56
+    },
+    "assistant_timeline": [
+      {
+        "timestamp_ms": 1787521911209,
+        "input_tokens": 7868,
+        "output_tokens": 136
+      },
+      {
+        "timestamp_ms": 1787521918091,
+        "input_tokens": 14070,
+        "output_tokens": 75
+      },
+      {
+        "timestamp_ms": 1787521921531,
+        "input_tokens": 18521,
+        "output_tokens": 93
+      },
+      {
+        "timestamp_ms": 1787521928582,
+        "input_tokens": 21301,
+        "output_tokens": 122
+      },
+      {
+        "timestamp_ms": 1787521936215,
+        "input_tokens": 60775,
+        "output_tokens": 279
+      },
+      {
+        "timestamp_ms": 1787521947986,
+        "input_tokens": 70146,
+        "output_tokens": 96
+      },
+      {
+        "timestamp_ms": 1787521956217,
+        "input_tokens": 72494,
+        "output_tokens": 136
+      },
+      {
+        "timestamp_ms": 1787521961432,
+        "input_tokens": 81025,
+        "output_tokens": 128
+      },
+      {
+        "timestamp_ms": 1787521967335,
+        "input_tokens": 73910,
+        "output_tokens": 391
+      },
+      {
+        "timestamp_ms": 1787521981831,
+        "input_tokens": 96718,
+        "output_tokens": 304
+      },
+      {
+        "timestamp_ms": 1787521997940,
+        "input_tokens": 94914,
+        "output_tokens": 109
+      },
+      {
+        "timestamp_ms": 1787522003972,
+        "input_tokens": 107416,
+        "output_tokens": 59
+      },
+      {
+        "timestamp_ms": 1787522009717,
+        "input_tokens": 115801,
+        "output_tokens": 766
+      },
+      {
+        "timestamp_ms": 1787522048625,
+        "input_tokens": 119311,
+        "output_tokens": 15329
+      },
+      {
+        "timestamp_ms": 1787522278439,
+        "input_tokens": 136955,
+        "output_tokens": 243
+      },
+      {
+        "timestamp_ms": 1787522289830,
+        "input_tokens": 137286,
+        "output_tokens": 455
+      },
+      {
+        "timestamp_ms": 1787522316753,
+        "input_tokens": 139228,
+        "output_tokens": 315
+      },
+      {
+        "timestamp_ms": 1787522339409,
+        "input_tokens": 147894,
+        "output_tokens": 125
+      },
+      {
+        "timestamp_ms": 1787522347151,
+        "input_tokens": 148171,
+        "output_tokens": 166
+      },
+      {
+        "timestamp_ms": 1787522356063,
+        "input_tokens": 150348,
+        "output_tokens": 131
+      },
+      {
+        "timestamp_ms": 1787522365996,
+        "input_tokens": 149710,
+        "output_tokens": 68
+      },
+      {
+        "timestamp_ms": 1787522396054,
+        "input_tokens": 150270,
+        "output_tokens": 3917
+      },
+      {
+        "timestamp_ms": 1787522462693,
+        "input_tokens": 158552,
+        "output_tokens": 94
+      },
+      {
+        "timestamp_ms": 1787522471715,
+        "input_tokens": 159241,
+        "output_tokens": 391
+      },
+      {
+        "timestamp_ms": 1787522497973,
+        "input_tokens": 160864,
+        "output_tokens": 234
+      },
+      {
+        "timestamp_ms": 1787522511953,
+        "input_tokens": 161720,
+        "output_tokens": 101
+      },
+      {
+        "timestamp_ms": 1787522520099,
+        "input_tokens": 146474,
+        "output_tokens": 69
+      },
+      {
+        "timestamp_ms": 1787522541723,
+        "input_tokens": 163875,
+        "output_tokens": 66
+      },
+      {
+        "timestamp_ms": 1787522550509,
+        "input_tokens": 164293,
+        "output_tokens": 368
+      },
+      {
+        "timestamp_ms": 1787522576511,
+        "input_tokens": 165105,
+        "output_tokens": 46
+      },
+      {
+        "timestamp_ms": 1787522587069,
+        "input_tokens": 165530,
+        "output_tokens": 1208
+      },
+      {
+        "timestamp_ms": 1787522632298,
+        "input_tokens": 166405,
+        "output_tokens": 100
+      },
+      {
+        "timestamp_ms": 1787522642995,
+        "input_tokens": 151198,
+        "output_tokens": 147
+      },
+      {
+        "timestamp_ms": 1787522653674,
+        "input_tokens": 168185,
+        "output_tokens": 101
+      },
+      {
+        "timestamp_ms": 1787522664053,
+        "input_tokens": 169062,
+        "output_tokens": 169
+      },
+      {
+        "timestamp_ms": 1787522685499,
+        "input_tokens": 170077,
+        "output_tokens": 99
+      },
+      {
+        "timestamp_ms": 1787522700053,
+        "input_tokens": 155152,
+        "output_tokens": 509
+      },
+      {
+        "timestamp_ms": 1787522715412,
+        "input_tokens": 172181,
+        "output_tokens": 344
+      },
+      {
+        "timestamp_ms": 1787522734287,
+        "input_tokens": 158237,
+        "output_tokens": 68
+      },
+      {
+        "timestamp_ms": 1787522742423,
+        "input_tokens": 158545,
+        "output_tokens": 73
+      },
+      {
+        "timestamp_ms": 1787522750806,
+        "input_tokens": 158920,
+        "output_tokens": 234
+      },
+      {
+        "timestamp_ms": 1787522761393,
+        "input_tokens": 160649,
+        "output_tokens": 226
+      },
+      {
+        "timestamp_ms": 1787522782880,
+        "input_tokens": 145952,
+        "output_tokens": 711
+      },
+      {
+        "timestamp_ms": 1787522838750,
+        "input_tokens": 161420,
+        "output_tokens": 345
+      },
+      {
+        "timestamp_ms": 1787522857553,
+        "input_tokens": 163536,
+        "output_tokens": 177
+      },
+      {
+        "timestamp_ms": 1787522876154,
+        "input_tokens": 165127,
+        "output_tokens": 690
+      },
+      {
+        "timestamp_ms": 1787522892540,
+        "input_tokens": 166634,
+        "output_tokens": 81
+      },
+      {
+        "timestamp_ms": 1787522900966,
+        "input_tokens": 167241,
+        "output_tokens": 458
+      },
+      {
+        "timestamp_ms": 1787522920206,
+        "input_tokens": 166119,
+        "output_tokens": 101
+      },
+      {
+        "timestamp_ms": 1787522929916,
+        "input_tokens": 170177,
+        "output_tokens": 443
+      },
+      {
+        "timestamp_ms": 1787522944844,
+        "input_tokens": 172062,
+        "output_tokens": 180
+      },
+      {
+        "timestamp_ms": 1787522956217,
+        "input_tokens": 171777,
+        "output_tokens": 334
+      },
+      {
+        "timestamp_ms": 1787522967274,
+        "input_tokens": 172639,
+        "output_tokens": 288
+      },
+      {
+        "timestamp_ms": 1787522987848,
+        "input_tokens": 172775,
+        "output_tokens": 4609
+      },
+      {
+        "timestamp_ms": 1787523057228,
+        "input_tokens": 172877,
+        "output_tokens": 841
+      },
+      {
+        "timestamp_ms": 1787523090449,
+        "input_tokens": 173651,
+        "output_tokens": 73
+      },
+      {
+        "timestamp_ms": 1787523099860,
+        "input_tokens": 173929,
+        "output_tokens": 1863
+      }
+    ]
+  },
+  "economics": {
+    "pricing_usd_per_million_tokens": {
+      "input": 0.03,
+      "output": 0.12
+    },
+    "counting_rule": "assistant message_end records with nonzero usage; streaming message_update records excluded",
+    "pi_foreground": {
+      "usage_responses": 43,
+      "input_tokens": 1811513.0,
+      "output_tokens": 71785.0,
+      "cache_read_tokens": 612544.0,
+      "reported_cost_usd": 0.06295959,
+      "calculated_cost_usd": 0.06295959,
+      "largest_context_tokens": 88291.0,
+      "mean_context_tokens": 42128.20930232558,
+      "foreground_latency_ms": {
+        "median": 9452.0,
+        "p95": 249711.34999999974,
+        "samples": 42
+      }
+    },
+    "orchid_foreground": {
+      "usage_responses": 57,
+      "input_tokens": 7864313.0,
+      "output_tokens": 39284.0,
+      "cache_read_tokens": 80512.0,
+      "reported_cost_usd": 0.0,
+      "calculated_cost_usd": 0.24064346999999997,
+      "largest_context_tokens": 173929.0,
+      "mean_context_tokens": 137970.40350877194,
+      "foreground_latency_ms": {
+        "median": 11581.0,
+        "p95": 58562.25,
+        "samples": 56
+      }
+    },
+    "orchid_memory_pipeline": [
+      {
+        "stage": "consolidator",
+        "calls": 5,
+        "input_tokens": 368740,
+        "output_tokens": 4490,
+        "wall_ms": 116216.97949999361
+      },
+      {
+        "stage": "selector",
+        "calls": 272,
+        "input_tokens": 415863,
+        "output_tokens": 18094,
+        "wall_ms": 831358.302500099
+      }
+    ],
+    "local_selector_cost_usd": 0.0,
+    "orchid_memory_input_tokens": 784603,
+    "orchid_memory_output_tokens": 22584,
+    "orchid_memory_cost_usd": 0.026248169999999998,
+    "orchid_total_provider_equivalent_cost_usd": 0.26689164,
+    "cumulative_foreground_context_token_area": {
+      "pi_native": 1811513.0,
+      "orchid": 7864313.0,
+      "absolute_difference_pi_minus_orchid": -6052800.0,
+      "fraction_saved_vs_pi": -3.3412953702236745
+    },
+    "paired_deltas": {
+      "total_cost_usd_pi_minus_orchid": -0.20393204999999998,
+      "prompt_token_area_pi_minus_orchid": -6052800.0,
+      "peak_context_pi_minus_orchid": -85638.0,
+      "foreground_latency_median_ms_pi_minus_orchid": -2129.0
+    }
+  },
+  "memory_transitions": {
+    "pi_compactions": 0,
+    "orchid_promotions": 5,
+    "orchid_clean_promotions": 5,
+    "canonicalizer_calls": 0,
+    "throughput": {
+      "run_seconds": 1838.5710000991821,
+      "arrival_observation_seconds": 1233.5,
+      "arrival_tokens": 211908,
+      "retired_tokens": 202232,
+      "arrival_tokens_per_second": 171.79408188082692,
+      "semantic_service_tokens_per_second": 212.01745356095324,
+      "sustained_retirement_tokens_per_second": 109.99412042781626,
+      "service_retirement_ratio": 1.2341371206723475,
+      "sustained_retirement_ratio": 0.6402672270405617,
+      "peak_arrival_burst_tokens_per_second": 4934.066056286508,
+      "peak_backlog_tokens": 111967,
+      "end_backlog_tokens": 9676,
+      "runtime_samples": 360
+    },
+    "generations": [
+      {
+        "generation": 1,
+        "job_id": "job_a0e3b1a9276047839f7bb7e02e63951d",
+        "status": "PROMOTED",
+        "watermark_start": "evt_c0798ea0f61446119b11e91c27864a0e",
+        "watermark_end": "evt_b2456f69d31f48749d18151a04bf62f1",
+        "start_sequence": 1,
+        "end_sequence": 16,
+        "source_events": 16,
+        "source_tokens": 35033,
+        "source_envelope_tokens": 37445,
+        "effective_source_window_tokens": 119466,
+        "bounded_source_window": true,
+        "selected_items": 53,
+        "selected_tokens": 42697,
+        "selector_calls": 47,
+        "selector_input_tokens": 65744,
+        "selector_output_tokens": 2290,
+        "selector_latency_ms": 98994.68659996637,
+        "consolidator_calls": 1,
+        "consolidator_input_tokens": 58359,
+        "consolidator_output_tokens": 1568,
+        "consolidator_latency_ms": 44885.37689999794,
+        "max_actual_request_tokens": 58359,
+        "max_estimated_request_tokens": 43824,
+        "provider_context_tokens": 524288,
+        "context_headroom_tokens": 465929,
+        "capsule_chars": 329,
+        "capsule_tokens": 82,
+        "validation_result": "PASS",
+        "promotion_result": "PROMOTED",
+        "failure_category": null,
+        "canonicalizer_calls": 0,
+        "exact_legal_provenance": true,
+        "unknown_provenance_ids": false,
+        "watermark_progression_exact": true,
+        "duplicate_selected_source_coverage": false,
+        "model_runs_succeeded": true,
+        "requests_below_provider_limit": true,
+        "promotion_cas_exact": true,
+        "started_at": "2026-08-23T21:52:28.093+00:00",
+        "finished_at": "2026-08-23T21:54:52.799+00:00",
+        "clean_promotion": true
+      },
+      {
+        "generation": 2,
+        "job_id": "job_931ff3e5dc5e4bcabaa289858a294900",
+        "status": "PROMOTED",
+        "watermark_start": "evt_5ea6420332ac49e3815071d69cdc9de3",
+        "watermark_end": "evt_a591fbf9d60d409f8f0d376cb7aa6754",
+        "start_sequence": 17,
+        "end_sequence": 43,
+        "source_events": 27,
+        "source_tokens": 76934,
+        "source_envelope_tokens": 82322,
+        "effective_source_window_tokens": 119384,
+        "bounded_source_window": true,
+        "selected_items": 115,
+        "selected_tokens": 94859,
+        "selector_calls": 101,
+        "selector_input_tokens": 148946,
+        "selector_output_tokens": 5128,
+        "selector_latency_ms": 307671.3120001368,
+        "consolidator_calls": 1,
+        "consolidator_input_tokens": 132726,
+        "consolidator_output_tokens": 819,
+        "consolidator_latency_ms": 23547.717800014652,
+        "max_actual_request_tokens": 132726,
+        "max_estimated_request_tokens": 97018,
+        "provider_context_tokens": 524288,
+        "context_headroom_tokens": 391562,
+        "capsule_chars": 213,
+        "capsule_tokens": 53,
+        "validation_result": "PASS",
+        "promotion_result": "PROMOTED",
+        "failure_category": null,
+        "canonicalizer_calls": 0,
+        "exact_legal_provenance": true,
+        "unknown_provenance_ids": false,
+        "watermark_progression_exact": true,
+        "duplicate_selected_source_coverage": false,
+        "model_runs_succeeded": true,
+        "requests_below_provider_limit": true,
+        "promotion_cas_exact": true,
+        "started_at": "2026-08-23T21:54:52.828+00:00",
+        "finished_at": "2026-08-23T22:00:27.404+00:00",
+        "clean_promotion": true
+      },
+      {
+        "generation": 3,
+        "job_id": "job_4ffe016689ea4381a057fc85f088d09a",
+        "status": "PROMOTED",
+        "watermark_start": "evt_704360b49ed04ffbbd25c5e344be329e",
+        "watermark_end": "evt_cf9df61811c6453d94680eccd741486f",
+        "start_sequence": 44,
+        "end_sequence": 59,
+        "source_events": 16,
+        "source_tokens": 32560,
+        "source_envelope_tokens": 35088,
+        "effective_source_window_tokens": 119413,
+        "bounded_source_window": true,
+        "selected_items": 54,
+        "selected_tokens": 40511,
+        "selector_calls": 43,
+        "selector_input_tokens": 61554,
+        "selector_output_tokens": 2334,
+        "selector_latency_ms": 111439.90750005469,
+        "consolidator_calls": 1,
+        "consolidator_input_tokens": 54782,
+        "consolidator_output_tokens": 515,
+        "consolidator_latency_ms": 20733.683600003133,
+        "max_actual_request_tokens": 54782,
+        "max_estimated_request_tokens": 41757,
+        "provider_context_tokens": 524288,
+        "context_headroom_tokens": 469506,
+        "capsule_chars": 213,
+        "capsule_tokens": 53,
+        "validation_result": "PASS",
+        "promotion_result": "PROMOTED",
+        "failure_category": null,
+        "canonicalizer_calls": 0,
+        "exact_legal_provenance": true,
+        "unknown_provenance_ids": false,
+        "watermark_progression_exact": true,
+        "duplicate_selected_source_coverage": false,
+        "model_runs_succeeded": true,
+        "requests_below_provider_limit": true,
+        "promotion_cas_exact": true,
+        "started_at": "2026-08-23T22:00:27.431+00:00",
+        "finished_at": "2026-08-23T22:02:40.356+00:00",
+        "clean_promotion": true
+      },
+      {
+        "generation": 4,
+        "job_id": "job_1536582fc3b8438c830f8b61ff9d6a0e",
+        "status": "PROMOTED",
+        "watermark_start": "evt_de9dba6fd715470cae13f742142e0b53",
+        "watermark_end": "evt_e5ff62c9f31548609005ac88dd8256b8",
+        "start_sequence": 60,
+        "end_sequence": 169,
+        "source_events": 110,
+        "source_tokens": 23061,
+        "source_envelope_tokens": 30740,
+        "effective_source_window_tokens": 119413,
+        "bounded_source_window": true,
+        "selected_items": 115,
+        "selected_tokens": 31517,
+        "selector_calls": 32,
+        "selector_input_tokens": 58745,
+        "selector_output_tokens": 3859,
+        "selector_latency_ms": 130239.64859984699,
+        "consolidator_calls": 1,
+        "consolidator_input_tokens": 51652,
+        "consolidator_output_tokens": 845,
+        "consolidator_latency_ms": 7990.150199999334,
+        "max_actual_request_tokens": 51652,
+        "max_estimated_request_tokens": 33281,
+        "provider_context_tokens": 524288,
+        "context_headroom_tokens": 472636,
+        "capsule_chars": 197,
+        "capsule_tokens": 49,
+        "validation_result": "PASS",
+        "promotion_result": "PROMOTED",
+        "failure_category": null,
+        "canonicalizer_calls": 0,
+        "exact_legal_provenance": true,
+        "unknown_provenance_ids": false,
+        "watermark_progression_exact": true,
+        "duplicate_selected_source_coverage": false,
+        "model_runs_succeeded": true,
+        "requests_below_provider_limit": true,
+        "promotion_cas_exact": true,
+        "started_at": "2026-08-23T22:09:16.450+00:00",
+        "finished_at": "2026-08-23T22:11:35.283+00:00",
+        "clean_promotion": true
+      },
+      {
+        "generation": 5,
+        "job_id": "job_b2af43804cd54bf4bd53b64fd49c0bb3",
+        "status": "PROMOTED",
+        "watermark_start": "evt_c2d6b77533164d1fbeab07f7e7b8a0cb",
+        "watermark_end": "evt_506c48c695cc4d078d45a4c652893e88",
+        "start_sequence": 170,
+        "end_sequence": 278,
+        "source_events": 109,
+        "source_tokens": 34644,
+        "source_envelope_tokens": 42995,
+        "effective_source_window_tokens": 119417,
+        "bounded_source_window": true,
+        "selected_items": 127,
+        "selected_tokens": 45749,
+        "selector_calls": 49,
+        "selector_input_tokens": 80874,
+        "selector_output_tokens": 4483,
+        "selector_latency_ms": 183012.74780009408,
+        "consolidator_calls": 1,
+        "consolidator_input_tokens": 71221,
+        "consolidator_output_tokens": 743,
+        "consolidator_latency_ms": 19060.050999978557,
+        "max_actual_request_tokens": 71221,
+        "max_estimated_request_tokens": 47698,
+        "provider_context_tokens": 524288,
+        "context_headroom_tokens": 453067,
+        "capsule_chars": 162,
+        "capsule_tokens": 40,
+        "validation_result": "PASS",
+        "promotion_result": "PROMOTED",
+        "failure_category": null,
+        "canonicalizer_calls": 0,
+        "exact_legal_provenance": true,
+        "unknown_provenance_ids": false,
+        "watermark_progression_exact": true,
+        "duplicate_selected_source_coverage": false,
+        "model_runs_succeeded": true,
+        "requests_below_provider_limit": true,
+        "promotion_cas_exact": true,
+        "started_at": "2026-08-23T22:11:35.315+00:00",
+        "finished_at": "2026-08-23T22:14:58.121+00:00",
+        "clean_promotion": true
+      }
+    ],
+    "model_runs_by_stage": [
+      {
+        "stage": "consolidator",
+        "calls": 5,
+        "input_tokens": 368740,
+        "output_tokens": 4490,
+        "wall_ms": 116216.97949999361
+      },
+      {
+        "stage": "selector",
+        "calls": 272,
+        "input_tokens": 415863,
+        "output_tokens": 18094,
+        "wall_ms": 831358.302500099
+      }
+    ]
+  },
+  "foreground_substitution": {
+    "present": false
+  },
+  "quality": {
+    "validation": {
+      "PI_NATIVE": {
+        "arm": "PI_NATIVE",
+        "cwd": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi",
+        "commands": {
+          "typecheck": {
+            "exit_code": 2,
+            "wall_ms": 1549.0843000006862,
+            "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_corrected_all_solar\\quality\\pi_native_typecheck.log",
+            "tail": "\n> freetoshop@0.1.0 typecheck\n> tsc -b\n\npackages/raster-engine/src/cloneStamp.ts(1,33): error TS2307: Cannot find module '../index.js' or its corresponding type declarations.\npackages/raster-engine/src/index.ts(10,3): error TS2440: Import declaration conflicts with local declaration of 'PixelPatch'.\n"
+          },
+          "build": {
+            "exit_code": 1,
+            "wall_ms": 5629.072999989148,
+            "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_corrected_all_solar\\quality\\pi_native_build.log",
+            "tail": "\n> freetoshop@0.1.0 build\n> npm run build --workspaces --if-present\n\n\n> @freetoshop/web@0.1.0 build\n> tsc -b && vite build\n\n../../packages/raster-engine/src/cloneStamp.ts(1,33): error TS2307: Cannot find module '../index.js' or its corresponding type declarations.\n../../packages/raster-engine/src/index.ts(10,3): error TS2440: Import declaration conflicts with local declaration of 'PixelPatch'.\n\n> @freetoshop/benchmarks@0.1.0 build\n> tsc -b\n\n../raster-engine/src/cloneStamp.ts(1,33): error TS2307: Cannot find module '../index.js' or its corresponding type declarations.\n../raster-engine/src/index.ts(10,3): error TS2440: Import declaration conflicts with local declaration of 'PixelPatch'.\n\n> @freetoshop/command-history@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/compositor@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/core-document@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/file-codecs@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/filter-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/persistence@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/pixel-storage@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/raster-engine@0.1.0 build\n> tsc -b\n\nsrc/cloneStamp.ts(1,33): error TS2307: Cannot find module '../index.js' or its corresponding type declarations.\nsrc/index.ts(10,3): error TS2440: Import declaration conflicts with local declaration of 'PixelPatch'.\n\n> @freetoshop/renderer@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/selection-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/text-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/transform-engine@0.1.0 build\n> tsc -b\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 2\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\apps\\web\nnpm error workspace @freetoshop/web@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\apps\\web\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b && vite build\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 2\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\packages\\benchmarks\nnpm error workspace @freetoshop/benchmarks@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\packages\\benchmarks\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 1\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\packages\\raster-engine\nnpm error workspace @freetoshop/raster-engine@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\packages\\raster-engine\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b\n\n"
+          }
+        }
+      },
+      "ORCHID": {
+        "arm": "ORCHID",
+        "cwd": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid",
+        "commands": {
+          "typecheck": {
+            "exit_code": 2,
+            "wall_ms": 1512.1058000077028,
+            "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_corrected_all_solar\\quality\\orchid_typecheck.log",
+            "tail": "\n> freetoshop@0.1.0 typecheck\n> tsc -b\n\npackages/raster-engine/src/index.test.ts(926,1): error TS1005: ']' expected.\n"
+          },
+          "build": {
+            "exit_code": 1,
+            "wall_ms": 5830.086300004041,
+            "output_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_corrected_all_solar\\quality\\orchid_build.log",
+            "tail": "\n> freetoshop@0.1.0 build\n> npm run build --workspaces --if-present\n\n\n> @freetoshop/web@0.1.0 build\n> tsc -b && vite build\n\n../../packages/raster-engine/src/index.test.ts(926,1): error TS1005: ']' expected.\n\n> @freetoshop/benchmarks@0.1.0 build\n> tsc -b\n\n../raster-engine/src/index.test.ts(926,1): error TS1005: ']' expected.\n\n> @freetoshop/command-history@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/compositor@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/core-document@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/file-codecs@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/filter-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/persistence@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/pixel-storage@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/raster-engine@0.1.0 build\n> tsc -b\n\nsrc/index.test.ts(926,1): error TS1005: ']' expected.\n\n> @freetoshop/renderer@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/selection-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/text-engine@0.1.0 build\n> tsc -b\n\n\n> @freetoshop/transform-engine@0.1.0 build\n> tsc -b\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 2\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\apps\\web\nnpm error workspace @freetoshop/web@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\apps\\web\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b && vite build\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 2\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\packages\\benchmarks\nnpm error workspace @freetoshop/benchmarks@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\packages\\benchmarks\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b\n\nnpm error Lifecycle script `build` failed with error:\nnpm error code 1\nnpm error path C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\packages\\raster-engine\nnpm error workspace @freetoshop/raster-engine@0.1.0\nnpm error location C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\packages\\raster-engine\nnpm error command failed\nnpm error command C:\\WINDOWS\\system32\\cmd.exe /d /s /c tsc -b\n\n"
+          }
+        }
+      }
+    },
+    "hidden_eval": {
+      "evaluator": "controller-private-clone-stamp-black-box-v1",
+      "oracle_commit": "71ed699e605ddfcec6f172d529040f39544dcc8f",
+      "source_sha256": "3f00b8a0b3acfe22c4b645c7b5d3a5efd7945143c42a82a08d13d2b184b3aee0",
+      "clone_test_name": "paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence",
+      "started_at": "2026-08-23T22:27:55.949+00:00",
+      "arms": {
+        "arm_a_pi": {
+          "exit_code": 1,
+          "timed_out": false,
+          "duration_ms": 98119.36130002141,
+          "stdout": "\n\nRunning 3 tests using 3 workers\n\n\n\n\n\n\n\n\n\n\n\n\n\n\u001b[1A\u001b[2K[1/3] [firefox] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence\n\u001b[1A\u001b[2K[2/3] [webkit] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence\n\u001b[1A\u001b[2K[3/3] [chromium] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence\n\n\n\n\n\n\n\n\n\u001b[1A\u001b[2K[4/3] (retries) [firefox] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #1)\n\u001b[1A\u001b[2K[5/3] (retries) [webkit] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #1)\n\n\n\n\n\n\n\n\n\u001b[1A\u001b[2K[6/3] (retries) [webkit] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #2)\n\u001b[1A\u001b[2K[7/3] (retries) [firefox] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #2)\n\u001b[1A\u001b[2K  1) [webkit] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\webkit-2203\\Playwright.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────\n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\webkit-2203\\Playwright.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────\n    test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-webkit-retry1\\trace.zip\n    Usage:\n\n        npx playwright show-trace test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-webkit-retry1\\trace.zip\n\n    ────────────────────────────────────────────────────────────────────────────────────────────────\n\n    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────\n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\webkit-2203\\Playwright.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n\n\u001b[1A\u001b[2K  2) [firefox] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\firefox-1490\\firefox\\firefox.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────\n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\firefox-1490\\firefox\\firefox.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────\n    test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-firefox-retry1\\trace.zip\n    Usage:\n\n        npx playwright show-trace test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-firefox-retry1\\trace.zip\n\n    ────────────────────────────────────────────────────────────────────────────────────────────────\n\n    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────\n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\firefox-1490\\firefox\\firefox.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n\n\n\n\n\n\u001b[1A\u001b[2K[8/3] (retries) [chromium] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #1)\n\n\n\n\n\u001b[1A\u001b[2K[9/3] (retries) [chromium] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #2)\n\u001b[1A\u001b[2K  3) [chromium] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n\n    \u001b[31mTest timeout of 30000ms exceeded.\u001b[39m\n\n    Error: locator.click: Test timeout of 30000ms exceeded.\n    Call log:\n    \u001b[2m  - waiting for getByRole('button', { name: 'Clone stamp' })\u001b[22m\n\n\n      2481 |   expect(await exportedPixel(page, 4, 20)).toEqual([0, 0, 220, 255]);\n      2482 |\n    > 2483 |   await page.getByRole('button', { name: 'Clone stamp' }).click();\n           |                                                           ^\n      2484 |   await expect(page.getByLabel('Tool options', { exact: true })).toContainText('Clone Stamp');\n      2485 |   await expect(page.getByText('Alt/Option-click to set clone source')).toBeVisible();\n      2486 |\n        at C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:2483:59\n\n    Error Context: test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-chromium\\error-context.md\n\n    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────\n\n    \u001b[31mTest timeout of 30000ms exceeded.\u001b[39m\n\n    Error: locator.click: Test timeout of 30000ms exceeded.\n    Call log:\n    \u001b[2m  - waiting for getByRole('button', { name: 'Clone stamp' })\u001b[22m\n\n\n      2481 |   expect(await exportedPixel(page, 4, 20)).toEqual([0, 0, 220, 255]);\n      2482 |\n    > 2483 |   await page.getByRole('button', { name: 'Clone stamp' }).click();\n           |                                                           ^\n      2484 |   await expect(page.getByLabel('Tool options', { exact: true })).toContainText('Clone Stamp');\n      2485 |   await expect(page.getByText('Alt/Option-click to set clone source')).toBeVisible();\n      2486 |\n        at C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:2483:59\n\n    Error Context: test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-chromium-retry1\\error-context.md\n\n    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────\n    test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-chromium-retry1\\trace.zip\n    Usage:\n\n        npx playwright show-trace test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-chromium-retry1\\trace.zip\n\n    ────────────────────────────────────────────────────────────────────────────────────────────────\n\n    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────\n\n    \u001b[31mTest timeout of 30000ms exceeded.\u001b[39m\n\n    Error: locator.click: Test timeout of 30000ms exceeded.\n    Call log:\n    \u001b[2m  - waiting for getByRole('button', { name: 'Clone stamp' })\u001b[22m\n\n\n      2481 |   expect(await exportedPixel(page, 4, 20)).toEqual([0, 0, 220, 255]);\n      2482 |\n    > 2483 |   await page.getByRole('button', { name: 'Clone stamp' }).click();\n           |                                                           ^\n      2484 |   await expect(page.getByLabel('Tool options', { exact: true })).toContainText('Clone Stamp');\n      2485 |   await expect(page.getByText('Alt/Option-click to set clone source')).toBeVisible();\n      2486 |\n        at C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi\\tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:2483:59\n\n    Error Context: test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-chromium-retry2\\error-context.md\n\n\n\u001b[1A\u001b[2K  3 failed\n    [chromium] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n    [firefox] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n    [webkit] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n",
+          "stderr": "\u001b[1A\u001b[2K\u001b[2m[WebServer] \u001b[22m(node:16212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n\u001b[2m[WebServer] \u001b[22m(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:33788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:10696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:16096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:16096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:10696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:33788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:12376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:13036) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:13036) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:12376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:18412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:13980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:13980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:18412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:25408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:25408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:14636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:14636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+        },
+        "arm_b_orchid": {
+          "exit_code": 1,
+          "timed_out": false,
+          "duration_ms": 97136.95320000988,
+          "stdout": "\n\nRunning 3 tests using 3 workers\n\n\n\n\n\n\n\n\n\n\n\n\n\n\u001b[1A\u001b[2K[1/3] [firefox] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence\n\u001b[1A\u001b[2K[2/3] [chromium] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence\n\u001b[1A\u001b[2K[3/3] [webkit] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence\n\n\n\n\n\n\n\n\n\u001b[1A\u001b[2K[4/3] (retries) [firefox] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #1)\n\u001b[1A\u001b[2K[5/3] (retries) [webkit] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #1)\n\n\n\n\n\n\n\n\n\u001b[1A\u001b[2K[6/3] (retries) [firefox] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #2)\n\u001b[1A\u001b[2K[7/3] (retries) [webkit] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #2)\n\u001b[1A\u001b[2K  1) [webkit] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\webkit-2203\\Playwright.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────\n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\webkit-2203\\Playwright.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────\n    test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-webkit-retry1\\trace.zip\n    Usage:\n\n        npx playwright show-trace test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-webkit-retry1\\trace.zip\n\n    ────────────────────────────────────────────────────────────────────────────────────────────────\n\n    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────\n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\webkit-2203\\Playwright.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n\n\u001b[1A\u001b[2K  2) [firefox] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\firefox-1490\\firefox\\firefox.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────\n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\firefox-1490\\firefox\\firefox.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────\n    test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-firefox-retry1\\trace.zip\n    Usage:\n\n        npx playwright show-trace test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-firefox-retry1\\trace.zip\n\n    ────────────────────────────────────────────────────────────────────────────────────────────────\n\n    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────\n\n    Error: browserType.launch: Executable doesn't exist at C:\\Users\\disti\\AppData\\Local\\ms-playwright\\firefox-1490\\firefox\\firefox.exe\n    ╔═════════════════════════════════════════════════════════════════════════╗\n    ║ Looks like Playwright Test or Playwright was just installed or updated. ║\n    ║ Please run the following command to download new browsers:              ║\n    ║                                                                         ║\n    ║     npx playwright install                                              ║\n    ║                                                                         ║\n    ║ <3 Playwright Team                                                      ║\n    ╚═════════════════════════════════════════════════════════════════════════╝\n\n\n\n\n\n\n\u001b[1A\u001b[2K[8/3] (retries) [chromium] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #1)\n\n\n\n\n\u001b[1A\u001b[2K[9/3] (retries) [chromium] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence (retry #2)\n\u001b[1A\u001b[2K  3) [chromium] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n\n    \u001b[31mTest timeout of 30000ms exceeded.\u001b[39m\n\n    Error: locator.click: Test timeout of 30000ms exceeded.\n    Call log:\n    \u001b[2m  - waiting for getByRole('button', { name: 'Clone stamp' })\u001b[22m\n\n\n      2481 |   expect(await exportedPixel(page, 4, 20)).toEqual([0, 0, 220, 255]);\n      2482 |\n    > 2483 |   await page.getByRole('button', { name: 'Clone stamp' }).click();\n           |                                                           ^\n      2484 |   await expect(page.getByLabel('Tool options', { exact: true })).toContainText('Clone Stamp');\n      2485 |   await expect(page.getByText('Alt/Option-click to set clone source')).toBeVisible();\n      2486 |\n        at C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:2483:59\n\n    Error Context: test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-chromium\\error-context.md\n\n    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────\n\n    \u001b[31mTest timeout of 30000ms exceeded.\u001b[39m\n\n    Error: locator.click: Test timeout of 30000ms exceeded.\n    Call log:\n    \u001b[2m  - waiting for getByRole('button', { name: 'Clone stamp' })\u001b[22m\n\n\n      2481 |   expect(await exportedPixel(page, 4, 20)).toEqual([0, 0, 220, 255]);\n      2482 |\n    > 2483 |   await page.getByRole('button', { name: 'Clone stamp' }).click();\n           |                                                           ^\n      2484 |   await expect(page.getByLabel('Tool options', { exact: true })).toContainText('Clone Stamp');\n      2485 |   await expect(page.getByText('Alt/Option-click to set clone source')).toBeVisible();\n      2486 |\n        at C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:2483:59\n\n    Error Context: test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-chromium-retry1\\error-context.md\n\n    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────\n    test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-chromium-retry1\\trace.zip\n    Usage:\n\n        npx playwright show-trace test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-chromium-retry1\\trace.zip\n\n    ────────────────────────────────────────────────────────────────────────────────────────────────\n\n    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────\n\n    \u001b[31mTest timeout of 30000ms exceeded.\u001b[39m\n\n    Error: locator.click: Test timeout of 30000ms exceeded.\n    Call log:\n    \u001b[2m  - waiting for getByRole('button', { name: 'Clone stamp' })\u001b[22m\n\n\n      2481 |   expect(await exportedPixel(page, 4, 20)).toEqual([0, 0, 220, 255]);\n      2482 |\n    > 2483 |   await page.getByRole('button', { name: 'Clone stamp' }).click();\n           |                                                           ^\n      2484 |   await expect(page.getByLabel('Tool options', { exact: true })).toContainText('Clone Stamp');\n      2485 |   await expect(page.getByText('Alt/Option-click to set clone source')).toBeVisible();\n      2486 |\n        at C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid\\tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:2483:59\n\n    Error Context: test-results\\benchmark-hidden-clone-sta-e19ca-pen-and-aligned-persistence-chromium-retry2\\error-context.md\n\n\n\u001b[1A\u001b[2K  3 failed\n    [chromium] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n    [firefox] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n    [webkit] › tests\\e2e\\benchmark-hidden-clone-stamp.spec.ts:3015:1 › paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence \n",
+          "stderr": "\u001b[1A\u001b[2K\u001b[2m[WebServer] \u001b[22m(node:15896) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n\u001b[2m[WebServer] \u001b[22m(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:34776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:15984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:16520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:34776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:15984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:16520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:13620) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:10136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:13620) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:10136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:33216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:6044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:33216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:6044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:28188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:28188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:27996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\u001b[1A\u001b[2K(node:27996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+        }
+      },
+      "ended_at": "2026-08-23T22:31:11.209+00:00"
+    },
+    "milestones": [
+      {
+        "arm": "PI_NATIVE",
+        "assistant_messages": 43,
+        "tool_calls": 73,
+        "tool_failures": 3,
+        "files_changed": 4,
+        "typecheck_exit": 2,
+        "build_exit": 1,
+        "hidden_exit": 1
+      },
+      {
+        "arm": "ORCHID",
+        "assistant_messages": 57,
+        "tool_calls": 73,
+        "tool_failures": 9,
+        "files_changed": 5,
+        "typecheck_exit": 2,
+        "build_exit": 1,
+        "hidden_exit": 1
+      }
+    ]
+  },
+  "selector_gpu": {
+    "present": false,
+    "reason": "selector GPU telemetry not recorded in artifact"
+  },
+  "driver": {
+    "started_at": "2026-08-23T21:51:48.661Z",
+    "ended_at": "2026-08-23T22:22:27.232Z",
+    "reason": "unrecoverable_controller_continuity_stall_follow_up_queued_while_idle",
+    "max_runtime_ms": 21600000,
+    "arms": {
+      "arm_a_pi": {
+        "name": "PI_NATIVE",
+        "launch_count": 1,
+        "prompt_count": 1,
+        "continuation_count": 1,
+        "provider_messages": 43,
+        "tool_calls": 73,
+        "tool_failures": 3,
+        "pi_native_compactions": 0,
+        "request_responses": 3,
+        "errors": [],
+        "git": {
+          "head": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa",
+          "status": " M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md\n?? packages/raster-engine/src/cloneStamp.ts\n?? packages/raster-engine/src/types.ts\n"
+        }
+      },
+      "arm_b_orchid": {
+        "name": "ORCHID",
+        "launch_count": 1,
+        "prompt_count": 1,
+        "continuation_count": 1,
+        "provider_messages": 57,
+        "tool_calls": 73,
+        "tool_failures": 9,
+        "pi_native_compactions": 0,
+        "request_responses": 3,
+        "errors": [],
+        "git": {
+          "head": "ef22afee503843305c28d47dbf966cd644f52401",
+          "status": " M packages/raster-engine/src/index.test.ts\n M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md\n?? packages/raster-engine/src/clone-stamp.ts\n"
+        }
+      }
+    }
+  }
+}

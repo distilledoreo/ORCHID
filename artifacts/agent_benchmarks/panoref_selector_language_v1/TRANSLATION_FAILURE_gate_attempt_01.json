@@ -1,0 +1,122 @@
+{
+  "completed_calls": [
+    {
+      "dense_content": "{\"content\": [{\"text\": \"是的——这现在是算法的真实实现，而不仅仅是遮挡基础。最新的头添加了 17 覆盖引擎文件、一个工作进程、UI 和测试。联合模式真正评估候选对，而不是贪婪地选择第一个 origin.\\n\\nRevised verdict\\n\\nAlgorithm 架构用于普通灰盒集：8/10\\n\\nCorrectness 的两种搜索模式：7.5/10\\n\\nReadiness 用于复杂导入集：4/10\\n\\nOverall: 很有希望，但我不会将其合并为生产就绪 yet.\\n\\n\\nThe math/search 设计大体正确。阻碍在于实现规模和一种危险的工作流程 decision.\\n\\nWhat 它得到了 right\\n\\nThe 表面采样器是确定性的，并使用双线性 coordinates.\\n\\nOrigin 评估 includes:\\n\\nactual 段遮挡、\\n\\ngeometric 面法线、\\n\\nviewing 角度、\\n\\napproximate 投影纹理密度、\\n\\nseparate 可见性和可用覆盖位集、\\n\\ncontinuous 质量 values.\\n\\n\\nThat 紧密遵循我们的算法。我们 designed.\\n\\nThe 联合对模式真正是联合的。它检查每个合法的粗粒度对，按位集并集排序它们，然后才应用质量和贡献平局打破器。它不会丢弃单独平庸但互补的起源 prematurely.\\n\\nThe 共享粗粒度到精细引擎也合理 organized:\\n\\n4、096 粗采样、\\n\\n256 候选、\\n\\nretained 对种子、\\n\\n24、576 精细采样、\\n\\nlocal 偏移、\\n\\nseparate 固定优先和联合 branches.\\n\\n\\nThe 测试覆盖确定性采样、双面遮挡、次要起源排序、非贪婪对排序、候选生成以及两种搜索 modes.\\n\\nBlockers\\n\\n1. 导入集可能产生零合法 candidates\\n\\nThis 是最大的正确性问题 issue.\\n\\nFor 每个非地板场景对象，提取器存储整个对象的轴对齐包围盒作为 obstacle.\\n\\nCandidate 清除距离则是从原点点到这些包围盒的距离，0.3 米内的候选被拒绝。任何位于 AABB 内部的点的距离为 zero.\\n\\nConsider 一个典型的导入 model:\\n\\nImported Set\\n├── floor\\n├── walls\\n├── furniture\\n└── props\\n\\nPanoRef 将其表示为一个导入的 SceneObject。其 AABB 可能包含整个房间。因此，房间内每个合理的相机原点都在\"障碍物边界内\"，获得零清除距离，并且是 rejected.\\n\\nThis 可以 affect:\\n\\na 完整 Maya 集作为单个 GLB 导入、\\n\\na 房间外壳和家具合并为一个网格、\\n\\nconcave 几何体、\\n\\nL-shaped 墙壁、\\n\\nany 大型模型，其 AABB 包含可导航的 space.\\n\\n\\nFix\\n\\nUse 实际几何体清除距离，而非对象 AABBs:\\n\\ncandidate 有效 =\\n    相机 sphere/capsule 不交叠附近 triangles\\n\\nThe 覆盖 BVH 可以通过点到三角形距离、球体相交或形状投射支持这一点。至少，障碍物边界应针对每个连接的网格或空间簇——而非针对导入集 object.\\n\\nAdd 一个包含房间地板、墙壁和空区域的单个导入对象的回归测试 interior.\\n\\n2. 几何表示无法扩展到重型 imports\\n\\nEvery 三角形被扩展在\"]}",
+      "dense_content_sha256": "19fcbe2e72e30e7926998b146301b08a8322b57e4f67785a6961bab436d2bddf",
+      "dense_metrics": {
+        "input_chars": 1584,
+        "output_chars": 1751,
+        "protected_token_count": 57,
+        "status": "SUCCEEDED",
+        "usage": {
+          "completion_tokens": 1057,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "prompt_tokens": 1157,
+          "total_tokens": 2214
+        },
+        "wall_ms": 88436.74249999458
+      },
+      "event_type": "message",
+      "faithful_content": "{\"content\": [{\"text\": \"是的——这现在是算法的真实实现，而不仅仅是遮挡基础。最新的头添加了 17 覆盖引擎文件、一个工作进程、UI 和测试。联合模式真正评估候选对，而不是贪婪地选择第一个 origin.\\n\\nRevised verdict\\n\\nAlgorithm 架构用于普通灰盒集：8/10\\n\\nCorrectness 的两种搜索模式：7.5/10\\n\\nReadiness 用于复杂导入集：4/10\\n\\nOverall: 很有希望，但我不会将其合并为生产就绪 yet.\\n\\n\\nThe math/search 设计大体正确。阻碍在于实现规模和一种危险的工作流程 decision.\\n\\nWhat 它得到了 right\\n\\nThe 表面采样器是确定性的，并使用双线性 coordinates.\\n\\nOrigin 评估 includes:\\n\\nactual 段遮挡、\\n\\ngeometric 面法线、\\n\\nviewing 角度、\\n\\napproximate 投影纹理密度、\\n\\nseparate 可见性和可用覆盖位集、\\n\\ncontinuous 质量 values.\\n\\n\\nThat 紧密遵循我们的算法。我们 designed.\\n\\nThe 联合对模式真正是联合的。它检查每个合法的粗粒度对，按位集并集排序它们，然后才应用质量和贡献平局打破器。它不会丢弃单独平庸但互补的起源 prematurely.\\n\\nThe 共享粗粒度到精细引擎也合理 organized:\\n\\n4、096 粗采样、\\n\\n256 候选、\\n\\nretained 对种子、\\n\\n24、576 精细采样、\\n\\nlocal 偏移、\\n\\nseparate 固定优先和联合 branches.\\n\\n\\nThe 测试覆盖确定性采样、双面遮挡、次要起源排序、非贪婪对排序、候选生成以及两种搜索 modes.\\n\\nBlockers\\n\\n1. 导入集可能产生零合法 candidates\\n\\nThis 是最大的正确性问题 issue.\\n\\nFor 每个非地板场景对象，提取器存储整个对象的轴对齐包围盒作为 obstacle.\\n\\nCandidate 清除距离则是从原点点到这些包围盒的距离，0.3 米内的候选被拒绝。任何位于 AABB 内部的点的距离为 zero.\\n\\nConsider 一个典型的导入 model:\\n\\nImported Set\\n├── floor\\n├── walls\\n├── furniture\\n└── props\\n\\nPanoRef 将其表示为一个导入的 SceneObject。其 AABB 可能包含整个房间。因此，房间内每个合理的相机原点都在\"障碍物边界内\"，获得零清除距离，并且是 rejected.\\n\\nThis 可以 affect:\\n\\na 完整 Maya 集作为单个 GLB 导入、\\n\\na 房间外壳和家具合并为一个网格、\\n\\nconcave 几何体、\\n\\nL-shaped 墙壁、\\n\\nany 大型模型，其 AABB 包含可导航的 space.\\n\\n\\nFix\\n\\nUse 实际几何体清除距离，而非对象 AABBs:\\n\\ncandidate 有效 =\\n    相机 sphere/capsule 不交叠附近 triangles\\n\\nThe 覆盖 BVH 可以通过点到三角形距离、球体相交或形状投射支持这一点。至少，障碍物边界应针对每个连接的网格或空间簇——而非针对导入集 object.\\n\\nAdd 一个包含房间地板、墙壁和空区域的单个导入对象的回归测试 interior.\\n\\n2. 几何表示无法扩展到重型 imports\\n\\nEvery 三角形被扩展在",
+      "faithful_content_sha256": "88caf8dfde08bf05d131f413447ec691a2aa7b387a748a23e0958d93c90c1aca",
+      "faithful_metrics": {
+        "input_chars": 3248,
+        "output_chars": 1748,
+        "protected_token_count": 57,
+        "status": "SUCCEEDED",
+        "usage": {
+          "completion_tokens": 1053,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "prompt_tokens": 1140,
+          "total_tokens": 2193
+        },
+        "wall_ms": 88122.2437999968
+      },
+      "item_id": "panoref_evt_000582::span::000000",
+      "original_content_sha256": "d1455864305e01d2485272bd31b529e9f65fd2283626f1b4e3553fabae7c549a",
+      "status": "TRANSLATED"
+    },
+    {
+      "event_type": "custom_tool_call_output",
+      "item_id": "panoref_evt_000923::span::000002",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "custom_tool_call",
+      "item_id": "panoref_evt_000924",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "custom_tool_call_output",
+      "item_id": "panoref_evt_000925",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "function_call_output",
+      "item_id": "panoref_evt_000934::span::000004",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "custom_tool_call",
+      "item_id": "panoref_evt_000935",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "custom_tool_call",
+      "item_id": "panoref_evt_000958",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "custom_tool_call_output",
+      "item_id": "panoref_evt_000961::span::000004",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "custom_tool_call_output",
+      "item_id": "panoref_evt_000961::span::000010",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "custom_tool_call_output",
+      "item_id": "panoref_evt_000970",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "function_call",
+      "item_id": "panoref_evt_000971",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "function_call_output",
+      "item_id": "panoref_evt_000972",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "function_call",
+      "item_id": "panoref_evt_000973",
+      "status": "UNCHANGED"
+    },
+    {
+      "event_type": "function_call_output",
+      "item_id": "panoref_evt_000974",
+      "status": "UNCHANGED"
+    },
+    {
+      "error": "ValueError: translator changed protected tokens: ['ORCHIDKEEP00000X', 'ORCHIDKEEP00003X', 'ORCHIDKEEP00004X']",
+      "event_type": "message",
+      "item_id": "panoref_evt_000975",
+      "status": "FAILED"
+    }
+  ],
+  "failure": {
+    "error": "ValueError: translator changed protected tokens: ['ORCHIDKEEP00000X', 'ORCHIDKEEP00003X', 'ORCHIDKEEP00004X']",
+    "event_type": "message",
+    "item_id": "panoref_evt_000975",
+    "status": "FAILED"
+  },
+  "scope": "gate"
+}

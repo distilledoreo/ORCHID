@@ -1,0 +1,16 @@
+{
+  "repeat": 2,
+  "budget": 2000,
+  "condition": "recursive_raw_solar_plain_text_budget_instruction",
+  "no_retry_within_run": true,
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+  "raw_plan": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\arm_c_raw_solar\\batch_plan.json",
+  "oracle": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_direct_consolidation\\semantic_oracle\\deterministic_checks.jsonl",
+  "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+  "raw_plan_sha256": "b50194fb9a7af32c096a9b5dbb5ab88905aa8e9b992903b054346cf1b60755aa",
+  "oracle_sha256": "9c5b7f4f9e6c0bc7af514901666e91ce1e47fb047ccaa7b6bb9db6f5f195cd0c",
+  "phase3_oracle_manifest_sha256": "8fb7696c32206bb156f725e1dec2ca04f42ed97fe2dda2dde275c1b812931add",
+  "system_prompt_sha256": "7140c156c0599f7f5252af6b584603873288a603ba3a14b2cf9a0ee0d290e14a",
+  "base_system_prompt_sha256": "2bbf1efc4212723633749ae52fba0e19ab96a0a9d6833c831962cb684ff66a35",
+  "runner_error": null
+}

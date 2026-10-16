@@ -1,0 +1,72 @@
+{
+  "generation": 139,
+  "content": "GitHub PR #23 (https://github.com/distilledoreo/PanoRef/pull/23) is MERGEABLE with mergeStateStatus=CLEAN, commit headRefOid=80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a. All status checks passed at 2026-07-19T13:48:03Z (netlify/panoref/deploy-preview state=SUCCESS) and three Netlify checks concluded NEUTRAL. Local `npm test` reports 303/303 tests passed. Branch t3code/projector-occlusion is at 80882e33, origin/main is at 3a901743, indicating the branch is ahead by one commit.",
+  "events": [
+    {
+      "id": "panoref_evt_001175",
+      "sequence": 1175,
+      "content": "{\"call_id\": \"call_JR5JUrshrcrFj3vqxrVYbc0r\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd6124688819482e20f5b529f5df5\", \"input\": \"const r = await tools.shell_command({command:\\\"rg -n \\\\\\\"303|371|372|373|test count|tests pass\\\\\\\" docs README.md; gh pr view 23 --json headRefOid,mergeable,mergeStateStatus,statusCheckRollup,url; git status --short --branch; git rev-parse HEAD; git ls-remote origin refs/heads/main refs/heads/t3code/projector-occlusion\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":30000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+      "content_hash": "ed026122db3172f929eda5ce76ebaa16070179b9f51a2777e344e65a97e6a032",
+      "event_type": "custom_tool_call",
+      "role": "assistant"
+    },
+    {
+      "id": "panoref_evt_001176",
+      "sequence": 1176,
+      "content": "{\"call_id\": \"call_JR5JUrshrcrFj3vqxrVYbc0r\", \"id\": \"ctco_019f7aa4-474c-7af1-a6aa-8911951db79f\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 1.4 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 1.4 seconds\\nOutput:\\ndocs\\\\ui-revamp-regression-audit.md:298:| `npm test` | 303/303 passed |\\r\\n{\\\"headRefOid\\\":\\\"80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\\",\\\"mergeStateStatus\\\":\\\"CLEAN\\\",\\\"mergeable\\\":\\\"MERGEABLE\\\",\\\"statusCheckRollup\\\":[{\\\"__typename\\\":\\\"CheckRun\\\",\\\"completedAt\\\":\\\"2026-07-19T13:48:03Z\\\",\\\"conclusion\\\":\\\"NEUTRAL\\\",\\\"detailsUrl\\\":\\\"https://app.netlify.com/projects/panoref/deploys/6a5cd583b860f600070846ce\\\",\\\"name\\\":\\\"Header rules - panoref\\\",\\\"startedAt\\\":\\\"2026-07-19T13:47:48Z\\\",\\\"status\\\":\\\"COMPLETED\\\",\\\"workflowName\\\":\\\"\\\"},{\\\"__typename\\\":\\\"CheckRun\\\",\\\"completedAt\\\":\\\"2026-07-19T13:48:03Z\\\",\\\"conclusion\\\":\\\"NEUTRAL\\\",\\\"detailsUrl\\\":\\\"https://app.netlify.com/projects/panoref/deploys/6a5cd583b860f600070846ce\\\",\\\"name\\\":\\\"Pages changed - panoref\\\",\\\"startedAt\\\":\\\"2026-07-19T13:47:48Z\\\",\\\"status\\\":\\\"COMPLETED\\\",\\\"workflowName\\\":\\\"\\\"},{\\\"__typename\\\":\\\"CheckRun\\\",\\\"completedAt\\\":\\\"2026-07-19T13:48:03Z\\\",\\\"conclusion\\\":\\\"NEUTRAL\\\",\\\"detailsUrl\\\":\\\"https://app.netlify.com/projects/panoref/deploys/6a5cd583b860f600070846ce\\\",\\\"name\\\":\\\"Redirect rules - panoref\\\",\\\"startedAt\\\":\\\"2026-07-19T13:47:48Z\\\",\\\"status\\\":\\\"COMPLETED\\\",\\\"workflowName\\\":\\\"\\\"},{\\\"__typename\\\":\\\"StatusContext\\\",\\\"context\\\":\\\"netlify/panoref/deploy-preview\\\",\\\"startedAt\\\":\\\"2026-07-19T13:48:07Z\\\",\\\"state\\\":\\\"SUCCESS\\\",\\\"targetUrl\\\":\\\"https://deploy-preview-23--panoref.netlify.app\\\"}],\\\"url\\\":\\\"https://github.com/distilledoreo/PanoRef/pull/23\\\"}\\n## t3code/projector-occlusion...origin/t3code/projector-occlusion\\n80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\n3a9017438ef6ecccd4d029bc8b10f9eec4352c66\\trefs/heads/main\\n80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\trefs/heads/t3code/projector-occlusion\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+      "content_hash": "2f14e5d728d8949e1b23605bd1ed8987014b79b6caa3a078c5b8ffa7127fbe6b",
+      "event_type": "custom_tool_call_output",
+      "role": "tool"
+    },
+    {
+      "id": "panoref_evt_001177",
+      "sequence": 1177,
+      "content": "{\"call_id\": \"call_Ns5SV3dzRavXNMYzVZ8qJzvi\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd61e9d0881948ce7de0a54997328\", \"input\": \"const r = await tools.shell_command({command:\\\"Get-Content docs/ui-revamp-regression-audit.md | Select-Object -Skip 282 -First 25; git diff --check origin/main...HEAD\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":30000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+      "content_hash": "ed026fce70eec1e8cdc9bb447b73bb6cee3c2dd3ba95d0fc14d20228a6cc867d",
+      "event_type": "custom_tool_call",
+      "role": "assistant"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "\"\\\"headRefOid\\\":\\\"80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\\",\\\"mergeStateStatus\\\":\\\"CLEAN\\\",\\\"mergeable\\\":\\\"MERGEABLE\\\"\"",
+          "source_id": "panoref_evt_001176"
+        },
+        {
+          "excerpt": "\"{\\\"__typename\\\":\\\"StatusContext\\\",\\\"context\\\":\\\"netlify/panoref/deploy-preview\\\",\\\"state\\\":\\\"SUCCESS\\\"\"",
+          "source_id": "panoref_evt_001176"
+        },
+        {
+          "excerpt": "\"docs\\\\ui-revamp-regression-audit.md:298:| \\`npm test\\` | 303/303 passed |\"",
+          "source_id": "panoref_evt_001176"
+        },
+        {
+          "excerpt": "\"80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\trefs/heads/t3code/projector-occlusion\\n3a9017438ef6ecccd4d029bc8b10f9eec4352c66\\trefs/heads/main\"",
+          "source_id": "panoref_evt_001176"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "PR #23 is mergeable and all checks pass; tests 303/303 passed."
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "\"80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\trefs/heads/t3code/projector-occlusion\\n3a9017438ef6ecccd4d029bc8b10f9eec4352c66\\trefs/heads/main\"",
+          "source_id": "panoref_evt_001176"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Branch t3code/projector-occlusion is one commit ahead of origin/main."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_001175",
+    "panoref_evt_001176"
+  ]
+}

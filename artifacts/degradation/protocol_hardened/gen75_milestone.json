@@ -1,0 +1,268 @@
+{
+  "generation": 75,
+  "first_semantic_failure": {
+    "generation": 50,
+    "verdict": "FAIL",
+    "cause": {
+      "selector": "PASS",
+      "provenance_lineage": "PASS",
+      "awake_recall": "PASS",
+      "capsule_current_facts": "still present",
+      "capsule_no_resurrection": "FAIL",
+      "detail": "obsolete values were being represented as current; superseded current compaction_generation=3,4,5,7,30,35,40; superseded current lease_seconds=30",
+      "residue_count": 10,
+      "capsule_chars": 770
+    },
+    "immutable": true
+  },
+  "first_selector_protocol_failure": {
+    "generation": 63,
+    "verdict": "FAILED",
+    "error": "selector returned ID outside current chunk",
+    "immutable": true
+  },
+  "capsule": {
+    "id": "cap_2605f5f47f1049ffafc58b78146d6d30",
+    "base_capsule_id": "cap_0b2d12c1506447d487ba9d0bf4be90cb",
+    "content": "Project: Orchid Memory Gateway. Owner: Disti. Timezone: America/New_York. Lease Duration: 900 seconds. Database Status: SQLite selected (Postgres rejected). Compaction Generation: Current (75). Promotion Policy: Promote READY descendants with compare-and-swap against the active capsule. Job Recovery Policy: Expired RUNNING jobs restart only if recover_expired_jobs is true. Event Model: Events are append-only; corrections add a new event. Preferences: Coffee order is black coffee; favorite color is teal. Lab Mascot: Okapi. Caching: A coworker mentioned Redis caching, but no decision was made. Additional Log: Protected-tail padding after generation 30 (pads 0 through 7), after generation 35 (pads 0 through 7), after generation 40 (pads 0 through 7), after generation 51 (pads 0 through 7), after generation 56 (pads 0 through 7), after generation 57 (pads 0 through 7), after generation 62 (pads 0 through 7), and after generation 63 (pads 0 through 7) recorded; Filler chatter for compaction generation 67 (notes 0 through 3) recorded.",
+    "chars": 1044,
+    "source_event_hash": "14a43d2393cac92f36b100d23226d3097f41dbb6eef97d89e5fca1a57ddda2ea",
+    "input_hash": "4908101b9016280f2b058b990d1a9e33eb79638688862910a3029b61af003107",
+    "output_hash": "3867ad2a8faba3fad7af0f807514db25fb69fc2b66f9b86793e85fef5e2a41ae",
+    "capsule_hash": "b0854b16b064b3ab58eba86d4248f3a691caa94238a5696936e8d8c0b957bcd5",
+    "covered_start_event_id": "evt_62cbce11bc794a0fa9b51e26771fa8e0",
+    "covered_end_event_id": "evt_3536268d983646ca8bc35c94757d301a"
+  },
+  "lineage_depth": 75,
+  "history": {
+    "authoritative_raw_event_count": 983,
+    "authoritative_raw_chars": 80359,
+    "authoritative_raw_tokens": 19536,
+    "covered_watermark_event_id": "evt_3536268d983646ca8bc35c94757d301a",
+    "covered_watermark_sequence": 983,
+    "uncompacted_backlog_events": 0,
+    "uncompacted_backlog_chars": 0,
+    "uncompacted_backlog_tokens": 0,
+    "capsule_chars": 1044,
+    "capsule_tokens": 261,
+    "compression_ratio_vs_history": 76.97222222222223
+  },
+  "taxonomy": {
+    "residue": [
+      "superseded:compaction_generation=9",
+      "rejected:database=Postgres"
+    ],
+    "residue_count": 2,
+    "residue_all": [
+      "superseded:compaction_generation=1",
+      "superseded:compaction_generation=2",
+      "superseded:compaction_generation=3",
+      "superseded:compaction_generation=4",
+      "superseded:compaction_generation=5",
+      "superseded:compaction_generation=6",
+      "superseded:compaction_generation=7",
+      "superseded:compaction_generation=9",
+      "superseded:compaction_generation=30",
+      "superseded:compaction_generation=35",
+      "superseded:compaction_generation=40",
+      "superseded:compaction_generation=51",
+      "superseded:compaction_generation=56",
+      "superseded:compaction_generation=57",
+      "superseded:compaction_generation=62",
+      "superseded:compaction_generation=63",
+      "superseded:compaction_generation=67",
+      "superseded:lease_seconds=30",
+      "rejected:database=Postgres"
+    ],
+    "resurrection": [
+      "superseded current compaction_generation=1",
+      "superseded current compaction_generation=2",
+      "superseded current compaction_generation=3",
+      "superseded current compaction_generation=4",
+      "superseded current compaction_generation=5",
+      "superseded current compaction_generation=6",
+      "superseded current compaction_generation=7",
+      "superseded current compaction_generation=30",
+      "superseded current compaction_generation=35",
+      "superseded current compaction_generation=40",
+      "superseded current compaction_generation=51",
+      "superseded current compaction_generation=56",
+      "superseded current compaction_generation=57",
+      "superseded current compaction_generation=62",
+      "superseded current compaction_generation=63",
+      "superseded current compaction_generation=67",
+      "superseded current lease_seconds=30"
+    ],
+    "resurrection_count": 17,
+    "rejected_option_corruption": [],
+    "rejected_option_corruption_count": 0,
+    "current_fact_loss": [],
+    "current_fact_loss_count": 0,
+    "invented_state": [],
+    "invented_state_count": 0,
+    "conditional_corruption": [],
+    "conditional_corruption_count": 0,
+    "selector_loss": [],
+    "selector_loss_count": 0,
+    "awake_recall_failure": [],
+    "awake_recall_failure_count": 0,
+    "semantic_error_count": 17
+  },
+  "metrics": {
+    "generation": 75,
+    "active_capsule_id": "cap_2605f5f47f1049ffafc58b78146d6d30",
+    "base_capsule_id": "cap_0b2d12c1506447d487ba9d0bf4be90cb",
+    "compaction_latency_ms": 28747.290300001623,
+    "first_semantic_failure_generation": 50,
+    "authoritative_raw_event_count": 983,
+    "authoritative_raw_chars": 80359,
+    "authoritative_raw_tokens": 19536,
+    "covered_watermark_event_id": "evt_3536268d983646ca8bc35c94757d301a",
+    "covered_watermark_sequence": 983,
+    "uncompacted_backlog_events": 0,
+    "uncompacted_backlog_chars": 0,
+    "uncompacted_backlog_tokens": 0,
+    "capsule_chars": 1044,
+    "capsule_tokens": 261,
+    "compression_ratio_vs_history": 76.97222222222223,
+    "job_id": "job_a3a20081fc0a48a491dc9ea0b5e39a06",
+    "snapshot_start_event_id": "evt_62cbce11bc794a0fa9b51e26771fa8e0",
+    "snapshot_end_event_id": "evt_3536268d983646ca8bc35c94757d301a",
+    "selector_chunks": 1,
+    "canonicalizer_batches": 1,
+    "selected_reference_count": 1,
+    "gemini_input_tokens": 1394,
+    "gemini_output_tokens": 311,
+    "gemini_reasoning_tokens": 0,
+    "gemini_latency_ms": 3722.7576000004774,
+    "provider_attempt_count": 1,
+    "model_run_statuses": [
+      "SUCCEEDED",
+      "SUCCEEDED",
+      "SUCCEEDED"
+    ],
+    "residue_count": 2,
+    "resurrection_count": 17,
+    "current_fact_loss_count": 0,
+    "invented_state_count": 0,
+    "conditional_corruption_count": 0,
+    "rejected_option_corruption_count": 0,
+    "selector_loss_count": 0,
+    "awake_recall_failure_count": 0,
+    "semantic_error_count": 17,
+    "residue": [
+      "superseded:compaction_generation=9",
+      "rejected:database=Postgres"
+    ],
+    "resurrection": [
+      "superseded current compaction_generation=1",
+      "superseded current compaction_generation=2",
+      "superseded current compaction_generation=3",
+      "superseded current compaction_generation=4",
+      "superseded current compaction_generation=5",
+      "superseded current compaction_generation=6",
+      "superseded current compaction_generation=7",
+      "superseded current compaction_generation=30",
+      "superseded current compaction_generation=35",
+      "superseded current compaction_generation=40",
+      "superseded current compaction_generation=51",
+      "superseded current compaction_generation=56",
+      "superseded current compaction_generation=57",
+      "superseded current compaction_generation=62",
+      "superseded current compaction_generation=63",
+      "superseded current compaction_generation=67",
+      "superseded current lease_seconds=30"
+    ],
+    "current_fact_loss": [],
+    "healed": {},
+    "first_seen": {
+      "resurrection": 50,
+      "residue": 63
+    },
+    "solar_checkpoint": {
+      "passed": false,
+      "fails": [
+        "capsule:no_resurrection"
+      ]
+    }
+  },
+  "checkpoint": {
+    "passed": false,
+    "probes": [
+      {
+        "layer": "provenance",
+        "name": "lineage_depth",
+        "passed": true,
+        "detail": "depth=75 expected=75"
+      },
+      {
+        "layer": "provenance",
+        "name": "source_facts_left_tail",
+        "passed": true,
+        "detail": "fact_events_in_tail=0"
+      },
+      {
+        "layer": "selector",
+        "name": "selector_retention",
+        "passed": true,
+        "detail": "all still-valid introducing events selected"
+      },
+      {
+        "layer": "capsule",
+        "name": "current_facts_present",
+        "passed": true,
+        "detail": "all still-valid values present in capsule"
+      },
+      {
+        "layer": "capsule",
+        "name": "no_resurrection",
+        "passed": false,
+        "detail": "superseded current compaction_generation=1; superseded current compaction_generation=2; superseded current compaction_generation=3; superseded current compaction_generation=4; superseded current compaction_generation=5; superseded current compaction_generation=6; superseded current compaction_generation=7; superseded current compaction_generation=30; superseded current compaction_generation=35; superseded current compaction_generation=40; superseded current compaction_generation=51; superseded current compaction_generation=56; superseded current compaction_generation=57; superseded current compaction_generation=62; superseded current compaction_generation=63; superseded current compaction_generation=67; superseded current lease_seconds=30"
+      },
+      {
+        "layer": "capsule",
+        "name": "no_invented_state",
+        "passed": true,
+        "detail": "no invented store/cache decision"
+      },
+      {
+        "layer": "capsule",
+        "name": "conditionals_remain_conditional",
+        "passed": true,
+        "detail": "conditional preserved"
+      },
+      {
+        "layer": "capsule",
+        "name": "superseded_residue",
+        "passed": true,
+        "detail": "19 obsolete mentions: superseded:compaction_generation=1, superseded:compaction_generation=2, superseded:compaction_generation=3, superseded:compaction_generation=4, superseded:compaction_generation=5, superseded:compaction_generation=6, superseded:compaction_generation=7, superseded:compaction_generation=9, superseded:compaction_generation=30, superseded:compaction_generation=35, superseded:compaction_generation=40, superseded:compaction_generation=51, superseded:compaction_generation=56, superseded:compaction_generation=57, superseded:compaction_generation=62, superseded:compaction_generation=63, superseded:compaction_generation=67, superseded:lease_seconds=30, rejected:database=Postgres"
+      },
+      {
+        "layer": "recall",
+        "name": "awake_recall",
+        "passed": true,
+        "detail": "Solar matched still-valid state"
+      },
+      {
+        "layer": "recall",
+        "name": "recall_no_invented_state",
+        "passed": true,
+        "detail": "no extra recall claims"
+      }
+    ],
+    "recall_answers": {
+      "q1": "900 seconds",
+      "q2": "Only if recover_expired_jobs is true",
+      "q3": "SQLite selected",
+      "q4": "Yes, Postgres rejected",
+      "q5": "Orchid Memory Gateway",
+      "q6": "Disti",
+      "q7": "America/New_York",
+      "q8": "Events are append-only; corrections add a new event",
+      "q9": "Promote READY descendants with compare-and-swap against the active capsule",
+      "q10": "Okapi",
+      "q11": "black coffee",
+      "q12": "teal"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "historical_snapshot": "db24908e582c1642a001abd2feca4ec47b1947f8",
+  "source_trees_identical": true,
+  "node": "v24.12.0",
+  "npm": "11.6.2",
+  "commands": {
+    "typecheck": {"arm_a_pi": {"exit_code": 0}, "arm_b_orchid": {"exit_code": 0}},
+    "lint": {"arm_a_pi": {"exit_code": 0}, "arm_b_orchid": {"exit_code": 0}},
+    "format:check": {"arm_a_pi": {"exit_code": 1}, "arm_b_orchid": {"exit_code": 1}},
+    "test": {"arm_a_pi": {"exit_code": 1}, "arm_b_orchid": {"exit_code": 1}},
+    "build": {"arm_a_pi": {"exit_code": 0}, "arm_b_orchid": {"exit_code": 0}},
+    "test:e2e -- --list": {"arm_a_pi": {"exit_code": 0}, "arm_b_orchid": {"exit_code": 0}}
+  },
+  "preexisting_failures": [
+    {
+      "command": "format:check",
+      "detail": "251 pre-existing formatting warnings/files reported by the historical snapshot"
+    },
+    {
+      "command": "test",
+      "detail": "509/510 tests passed; packages/selection-engine/src/index.test.ts timed out on the 4096-square complement morphology tile-bounded test at about 5.5-5.8 seconds"
+    }
+  ],
+  "logs": {
+    "arm_a_pi": "baseline_test_results/arm_a_pi/",
+    "arm_b_orchid": "baseline_test_results/arm_b_orchid/"
+  }
+}

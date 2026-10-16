@@ -1,0 +1,45 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 91,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001064' for item mem_22c94dca73b6681507829d15",
+        "excerpt not found in source 'panoref_evt_001064' for item mem_520e93241304fe1ad44d24da",
+        "excerpt not found in source 'panoref_evt_001064' for item mem_520e93241304fe1ad44d24da",
+        "excerpt not found in source 'panoref_evt_001064' for item mem_520e93241304fe1ad44d24da"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Independent audit in progress: first audit found unpublished rebase and large prop-top ambiguity; both fixed via explicit allowed-floor bounds and force-pushed rebased branch. PR #23 is mergeable per GitHub. Plan step 7 (independent adversarial completion audits and repair gaps) is in_progress; all other steps including unit/type/build/WebGL/browser/workflow verification, 100K+ integration test, complex imported-set benchmark, and rebase/publishing are completed. A wait_agent call timed out at panoref_evt_001067, and a second wait_agent call was issued at panoref_evt_001068.",
+      "envelope_json": "{\"generation\":91,\"items\":[{\"evidence\":[{\"excerpt\":\"\\\"the first independent audit found an unpublished rebase and ambiguity for large prop tops. Both are fixed: explicit allowed-floor bounds were added and tested, the rebased branch was force-pushed with lease, and GitHub now reports PR #23 mergeable. Audit round two is running.\\\"\",\"source_id\":\"panoref_evt_001064\"}],\"id\":\"mem_22c94dca73b6681507829d15\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Independent adversarial completion audit is in progress; prior unrelated structural fixes have been completed and PR #23 is mergeable.\"},{\"evidence\":[{\"excerpt\":\"\\\"step: Run independent adversarial completion audits and repair every concrete gap\\\",\\\"status: \\\\\\\"in_progress\\\\\\\"\\\"\",\"source_id\":\"panoref_evt_001064\"},{\"excerpt\":\"\\\"step: Run unit, type, build, WebGL, browser, and workflow verification\\\\\\\",\\\\\\\"status\\\\\\\":\\\\\\\"completed\\\\\\\"\\\"\",\"source_id\":\"panoref_evt_001064\"},{\"excerpt\":\"\\\"step: Add a 100K+ full optimizer integration test and execute a real complex imported-set benchmark\\\\\\\",\\\\\\\"status\\\\\\\":\\\\\\\"completed\\\\\\\"\\\"\",\"source_id\":\"panoref_evt_001064\"}],\"id\":\"mem_520e93241304fe1ad44d24da\",\"kind\":\"decision\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Remaining work is adversarial completion auditing; prior implementation, testing, and publishing steps are completed.\"},{\"evidence\":[{\"excerpt\":\"\\\"Wait timed out.\\\"\",\"source_id\":\"panoref_evt_001067\"},{\"excerpt\":\"\\\"timed_out\\\":true\",\"source_id\":\"panoref_evt_001067\"}],\"id\":\"mem_75e72b86cf7904d7357a1d9f\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Previous wait_agent call timed out while awaiting audit progression, triggering a follow-up wait_agent call.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 91,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001064' for item mem_22c94dca73b6681507829d15",
+        "excerpt not found in source 'panoref_evt_001064' for item mem_520e93241304fe1ad44d24da",
+        "excerpt not found in source 'panoref_evt_001064' for item mem_520e93241304fe1ad44d24da",
+        "excerpt not found in source 'panoref_evt_001064' for item mem_520e93241304fe1ad44d24da"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

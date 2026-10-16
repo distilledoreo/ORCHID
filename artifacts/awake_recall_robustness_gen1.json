@@ -1,0 +1,189 @@
+{
+  "contract": {
+    "prompt_version": "awake-recall-instruction-v2-generic",
+    "prompt_sha256": "3378a4b676fd74d3eda2b359adba4b0194b53515d0093138083543ea79bade11",
+    "schema_version": "orchid_endurance_recall_v2",
+    "schema_sha256": "f29b8def722225544a01cd14688327dad11c234168b1baf4d72ff4e18deff187",
+    "instruction": "Answer from the supplied memory only. Do not invent missing values. Preserve qualifiers, conditions, exceptions, negation, rejection, and uncertainty. Do not collapse a conditional policy into a bare boolean. When a requested value is a quantity, preserve the value and the unit or meaning represented by memory. Do not copy unrelated nearby text into another field. If a field is unknown, use null. Do not use empty strings. Return JSON only.",
+    "minLength": 1,
+    "null_still_allowed": true,
+    "benchmark_specific_mappings": false
+  },
+  "frozen_capsule_id": "cap_afb3cc81568144488febf4b4a403ce51",
+  "frozen_capsule_sha256": "4d4a3c37781ec818248e665268292f9c510f2198d32010b3d26770721f085062",
+  "phase2_structured": {
+    "http_status": 200,
+    "wall_ms": 11546.2,
+    "endpoint": "https://openrouter.ai/api",
+    "model": "upstage/solar-pro4",
+    "temperature": 0,
+    "retries": 0,
+    "request_input_hash": "3af416ff9c8febe799d546d8d38e491ad8a177b6a1b288d9babdb39b893ede97",
+    "finish_reason": "stop",
+    "input_tokens": 616,
+    "output_tokens": 131,
+    "response_sha256": "71b60f70fd6beab00858aff9faa148676bb273bb146942cc0cc7f6f7b18c1d93",
+    "answers": {
+      "project_name": "Orchid Memory Gateway",
+      "owner": "Disti",
+      "timezone": "America/New_York",
+      "lease_seconds": null,
+      "database": "Undecided",
+      "database_rejected": null,
+      "recover_expired_jobs": null,
+      "event_model": "append-only",
+      "promotion": "Coffee order is oat latte; favorite color is teal.",
+      "backend_model": "Solar Pro4",
+      "coffee_order": "oat latte",
+      "favorite_color": "teal"
+    },
+    "score": {
+      "passed": false,
+      "probes": [
+        {
+          "name": "awake_recall",
+          "passed": false,
+          "detail": "lease_seconds expected '30' got None; recover_expired_jobs expected 'expired RUNNING jobs restart only if recover_expired_jobs is true' got None; event_model expected 'events are append-only; corrections add a new event' got 'append-only'"
+        },
+        {
+          "name": "recall_no_invented_state",
+          "passed": false,
+          "detail": "promotion=Coffee order is oat latte; favorite color is teal.; backend_model=Solar Pro4"
+        }
+      ],
+      "answers": {
+        "project_name": "Orchid Memory Gateway",
+        "owner": "Disti",
+        "timezone": "America/New_York",
+        "lease_seconds": null,
+        "database": "Undecided",
+        "database_rejected": null,
+        "recover_expired_jobs": null,
+        "event_model": "append-only",
+        "promotion": "Coffee order is oat latte; favorite color is teal.",
+        "backend_model": "Solar Pro4",
+        "coffee_order": "oat latte",
+        "favorite_color": "teal"
+      },
+      "supported_by_capsule": {
+        "project_name": true,
+        "owner": true,
+        "timezone": true,
+        "lease_seconds": null,
+        "database": true,
+        "database_rejected": null,
+        "recover_expired_jobs": null,
+        "event_model": true,
+        "promotion": true,
+        "backend_model": false,
+        "coffee_order": true,
+        "favorite_color": true
+      }
+    },
+    "prompt_tokens_estimate": 404
+  },
+  "phase3_natural_language": {
+    "http_status": 200,
+    "wall_ms": 1843.9,
+    "endpoint": "https://openrouter.ai/api",
+    "model": "upstage/solar-pro4",
+    "temperature": 0,
+    "retries": 0,
+    "finish_reason": "stop",
+    "input_tokens": 608,
+    "output_tokens": 82,
+    "text": "1) The remembered lease duration is 30 seconds.\n2) Expired running jobs restart only if `recover_expired_jobs` is true.\n3) The current database status is \"Undecided.\"\n4) I do not know. The memory capsule does not mention any alternative database option being rejected.\n5) The remembered coffee order is oat latte, and the favorite color is teal.",
+    "score": {
+      "lease_duration_recalled": true,
+      "conditional_policy_recalled": true,
+      "database_status_recalled": true,
+      "no_false_postgres_rejection": true,
+      "coffee_recalled": true,
+      "color_recalled": true,
+      "text": "1) The remembered lease duration is 30 seconds.\n2) Expired running jobs restart only if `recover_expired_jobs` is true.\n3) The current database status is \"Undecided.\"\n4) I do not know. The memory capsule does not mention any alternative database option being rejected.\n5) The remembered coffee order is oat latte, and the favorite color is teal.",
+      "passed": true
+    }
+  },
+  "phase4_unrelated_control": {
+    "capsule_sha256": "25a9841949cf40ff84e80d6478e52c1c9b40aaae72acbd64db47f3b446ad12b9",
+    "schema_version": "orchid_unrelated_recall_v2",
+    "schema_sha256": "620533bbbd265622e51ecb4fbf42025adc18de49ac9956108975d9b3cf9ea9e8",
+    "structured": {
+      "http_status": 200,
+      "wall_ms": 3339.4,
+      "endpoint": "https://openrouter.ai/api",
+      "model": "upstage/solar-pro4",
+      "temperature": 0,
+      "retries": 0,
+      "request_input_hash": "2ed5073ee5336b3c9185f072c42efacd13b327c6ad998954e27018e9e1f90c03",
+      "finish_reason": "stop",
+      "input_tokens": 266,
+      "output_tokens": 108,
+      "response_sha256": "e92869c61d162912f634e8d1898b94bc8818d0cb8f7176740a9a164700839bc7",
+      "answers": {
+        "destination": "Kyoto",
+        "departure_date": "18 April 2027",
+        "budget": "1,850,000 JPY",
+        "weather_plan": "pack a rain jacket only if the morning forecast shows precipitation",
+        "rejected_transport": "overnight highway bus",
+        "meal_preference": "pescatarian",
+        "gate_detail": "the hostel lockbox code reminder was written on a blue sticky note"
+      },
+      "score": {
+        "answers": {
+          "destination": "Kyoto",
+          "departure_date": "18 April 2027",
+          "budget": "1,850,000 JPY",
+          "weather_plan": "pack a rain jacket only if the morning forecast shows precipitation",
+          "rejected_transport": "overnight highway bus",
+          "meal_preference": "pescatarian",
+          "gate_detail": "the hostel lockbox code reminder was written on a blue sticky note"
+        },
+        "expected": {
+          "destination": "Kyoto",
+          "departure_date": "18 April 2027",
+          "budget": "1,850,000 JPY",
+          "weather_plan": "pack a rain jacket only if the morning forecast shows precipitation",
+          "rejected_transport": "overnight highway bus",
+          "meal_preference": "pescatarian",
+          "gate_detail": "blue sticky note"
+        },
+        "field_hits": {
+          "destination": true,
+          "departure_date": true,
+          "budget": true,
+          "weather_plan": true,
+          "rejected_transport": true,
+          "meal_preference": true,
+          "gate_detail": true
+        },
+        "passed": true,
+        "conditional_preserved": true,
+        "supported_by_capsule": {
+          "destination": true,
+          "departure_date": true,
+          "budget": true,
+          "weather_plan": true,
+          "rejected_transport": true,
+          "meal_preference": true,
+          "gate_detail": true
+        }
+      }
+    },
+    "natural_language": {
+      "destination": true,
+      "corrected_date": true,
+      "budget": true,
+      "conditional_weather": true,
+      "rejected_bus": true,
+      "meal": true,
+      "low_salience": true,
+      "text": "1) The trip is going to Kyoto.\n2) The current departure date is 18 April 2027, and yes, an earlier date of 3 April 2027 was corrected.\n3) The budget amount remembered is 1,850,000 JPY.\n4) A rain jacket should be packed only if the morning forecast shows precipitation.\n5) The overnight highway bus was the transport option that was rejected.\n6) The meal preference remembered is pescatarian.\n7) The low-salience hostel detail noted is that the hostel lockbox code reminder was written on a blue sticky note.",
+      "passed": true,
+      "http_status": 200,
+      "wall_ms": 7030.8,
+      "input_tokens": 278,
+      "output_tokens": 134
+    }
+  }
+}

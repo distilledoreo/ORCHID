@@ -1,0 +1,4 @@
+{
+  "status": "NOT_RUN",
+  "reason": "No candidate has yet completed a full frozen replay with zero unresolved failures, semantic evaluation, and a rate above 75 tok/s."
+}

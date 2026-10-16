@@ -1,0 +1,5 @@
+{
+  "arm": "ARM_D_ROLE_AFFINITY",
+  "status": "NOT_RUN",
+  "reason": "NOT_RUN: no validated persistent endpoint slot/session-affinity primitive was exposed by the configured LM Studio API."
+}

@@ -1,0 +1,35 @@
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-001", "checkpoint": "review", "generation": 0, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-002", "checkpoint": "review", "generation": 0, "missing_all": [], "missing_any": ["connected-component", "connected component"], "status": "FAIL"}
+{"category": "BLOCKER_PRESERVATION", "check_id": "spot-003", "checkpoint": "review", "generation": 0, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_INTENT_PRESERVATION", "check_id": "spot-004", "checkpoint": "final-request", "generation": 0, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CONTINUATION_SUFFICIENCY", "check_id": "spot-005", "checkpoint": "final-request", "generation": 0, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-001", "checkpoint": "review", "generation": 1, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-002", "checkpoint": "review", "generation": 1, "missing_all": [], "missing_any": ["connected-component", "connected component"], "status": "FAIL"}
+{"category": "BLOCKER_PRESERVATION", "check_id": "spot-003", "checkpoint": "review", "generation": 1, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_INTENT_PRESERVATION", "check_id": "spot-004", "checkpoint": "final-request", "generation": 1, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CONTINUATION_SUFFICIENCY", "check_id": "spot-005", "checkpoint": "final-request", "generation": 1, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-001", "checkpoint": "review", "generation": 2, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-002", "checkpoint": "review", "generation": 2, "missing_all": [], "missing_any": ["connected-component", "connected component"], "status": "FAIL"}
+{"category": "BLOCKER_PRESERVATION", "check_id": "spot-003", "checkpoint": "review", "generation": 2, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_INTENT_PRESERVATION", "check_id": "spot-004", "checkpoint": "final-request", "generation": 2, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CONTINUATION_SUFFICIENCY", "check_id": "spot-005", "checkpoint": "final-request", "generation": 2, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-001", "checkpoint": "review", "generation": 3, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-002", "checkpoint": "review", "generation": 3, "missing_all": [], "missing_any": ["connected-component", "connected component"], "status": "FAIL"}
+{"category": "BLOCKER_PRESERVATION", "check_id": "spot-003", "checkpoint": "review", "generation": 3, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_INTENT_PRESERVATION", "check_id": "spot-004", "checkpoint": "final-request", "generation": 3, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CONTINUATION_SUFFICIENCY", "check_id": "spot-005", "checkpoint": "final-request", "generation": 3, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-001", "checkpoint": "review", "generation": 4, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-002", "checkpoint": "review", "generation": 4, "missing_all": [], "missing_any": ["connected-component", "connected component"], "status": "FAIL"}
+{"category": "BLOCKER_PRESERVATION", "check_id": "spot-003", "checkpoint": "review", "generation": 4, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_INTENT_PRESERVATION", "check_id": "spot-004", "checkpoint": "final-request", "generation": 4, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CONTINUATION_SUFFICIENCY", "check_id": "spot-005", "checkpoint": "final-request", "generation": 4, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-001", "checkpoint": "review", "generation": 5, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-002", "checkpoint": "review", "generation": 5, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "BLOCKER_PRESERVATION", "check_id": "spot-003", "checkpoint": "review", "generation": 5, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_INTENT_PRESERVATION", "check_id": "spot-004", "checkpoint": "final-request", "generation": 5, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CONTINUATION_SUFFICIENCY", "check_id": "spot-005", "checkpoint": "final-request", "generation": 5, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-001", "checkpoint": "review", "generation": 6, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_FACT_PRESERVATION", "check_id": "spot-002", "checkpoint": "review", "generation": 6, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "BLOCKER_PRESERVATION", "check_id": "spot-003", "checkpoint": "review", "generation": 6, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CURRENT_INTENT_PRESERVATION", "check_id": "spot-004", "checkpoint": "final-request", "generation": 6, "missing_all": [], "missing_any": [], "status": "PASS"}
+{"category": "CONTINUATION_SUFFICIENCY", "check_id": "spot-005", "checkpoint": "final-request", "generation": 6, "missing_all": [], "missing_any": [], "status": "PASS"}

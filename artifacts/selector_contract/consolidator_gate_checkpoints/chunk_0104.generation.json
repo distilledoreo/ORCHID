@@ -1,0 +1,74 @@
+{
+  "generation": 105,
+  "content": "The CoverageOptimizerPanel is a React component that provides a UI for coverage optimization. It accepts project, primaryPano, and onSetCaptureOrigin props. The component tracks optimization mode (default 'fixed-first'), status ('idle' | 'running' | 'complete' | 'failed'), and result state. It calculates captureOrigin from primaryPano or project.scene.panoOrigin, and derives floorRegion bounds from captureOrigin and cameraHeight. The analyze function extracts scene geometry via extractCoverageScene and runs coverage optimization, supporting cancellation and progress tracking.",
+  "events": [
+    {
+      "id": "panoref_evt_001111::span::000000",
+      "sequence": 1111,
+      "content": "{\"call_id\": \"call_qunLtZnYs1Lr7GEwdJ57pqC8\", \"id\": \"ctco_019f7a9c-0c7e-7a62-9d43-f73eb61463c1\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 0.4 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 0.4 seconds\\nOutput:\\nimport React, { useEffect, useRef, useState } from 'react';\\r\\nimport type { LocationProject, PanoReference, Vec3 } from '../../domain/types';\\r\\nimport {\\r\\n  extractCoverageScene,\\r\\n  runCoverageOptimization,\\r\\n  type CoverageBounds,\\r\\n  type CoverageOptimizationMode,\\r\\n  type CoverageOptimizationResult,\\r\\n  type CoverageOptimizationTask,\\r\\n} from '../../engine/projectionCoverage';\\r\\nimport { Field, Select, TextInput, Toggle } from './Field';\\r\\n\\r\\nfunction percent(value: number): string {\\r\\n  return `${(value * 100).toFixed(1)}%`;\\r\\n}\\r\\n\\r\\nfunction originLabel(origin: Vec3): string {\\r\\n  return origin.map((value) => value.toFixed(2)).join(', ');\\r\\n}\\r\\n\\r\\nexport function CoverageOptimizerPanel({\\r\\n  project,\\r\\n  primaryPano,\\r\\n  onSetCaptureOrigin,\\r\\n}: {\\r\\n  project: LocationProject;\\r\\n  primaryPano?: PanoReference;\\r\\n  onSetCaptureOrigin?: (origin: Vec3) => void;\\r\\n}) {\\r\\n  const [mode, setMode] = useState<CoverageOptimizationMode>('fixed-first');\\r\\n  const [status, setStatus] = useState<'idle' | 'running' | 'complete' | 'failed'>('idle');\\r\\n  const [statusMessage, setStatusMessage] = useState('');\\r\\n  const [result, setResult] = useState<CoverageOptimizationResult>();\\r\\n  const cameraHeight = project.settings.defaultCameraHeightMeters ?? 1.6;\\r\\n  const captureOrigin = primaryPano?.origin ?? project.scene.panoOrigin;\\r\\n  const [restrictFloorRegion, setRestrictFloorRegion] = useState(false);\\r\\n  const [floorRegion, setFloorRegion] = useState<CoverageBounds>(() => ({\\r\\n    min: [captureOrigin[0] - 5, captureOrigin[1] - cameraHeight - 0.25, captureOrigin[2] - 5],\\r\\n    max: [captureOrigin[0] + 5, captureOrigin[1] - cameraHeight + 0.25, captureOrigin[2] + 5],\\r\\n  }));\\r\\n  const floorRegionIsValid = floorRegion.min.every(Number.isFinite)\\r\\n    && floorRegion.max.every(Number.isFinite)\\r\\n    && floorRegion.min.every((value, axis) => value <= floorRegion.max[axis]);\\r\\n  const taskRef = useRef<CoverageOptimizationTask>();\\r\\n  const analysisIdRef = useRef(0);\\r\\n\\r\\n  useEffect(() => () => {\\r\\n    analysisIdRef.current += 1;\\r\\n    taskRef.current?.cancel();\\r\\n  }, []);\\r\\n\\r\\n  const analyze = async () => {\\r\\n    taskRef.current?.cancel();\\r\\n    const analysisId = analysisIdRef.current + 1;\\r\\n    analysisIdRef.current = analysisId;\\r\\n    setResult(undefined);\\r\\n    setStatus('running');\\r\\n    setStatusMessage('Preparing indexed scene geometry…');\\r\\n    try {\\r\\n      const scene = await extractCoverageScene(\\r\\n        project,\\r\\n        (_progress, message) => {\\r\\n          if (analysisIdRef.current === analysisId) setStatusMessage(message);\\r\\n        },\\r\\n        restrictFloorRegion ? [floorRegion] : undefined,\\r\\n      );\\r\\n      if (analysisIdRef.current !== analysisId) return;\\r\\n      const task = r",
+      "content_hash": "5c6900fae1220039ede63c46e76e6e173b499e893a7adedbf06fd5d0f80844f3",
+      "event_type": "custom_tool_call_output",
+      "role": "tool"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "export function CoverageOptimizerPanel({\n  project,\n  primaryPano,\n  onSetCaptureOrigin,\n}",
+          "source_id": "panoref_evt_001111::span::000000"
+        }
+      ],
+      "kind": "artifact",
+      "status": "active",
+      "text": "CoverageOptimizerPanel component interface: accepts project: LocationProject, primaryPano?: PanoReference, onSetCaptureOrigin?: (origin: Vec3) => void"
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "const cameraHeight = project.settings.defaultCameraHeightMeters ?? 1.6;\n  const captureOrigin = primaryPano?.origin ?? project.scene.panoOrigin;",
+          "source_id": "panoref_evt_001111::span::000000"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "text": "cameraHeight defaults to 1.6m from project.settings.defaultCameraHeightMeters; captureOrigin derived from primaryPano.origin or project.scene.panoOrigin"
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "const floorRegion = useState<CoverageBounds>(() => ({\n    min: [captureOrigin[0] - 5, captureOrigin[1] - cameraHeight - 0.25, captureOrigin[2] - 5],\n    max: [captureOrigin[0] + 5, captureOrigin[1] - cameraHeight + 0.25, captureOrigin[2] + 5],\n  }));",
+          "source_id": "panoref_evt_001111::span::000000"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "text": "Default floorRegion bounds: min=[captureOrigin[0]-5, captureOrigin[1]-cameraHeight-0.25, captureOrigin[2]-5], max=[captureOrigin[0]+5, captureOrigin[1]-cameraHeight+0.25, captureOrigin[2]+5]"
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "const analyze = async () => {\n    taskRef.current?.cancel();\n    ...",
+          "source_id": "panoref_evt_001111::span::000000"
+        }
+      ],
+      "kind": "decision",
+      "status": "active",
+      "text": "analyze function cancels previous task before starting new analysis"
+    },
+    {
+      "evidence": [
+        {
+          "excerpt": "const scene = await extractCoverageScene(\n        project,\n        (_progress, message) => {\n          if (analysisIdRef.current === analysisId) setStatusMessage(message);\n        },\n        restrictFloorRegion ? [floorRegion] : undefined,\n      );",
+          "source_id": "panoref_evt_001111::span::000000"
+        }
+      ],
+      "kind": "decision",
+      "status": "active",
+      "text": "extractCoverageScene called with project, progress callback, and optional floorRegion constraint when restrictFloorRegion is enabled"
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_001111::span::000000"
+  ]
+}

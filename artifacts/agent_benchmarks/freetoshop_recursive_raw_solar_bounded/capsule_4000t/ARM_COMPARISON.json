@@ -1,0 +1,99 @@
+{
+  "capsule_budget_tokens": 4000,
+  "status": "FAILED",
+  "full_trace_completed": false,
+  "completed_generations": 12,
+  "planned_generations": 18,
+  "source_tokens_retired": 139101,
+  "planned_source_tokens": 202761,
+  "wall_seconds": 954.8043486000025,
+  "retirement_tok_per_second": 145.685344022531,
+  "margin_vs_arrival": 86.53734402253102,
+  "provider_input_tokens": 228112,
+  "provider_output_tokens": 39025,
+  "timeout_count": 1,
+  "failure_count": 1,
+  "semantic_pass": 90,
+  "semantic_fail": 12,
+  "current_fact_losses": 0,
+  "intent_blocker_continuation_losses": 12,
+  "resurrection_failures": 0,
+  "invention_failures": 0,
+  "capsule_by_generation": [
+    {
+      "generation": 0,
+      "estimated_tokens": 1636,
+      "chars": 6547,
+      "base_estimated_tokens": 1
+    },
+    {
+      "generation": 1,
+      "estimated_tokens": 3318,
+      "chars": 13273,
+      "base_estimated_tokens": 1636
+    },
+    {
+      "generation": 2,
+      "estimated_tokens": 4013,
+      "chars": 16053,
+      "base_estimated_tokens": 3318
+    },
+    {
+      "generation": 3,
+      "estimated_tokens": 4054,
+      "chars": 16219,
+      "base_estimated_tokens": 4013
+    },
+    {
+      "generation": 4,
+      "estimated_tokens": 3146,
+      "chars": 12587,
+      "base_estimated_tokens": 4054
+    },
+    {
+      "generation": 5,
+      "estimated_tokens": 3073,
+      "chars": 12295,
+      "base_estimated_tokens": 3146
+    },
+    {
+      "generation": 6,
+      "estimated_tokens": 3255,
+      "chars": 13023,
+      "base_estimated_tokens": 3073
+    },
+    {
+      "generation": 7,
+      "estimated_tokens": 3473,
+      "chars": 13895,
+      "base_estimated_tokens": 3255
+    },
+    {
+      "generation": 8,
+      "estimated_tokens": 4124,
+      "chars": 16498,
+      "base_estimated_tokens": 3473
+    },
+    {
+      "generation": 9,
+      "estimated_tokens": 4224,
+      "chars": 16896,
+      "base_estimated_tokens": 4124
+    },
+    {
+      "generation": 10,
+      "estimated_tokens": 4224,
+      "chars": 16896,
+      "base_estimated_tokens": 4224
+    },
+    {
+      "generation": 11,
+      "estimated_tokens": 6993,
+      "chars": 27975,
+      "base_estimated_tokens": 4224
+    }
+  ],
+  "max_capsule_estimated_tokens": 6993,
+  "final_capsule_estimated_tokens": 6993,
+  "first_to_final_capsule_ratio": 4.2744498777506115
+}

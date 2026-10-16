@@ -1,0 +1,43 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 25,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000961::span::000002' for item mem_c5addb1599fa1f0d74328959",
+        "excerpt not found in source 'panoref_evt_000961::span::000002' for item mem_68a01a314b0f777a5fc54a87",
+        "excerpt not found in source 'panoref_evt_000961::span::000002' for item mem_6c5d7fdffaef23a88bc7aaae"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "extractCoverageScene uses forEachProjectMesh to iterate visible non-helper non-sun_marker objects, creates Object3D roots, extracts triangles-only THREE.Mesh instances with position attributes, visits each mesh indicating whether the object is a floor, and disposes roots after traversal; work is chunked via yieldToMainThread to avoid monopolizing the browser event loop. copyPositionAttribute copies position data in chunks of COPY_CHUNK_VALUES values for unnormalized non-interleaved itemSize-3 attributes, otherwise copies per vertex in chunks of COPY_CHUNK_VALUES/3 vertices, yielding to the main thread between chunks.",
+      "envelope_json": "{\"generation\":25,\"items\":[{\"evidence\":[{\"excerpt\":\"const objects = project.scene.objects.filter((object) => object.visible && object.type !== 'sun_marker' && object.category !== 'helper',);\",\"source_id\":\"panoref_evt_000961::span::000002\"}],\"id\":\"mem_c5addb1599fa1f0d74328959\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"forEachProjectMesh iterates only visible objects that are not sun_marker and do not have category 'helper'.\"},{\"evidence\":[{\"excerpt\":\"for (const mesh of meshes) await visit(mesh, object.type === 'floor');\",\"source_id\":\"panoref_evt_000961::span::000002\"},{\"excerpt\":\"const root = createObject3D(object, false, 'light', project.assets);\",\"source_id\":\"panoref_evt_000961::span::000002\"},{\"excerpt\":\"disposeExtractedNode(root);\",\"source_id\":\"panoref_evt_000961::span::000002\"}],\"id\":\"mem_857d7999eff9b3bb380475c8\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"For each project object, extractCoverageScene creates an Object3D root, traverses it to collect THREE.Mesh children that have a position attribute, visits each resulting mesh with explicitFloor=true when object.type==='floor', and disposes the temporary root afterward.\"},{\"evidence\":[{\"excerpt\":\"async function copyPositionAttribute(target: Float32Array, targetOffset: number, attribute: THREE.BufferAttribute | THREE.InterleavedBufferAttribute): Promise<void> {\",\"source_id\":\"panoref_evt_000961::span::000002\"},{\"excerpt\":\"if (!attribute.normalized && !(attribute instanceof THREE.InterleavedBufferAttribute) && attribute.itemSize === 3) {\",\"source_id\":\"panoref_evt_000961::span::000002\"},{\"excerpt\":\"for (let offset = 0; offset < source.length; offset += COPY_CHUNK_VALUES) {\",\"source_id\":\"panoref_evt_000961::span::000002\"},{\"excerpt\":\"if (end < source.length) await yieldToMainThread();\",\"source_id\":\"panoref_evt_000961::span::000002\"},{\"excerpt\":\"for (let vertex = 0; vertex < attribute.count; vertex += 1) {\",\"source_id\":\"panoref_evt_000961::span::000002\"},{\"excerpt\":\"if (vertex > 0 && vertex % (COPY_CHUNK_VALUES / 3) === 0) await yieldToMainThread();\",\"source_id\":\"panoref_evt_000961::span::000002\"}],\"id\":\"mem_68a01a314b0f777a5fc54a87\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"copyPositionAttribute handles copying position buffer data in two paths: a direct typed-array copy path for simple unnormalized non-interleaved 3-component attributes using COPY_CHUNK_VALUES-sized ranges, and a per-vertex accessor path for other attributes using chunks of COPY_CHUNK_VALUES/3 vertices, with main-thread yields between chunks in both paths.\"},{\"evidence\":[{\"excerpt\":\"Work is chunked between objects and large buffer ranges so complex imports do not monopolize the browser event loop before worker optimization begins.\",\"source_id\":\"panoref_evt_000961::span::000002\"},{\"excerpt\":\"await yieldToMainThread();\",\"source_id\":\"panoref_evt_000961::span::000002\"},{\"excerpt\":\"return new Promise((resolve) => setTimeout(resolve, 0));\",\"source_id\":\"panoref_evt_000961::span::000002\"}],\"id\":\"mem_6c5d7fdffaef23a88bc7aaae\",\"kind\":\"constraint\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"extractCoverageScene yields to the main thread between processed objects and within large attribute copies via setTimeout(0) to prevent monopolizing the browser event loop.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 25,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000961::span::000002' for item mem_c5addb1599fa1f0d74328959",
+        "excerpt not found in source 'panoref_evt_000961::span::000002' for item mem_68a01a314b0f777a5fc54a87",
+        "excerpt not found in source 'panoref_evt_000961::span::000002' for item mem_6c5d7fdffaef23a88bc7aaae"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

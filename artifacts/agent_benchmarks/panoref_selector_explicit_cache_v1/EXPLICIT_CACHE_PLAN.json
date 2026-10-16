@@ -1,0 +1,122 @@
+{
+  "api_models_endpoint": "http://127.0.0.1:1234/api/v1/models",
+  "backend_load_fields": [
+    {
+      "key": "llm.load.contextLength",
+      "value": 32768
+    },
+    {
+      "key": "llm.load.numParallelSessions",
+      "value": 1
+    },
+    {
+      "key": "llm.load.llama.contextCheckpoints",
+      "value": 32
+    },
+    {
+      "key": "llm.load.llama.flashAttention",
+      "value": true
+    },
+    {
+      "key": "llm.load.llama.acceleration.offloadRatio",
+      "value": 1
+    },
+    {
+      "key": "llm.load.llama.evalBatchSize",
+      "value": 2048
+    }
+  ],
+  "baseline_backend_snapshot_at_freeze": {
+    "config": {
+      "context_checkpoints": 32,
+      "context_length": 32768,
+      "eval_batch_size": 2048,
+      "flash_attention": true,
+      "offload_kv_cache_to_gpu": true,
+      "parallel": 1,
+      "physical_batch_size": 512,
+      "reasoning_budget_message": "",
+      "speculative_draft_max_tokens": 16,
+      "speculative_draft_min_continue_probability": 0.75,
+      "speculative_draft_min_tokens": 0,
+      "speculative_draft_model": "",
+      "speculative_draft_mtp": false,
+      "speculative_draft_simple": false
+    },
+    "id": "qwen3.5-4b@q6_k"
+  },
+  "chunk_count": 148,
+  "chunk_plan_sha256": "74ff93c68bde03cdb0676e6ce478620d6b273f610826dad95959c3615fb65873",
+  "chunk_target_tokens": 1200,
+  "condition_order": [
+    "BASELINE_CURRENT_32",
+    "EXPLICIT_PREFIX_148"
+  ],
+  "conditions": {
+    "BASELINE_CURRENT_32": {
+      "context_checkpoints": 32,
+      "designation": "fresh dedicated baseline instance, current default checkpoint capacity",
+      "instance_identifier": "qwen3.5-4b@q6_k",
+      "model": "qwen3.5-4b@q6_k"
+    },
+    "EXPLICIT_PREFIX_148": {
+      "context_checkpoints": 148,
+      "designation": "fresh dedicated serial instance with one checkpoint budget per frozen selector call",
+      "instance_identifier": "orchid-prefix-cache-validation",
+      "model": "orchid-prefix-cache-validation"
+    }
+  },
+  "created_at": "2026-08-22T22:01:08.360+00:00",
+  "durability": {
+    "changing_chunks": "covered by the full 148-call trace",
+    "request_cleanup": "close the HTTP client, issue a subsequent selector request, then record instance state",
+    "short_idle_seconds": 2.0,
+    "solar_between_selector_calls": {
+      "reason": "the existing selector apparatus completes the selector stage before Solar; inserting Solar would change workflow ordering",
+      "run": false
+    }
+  },
+  "endpoint": "http://127.0.0.1:1234/v1",
+  "explicit_backend_change": {
+    "baseline_value": 32,
+    "control_transport": "LM Studio SDK internal loadModel channel with raw KVConfig fields; benchmark-only, no ORCHID production change",
+    "explicit_value": 148,
+    "only_changed_field": "llm.load.llama.contextCheckpoints",
+    "reason": "avoid checkpoint-capacity eviction across the exact 148-call frozen trace; capacity chosen before outcomes"
+  },
+  "historical_reference": {
+    "downstream_seconds": 229.30000000000018,
+    "end_to_end_wall_seconds": 2034.4,
+    "freetoshop_arrival_tokens_per_second": 59.148,
+    "retired_source_tokens": 138149,
+    "selector_wall_seconds": 1805.1
+  },
+  "no_concurrency": true,
+  "no_decode_optimization": true,
+  "no_prompt_restructuring": true,
+  "no_retries": true,
+  "plan_sha256": "fd1a2f332ccee1f894f1408cbdbcaa9369bde6d654c81ca1cd7c2c0fcb9d21e8",
+  "prior_profile_config": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_microprofile_v1\\PROFILE_CONFIG.json",
+  "prior_profile_config_sha256": "19157d0b9e59859182b512d24f2b26e9bfbba17aea76f49e8cca0246e1d7d4d2",
+  "prior_profile_sample_sha256": "fa4083f3fc17978cc255cd52e1a305daed4e10b6573b3b43cdc0d4477f227aa4",
+  "profile_generation": {
+    "reasoning_effort": "none",
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    },
+    "temperature": 0,
+    "top_p": 1
+  },
+  "prompt_version": "selector-v1",
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_direct_generalization_bounded_v2\\frozen_panoref_replay\\events.jsonl",
+  "replay_sha256": "aa0e7326c2514501a8c53a5a2c4669b1512383507989e71403d4e6f00f7eaf07",
+  "schema_version": "panoref-selector-explicit-cache-plan-v1",
+  "source_commit": "7ddac7b628ab4303053af16b72dd69b7a9de2437",
+  "system_prompt": "You select durable-memory source items. Return JSON only with exactly {\"selected_event_ids\":[\"source-item-id\"]}. Select only whole-event or source-span IDs present in the input; do not summarize or rewrite items.",
+  "telemetry_thresholds": {
+    "cold_regression_ms_gte": 5000.0,
+    "low_ttft_ms_lt": 1000.0
+  },
+  "timeout_seconds": 180.0
+}

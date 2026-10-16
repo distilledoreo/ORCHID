@@ -1,0 +1,36 @@
+{
+  "pi_native": {
+    "path": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-a-pi",
+    "head": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa",
+    "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+    "status": "M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md\n?? packages/raster-engine/src/cloneStamp.ts\n?? packages/raster-engine/src/types.ts\n?? tests/e2e/benchmark-hidden-clone-stamp.spec.ts",
+    "baseline": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa",
+    "changed_files": [
+      "ackages/raster-engine/src/index.ts",
+      "packages/raster-engine/src/cloneStamp.ts",
+      "packages/raster-engine/src/index.ts",
+      "packages/raster-engine/src/types.ts",
+      "tests/e2e/benchmark-hidden-clone-stamp.spec.ts"
+    ],
+    "changed_file_count": 5,
+    "diff_stat": "packages/raster-engine/src/index.ts | 64 +++++++++++++++++++++++++++++++++++++\n 1 file changed, 64 insertions(+)",
+    "commits_after_baseline": ""
+  },
+  "orchid": {
+    "path": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_corrected_all_solar_20260823\\arm-b-orchid",
+    "head": "ef22afee503843305c28d47dbf966cd644f52401",
+    "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+    "status": "M packages/raster-engine/src/index.test.ts\n M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md\n?? packages/raster-engine/src/clone-stamp.ts",
+    "baseline": "ef22afee503843305c28d47dbf966cd644f52401",
+    "changed_files": [
+      "ackages/raster-engine/src/index.test.ts",
+      "packages/raster-engine/src/clone-stamp.ts",
+      "packages/raster-engine/src/index.test.ts",
+      "packages/raster-engine/src/index.ts",
+      "warning: in the working copy of 'packages/raster-engine/src/index.test.ts', LF will be replaced by CRLF the next time Git touches it"
+    ],
+    "changed_file_count": 5,
+    "diff_stat": "warning: in the working copy of 'packages/raster-engine/src/index.test.ts', LF will be replaced by CRLF the next time Git touches it\n packages/raster-engine/src/index.test.ts | 27 +++++++++++++++++++++++++++\n packages/raster-engine/src/index.ts      | 30 ++++++++++++++++++++++++++++++\n 2 files changed, 57 insertions(+)",
+    "commits_after_baseline": ""
+  }
+}

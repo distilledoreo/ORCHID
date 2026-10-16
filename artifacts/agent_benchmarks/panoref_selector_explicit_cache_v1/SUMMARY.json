@@ -1,0 +1,135 @@
+{
+  "baseline_metrics": {
+    "calls": 148,
+    "cold_or_regression_calls_gte_5000ms": 142,
+    "decision_hashes": 148,
+    "decode_ms_backend": {
+      "count": 0,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null
+    },
+    "decode_ms_client_observed": {
+      "count": 148,
+      "mean": 2808.7922945949786,
+      "p50": 2031.6320999991149,
+      "p95": 5550.42573499959,
+      "p99": 7279.283251999295
+    },
+    "errors": 0,
+    "explicit_backend_field_rows": 0,
+    "failed": 0,
+    "first_low_ttft_call_index": null,
+    "low_ttft_calls_lt_1000ms": 0,
+    "prompt_eval_ms_backend": {
+      "count": 0,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null
+    },
+    "queue_wait_ms_backend": {
+      "count": 0,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null
+    },
+    "succeeded": 148,
+    "timeouts": 0,
+    "total_selector_wall_ms": 1819158.7124000944,
+    "total_wall_ms": {
+      "count": 148,
+      "mean": 12291.61292162226,
+      "p50": 10960.485549992882,
+      "p95": 19987.21143499279,
+      "p99": 20767.46646399639
+    },
+    "ttft_ms": {
+      "count": 148,
+      "mean": 9482.82062702728,
+      "p50": 8416.264899991802,
+      "p95": 15228.950579998493,
+      "p99": 16119.577875990944
+    },
+    "warmup_wall_ms_to_first_low_ttft": null
+  },
+  "completed_at": "2026-08-22T23:05:30.089+00:00",
+  "decision_equivalence": {
+    "compared": 148,
+    "divergences": [],
+    "identical": 148,
+    "match_fraction": 1.0,
+    "planned": 148,
+    "retries": 0,
+    "timeouts": 0,
+    "unknown_id_or_schema_failures": 0
+  },
+  "explicit_metrics": {
+    "calls": 148,
+    "cold_or_regression_calls_gte_5000ms": 142,
+    "decision_hashes": 148,
+    "decode_ms_backend": {
+      "count": 0,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null
+    },
+    "decode_ms_client_observed": {
+      "count": 148,
+      "mean": 2808.1154182448677,
+      "p50": 2028.2585999957519,
+      "p95": 5546.004189999076,
+      "p99": 7270.825630002655
+    },
+    "errors": 0,
+    "explicit_backend_field_rows": 0,
+    "failed": 0,
+    "first_low_ttft_call_index": null,
+    "low_ttft_calls_lt_1000ms": 0,
+    "prompt_eval_ms_backend": {
+      "count": 0,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null
+    },
+    "queue_wait_ms_backend": {
+      "count": 0,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null
+    },
+    "succeeded": 148,
+    "timeouts": 0,
+    "total_selector_wall_ms": 1820272.829900321,
+    "total_wall_ms": {
+      "count": 148,
+      "mean": 12299.140742569736,
+      "p50": 10962.506150011905,
+      "p95": 19999.07854500198,
+      "p99": 20813.173068986507
+    },
+    "ttft_ms": {
+      "count": 148,
+      "mean": 9491.02532432487,
+      "p50": 8418.036899995059,
+      "p95": 15211.089045001429,
+      "p99": 16163.893798009958
+    },
+    "warmup_wall_ms_to_first_low_ttft": null
+  },
+  "plan_sha256": "fd1a2f332ccee1f894f1408cbdbcaa9369bde6d654c81ca1cd7c2c0fcb9d21e8",
+  "projected_end_to_end": {
+    "downstream_held_constant_seconds": 229.30000000000018,
+    "is_projection": true,
+    "margin_over_freetoshop_arrival_tok_s": 8.255801409056893,
+    "retirement_tok_s": 67.4038014090569,
+    "selector_wall_seconds": 1820.272829900321,
+    "speedup_vs_historical_total": 0.9925970769718591,
+    "total_wall_seconds": 2049.5728299003213
+  }
+}

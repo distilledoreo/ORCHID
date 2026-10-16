@@ -1,0 +1,40 @@
+{
+  "started_at": "2026-08-23T21:51:48.661Z",
+  "ended_at": "2026-08-23T22:22:27.232Z",
+  "reason": "unrecoverable_controller_continuity_stall_follow_up_queued_while_idle",
+  "max_runtime_ms": 21600000,
+  "arms": {
+    "arm_a_pi": {
+      "name": "PI_NATIVE",
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 1,
+      "provider_messages": 43,
+      "tool_calls": 73,
+      "tool_failures": 3,
+      "pi_native_compactions": 0,
+      "request_responses": 3,
+      "errors": [],
+      "git": {
+        "head": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa",
+        "status": " M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md\n?? packages/raster-engine/src/cloneStamp.ts\n?? packages/raster-engine/src/types.ts\n"
+      }
+    },
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "launch_count": 1,
+      "prompt_count": 1,
+      "continuation_count": 1,
+      "provider_messages": 57,
+      "tool_calls": 73,
+      "tool_failures": 9,
+      "pi_native_compactions": 0,
+      "request_responses": 3,
+      "errors": [],
+      "git": {
+        "head": "ef22afee503843305c28d47dbf966cd644f52401",
+        "status": " M packages/raster-engine/src/index.test.ts\n M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md\n?? packages/raster-engine/src/clone-stamp.ts\n"
+      }
+    }
+  }
+}

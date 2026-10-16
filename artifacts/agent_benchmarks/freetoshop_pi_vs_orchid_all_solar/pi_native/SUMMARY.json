@@ -1,0 +1,31 @@
+{
+  "path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_all_solar\\pi_native\\telemetry.jsonl",
+  "rpc_lines": 105182,
+  "event_counts": {
+    "response": 2,
+    "agent_start": 1,
+    "turn_start": 67,
+    "message_start": 210,
+    "message_end": 210,
+    "message_update": 104231,
+    "tool_execution_start": 142,
+    "tool_execution_update": 107,
+    "tool_execution_end": 142,
+    "turn_end": 67,
+    "agent_end": 1,
+    "agent_settled": 1,
+    "queue_update": 1
+  },
+  "assistant_messages": 67,
+  "tool_calls": 142,
+  "tool_failures": 21,
+  "pi_native_compactions": 0,
+  "agent_settled": 1,
+  "provider_errors": 0,
+  "errors": [],
+  "usage_samples": 67,
+  "input_tokens_observed": 3000735.0,
+  "output_tokens_observed": 115427.0,
+  "cache_read_tokens_observed": 1484032.0,
+  "cost_observed": 0.10387329
+}

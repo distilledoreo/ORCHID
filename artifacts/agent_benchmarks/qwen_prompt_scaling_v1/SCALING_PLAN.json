@@ -1,0 +1,41 @@
+{
+  "cache_policy": "no explicit cache controls; distinct per-call nonce prevents exact-repeat identity across measurements",
+  "created_at": "2026-08-23T02:29:32.527+00:00",
+  "distinct_nonce_per_call": true,
+  "endpoint": "http://127.0.0.1:1234/v1",
+  "filler_unit": "inert prefill scaling unit ",
+  "generation": {
+    "reasoning_effort": "none",
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    },
+    "temperature": 0,
+    "top_p": 1
+  },
+  "measurement_policy": "TTFT is measured from request start to first streamed content token; backend phase metrics are recorded only when exposed",
+  "model": "qwen3.5-4b@q6_k",
+  "no_retries": true,
+  "output_contract": "assistant content must be exactly OK after whitespace stripping",
+  "plan_sha256": "265d64e8759bdd217c467104d77d3225bf7c6f56de2ee0eb859170cc9d158772",
+  "profile_config": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_microprofile_v1\\PROFILE_CONFIG.json",
+  "profile_config_sha256": "19157d0b9e59859182b512d24f2b26e9bfbba17aea76f49e8cca0246e1d7d4d2",
+  "repetitions_per_target": 6,
+  "schema_version": "qwen-prompt-scaling-plan-v1",
+  "serial": true,
+  "source_commit": "c4458ffeca7f1e02f9c4d4e571bab979b5ecaecd",
+  "system_prompt": "You are a deterministic diagnostic endpoint. Reply with exactly OK and nothing else.",
+  "target_prompt_tokens": [
+    128,
+    256,
+    512,
+    1000,
+    1500,
+    2000,
+    4000
+  ],
+  "user_prefix": "Prompt-scaling diagnostic payload. Ignore its meaning and reply with exactly OK.\n",
+  "user_suffix": "\nEND_DIAGNOSTIC_PAYLOAD",
+  "warmup_calls": 3,
+  "warmup_target_tokens": 1000
+}

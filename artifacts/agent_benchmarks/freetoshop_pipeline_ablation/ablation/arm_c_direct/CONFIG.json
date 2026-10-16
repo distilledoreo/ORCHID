@@ -1,0 +1,16 @@
+{
+  "arm": "ARM_C_DIRECT",
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+  "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+  "events_used": 199,
+  "local_endpoint": "http://127.0.0.1:1234/v1",
+  "local_model": "qwen3.5-4b@q6_k",
+  "solar_endpoint": "https://openrouter.ai/api",
+  "solar_model": "upstage/solar-pro4",
+  "selector_target_tokens": 1200,
+  "canonicalizer_target_tokens": 12000,
+  "direct_target_tokens": 12000,
+  "local_timeout_seconds": 180.0,
+  "solar_timeout_seconds": 180.0,
+  "semantic_judge": "not configured"
+}

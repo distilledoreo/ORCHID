@@ -1,0 +1,118 @@
+{
+  "status": "terminated_early_arm_specific_failure",
+  "valid_attempt": {
+    "started_at": "2026-08-20T16:49:03.708Z",
+    "last_checkpoint_at": "2026-08-20T18:19:04.111Z",
+    "stopped_at": "2026-08-20T18:19:20Z",
+    "observed_wall_clock_ms": 5420000,
+    "automatic_restarts": {
+      "PI_NATIVE": 0,
+      "ORCHID": 0
+    },
+    "human_interventions": 0,
+    "termination_reason": "ORCHID remained OS-responsive but produced no new RPC or gateway request for approximately 43 minutes after a provider stream error and an accepted follow-up. The paired run was stopped without manual rescue."
+  },
+  "checkpoint_series": [
+    {"elapsed_min": 0, "pi_provider_messages": 0, "pi_tool_calls": 0, "orchid_provider_messages": 0, "orchid_tool_calls": 0, "orchid_raw_tail_tokens": 0, "orchid_capsule_tokens": 0},
+    {"elapsed_min": 15, "pi_provider_messages": 17, "pi_tool_calls": 34, "orchid_provider_messages": 30, "orchid_tool_calls": 42, "orchid_raw_tail_tokens": 71401, "orchid_capsule_tokens": 0},
+    {"elapsed_min": 30, "pi_provider_messages": 34, "pi_tool_calls": 55, "orchid_provider_messages": 58, "orchid_tool_calls": 84, "orchid_raw_tail_tokens": 19576, "orchid_capsule_tokens": 262},
+    {"elapsed_min": 45, "pi_provider_messages": 74, "pi_tool_calls": 97, "orchid_provider_messages": 79, "orchid_tool_calls": 110, "orchid_raw_tail_tokens": 180921, "orchid_capsule_tokens": 262},
+    {"elapsed_min": 60, "pi_provider_messages": 107, "pi_tool_calls": 137, "orchid_provider_messages": 86, "orchid_tool_calls": 114, "orchid_raw_tail_tokens": 184124, "orchid_capsule_tokens": 262},
+    {"elapsed_min": 75, "pi_provider_messages": 150, "pi_tool_calls": 187, "orchid_provider_messages": 86, "orchid_tool_calls": 114, "orchid_raw_tail_tokens": 184124, "orchid_capsule_tokens": 262},
+    {"elapsed_min": 90, "pi_provider_messages": 186, "pi_tool_calls": 228, "orchid_provider_messages": 86, "orchid_tool_calls": 114, "orchid_raw_tail_tokens": 184124, "orchid_capsule_tokens": 262}
+  ],
+  "rpc_log_totals": {
+    "PI_NATIVE": {
+      "assistant_messages": 192,
+      "tool_calls": 236,
+      "tool_failures": 24,
+      "agent_settled": 0,
+      "compaction_end": 0,
+      "provider_errors": {"terminated": 1, "Upstream idle timeout exceeded": 3},
+      "assistant_stop_reasons": {"toolUse": 188, "error": 4},
+      "usage_sum": {"input": 14706539, "output": 89233, "cacheRead": 18319744, "cacheWrite": 0, "totalTokens": 33115516, "reasoning": 51561}
+    },
+    "ORCHID": {
+      "assistant_messages": 86,
+      "tool_calls": 114,
+      "tool_failures": 6,
+      "agent_settled": 1,
+      "follow_up_responses": 1,
+      "compaction_end": 0,
+      "provider_errors": {"Stream ended without finish_reason": 4},
+      "assistant_stop_reasons": {"toolUse": 83, "error": 3},
+      "usage_sum": {"input": 17262397, "output": 36595, "cacheRead": 0, "cacheWrite": 0, "totalTokens": 17298992, "reasoning": 14430}
+    }
+  },
+  "orchid_database": {
+    "path": "orchid-state-actual-2/memory.db",
+    "size_bytes": 42766336,
+    "events": 172,
+    "event_types": {"request": 86, "assistant_response": 83, "backend_error": 3},
+    "event_privacy_classes": {"normal": 172},
+    "threads": 1,
+    "projects": 1,
+    "capsules": 1,
+    "active_capsules": 1,
+    "active_capsule_content_chars": 1051,
+    "long_term_memories": 0,
+    "memory_evidence": 0,
+    "compaction_jobs": {"PROMOTED": 1, "QUEUED": 41, "RUNNING": 1, "STALE": 42},
+    "model_runs": 441,
+    "model_runs_succeeded": 441,
+    "model_run_input_tokens": 823637,
+    "model_run_output_tokens": 21919,
+    "model_run_wall_ms": 5433188.594,
+    "cold_retrieval": {
+      "attempts": 86,
+      "mode": "inject",
+      "status": {"no_match": 86},
+      "timed_out": 0,
+      "fail_open": 0,
+      "exact_candidates": 0,
+      "lexical_candidates": 0,
+      "would_inject": 0,
+      "injected": 0,
+      "avg_total_ms": 1.5805255836,
+      "max_total_ms": 2.2209000017,
+      "avg_query_construction_ms": 2.2773848837,
+      "avg_db_checkout_ms": 1.1074348833,
+      "avg_fts_ms": 0.2671651154,
+      "avg_ranking_ms": 0.0041732558,
+      "avg_token_budget_ms": 0.0012395355,
+      "avg_telemetry_ms": 0,
+      "dense_production_injections": 0
+    }
+  },
+  "public_validation": {
+    "PI_NATIVE": {
+      "typecheck": "FAIL: Tool 'clone' is not assignable to the existing Tool union",
+      "lint": "FAIL: 5 new unused-variable errors in raster-engine clone imports; 1 existing warning",
+      "format_check": "FAIL: 251 files reported, matching historical baseline count",
+      "test": "FAIL: historical selection-engine 4096-square timeout plus tool registry expectation mismatch",
+      "build": "FAIL: same Tool union type error",
+      "focused_raster_tests": "PASS: 30/30",
+      "focused_tool_registry_test": "FAIL: expected family list was not updated for clone"
+    },
+    "ORCHID": {
+      "typecheck": "FAIL: App.tsx omits cloneAlignMode and onCloneAlignModeChange",
+      "lint": "FAIL: 3 new raster-engine errors plus 1 existing warning",
+      "format_check": "FAIL: 251 files reported, matching historical baseline count",
+      "test": "FAIL: historical selection-engine timeout plus composite-worker timeout",
+      "build": "FAIL: same App.tsx ToolOptionsBarProps error",
+      "focused_raster_tests": "PASS: 30/30",
+      "focused_tool_registry_test": "PASS: 3/3"
+    }
+  },
+  "hidden_clone_stamp": {
+    "test": "paints with clone stamp from Alt-set source with undo, reopen, and aligned persistence",
+    "browser": "Chromium installed post-run for evaluation",
+    "PI_NATIVE": {"exit_code": 1, "result": "FAIL: timeout waiting for button Clone stamp"},
+    "ORCHID": {"exit_code": 1, "result": "FAIL: timeout waiting for button Clone stamp"},
+    "note": "Both arms reached the same missing/incomplete UI integration point; no end-to-end clone workflow passed."
+  },
+  "source_state": {
+    "PI_NATIVE": {"baseline_head": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa", "changed_files": 5, "insertions": 288, "deletions": 1, "commits_after_baseline": 0},
+    "ORCHID": {"baseline_head": "ef22afee503843305c28d47dbf966cd644f52401", "changed_files": 6, "insertions": 292, "deletions": 0, "commits_after_baseline": 0}
+  }
+}

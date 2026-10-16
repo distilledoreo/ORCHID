@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 120,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "In the PanoRef worktree, a stale extraction error was found to bypass the success-path identity guard and overwrite a newer run's status. The fix adds the same identity check to the extraction catch block and a regression guard around that cancellation boundary. After publishing, another adversarial pass will be executed.",
+      "envelope_json": "{\"generation\":120,\"items\":[{\"evidence\":[{\"excerpt\":\"Round four isolated one final cancellation edge: a stale extraction error could bypass the success-path identity guard and overwrite a newer run’s status.\",\"source_id\":\"panoref_evt_001142\"}],\"id\":\"mem_1d18bcdd9fa05de7c83dcf0d\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Stale extraction error bypassing success-path identity guard\"},{\"evidence\":[{\"excerpt\":\"I’m adding the same identity check to the extraction catch and a regression guard around that cancellation boundary, then I’ll publish and run another adversarial pass.\",\"source_id\":\"panoref_evt_001142\"}],\"id\":\"mem_6e5f453b7d6204e795266ad3\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Add identity check to extraction catch and regression guard, then publish and run adversarial pass\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

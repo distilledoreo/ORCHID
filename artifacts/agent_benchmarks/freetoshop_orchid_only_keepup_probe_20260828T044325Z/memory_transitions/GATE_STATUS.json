@@ -1,0 +1,9 @@
+{
+  "status": "PASSED",
+  "required": 3,
+  "promotions": 8,
+  "clean_promotions": 8,
+  "failures": 0,
+  "invariant_failures": 0,
+  "observed_at": "2026-08-28T05:43:33.322+00:00"
+}

@@ -1,0 +1,34 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 1,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "consolidator returned no memory items"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The Panoref algorithm implementation is a real, functional prototype with an architecture rated 8/10 for correctness and promising design. It successfully implements deterministic surface sampling via barycentric coordinates and a joint-pair mode that evaluates candidate pairs rather than greedily selecting the first origin. However, it contains critical blockers preventing production readiness: (1) Imported sets can produce zero legal candidates because the system uses object Axis-Aligned Bounding Boxes (AABBs) for clearance checks instead of actual geometry; any point inside an imported model's AABB is rejected even if navigable space exists within that box. (2) The current geometry representation does not scale to heavy imports due to triangle expansion issues.",
+      "envelope_json": null
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 1,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "consolidator returned no memory items"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

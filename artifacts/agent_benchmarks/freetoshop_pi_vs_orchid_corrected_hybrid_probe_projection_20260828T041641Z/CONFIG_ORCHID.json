@@ -1,0 +1,35 @@
+{
+  "arm": "ORCHID",
+  "foreground_provider": "https://apihub.agnes-ai.com/v1",
+  "foreground_model": "agnes-2.5-flash",
+  "pipeline": [
+    "bounded_immutable_source_window",
+    "local_qwen_selector",
+    "software_owned_semantic_packet",
+    "solar_consolidator",
+    "validation",
+    "active_cas_promotion"
+  ],
+  "selector_provider": "http://127.0.0.1:1234/v1",
+  "selector_model": "qwen3.5-4b@q6_k",
+  "consolidator_model": "agnes-2.5-flash",
+  "canonicalizer_enabled": false,
+  "source_window_tokens": 119466,
+  "provider_context_tokens": 524288,
+  "reserved_output_tokens": 8192,
+  "fixed_overhead_tokens": 4096,
+  "safety_margin": 0.7,
+  "request_amplification": 3.0,
+  "selector_chunk_target_tokens": 1200,
+  "temperature": 0,
+  "top_p": 1,
+  "reasoning_effort": "none",
+  "structured_output": true,
+  "model_timeout_seconds": 180,
+  "cold_memory_mode": "off",
+  "retry_policy": "existing model-client policy; controller performs no retry or rescue",
+  "pricing_usd_per_million_tokens": {
+    "input": 0.0,
+    "output": 0.0
+  }
+}

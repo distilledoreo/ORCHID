@@ -7,11 +7,15 @@ from pathlib import Path
 
 import pytest
 
-from memory_gateway.config import RuntimeConfig
 from memory_gateway.compaction import CompactionWorker, queue_snapshot_job
+from memory_gateway.config import RuntimeConfig
 from memory_gateway.context import ContextAssembler
 from memory_gateway.db import SQLiteStore
-from memory_gateway.fake_engines import BrokenCompactionEngine, PerfectCompactionEngine, SlowCompactionEngine
+from memory_gateway.fake_engines import (
+    BrokenCompactionEngine,
+    PerfectCompactionEngine,
+    SlowCompactionEngine,
+)
 
 
 def make_store(tmp_path: Path) -> SQLiteStore:
@@ -38,6 +42,49 @@ def ready_capsule(store: SQLiteStore, base: str | None, content: str) -> str:
     )
     assert store.mark_capsule_ready(capsule_id)
     return capsule_id
+
+
+def test_mark_capsule_ready_requires_source_links(tmp_path: Path) -> None:
+    store = make_store(tmp_path)
+    event = store.append_event(
+        project_id="project",
+        thread_id="thread",
+        event_type="user_message",
+        role="user",
+        content='{"content":"goal","role":"user"}',
+    )
+    digest = hashlib.sha256(b"capsule").hexdigest()
+    bare_id = store.create_capsule(
+        thread_id="thread",
+        base_capsule_id=None,
+        content="capsule",
+        source_event_hash="source",
+        input_hash="input",
+        output_hash=digest,
+        capsule_hash=digest,
+        snapshot_start_event_id=event["id"],
+        snapshot_end_event_id=event["id"],
+        covered_start_event_id=event["id"],
+        covered_end_event_id=event["id"],
+        source_event_ids=(),
+    )
+    assert not store.mark_capsule_ready(bare_id)
+    sourced_id = store.create_capsule(
+        thread_id="thread",
+        base_capsule_id=None,
+        content="capsule",
+        source_event_hash="source",
+        input_hash="input",
+        output_hash=digest,
+        capsule_hash=digest,
+        snapshot_start_event_id=event["id"],
+        snapshot_end_event_id=event["id"],
+        covered_start_event_id=event["id"],
+        covered_end_event_id=event["id"],
+    )
+    sources = store.list_capsule_sources(sourced_id)
+    assert [row["event_id"] for row in sources] == [event["id"]]
+    assert store.mark_capsule_ready(sourced_id)
 
 
 def test_events_are_append_only_and_sequenced(tmp_path: Path) -> None:
@@ -365,6 +412,17 @@ def test_runtime_rejects_renewal_cadence_longer_than_lease(
         RuntimeConfig.from_env()
 
 
+def test_runtime_aligns_backend_and_compaction_context_from_env(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("ORCHID_BACKEND_CONTEXT_LIMIT_TOKENS", "128000")
+    monkeypatch.setenv("ORCHID_COMPACTION_CONTEXT_TOKENS", "128000")
+    config = RuntimeConfig.from_env()
+    assert config.backend_context_limit_tokens == 128_000
+    assert config.compaction_context_tokens == 128_000
+    assert config.context_tokens == 128_000
+
+
 def test_broken_engine_fails_before_candidate_creation(tmp_path: Path) -> None:
     store = make_store(tmp_path)
     event = store.append_event(
@@ -415,11 +473,19 @@ def test_delayed_jobs_preserve_lineage_and_context_continuity(tmp_path: Path) ->
         return v3_result, v4_result
 
     v3_result, v4_result = asyncio.run(race_slow_v3())
-    assert (v3_result, v4_result) == ("STALE", "PROMOTED")
-    assert store.get_job(v3_job)["status"] == "STALE"
+    # New pressure coalesces behind the immutable running snapshot. It does
+    # not create an overlapping v4 job; the dirty watermark is admitted only
+    # after v3 finishes.
+    assert (v3_result, v4_result) == ("PROMOTED", None)
+    assert store.get_job(v3_job)["status"] == "PROMOTED"
+    v3 = store.get_active_capsule("thread")
+    assert v3 is not None
+    v4_job = queue_snapshot_job(store, "thread")
+    assert v4_job is not None and v4_job != v3_job
+    assert asyncio.run(CompactionWorker(store, PerfectCompactionEngine(), "v4-worker").run_once()) == "PROMOTED"
     v4 = store.get_active_capsule("thread")
     assert v4 is not None
-    assert v4["base_capsule_id"] == v2["id"]
+    assert v4["base_capsule_id"] == v3["id"]
 
     append("turn for failed v5")
     v5_job = queue_snapshot_job(store, "thread")

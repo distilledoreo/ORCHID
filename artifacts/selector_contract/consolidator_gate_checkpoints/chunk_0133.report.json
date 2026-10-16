@@ -1,0 +1,43 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 134,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001167' for item mem_93801d20f1dc5dafc8ed7eb6",
+        "excerpt not found in source 'panoref_evt_001167' for item mem_234e0c69ca88f1186eb0ddfd",
+        "excerpt not found in source 'panoref_evt_001167' for item mem_0c2bf6cb3264bfaa2bffa962"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Goal /root concluded successfully: audit round five confirmed no remaining concrete holes, and final verification showed PR #23 is MERGEABLE/CLEAN with matching heads at 80882e3 rebased on origin/main. All prior audit findings (stale success/worker/extraction paths, bounds/capture invalidation, allowed regions constraining extraction pipeline, large-tabletop regression, 101250-triangle test in both optimizer modes, production-scene benchmark without page errors, typecheck/tests passing) remain valid and documented.",
+      "envelope_json": "{\"generation\":134,\"items\":[{\"evidence\":[{\"excerpt\":\"Audit round five is the requested stopping condition: the independent auditor was unable to find any remaining concrete hole\",\"source_id\":\"panoref_evt_001168\"}],\"id\":\"mem_ad139c2e698c5416f88fd13c\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"Audit round five passed: no remaining concrete holes found\"},{\"evidence\":[{\"excerpt\":\"PR #23 is MERGEABLE/CLEAN; latest Netlify checks passed\",\"source_id\":\"panoref_evt_001167\"}],\"id\":\"mem_93801d20f1dc5dafc8ed7eb6\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"PR #23 is MERGEABLE/CLEAN with passing Netlify checks\"},{\"evidence\":[{\"excerpt\":\"Local and remote heads match 80882e3, rebased on current origin/main\",\"source_id\":\"panoref_evt_001167\"}],\"id\":\"mem_234e0c69ca88f1186eb0ddfd\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Heads synchronized at 80882e3 on origin/main\"},{\"evidence\":[{\"excerpt\":\"stale success, worker, and extraction-failure paths all enforce analysis identity\",\"source_id\":\"panoref_evt_001167\"}],\"id\":\"mem_0c2bf6cb3264bfaa2bffa962\",\"kind\":\"constraint\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"All stale/error paths enforce analysis identity\"},{\"evidence\":[{\"excerpt\":\"Large-tabletop regression passes\",\"source_id\":\"panoref_evt_001167\"}],\"id\":\"mem_000882ae6433854a16a0c922\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Large-tabletop regression passes\"},{\"evidence\":[{\"excerpt\":\"101,250-triangle test executes both complete optimizer modes\",\"source_id\":\"panoref_evt_001167\"}],\"id\":\"mem_1ada56c6ce02e70a51d56aad\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"101,250-triangle test passes in both optimizer modes\"},{\"evidence\":[{\"excerpt\":\"Real production-scene benchmark succeeded with no page errors\",\"source_id\":\"panoref_evt_001167\"}],\"id\":\"mem_a06c8452670861ece3582678\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Production-scene benchmark succeeded without page errors\"},{\"evidence\":[{\"excerpt\":\"Typecheck and targeted tests pass on final HEAD\",\"source_id\":\"panoref_evt_001167\"}],\"id\":\"mem_eab2d561bb291fe17c8f1b05\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Typecheck and targeted tests pass on final HEAD\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 134,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001167' for item mem_93801d20f1dc5dafc8ed7eb6",
+        "excerpt not found in source 'panoref_evt_001167' for item mem_234e0c69ca88f1186eb0ddfd",
+        "excerpt not found in source 'panoref_evt_001167' for item mem_0c2bf6cb3264bfaa2bffa962"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

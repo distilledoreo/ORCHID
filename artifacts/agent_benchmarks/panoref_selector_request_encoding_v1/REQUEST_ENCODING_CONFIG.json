@@ -1,0 +1,14 @@
+{
+  "arm_order": [
+    "KEEP_OPAQUE",
+    "KEEP_SHORT_IDS",
+    "DROP_OPAQUE",
+    "DROP_SHORT_IDS"
+  ],
+  "no_concurrency": true,
+  "no_retries": true,
+  "plan_path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_request_encoding_v1\\REQUEST_ENCODING_PLAN.json",
+  "plan_sha256": "ee0e056f215c881640fd6ac3caededac735aecac5fe558cbc057402fccddfd19",
+  "schema_version": "panoref-selector-request-encoding-config-v1",
+  "source_commit": "a699d6a4af3696dc2992049b2ebbc748493eb3d9"
+}

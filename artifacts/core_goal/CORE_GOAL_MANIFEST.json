@@ -1,0 +1,73 @@
+{
+  "schema_version": "orchid.core_goal_manifest.v1",
+  "goal": "bounded main-model context backed by lossless long-term memory, continuous secondary-GPU organization, retrieval, and zero foreground compaction waits",
+  "context": {
+    "foreground_target_tokens": 32000,
+    "foreground_emergency_ceiling_tokens": 48000,
+    "minimum_history_multiple": 5
+  },
+  "foreground_slo": {
+    "maximum_compaction_wait_ms": 0,
+    "background_only_memory_maintenance": true
+  },
+  "service_envelope": {
+    "minimum_background_to_arrival_ratio": 1.5,
+    "headroom_duration_percentile": "p99"
+  },
+  "storage": {
+    "append_only_raw_journal": true,
+    "raw_history_authoritative": true,
+    "memory_views_rebuildable": true
+  },
+  "selector": {
+    "frozen": true,
+    "role": "organizer",
+    "contract_sha256": "19117704791408c22e194d0da0dee5da43e7803785b2eab6e20a6b86f961b14f",
+    "contract": {
+      "schema_version": "orchid.selector_contract.v1",
+      "model": "qwen3.5-4b@q6_k",
+      "prompt_version": "selector-v1",
+      "system_prompt": "You select durable-memory source items. Return JSON only with exactly {\"selected_event_ids\":[\"source-item-id\"]}. Select only whole-event or source-span IDs present in the input; do not summarize or rewrite items.",
+      "chunk_target_tokens": 1200,
+      "timeout_seconds": 180.0,
+      "selector_context_tokens": 32768,
+      "span_safety_margin": 0.8,
+      "serial_execution": true,
+      "generation_settings": {
+        "temperature": 0,
+        "top_p": 1,
+        "stream": false,
+        "reasoning_effort": "none"
+      },
+      "response_schema_name": "selector_response_v1",
+      "chunk_payload_keys": [
+        "events",
+        "event_ids_in_order",
+        "source_ids_in_order"
+      ]
+    },
+    "golden_requests_path": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json",
+    "golden_requests_sha256": "c7c2a5d32f4a6b977b7681721e9c2a63a8d6a9123b4b5b070fc523af5b64aadb"
+  },
+  "canonicalizer": {
+    "enabled": true,
+    "frozen_gate_verdict": "KEEP",
+    "evidence_path": "artifacts/agent_benchmarks/freetoshop_direct_consolidation/semantic_eval/SUMMARY.json",
+    "evidence_sha256": "5eef8cbbf61785391eef1dc425aa49bc93cfb24a02f69184460c37e2e5b4e8ea"
+  },
+  "frozen_replay": {
+    "path": "artifacts/agent_benchmarks/freetoshop_operability_hardening/frozen_freetoshop_replay/events.jsonl",
+    "sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+    "expected_raw_events": 199,
+    "expected_projected_source_items": 216,
+    "expected_selector_chunks": 63,
+    "raw_event_admission": "exactly_once",
+    "source_item_delivery": "exactly_once"
+  },
+  "deployment": {
+    "main_model_device": "primary_gpu",
+    "selector_device": "secondary_gpu",
+    "selector_related_work_serial": true
+  },
+  "manifest_sha256": "1b45630e2a78a946996de608d417b9eefc6144d8dffe2b8d03ea83fe8e33cba1"
+}

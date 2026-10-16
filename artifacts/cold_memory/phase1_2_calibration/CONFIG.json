@@ -1,0 +1,31 @@
+{
+  "acceptance_holdout_query_count": 18,
+  "calibrated_policy": {
+    "activation_weight": 0.05,
+    "distinctive_weight": 0.25,
+    "fts_rank_weight": 0.4,
+    "identifier_weight": 0.15,
+    "lexical_saturation": 3,
+    "lexical_weight": 0.15,
+    "minimum_distinctive_overlap": 1,
+    "minimum_identifier_coverage": 0.66,
+    "minimum_lexical_overlap": 2,
+    "minimum_margin": 0.05,
+    "minimum_score": 0.6,
+    "name": "phase1_2_calibrated",
+    "secondary_score_gap": 0.1
+  },
+  "calibration_query_count": 26,
+  "calibration_trace_source": "artifacts\\cold_memory\\phase1_1_decision_audit\\quality_results.jsonl",
+  "candidate_limit": 20,
+  "dense_retrieval": false,
+  "development_query_count": 18,
+  "max_injected": 3,
+  "phase": "cold_memory_phase1_2_calibration",
+  "project_id": "phase1-project",
+  "query_construction_changed": false,
+  "telemetry_optimization": false,
+  "thread_id": "phase1-thread",
+  "timeout_ms": 50,
+  "token_budget": 512
+}

@@ -1,0 +1,12 @@
+{
+  "canonicalizer_calls": 0,
+  "exact_watermark_progression": true,
+  "failures": 0,
+  "max_request_estimated_tokens": 67886,
+  "note": "Deterministic legal-ID selector/consolidator stand-ins prove local window, validation, CAS, and watermark mechanics; they are not semantic provider results.",
+  "promotions": 10,
+  "provider_context_tokens": 524288,
+  "replay_type": "offline captured-history structural replay",
+  "source_db_sha256": "9dac3410930e57f69bff4253f913f7ff4756c820c2e63b44fcb441913f539746",
+  "window_target_tokens": 30000
+}

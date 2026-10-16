@@ -1,0 +1,198 @@
+{
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_operability_hardening\\frozen_freetoshop_replay\\events.jsonl",
+  "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+  "events_used": 12,
+  "endpoint": "http://127.0.0.1:1234/v1",
+  "model": "qwen3.5-4b@q6_k",
+  "timeout_seconds": 90.0,
+  "measurements": [
+    {
+      "concurrency": 1,
+      "target_tokens": 4000,
+      "wall_ms": 47737.854500010144,
+      "aggregate_source_tokens": 3648,
+      "aggregate_source_tokens_per_second": 76.41734297043502,
+      "statuses": [
+        "SUCCEEDED"
+      ],
+      "timeouts": 0,
+      "structured_output_failures": 0,
+      "results": [
+        {
+          "target_tokens": 4000,
+          "model": "qwen3.5-4b@q6_k",
+          "endpoint": "http://127.0.0.1:1234/v1",
+          "timeout_seconds": 90.0,
+          "max_output_tokens": null,
+          "full_window": false,
+          "source_event_count": 4,
+          "source_tokens": 3648,
+          "batch_count": 1,
+          "wall_ms": 47731.85310000554,
+          "source_tokens_per_second": 76.42695104162165,
+          "status": "SUCCEEDED",
+          "error": null,
+          "batches": [
+            {
+              "batch_index": 0,
+              "target_tokens": 4000,
+              "source_event_count": 4,
+              "source_refs": [
+                "replay_evt_000001",
+                "replay_evt_000002::span::000000",
+                "replay_evt_000002::span::000001",
+                "replay_evt_000002::span::000002"
+              ],
+              "estimated_input_tokens": 3648,
+              "wall_ms": 47731.67010000907,
+              "input_tokens": 3608,
+              "output_tokens": 340,
+              "ttft_ms": null,
+              "finish_reason": "stop",
+              "status": "SUCCEEDED",
+              "error": null,
+              "timeout": false,
+              "structured_output_valid": true,
+              "request_profile": {
+                "input_payload_chars": 14623,
+                "system_prompt_chars": 420,
+                "response_schema_chars": 445,
+                "request_wrapper_chars": 48,
+                "input_payload_hash": "1365b57503ea6151f7e373826e5ff81920fcdd902fb0a842ead6a60da649e177",
+                "response_schema_hash": "614b9e46d739efe083546023e4463b5468c812c356d7b28f9c1f2ad368c15e3f"
+              },
+              "source_payload_estimated_tokens": 3655,
+              "system_prompt_estimated_tokens": 105,
+              "response_schema_estimated_tokens": 111,
+              "wrapper_estimated_tokens": 12,
+              "source_payload_chars": 14623,
+              "prompt_hash": "d102d960be3a588fff65169c487a0c987a01fe7fbeba7603702b3e8df0d76e29",
+              "source_tokens_per_second": 76.42724405738544
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "concurrency": 2,
+      "target_tokens": 4000,
+      "wall_ms": 55264.6482999844,
+      "aggregate_source_tokens": 7296,
+      "aggregate_source_tokens_per_second": 132.019296683049,
+      "statuses": [
+        "SUCCEEDED",
+        "SUCCEEDED"
+      ],
+      "timeouts": 0,
+      "structured_output_failures": 0,
+      "results": [
+        {
+          "target_tokens": 4000,
+          "model": "qwen3.5-4b@q6_k",
+          "endpoint": "http://127.0.0.1:1234/v1",
+          "timeout_seconds": 90.0,
+          "max_output_tokens": null,
+          "full_window": false,
+          "source_event_count": 4,
+          "source_tokens": 3648,
+          "batch_count": 1,
+          "wall_ms": 27714.497900014976,
+          "source_tokens_per_second": 131.62785821200205,
+          "status": "SUCCEEDED",
+          "error": null,
+          "batches": [
+            {
+              "batch_index": 0,
+              "target_tokens": 4000,
+              "source_event_count": 4,
+              "source_refs": [
+                "replay_evt_000001",
+                "replay_evt_000002::span::000000",
+                "replay_evt_000002::span::000001",
+                "replay_evt_000002::span::000002"
+              ],
+              "estimated_input_tokens": 3648,
+              "wall_ms": 27714.348399982555,
+              "input_tokens": 3608,
+              "output_tokens": 340,
+              "ttft_ms": null,
+              "finish_reason": "stop",
+              "status": "SUCCEEDED",
+              "error": null,
+              "timeout": false,
+              "structured_output_valid": true,
+              "request_profile": {
+                "input_payload_chars": 14623,
+                "system_prompt_chars": 420,
+                "response_schema_chars": 445,
+                "request_wrapper_chars": 48,
+                "input_payload_hash": "1365b57503ea6151f7e373826e5ff81920fcdd902fb0a842ead6a60da649e177",
+                "response_schema_hash": "614b9e46d739efe083546023e4463b5468c812c356d7b28f9c1f2ad368c15e3f"
+              },
+              "source_payload_estimated_tokens": 3655,
+              "system_prompt_estimated_tokens": 105,
+              "response_schema_estimated_tokens": 111,
+              "wrapper_estimated_tokens": 12,
+              "source_payload_chars": 14623,
+              "prompt_hash": "d102d960be3a588fff65169c487a0c987a01fe7fbeba7603702b3e8df0d76e29",
+              "source_tokens_per_second": 131.62856825464084
+            }
+          ]
+        },
+        {
+          "target_tokens": 4000,
+          "model": "qwen3.5-4b@q6_k",
+          "endpoint": "http://127.0.0.1:1234/v1",
+          "timeout_seconds": 90.0,
+          "max_output_tokens": null,
+          "full_window": false,
+          "source_event_count": 4,
+          "source_tokens": 3648,
+          "batch_count": 1,
+          "wall_ms": 55231.305299996166,
+          "source_tokens_per_second": 66.049498200077,
+          "status": "SUCCEEDED",
+          "error": null,
+          "batches": [
+            {
+              "batch_index": 0,
+              "target_tokens": 4000,
+              "source_event_count": 4,
+              "source_refs": [
+                "replay_evt_000001",
+                "replay_evt_000002::span::000000",
+                "replay_evt_000002::span::000001",
+                "replay_evt_000002::span::000002"
+              ],
+              "estimated_input_tokens": 3648,
+              "wall_ms": 55231.15710000275,
+              "input_tokens": 3608,
+              "output_tokens": 340,
+              "ttft_ms": null,
+              "finish_reason": "stop",
+              "status": "SUCCEEDED",
+              "error": null,
+              "timeout": false,
+              "structured_output_valid": true,
+              "request_profile": {
+                "input_payload_chars": 14623,
+                "system_prompt_chars": 420,
+                "response_schema_chars": 445,
+                "request_wrapper_chars": 48,
+                "input_payload_hash": "1365b57503ea6151f7e373826e5ff81920fcdd902fb0a842ead6a60da649e177",
+                "response_schema_hash": "614b9e46d739efe083546023e4463b5468c812c356d7b28f9c1f2ad368c15e3f"
+              },
+              "source_payload_estimated_tokens": 3655,
+              "system_prompt_estimated_tokens": 105,
+              "response_schema_estimated_tokens": 111,
+              "wrapper_estimated_tokens": 12,
+              "source_payload_chars": 14623,
+              "prompt_hash": "d102d960be3a588fff65169c487a0c987a01fe7fbeba7603702b3e8df0d76e29",
+              "source_tokens_per_second": 66.04967542857831
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

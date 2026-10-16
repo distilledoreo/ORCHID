@@ -1,0 +1,9 @@
+{
+  "arm": "PI_NATIVE",
+  "foreground_provider": "https://apihub.agnes-ai.com/v1",
+  "foreground_model": "agnes-2.5-pro-beta",
+  "native_compaction": true,
+  "pi_version": "0.84.2",
+  "thinking": "medium",
+  "retry_policy": "sealed Pi policy; controller performs no retry or rescue"
+}

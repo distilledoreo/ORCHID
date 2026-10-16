@@ -1,0 +1,80 @@
+{
+  "name": "structural_noise_prefilter",
+  "version": "v1",
+  "scope": "benchmark_only_frozen_selector_pipeline",
+  "decision_policy": "KEEP ambiguous content; DROP only when the typed protocol structure proves the item is mechanical orchestration with no task payload.",
+  "rules": [
+    {
+      "id": "explicit_mechanical_wait_call",
+      "decision": "DROP",
+      "predicate": {
+        "event_envelopes": [
+          "event_type in {function_call, custom_tool_call}",
+          "or event_type in {assistant_message} with message.tool_calls[*].function.name"
+        ],
+        "call_name": "case-sensitive name in {wait, wait_agent, poll, sleep}",
+        "arguments": "JSON object whose keys are a subset of {cell_id, duration_ms, max_tokens, poll_interval_ms, timeout_ms, yield_time_ms}",
+        "payload_exclusion": "No argument key outside the mechanical wait-control set"
+      },
+      "reason": "The event is explicitly typed as a wait/poll operation and its arguments contain only scheduler/runtime wait controls, not task facts or result content.",
+      "illustrative_examples": [
+        "function_call name=wait with cell_id and yield_time_ms",
+        "assistant_message tool_call name=wait_agent with timeout_ms"
+      ],
+      "explicit_keep_cases": [
+        "Any command/tool call named exec, bash, read, edit, test, or diagnostic",
+        "A wait-named call with a task-bearing or otherwise unknown argument key",
+        "User/developer/assistant reasoning or state messages"
+      ]
+    },
+    {
+      "id": "empty_typed_tool_output",
+      "decision": "DROP",
+      "predicate": {
+        "event_envelopes": [
+          "event_type in {function_call_output, custom_tool_call_output} with output",
+          "or event_type=tool_result with message.content"
+        ],
+        "payload": "The typed output/content value is exactly null, the empty string, an empty list, or an empty object"
+      },
+      "reason": "The protocol declares a tool result but carries no payload at all; there is no content from which semantic evidence can be recovered.",
+      "illustrative_examples": [
+        "function_call_output with output=[]",
+        "tool_result with message.content=''"
+      ],
+      "explicit_keep_cases": [
+        "A list containing any text/object part, even if it looks like a status wrapper",
+        "Any nonempty command result, diagnostic, stack trace, compiler/test output, or file content",
+        "An output event with a missing or unknown schema"
+      ]
+    },
+    {
+      "id": "typed_wait_protocol_result",
+      "decision": "DROP",
+      "predicate": {
+        "event_envelopes": [
+          "event_type in {function_call_output, custom_tool_call_output} with output",
+          "or event_type=tool_result with message.content"
+        ],
+        "linkage": "call_id resolves to a preceding explicit_mechanical_wait_call",
+        "payload": "After JSON parsing, the output/content is an object with exactly keys {message, timed_out}; message is a string and timed_out is boolean"
+      },
+      "reason": "The result is a typed wait protocol response with no task-state, diagnostic, code, or implementation payload beyond wait completion state.",
+      "illustrative_examples": [
+        "{message: 'Wait timed out.', timed_out: true}",
+        "{message: 'Wait completed.', timed_out: false}"
+      ],
+      "explicit_keep_cases": [
+        "Plain-text output from a wait call, because its contents are not structurally typed as wait-only",
+        "An object with any key beyond message and timed_out",
+        "A JSON object that is not linked to a typed wait call"
+      ]
+    }
+  ],
+  "global_non_matches": [
+    "Do not drop based only on words such as stale, obsolete, failed, test, diagnostic, or running.",
+    "Do not drop code, source inspection, compiler/test output, diagnostics, stack traces, commands, file contents, implementation analysis, user instructions, assistant summaries, or coordination artifacts.",
+    "If a structural predicate cannot be evaluated exactly, KEEP."
+  ],
+  "hash_basis": "SHA-256 of canonical JSON with sorted object keys and compact separators, excluding RULESET_HASH.txt and RULESET.md"
+}

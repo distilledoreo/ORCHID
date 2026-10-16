@@ -1,0 +1,416 @@
+{
+  "results": [
+    {
+      "target_source_tokens": 8000,
+      "achieved_batch_tokens": [
+        8468,
+        20584,
+        8172,
+        9918,
+        9803,
+        9513,
+        8567,
+        8002,
+        9097,
+        9473,
+        9037,
+        13567,
+        9767,
+        8133,
+        9166,
+        8565,
+        6275
+      ],
+      "source_tokens_covered": 166107,
+      "jobs_required": 17,
+      "wall_ms": 1320.6497999781277,
+      "retired_source_tokens_per_second": 125776.71991677962,
+      "selector_input_tokens": 166107,
+      "selector_output_tokens": 199,
+      "canonicalizer_input_tokens": 166107,
+      "canonicalizer_output_tokens": 1182,
+      "consolidator_input_tokens": 167289,
+      "consolidator_output_tokens": 1598,
+      "internal_model_runs": 51,
+      "provider_calls": 0,
+      "provider_tokens": 0,
+      "qwen_read_amplification": 2.0,
+      "active_capsule_tokens": 91,
+      "all_promotions_correct": true,
+      "semantic_correctness": "not_model_scored; deterministic coverage/provenance control",
+      "batches": [
+        {
+          "job_id": "job_e8df1373b07a4f5b83710d2d22071513",
+          "source_tokens": 8468,
+          "snapshot_start_event_id": "replay_evt_000001",
+          "snapshot_end_event_id": "replay_evt_000007",
+          "watermark": "replay_evt_000007",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_4d8ad7e1b89a4c7b8f7f50ded904e80c",
+          "source_tokens": 20584,
+          "snapshot_start_event_id": "replay_evt_000008",
+          "snapshot_end_event_id": "replay_evt_000016",
+          "watermark": "replay_evt_000016",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_04643b3d167e44299b0d277631b2248e",
+          "source_tokens": 8172,
+          "snapshot_start_event_id": "replay_evt_000017",
+          "snapshot_end_event_id": "replay_evt_000032",
+          "watermark": "replay_evt_000032",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_679531e7cbdd48a5aa1426f7576c6aa5",
+          "source_tokens": 9918,
+          "snapshot_start_event_id": "replay_evt_000033",
+          "snapshot_end_event_id": "replay_evt_000059",
+          "watermark": "replay_evt_000059",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_98d0b40c0a1a4cf6ac3128f1719e81ef",
+          "source_tokens": 9803,
+          "snapshot_start_event_id": "replay_evt_000060",
+          "snapshot_end_event_id": "replay_evt_000066",
+          "watermark": "replay_evt_000066",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_f307d810162b4b35842ae3dfaba6102e",
+          "source_tokens": 9513,
+          "snapshot_start_event_id": "replay_evt_000067",
+          "snapshot_end_event_id": "replay_evt_000074",
+          "watermark": "replay_evt_000074",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_adf9a2421edd462686e123325264545a",
+          "source_tokens": 8567,
+          "snapshot_start_event_id": "replay_evt_000075",
+          "snapshot_end_event_id": "replay_evt_000090",
+          "watermark": "replay_evt_000090",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_b45e8adedd7b454dace5f72a64aaac23",
+          "source_tokens": 8002,
+          "snapshot_start_event_id": "replay_evt_000091",
+          "snapshot_end_event_id": "replay_evt_000099",
+          "watermark": "replay_evt_000099",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_876e5ee52aa04c6d8afbba3b17db4355",
+          "source_tokens": 9097,
+          "snapshot_start_event_id": "replay_evt_000100",
+          "snapshot_end_event_id": "replay_evt_000109",
+          "watermark": "replay_evt_000109",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_1cfa5ba09437458ba937f5da9d5ba2e2",
+          "source_tokens": 9473,
+          "snapshot_start_event_id": "replay_evt_000110",
+          "snapshot_end_event_id": "replay_evt_000121",
+          "watermark": "replay_evt_000121",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_f044e22a3a4c42eea2007a2708a0983d",
+          "source_tokens": 9037,
+          "snapshot_start_event_id": "replay_evt_000122",
+          "snapshot_end_event_id": "replay_evt_000134",
+          "watermark": "replay_evt_000134",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_7a0ff0021ceb416f864e295f46487672",
+          "source_tokens": 13567,
+          "snapshot_start_event_id": "replay_evt_000135",
+          "snapshot_end_event_id": "replay_evt_000136",
+          "watermark": "replay_evt_000136",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_341de6bd75754bfa8a1d344d03d70860",
+          "source_tokens": 9767,
+          "snapshot_start_event_id": "replay_evt_000137",
+          "snapshot_end_event_id": "replay_evt_000150",
+          "watermark": "replay_evt_000150",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_17bc9d3d55634d6fb30e10d052d37955",
+          "source_tokens": 8133,
+          "snapshot_start_event_id": "replay_evt_000151",
+          "snapshot_end_event_id": "replay_evt_000166",
+          "watermark": "replay_evt_000166",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_eccca1fe095d4e668d0204567689f994",
+          "source_tokens": 9166,
+          "snapshot_start_event_id": "replay_evt_000167",
+          "snapshot_end_event_id": "replay_evt_000178",
+          "watermark": "replay_evt_000178",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_bac8ca0280c44bcf88143c497a7f114f",
+          "source_tokens": 8565,
+          "snapshot_start_event_id": "replay_evt_000179",
+          "snapshot_end_event_id": "replay_evt_000188",
+          "watermark": "replay_evt_000188",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_0ad84f6f01e74d9ba3a955eb583a8839",
+          "source_tokens": 6275,
+          "snapshot_start_event_id": "replay_evt_000189",
+          "snapshot_end_event_id": "replay_evt_000199",
+          "watermark": "replay_evt_000199",
+          "provenance_valid": true
+        }
+      ]
+    },
+    {
+      "target_source_tokens": 16000,
+      "achieved_batch_tokens": [
+        29052,
+        16153,
+        17149,
+        17598,
+        17431,
+        26818,
+        16276,
+        16965,
+        8665
+      ],
+      "source_tokens_covered": 166107,
+      "jobs_required": 9,
+      "wall_ms": 677.1150999993552,
+      "retired_source_tokens_per_second": 245315.75207842534,
+      "selector_input_tokens": 166107,
+      "selector_output_tokens": 199,
+      "canonicalizer_input_tokens": 166107,
+      "canonicalizer_output_tokens": 1094,
+      "consolidator_input_tokens": 167201,
+      "consolidator_output_tokens": 1310,
+      "internal_model_runs": 27,
+      "provider_calls": 0,
+      "provider_tokens": 0,
+      "qwen_read_amplification": 2.0,
+      "active_capsule_tokens": 111,
+      "all_promotions_correct": true,
+      "semantic_correctness": "not_model_scored; deterministic coverage/provenance control",
+      "batches": [
+        {
+          "job_id": "job_d46852f4d0dc4a56961e3b09d0b3a3e1",
+          "source_tokens": 29052,
+          "snapshot_start_event_id": "replay_evt_000001",
+          "snapshot_end_event_id": "replay_evt_000016",
+          "watermark": "replay_evt_000016",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_f64d92e4d5cd44199eb0055fc79c88e8",
+          "source_tokens": 16153,
+          "snapshot_start_event_id": "replay_evt_000017",
+          "snapshot_end_event_id": "replay_evt_000058",
+          "watermark": "replay_evt_000058",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_66cbe959949447239ec3d396834f10d9",
+          "source_tokens": 17149,
+          "snapshot_start_event_id": "replay_evt_000059",
+          "snapshot_end_event_id": "replay_evt_000070",
+          "watermark": "replay_evt_000070",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_baa83a95a83845f8ae0b2a7998b2433b",
+          "source_tokens": 17598,
+          "snapshot_start_event_id": "replay_evt_000071",
+          "snapshot_end_event_id": "replay_evt_000096",
+          "watermark": "replay_evt_000096",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_a292ad9cee374f8db30571b2654d0b0d",
+          "source_tokens": 17431,
+          "snapshot_start_event_id": "replay_evt_000097",
+          "snapshot_end_event_id": "replay_evt_000117",
+          "watermark": "replay_evt_000117",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_f351517eca3b448784a915989d2f903c",
+          "source_tokens": 26818,
+          "snapshot_start_event_id": "replay_evt_000118",
+          "snapshot_end_event_id": "replay_evt_000136",
+          "watermark": "replay_evt_000136",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_4de9e619e7d74667aac0fd8bed83375d",
+          "source_tokens": 16276,
+          "snapshot_start_event_id": "replay_evt_000137",
+          "snapshot_end_event_id": "replay_evt_000160",
+          "watermark": "replay_evt_000160",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_d0c6f77d93174e189a193b5aca8393fb",
+          "source_tokens": 16965,
+          "snapshot_start_event_id": "replay_evt_000161",
+          "snapshot_end_event_id": "replay_evt_000184",
+          "watermark": "replay_evt_000184",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_85ba85f578fd40e4872833f7ad49fa49",
+          "source_tokens": 8665,
+          "snapshot_start_event_id": "replay_evt_000185",
+          "snapshot_end_event_id": "replay_evt_000199",
+          "watermark": "replay_evt_000199",
+          "provenance_valid": true
+        }
+      ]
+    },
+    {
+      "target_source_tokens": 32000,
+      "achieved_batch_tokens": [
+        32737,
+        33721,
+        33303,
+        32232,
+        32638,
+        1476
+      ],
+      "source_tokens_covered": 166107,
+      "jobs_required": 6,
+      "wall_ms": 456.19550000992604,
+      "retired_source_tokens_per_second": 364113.63109979336,
+      "selector_input_tokens": 166107,
+      "selector_output_tokens": 199,
+      "canonicalizer_input_tokens": 166107,
+      "canonicalizer_output_tokens": 1061,
+      "consolidator_input_tokens": 167168,
+      "consolidator_output_tokens": 1202,
+      "internal_model_runs": 18,
+      "provider_calls": 0,
+      "provider_tokens": 0,
+      "qwen_read_amplification": 2.0,
+      "active_capsule_tokens": 56,
+      "all_promotions_correct": true,
+      "semantic_correctness": "not_model_scored; deterministic coverage/provenance control",
+      "batches": [
+        {
+          "job_id": "job_47ecb5448ec44b03864b4eaf8742f7ab",
+          "source_tokens": 32737,
+          "snapshot_start_event_id": "replay_evt_000001",
+          "snapshot_end_event_id": "replay_evt_000023",
+          "watermark": "replay_evt_000023",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_ed7fe94446b44cc49c13ced93f8ff3bd",
+          "source_tokens": 33721,
+          "snapshot_start_event_id": "replay_evt_000024",
+          "snapshot_end_event_id": "replay_evt_000074",
+          "watermark": "replay_evt_000074",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_d6855b50bfc94a4d84ec7af1d17638e8",
+          "source_tokens": 33303,
+          "snapshot_start_event_id": "replay_evt_000075",
+          "snapshot_end_event_id": "replay_evt_000120",
+          "watermark": "replay_evt_000120",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_bdc5e33cd9cc4e3ab5f9a0a9bb64e133",
+          "source_tokens": 32232,
+          "snapshot_start_event_id": "replay_evt_000121",
+          "snapshot_end_event_id": "replay_evt_000148",
+          "watermark": "replay_evt_000148",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_bfdd5267996646af904de63947d4a934",
+          "source_tokens": 32638,
+          "snapshot_start_event_id": "replay_evt_000149",
+          "snapshot_end_event_id": "replay_evt_000195",
+          "watermark": "replay_evt_000195",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_08cb0776baf64ea3850ade17d9267702",
+          "source_tokens": 1476,
+          "snapshot_start_event_id": "replay_evt_000196",
+          "snapshot_end_event_id": "replay_evt_000199",
+          "watermark": "replay_evt_000199",
+          "provenance_valid": true
+        }
+      ]
+    },
+    {
+      "target_source_tokens": 64000,
+      "achieved_batch_tokens": [
+        66458,
+        64486,
+        35163
+      ],
+      "source_tokens_covered": 166107,
+      "jobs_required": 3,
+      "wall_ms": 232.4293999990914,
+      "retired_source_tokens_per_second": 714655.7191157802,
+      "selector_input_tokens": 166107,
+      "selector_output_tokens": 199,
+      "canonicalizer_input_tokens": 166107,
+      "canonicalizer_output_tokens": 1028,
+      "consolidator_input_tokens": 167135,
+      "consolidator_output_tokens": 1094,
+      "internal_model_runs": 9,
+      "provider_calls": 0,
+      "provider_tokens": 0,
+      "qwen_read_amplification": 2.0,
+      "active_capsule_tokens": 311,
+      "all_promotions_correct": true,
+      "semantic_correctness": "not_model_scored; deterministic coverage/provenance control",
+      "batches": [
+        {
+          "job_id": "job_b525974103814784882899cdd5ed2361",
+          "source_tokens": 66458,
+          "snapshot_start_event_id": "replay_evt_000001",
+          "snapshot_end_event_id": "replay_evt_000074",
+          "watermark": "replay_evt_000074",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_65d2ce4f66764428ae2955fb67d6eff6",
+          "source_tokens": 64486,
+          "snapshot_start_event_id": "replay_evt_000075",
+          "snapshot_end_event_id": "replay_evt_000144",
+          "watermark": "replay_evt_000144",
+          "provenance_valid": true
+        },
+        {
+          "job_id": "job_0750e7d4e4694839bb5c4b904c63eae9",
+          "source_tokens": 35163,
+          "snapshot_start_event_id": "replay_evt_000145",
+          "snapshot_end_event_id": "replay_evt_000199",
+          "watermark": "replay_evt_000199",
+          "provenance_valid": true
+        }
+      ]
+    }
+  ],
+  "best_structural_control": 64000
+}

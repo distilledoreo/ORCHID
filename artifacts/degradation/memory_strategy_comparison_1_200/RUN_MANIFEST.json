@@ -1,0 +1,29 @@
+{
+  "experiment_name": "memory_strategy_comparison_1_200",
+  "created_at": "2026-08-20T02:55:22.286201+00:00",
+  "run_id": "2539dd56-2a5d-47ec-8ae3-2ec439b7878c",
+  "source_dbs": {
+    "generations_1_62": "C:\\Users\\disti\\orchid_memory_gateway_v1\\data\\live_endurance_degradation.db",
+    "generations_63_200": "C:\\Users\\disti\\orchid_memory_gateway_v1\\data\\live_endurance_protocol_hardened.db"
+  },
+  "shadow_lineage_dir": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\degradation\\residency_shadow_chained_1_200",
+  "traditional_prompt_bundle_hash": "6bda325ba03d2cad8f8f148c400ddfa0ac0b50a27f38ce7dc7339e597169c59e",
+  "traditional_model": "gemini-3.7-flash",
+  "checkpoint_generations": [
+    1,
+    10,
+    25,
+    50,
+    75,
+    100,
+    125,
+    150,
+    175,
+    200
+  ],
+  "arms": [
+    "full_raw",
+    "traditional_recursive_summary",
+    "orchid"
+  ]
+}

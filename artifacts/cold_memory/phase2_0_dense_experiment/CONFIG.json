@@ -1,0 +1,26 @@
+{
+  "case_counts": {
+    "frozen_semantic": 5,
+    "hard_negatives": 15,
+    "lexical_guardrail": 18,
+    "paraphrase_holdout": 15
+  },
+  "corpus_size": 100,
+  "decision_gate": {
+    "max_dense_query_p95_ms": 20.0,
+    "max_negative_false_would_inject_rate": 0.1,
+    "minimum_frozen_incremental_injection_recoveries": 1,
+    "minimum_frozen_incremental_recoveries": 1
+  },
+  "dense_measurement_threshold": 0.5,
+  "dense_production_injection": false,
+  "dense_top_k": 5,
+  "fts_policy": "phase1_2_calibrated",
+  "fts_unchanged": true,
+  "iterations": 10,
+  "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+  "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "output_root": "artifacts\\cold_memory\\phase2_0_dense_experiment",
+  "phase": "2.0",
+  "warmup": 2
+}

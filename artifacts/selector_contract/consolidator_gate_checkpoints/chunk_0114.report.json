@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 115,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "E2e coverage optimizer test completed successfully in 16.8 seconds. Both test cases passed: desktop-chromium (1.0m) and phone-390 (34.5s). The workflow path smoke test verified that coverage optimizer completes without overflowing the Reference drawer.",
+      "envelope_json": "{\"generation\":115,\"items\":[{\"evidence\":[{\"excerpt\":\"Script completed\\\\nWall time 16.8 seconds\\\\nOutput:\\\\n\",\"source_id\":\"panoref_evt_001125\"},{\"excerpt\":\"2 passed (1.6m)\",\"source_id\":\"panoref_evt_001125\"}],\"id\":\"mem_ee692d8a4f91ca156302ee61\",\"kind\":\"completed\",\"status\":\"resolved\",\"supersedes_item_ids\":[],\"text\":\"E2e coverage optimizer test completed successfully in 16.8 seconds. Both test cases passed.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

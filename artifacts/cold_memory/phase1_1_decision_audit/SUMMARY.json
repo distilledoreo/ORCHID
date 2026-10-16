@@ -1,0 +1,134 @@
+{
+  "artifacts": [
+    "REPORT.md",
+    "SUMMARY.json",
+    "CONFIG.json",
+    "CORPUS.json",
+    "TIMER_DIAGNOSTICS.json",
+    "latency_samples.jsonl",
+    "latency_summary.json",
+    "quality_results.jsonl",
+    "quality_summary.json"
+  ],
+  "interpretation": {
+    "dense_retrieval_not_implemented": true,
+    "fts_is_not_the_only_cost": true,
+    "hot_path_changed_by_shadow": false
+  },
+  "measured": {
+    "largest_corpus": 200,
+    "paired_shadow_minus_off_ms": {
+      "count": 520,
+      "max": 33.9129,
+      "mean": 16.83622,
+      "p50": 17.8514,
+      "p95": 20.8492,
+      "p99": 23.7733
+    },
+    "quality": {
+      "designed_match_success_rate": 0.6875,
+      "designed_query_count": 16,
+      "exact_match_success_rate": 1.0,
+      "failure_categories": {
+        "irrelevant_candidates": 1,
+        "no_lexical_overlap_likely_dense": 5,
+        "ranking_issue": 3,
+        "threshold_issue": 2
+      },
+      "false_injection_query_rate": 0.076923,
+      "false_injection_reasons": {
+        "bm25_or_activation_ranking": 1,
+        "identifier_collision": 1
+      },
+      "false_positive_candidate_rate": 0.771429,
+      "future_dense_opportunity_rate": 0.0,
+      "irrelevant_query_candidate_rate": 0.2,
+      "lexical_match_success_rate": 0.375,
+      "mrr": 0.495078,
+      "no_match_success_rate": 0.666667,
+      "quality_stage_ms": {
+        "db_checkout_ms": {
+          "count": 26,
+          "max": 10.3793,
+          "mean": 7.285238,
+          "p50": 7.4298,
+          "p95": 9.9666,
+          "p99": 10.3793
+        },
+        "fts_ms": {
+          "count": 26,
+          "max": 0.896,
+          "mean": 0.4832,
+          "p50": 0.4894,
+          "p95": 0.7286,
+          "p99": 0.896
+        },
+        "query_construction_ms": {
+          "count": 26,
+          "max": 0.0524,
+          "mean": 0.023288,
+          "p50": 0.023,
+          "p95": 0.0282,
+          "p99": 0.0524
+        },
+        "ranking_ms": {
+          "count": 26,
+          "max": 0.3081,
+          "mean": 0.074565,
+          "p50": 0.0572,
+          "p95": 0.1873,
+          "p99": 0.3081
+        },
+        "telemetry_ms": {
+          "count": 26,
+          "max": 11.5423,
+          "mean": 7.554235,
+          "p50": 7.9287,
+          "p95": 10.478,
+          "p99": 11.5423
+        },
+        "token_budget_ms": {
+          "count": 26,
+          "max": 0.0059,
+          "mean": 0.002462,
+          "p50": 0.0018,
+          "p95": 0.0058,
+          "p99": 0.0059
+        },
+        "total_ms": {
+          "count": 26,
+          "max": 19.9334,
+          "mean": 15.507577,
+          "p50": 16.76,
+          "p95": 19.5027,
+          "p99": 19.9334
+        }
+      },
+      "queries_with_discarded_input_terms": 0,
+      "query_count": 26,
+      "recall_at_1": 0.461538,
+      "recall_at_3": 0.5,
+      "recall_at_5": 0.5,
+      "zero_candidate_rate": 0.192308
+    },
+    "shadow_cold_retrieval_ms": {
+      "count": 520,
+      "max": 6.024,
+      "mean": 1.3593,
+      "p50": 1.3539,
+      "p95": 1.8551,
+      "p99": 2.5181
+    },
+    "timer": {
+      "clock": "time.perf_counter_ns / time.perf_counter",
+      "clock_monotonic": true,
+      "clock_resolution_seconds": 1e-07,
+      "fts_positive_sample_min_ms": 0.1915,
+      "fts_sample_count": 520,
+      "fts_zero_ms_fraction": 0.038462,
+      "fts_zero_ms_samples": 20
+    }
+  },
+  "next_capability": "deterministic_lexical_ranking_threshold_calibration",
+  "phase": "cold_memory_phase1_1_decision_audit"
+}

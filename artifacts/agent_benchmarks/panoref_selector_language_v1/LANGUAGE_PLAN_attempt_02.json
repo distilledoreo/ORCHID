@@ -1,0 +1,85 @@
+{
+  "arm_definitions": {
+    "A_CANONICAL_ENGLISH": {
+      "prefix": "INPUT_JSON\n--- BEGIN INPUT ---\n",
+      "suffix": "\n--- END INPUT ---",
+      "system_prompt": "You select durable-memory source items. Return JSON only with exactly {\"selected_event_ids\":[\"source-item-id\"]}. Select only whole-event or source-span IDs present in the input; do not summarize or rewrite items."
+    },
+    "B_FAITHFUL_CHINESE": {
+      "prefix": "输入JSON\n--- 输入开始 ---\n",
+      "suffix": "\n--- 输入结束 ---",
+      "system_prompt": "你要选择可长期保留的记忆源项目。仅返回 JSON，且必须严格包含 {\"selected_event_ids\":[\"source-item-id\"]}。只能选择输入中存在的完整事件 ID 或源跨度 ID；不要总结或改写项目。"
+    },
+    "C_DENSE_CHINESE": {
+      "prefix": "输入JSON\n---\n",
+      "suffix": "\n---",
+      "system_prompt": "选出耐久记忆源项。仅输出 JSON：{\"selected_event_ids\":[\"source-item-id\"]}。只能选输入中存在的完整事件或源跨度 ID；勿总结或改写。"
+    }
+  },
+  "chunk_count": 148,
+  "chunk_target_tokens": 1200,
+  "created_at": "2026-08-23T01:55:58.821+00:00",
+  "eligible_event_types": [
+    "agent_message",
+    "message"
+  ],
+  "endpoint": "http://127.0.0.1:1234/v1",
+  "gate_chunk_indices": [
+    0,
+    6,
+    13,
+    19,
+    26,
+    32,
+    38,
+    45,
+    51,
+    58,
+    64,
+    70,
+    77,
+    83,
+    89,
+    96,
+    102,
+    109,
+    115,
+    121,
+    128,
+    134,
+    141,
+    147
+  ],
+  "generation_rules": {
+    "no_cache_or_concurrency_changes": true,
+    "no_retries": true,
+    "outcome_blind_translation": true,
+    "same_chunk_order": true,
+    "same_model_runtime_settings": true,
+    "same_opaque_ids": true,
+    "same_response_schema": true,
+    "serial": true
+  },
+  "model": "qwen3.5-4b@q6_k",
+  "opaque_id_policy": "canonical opaque IDs are copied from frozen payloads and never translated or reordered",
+  "plan_sha256": "8fd2310aeba91811f4ffaa54442c748e6bd32b6cff7a17cee82c70a964350a85",
+  "profile_config": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_microprofile_v1\\PROFILE_CONFIG.json",
+  "profile_config_sha256": "19157d0b9e59859182b512d24f2b26e9bfbba17aea76f49e8cca0246e1d7d4d2",
+  "profile_sample": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_microprofile_v1\\FROZEN_SAMPLE.json",
+  "profile_sample_sha256": "4296e87be5d07a85f156b6a2e132b44b705d5e0ecb1c4ffda31f95c83fac86ee",
+  "replay": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_direct_generalization_bounded_v2\\frozen_panoref_replay\\events.jsonl",
+  "replay_sha256": "aa0e7326c2514501a8c53a5a2c4669b1512383507989e71403d4e6f00f7eaf07",
+  "request_encoding_plan": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\panoref_selector_request_encoding_v1\\REQUEST_ENCODING_PLAN.json",
+  "request_encoding_plan_sha256": "c3a7e39969b16c296ea72dd2c0344d113c8db5286b85364551c76501424dfe19",
+  "schema_version": "panoref-selector-language-plan-v1",
+  "source_commit": "b1a2829f748c61e48c01d8b107f53062aee02b37",
+  "technical_preservation_policy": "tool calls, tool outputs, diagnostics, code, paths, URLs, hashes, numbers, protocol keys, and technical identifiers are protected or unchanged",
+  "translation_prompt_sha256": "31f5f588ab2238023ccb24b6a1cfda11b24c2be1ccd25b01a410459d11dfc965",
+  "translator_generation": {
+    "reasoning_effort": "none",
+    "stream": false,
+    "temperature": 0,
+    "top_p": 1
+  },
+  "translator_model": "qwen3.5-4b@q6_k"
+}

@@ -1,0 +1,159 @@
+{
+  "results": [
+    {
+      "file": "corrected_4k_full12.json",
+      "target_tokens": 4000,
+      "max_output_tokens": null,
+      "full_window": true,
+      "status": "SUCCEEDED",
+      "source_tokens": 16155,
+      "wall_ms": 314050.54050000035,
+      "source_tokens_per_second": 51.440764834474095,
+      "batch_count": 5,
+      "valid_batch_count": 5,
+      "timeout_count": 0,
+      "structured_failure_count": 0,
+      "batch_latencies_ms": [
+        49034.2740000051,
+        49539.61569999228,
+        66630.26289999834,
+        41773.89020001283,
+        107071.82130002184
+      ],
+      "source_input_tokens": 16155,
+      "model_input_tokens": 20426,
+      "model_output_tokens": 2435
+    },
+    {
+      "file": "corrected_4k_full12_cap1024.json",
+      "target_tokens": 4000,
+      "max_output_tokens": 1024,
+      "full_window": true,
+      "status": "FAILED",
+      "source_tokens": 16155,
+      "wall_ms": 176541.3475999958,
+      "source_tokens_per_second": 91.50830793817043,
+      "batch_count": 5,
+      "valid_batch_count": 4,
+      "timeout_count": 0,
+      "structured_failure_count": 1,
+      "batch_latencies_ms": [
+        28376.44709998858,
+        15593.688599998131,
+        33087.10790000623,
+        17337.00410000165
+      ],
+      "source_input_tokens": 14955,
+      "model_input_tokens": 18492,
+      "model_output_tokens": 1119
+    },
+    {
+      "file": "corrected_4k_full12_cap512.json",
+      "target_tokens": 4000,
+      "max_output_tokens": 512,
+      "full_window": true,
+      "status": "FAILED",
+      "source_tokens": 16155,
+      "wall_ms": 136469.51500000432,
+      "source_tokens_per_second": 118.37808612421234,
+      "batch_count": 5,
+      "valid_batch_count": 4,
+      "timeout_count": 0,
+      "structured_failure_count": 1,
+      "batch_latencies_ms": [
+        28497.366700001294,
+        15595.8876000077,
+        33152.015100000426,
+        17437.615299975732
+      ],
+      "source_input_tokens": 14955,
+      "model_input_tokens": 18492,
+      "model_output_tokens": 1119
+    },
+    {
+      "file": "corrected_8k_full12.json",
+      "target_tokens": 8000,
+      "max_output_tokens": null,
+      "full_window": true,
+      "status": "SUCCEEDED",
+      "source_tokens": 16155,
+      "wall_ms": 337357.5482000015,
+      "source_tokens_per_second": 47.886878732064275,
+      "batch_count": 3,
+      "valid_batch_count": 3,
+      "timeout_count": 0,
+      "structured_failure_count": 0,
+      "batch_latencies_ms": [
+        129918.15519999363,
+        100497.36549999216,
+        106941.40169999446
+      ],
+      "source_input_tokens": 16155,
+      "model_input_tokens": 20182,
+      "model_output_tokens": 3194
+    },
+    {
+      "file": "corrected_12k_full12.json",
+      "target_tokens": 12000,
+      "max_output_tokens": null,
+      "full_window": true,
+      "status": "SUCCEEDED",
+      "source_tokens": 16155,
+      "wall_ms": 227103.07129999273,
+      "source_tokens_per_second": 71.13510137720677,
+      "batch_count": 2,
+      "valid_batch_count": 2,
+      "timeout_count": 0,
+      "structured_failure_count": 0,
+      "batch_latencies_ms": [
+        110305.13789999532,
+        116797.35239999718
+      ],
+      "source_input_tokens": 16155,
+      "model_input_tokens": 20060,
+      "model_output_tokens": 1534
+    },
+    {
+      "file": "corrected_16k_full12.json",
+      "target_tokens": 16000,
+      "max_output_tokens": null,
+      "full_window": true,
+      "status": "SUCCEEDED",
+      "source_tokens": 16155,
+      "wall_ms": 260375.08299999172,
+      "source_tokens_per_second": 62.045107442176075,
+      "batch_count": 2,
+      "valid_batch_count": 2,
+      "timeout_count": 0,
+      "structured_failure_count": 0,
+      "batch_latencies_ms": [
+        154714.05470001628,
+        105660.3406999784
+      ],
+      "source_input_tokens": 16155,
+      "model_input_tokens": 20060,
+      "model_output_tokens": 2371
+    }
+  ],
+  "correct_zero_timeout_best": {
+    "file": "corrected_12k_full12.json",
+    "target_tokens": 12000,
+    "max_output_tokens": null,
+    "full_window": true,
+    "status": "SUCCEEDED",
+    "source_tokens": 16155,
+    "wall_ms": 227103.07129999273,
+    "source_tokens_per_second": 71.13510137720677,
+    "batch_count": 2,
+    "valid_batch_count": 2,
+    "timeout_count": 0,
+    "structured_failure_count": 0,
+    "batch_latencies_ms": [
+      110305.13789999532,
+      116797.35239999718
+    ],
+    "source_input_tokens": 16155,
+    "model_input_tokens": 20060,
+    "model_output_tokens": 1534
+  }
+}

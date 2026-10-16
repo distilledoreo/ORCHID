@@ -1,0 +1,18 @@
+{
+  "arm": "ARM_B_SELECTOR_SOLAR",
+  "capsule_generations": 0,
+  "current_fact_losses": 0,
+  "intent_or_blocker_losses": 0,
+  "invention_failures": 0,
+  "promotion": {
+    "status": "NOT_REACHED"
+  },
+  "resurrection_failures": 0,
+  "semantic_checks": 0,
+  "semantic_fail": 0,
+  "semantic_pass": 0,
+  "structural_fail": 0,
+  "structural_generations": 0,
+  "structural_ok": false,
+  "structural_pass": 0
+}

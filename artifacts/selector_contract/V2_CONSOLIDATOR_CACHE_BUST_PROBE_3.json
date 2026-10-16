@@ -1,0 +1,84 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 3,
+  "accepted": 1,
+  "rejected": 2,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 1,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_32b8f379d7d7bfed2190b747",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_32b8f379d7d7bfed2190b747",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_593943690b1167a1229f3851"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Panoptic Rendered Object Finder (PanoRef) algorithm implementation assessed: correctness 7.5/10, production readiness 4/10. Core strengths include deterministic area-proportional sampling, actual segment occlusion evaluation, and a genuinely non-greedy joint-pair search mode. Two critical blockers remain: (1) imported sets incorrectly use whole-object AABBs for candidate clearance, causing valid interior origins to be rejected; (2) the geometry representation lacks scalability for heavy imports.",
+      "envelope_json": "{\"generation\":1,\"items\":[{\"evidence\":[{\"excerpt\":\"Algorithm architecture for normal graybox sets: 8/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Correctness of the two search modes: 7.5/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Readiness for complex imported sets: 4/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"The joint-pair mode is genuinely joint. It checks every legal coarse pair... It does not discard individually mediocre but complementary origins prematurely.\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"This is the biggest correctness issue. For every non-floor scene object, the extractor stores the entire object’s axis-aligned bounding box as an obstacle... Every sensible camera origin inside the room is therefore 'inside the obstacle bounds,' gets zero clearance, and is rejected.\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"The geometry representation will not scale to heavy imports\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_32b8f379d7d7bfed2190b747\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"PanoRef joint-mode implementation is architecturally sound but blocked on AABB-based obstacle rejection for imported sets and scalability limits.\"},{\"evidence\":[{\"excerpt\":\"Use actual geometry clearance, not object AABBs\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"candidate valid = camera sphere/capsule does not intersect nearby triangles\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_593943690b1167a1229f3851\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Fix import handling: implement triangle-level clearance checks replacing per-object AABB collision detection.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 6,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "Projected lighting uses dual pano sampling with continuous blend weighting via power-4 dominance, gating by blend mode (0=secondary, 1=primary, 2=primary-dominant, 3=secondary-dominant), and optional coverage debug output.",
+      "envelope_json": "{\"generation\":6,\"items\":[{\"evidence\":[{\"excerpt\":\"float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float primaryDominance = projectedBlendMode == 2 ? 1.15 : 1.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float primaryWeight = pow(primaryScore, 4.0);\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_fcd66ce9f22fbc0e693a8cb6\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Projected blend mode implements winner-takes-most weighting with power-4 scaling for smooth transitions between primary/secondary projectors based on quality and visibility scores.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    },
+    {
+      "generation": 10,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_fcd66ce9f22fbc0e693a8cb6",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_fcd66ce9f22fbc0e693a8cb6",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_fcd66ce9f22fbc0e693a8cb6",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_0034436ab54f5bf2618b3bbb",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_093fb9a52dd76cb31688143f",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_a106a3d6ecf2cb5797916f26",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_43eb5fc19d4ba9ae5c72f94f"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "All 215 unit tests across 14 test files passed successfully in Vitest v3.2.6 on Windows (C:/Users/disti/.t3/worktrees/PanoRef/t3code-aefd2138), confirming UI fidelity, model asset store, scene objects, camera cubemaps, human mannequin, transform gizmo, render output, package export, shot thumbnails, sandbox, project workflow, build clipboard, projector occlusion, and editor store functionality.",
+      "envelope_json": "{\"generation\":10,\"items\":[{\"evidence\":[{\"excerpt\":\"float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float primaryDominance = projectedBlendMode == 2 ? 1.15 : 1.0;\",\"source_id\":\"panoref_evt_000923::span::000001\"},{\"excerpt\":\"float primaryWeight = pow(primaryScore, 4.0);\",\"source_id\":\"panoref_evt_000923::span::000001\"}],\"id\":\"mem_fcd66ce9f22fbc0e693a8cb6\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Projected blend mode implements winner-takes-most weighting with power-4 scaling for smooth transitions between primary/secondary projectors based on quality and visibility scores.\"},{\"evidence\":[{\"excerpt\":\"tests/uiFidelity.test.ts (40 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_0034436ab54f5bf2618b3bbb\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Run the full integration test suite to verify end-to-end workflow correctness\"},{\"evidence\":[{\"excerpt\":\"tests/transformGizmo.test.ts (12 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_093fb9a52dd76cb31688143f\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Investigate performance optimization for transform gizmo interactions given its higher runtime (31ms) relative to test count\"},{\"evidence\":[{\"excerpt\":\"tests/modelAssetStore.test.ts (5 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_a106a3d6ecf2cb5797916f26\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Add integration tests for model import/export roundtrips with external file formats (GLB/GLTF) to verify asset persistence end-to-end\"},{\"evidence\":[{\"excerpt\":\"tests/projectWorkflow.test.ts (25 tests)\",\"source_id\":\"panoref_evt_000934::span::000000\"}],\"id\":\"mem_43eb5fc19d4ba9ae5c72f94f\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Consider splitting the large projectWorkflow test suite into sub-files (camera, audio, render) to improve parallelization and reduce CI time\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 1,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_32b8f379d7d7bfed2190b747",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_32b8f379d7d7bfed2190b747",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_593943690b1167a1229f3851"
+      ],
+      "semantic_violations": []
+    },
+    {
+      "generation": 10,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_fcd66ce9f22fbc0e693a8cb6",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_fcd66ce9f22fbc0e693a8cb6",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "unknown source id 'panoref_evt_000923::span::000001' for item mem_fcd66ce9f22fbc0e693a8cb6",
+        "missing authoritative source for 'panoref_evt_000923::span::000001'",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_0034436ab54f5bf2618b3bbb",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_093fb9a52dd76cb31688143f",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_a106a3d6ecf2cb5797916f26",
+        "excerpt not found in source 'panoref_evt_000934::span::000000' for item mem_43eb5fc19d4ba9ae5c72f94f"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 3,
+  "mode": "live",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

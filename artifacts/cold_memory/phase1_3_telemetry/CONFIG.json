@@ -1,0 +1,17 @@
+{
+  "awake_model": false,
+  "candidate_limit": 20,
+  "cold_memory_mode": "shadow",
+  "corpus_sizes": [
+    100,
+    500
+  ],
+  "iterations": 10,
+  "network": false,
+  "phase": "cold_memory_phase1_3_telemetry",
+  "telemetry_batch_size": 32,
+  "telemetry_flush_ms": 5,
+  "telemetry_queue_size": 256,
+  "timeout_ms": 50,
+  "warmup": 2
+}

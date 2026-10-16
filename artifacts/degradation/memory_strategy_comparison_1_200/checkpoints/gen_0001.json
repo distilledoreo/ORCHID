@@ -1,0 +1,158 @@
+{
+  "generation": 1,
+  "comparison": {
+    "generation": 1,
+    "raw_history_tokens": 284,
+    "full_raw_resident_tokens": 284,
+    "traditional_summary_tokens": 101,
+    "traditional_tail_tokens": 76,
+    "traditional_total_resident_tokens": 177,
+    "orchid_active_tokens": 85,
+    "orchid_tail_tokens": 76,
+    "orchid_total_resident_tokens": 161,
+    "traditional_current_fact_loss": true,
+    "orchid_current_fact_loss": false,
+    "traditional_resurrection": 0,
+    "orchid_resurrection": 0,
+    "traditional_invented_state": false,
+    "orchid_invented_state": false,
+    "traditional_residue": 0,
+    "orchid_residue": 0,
+    "orchid_background_input_tokens": 7563,
+    "orchid_background_output_tokens": 720,
+    "traditional_background_input_tokens": 1176,
+    "traditional_background_output_tokens": 93
+  },
+  "awake_recall": {
+    "full_raw": {
+      "generation": 1,
+      "arm": "full_raw",
+      "prompt_estimated_tokens": 735,
+      "context_limit_tokens": 32768,
+      "fits_context_limit": true,
+      "messages_hash": "2f6f99700ab2914c7991c78637a8085e58130a628c0fe1d87a60a6d65442fb8b",
+      "status": "transport_failure",
+      "detail": "stop at generation 0 [recall]: Solar content was not JSON",
+      "answers": null,
+      "wall_ms": 210006.67010000325
+    },
+    "traditional_recursive_summary": {
+      "generation": 1,
+      "arm": "traditional_recursive_summary",
+      "prompt_estimated_tokens": 479,
+      "context_limit_tokens": 32768,
+      "fits_context_limit": true,
+      "messages_hash": "cec2633300b65d89e69a3e7aa8ba8e2f604b3175198fc87b89b11961271c0b22",
+      "status": "transport_failure",
+      "detail": "stop at generation 0 [recall]: Solar HTTP 400: {\"error\":\"Engine protocol predict request returned 500: {\\\"error\\\":{\\\"code\\\":500,\\\"message\\\":\\\"\\\\n------------\\\\nWhile executing CallExpression at line 85, column 32 in source:\\\\n...first %}\u21b5            {{- raise_exception('System message must be at the beginnin...\\\\n                                ",
+      "answers": null,
+      "wall_ms": 44.29220000747591
+    },
+    "orchid": {
+      "generation": 1,
+      "arm": "orchid",
+      "prompt_estimated_tokens": 464,
+      "context_limit_tokens": 32768,
+      "fits_context_limit": true,
+      "messages_hash": "63141d12a660a2d4a8cba64bd32c7e7d2f3041326c787cdaec00184ccb79f420",
+      "status": "completed",
+      "answers": {
+        "q1": "30 seconds",
+        "q2": "only if recover_expired_jobs is true",
+        "q3": "undecided",
+        "q4": null,
+        "q5": "Orchid Memory Gateway",
+        "q6": "Disti",
+        "q7": "America/New_York",
+        "q8": "Events are append-only; corrections add a new event.",
+        "q9": null,
+        "q10": null,
+        "q11": "oat latte",
+        "q12": "teal"
+      },
+      "answers_hash": "71ab6e8f67085d29fe3824bea0c438da1ae7f36725b61d213341aed89fee2380",
+      "wall_ms": 5899.867799977073,
+      "classification": {
+        "per_question": {
+          "q1": {
+            "status": "correct",
+            "expected": "30",
+            "observed": "30 seconds"
+          },
+          "q2": {
+            "status": "correct",
+            "expected": "recover_expired_jobs",
+            "observed": "only if recover_expired_jobs is true"
+          },
+          "q3": {
+            "status": "correct",
+            "expected": "undecided",
+            "observed": "undecided"
+          },
+          "q4": {
+            "status": "correct",
+            "expected": null,
+            "observed": null
+          },
+          "q5": {
+            "status": "correct",
+            "expected": "Orchid Memory Gateway",
+            "observed": "Orchid Memory Gateway"
+          },
+          "q6": {
+            "status": "correct",
+            "expected": "Disti",
+            "observed": "Disti"
+          },
+          "q7": {
+            "status": "correct",
+            "expected": "America/New_York",
+            "observed": "America/New_York"
+          },
+          "q8": {
+            "status": "correct",
+            "expected": "append-only",
+            "observed": "Events are append-only; corrections add a new event."
+          },
+          "q9": {
+            "status": "correct",
+            "expected": null,
+            "observed": null
+          },
+          "q10": {
+            "status": "correct",
+            "expected": null,
+            "observed": null
+          },
+          "q11": {
+            "status": "correct",
+            "expected": "oat latte",
+            "observed": "oat latte"
+          },
+          "q12": {
+            "status": "correct",
+            "expected": "teal",
+            "observed": "teal"
+          }
+        },
+        "correct_count": 12,
+        "missing_count": 0,
+        "stale_count": 0,
+        "invented_count": 0,
+        "score": 1.0
+      },
+      "recall_probes": [
+        {
+          "name": "awake_recall",
+          "passed": true,
+          "detail": "Solar matched still-valid state"
+        },
+        {
+          "name": "recall_no_invented_state",
+          "passed": true,
+          "detail": "no extra recall claims"
+        }
+      ]
+    }
+  }
+}

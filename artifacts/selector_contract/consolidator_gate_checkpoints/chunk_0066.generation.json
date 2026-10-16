@@ -1,0 +1,30 @@
+{
+  "generation": 67,
+  "content": "The projection coverage optimizer uses connected-component filtering to discard small isolated prop/table tops and triangle clearance rather than enclosing object bounds so concave imported rooms retain interior candidates. For geometrically ambiguous large roofs, platforms, or prop tops, enable Allowed floor region and enter world-space X/Y/Z bounds; only floor points inside those bounds are eligible.",
+  "events": [
+    {
+      "id": "panoref_evt_001007::span::000003",
+      "sequence": 1007,
+      "content": "or-max={axis.toLowerCase()}\\\\n+                />\\\\n+              </Field>,\\\\n+            ]))}\\\\n+          </div>\\\\n+        )}\\\\n*** Update File: C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\\\\\\tests\\\\\\\\projectionCoverage.test.ts\\\\n@@\\\\n   it('extracts one imported room object and retains its concave empty interior', async () => {\\\\n@@\\\\n     expect(candidates.every((candidate) => candidate.position[1] < 2)).toBe(true);\\\\n   });\\\\n+\\\\n+  it('uses an explicit allowed floor region to reject a large prop top in one imported object', async () => {\\\\n+    const triangles = [...floorTriangles(0, 3), ...floorTriangles(0.8, 1.5)];\\\\n+    const positions = new Float32Array(triangles.length * 9);\\\\n+    const indices = new Uint32Array(triangles.length * 3);\\\\n+    triangles.forEach((triangle, triangleIndex) => {\\\\n+      positions.set([...triangle.a, ...triangle.b, ...triangle.c], triangleIndex * 9);\\\\n+      indices.set([triangleIndex * 3, triangleIndex * 3 + 1, triangleIndex * 3 + 2], triangleIndex * 3);\\\\n+    });\\\\n+    const asset: ProjectAsset = {\\\\n+      id: 'coverage_imported_large_top', type: 'model', name: 'large-top.panoref-mesh',\\\\n+      uri: encodePackedGrayboxMesh(positions, indices).uri, createdAt: new Date(0).toISOString(),\\\\n+    };\\\\n+    const object: SceneObject = {\\\\n+      id: 'coverage_large_top_object', name: 'Imported Floor and Large Top', type: 'imported_model',\\\\n+      transform: createTransform([0, 0, 0]), dimensions: [6, 1, 6],\\\\n+      category: 'architecture', locked: false, visible: true, modelAssetId: asset.id,\\\\n+    };\\\\n+    const project = createDefaultProject();\\\\n+    project.scene.objects = [object];\\\\n+    project.assets.assets[asset.id] = asset;\\\\n+    const scene = await extractCoverageScene(project, undefined, [{\\\\n+      min: [-3.1, -0.1, -3.1],\\\\n+      max: [3.1, 0.1, 3.1],\\\\n+    }]);\\\\n+    expect(Array.from(scene.floorTriangleIndices)).toEqual([0, 1]);\\\\n+    const candidates = generateOriginCandidates(\\\\n+      scene,\\\\n+      resolveCoverageOptions(scene, { candidateSpacing: 1, cameraClearanceRadius: 0.3 }),\\\\n+      buildSceneAcceleration(scene),\\\\n+    );\\\\n+    expect(candidates.length).toBeGreaterThan(0);\\\\n+    expect(candidates.every((candidate) => candidate.position[1] === 1.6)).toBe(true);\\\\n+  });\\\\n*** Update File: C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\\\\\\README.md\\\\n@@\\\\n-The optimizer uses connected-component filtering to keep substantial imported floor surfaces while rejecting isolated prop/table tops, and uses triangle clearance rather than enclosing object bounds so concave imported rooms retain interior candidates.\\\\n+The optimizer uses connected-component filtering to discard small isolated prop/table tops and triangle clearance rather than enclosing object bounds so concave imported rooms retain interior candidates. For geometrically ambiguous large roofs, platforms, or prop tops, enable **Allowed floor region** and enter world-space X/Y/Z bounds; only floor points inside those bounds are eligible.\\\\n*** Update File: C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\",
+      "content_hash": "52a78a902fce57e5a0cabd874f6c89fa2580ab65fe9e50082d79b9d532e5486f",
+      "event_type": "custom_tool_call",
+      "role": "assistant"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "The optimizer uses connected-component filtering to discard small isolated prop/table tops and triangle clearance rather than enclosing object bounds so concave imported rooms retain interior candidates. For geometrically ambiguous large roofs, platforms, or prop tops, enable **Allowed floor region** and enter world-space X/Y/Z bounds; only floor points inside those bounds are eligible.",
+          "source_id": "panoref_evt_001007::span::000003"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "text": "The projection coverage optimizer uses connected-component filtering to discard small isolated prop/table tops and triangle clearance rather than enclosing object bounds so concave imported rooms retain interior candidates. For geometrically ambiguous large roofs, platforms, or prop tops, enable Allowed floor region and enter world-space X/Y/Z bounds; only floor points inside those bounds are eligible."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_001007::span::000003"
+  ]
+}

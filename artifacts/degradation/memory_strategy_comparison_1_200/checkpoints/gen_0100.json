@@ -1,0 +1,251 @@
+{
+  "generation": 100,
+  "comparison": {
+    "generation": 100,
+    "raw_history_tokens": 26016,
+    "full_raw_resident_tokens": 26016,
+    "traditional_summary_tokens": 138,
+    "traditional_tail_tokens": 78,
+    "traditional_total_resident_tokens": 216,
+    "orchid_active_tokens": 113,
+    "orchid_tail_tokens": 78,
+    "orchid_total_resident_tokens": 191,
+    "traditional_current_fact_loss": true,
+    "orchid_current_fact_loss": false,
+    "traditional_resurrection": 0,
+    "orchid_resurrection": 0,
+    "traditional_invented_state": false,
+    "orchid_invented_state": false,
+    "traditional_residue": 5,
+    "orchid_residue": 2,
+    "orchid_background_input_tokens": 6945,
+    "orchid_background_output_tokens": 769,
+    "traditional_background_input_tokens": 1267,
+    "traditional_background_output_tokens": 128
+  },
+  "awake_recall": {
+    "full_raw": {
+      "generation": 100,
+      "arm": "full_raw",
+      "prompt_estimated_tokens": 44730,
+      "context_limit_tokens": 32768,
+      "fits_context_limit": false,
+      "messages_hash": "3e6959d4a38ff744901e3ea4aaf0c01da296ff796dd7e28cfdcd0f9f2b3992d7",
+      "status": "skipped_context_limit",
+      "detail": "Full raw history exceeds configured awake-model context limit; recall arm stopped without truncation.",
+      "answers": null
+    },
+    "traditional_recursive_summary": {
+      "generation": 100,
+      "arm": "traditional_recursive_summary",
+      "prompt_estimated_tokens": 519,
+      "context_limit_tokens": 32768,
+      "fits_context_limit": true,
+      "messages_hash": "2a5d2c7711b6e0c452cfbdb30e71753f564a6c1d50cb2a7c8527c3d95307307b",
+      "status": "completed",
+      "answers": {
+        "q1": "900 seconds",
+        "q2": "only if recover_expired_jobs is true",
+        "q3": "SQLite",
+        "q4": "Yes, Postgres was rejected",
+        "q5": "Orchid Memory Gateway",
+        "q6": "Disti",
+        "q7": "America/New_York",
+        "q8": "event model is append-only with corrections recorded as new events",
+        "q9": "promote READY descendants with compare-and-swap against the active capsule",
+        "q10": "okapi",
+        "q11": "black coffee",
+        "q12": "teal"
+      },
+      "answers_hash": "f63cfe141d92e0256bb963fcf565537fd2ac83d89c9d466b4f525a81df20a987",
+      "wall_ms": 10847.405400010757,
+      "classification": {
+        "per_question": {
+          "q1": {
+            "status": "correct",
+            "expected": "900",
+            "observed": "900 seconds"
+          },
+          "q2": {
+            "status": "correct",
+            "expected": "recover_expired_jobs",
+            "observed": "only if recover_expired_jobs is true"
+          },
+          "q3": {
+            "status": "correct",
+            "expected": "SQLite",
+            "observed": "SQLite"
+          },
+          "q4": {
+            "status": "correct",
+            "expected": "Postgres",
+            "observed": "Yes, Postgres was rejected"
+          },
+          "q5": {
+            "status": "correct",
+            "expected": "Orchid Memory Gateway",
+            "observed": "Orchid Memory Gateway"
+          },
+          "q6": {
+            "status": "correct",
+            "expected": "Disti",
+            "observed": "Disti"
+          },
+          "q7": {
+            "status": "correct",
+            "expected": "America/New_York",
+            "observed": "America/New_York"
+          },
+          "q8": {
+            "status": "correct",
+            "expected": "append-only",
+            "observed": "event model is append-only with corrections recorded as new events"
+          },
+          "q9": {
+            "status": "correct",
+            "expected": "compare-and-swap",
+            "observed": "promote READY descendants with compare-and-swap against the active capsule"
+          },
+          "q10": {
+            "status": "correct",
+            "expected": "okapi",
+            "observed": "okapi"
+          },
+          "q11": {
+            "status": "correct",
+            "expected": "black coffee",
+            "observed": "black coffee"
+          },
+          "q12": {
+            "status": "correct",
+            "expected": "teal",
+            "observed": "teal"
+          }
+        },
+        "correct_count": 12,
+        "missing_count": 0,
+        "stale_count": 0,
+        "invented_count": 0,
+        "score": 1.0
+      },
+      "recall_probes": [
+        {
+          "name": "awake_recall",
+          "passed": true,
+          "detail": "Solar matched still-valid state"
+        },
+        {
+          "name": "recall_no_invented_state",
+          "passed": true,
+          "detail": "no extra recall claims"
+        }
+      ]
+    },
+    "orchid": {
+      "generation": 100,
+      "arm": "orchid",
+      "prompt_estimated_tokens": 495,
+      "context_limit_tokens": 32768,
+      "fits_context_limit": true,
+      "messages_hash": "6e82651358be5dc77c59713fea0321a52e6d9796fb6811619e7b661e8b501680",
+      "status": "completed",
+      "answers": {
+        "q1": "900 seconds",
+        "q2": "only if recover_expired_jobs is true",
+        "q3": "SQLite",
+        "q4": null,
+        "q5": "Orchid Memory Gateway",
+        "q6": "Disti",
+        "q7": "America/New_York",
+        "q8": "Events are append-only; corrections add a new event.",
+        "q9": "Promote READY descendants with compare-and-swap against the active capsule.",
+        "q10": "okapi",
+        "q11": "black coffee",
+        "q12": "teal"
+      },
+      "answers_hash": "92d277ec24b3f3e20a592f63e6c7b6a953d4e0d6ebeeecba263180ef91485c7b",
+      "wall_ms": 6774.659300019266,
+      "classification": {
+        "per_question": {
+          "q1": {
+            "status": "correct",
+            "expected": "900",
+            "observed": "900 seconds"
+          },
+          "q2": {
+            "status": "correct",
+            "expected": "recover_expired_jobs",
+            "observed": "only if recover_expired_jobs is true"
+          },
+          "q3": {
+            "status": "correct",
+            "expected": "SQLite",
+            "observed": "SQLite"
+          },
+          "q4": {
+            "status": "missing",
+            "expected": "Postgres",
+            "observed": null
+          },
+          "q5": {
+            "status": "correct",
+            "expected": "Orchid Memory Gateway",
+            "observed": "Orchid Memory Gateway"
+          },
+          "q6": {
+            "status": "correct",
+            "expected": "Disti",
+            "observed": "Disti"
+          },
+          "q7": {
+            "status": "correct",
+            "expected": "America/New_York",
+            "observed": "America/New_York"
+          },
+          "q8": {
+            "status": "correct",
+            "expected": "append-only",
+            "observed": "Events are append-only; corrections add a new event."
+          },
+          "q9": {
+            "status": "correct",
+            "expected": "compare-and-swap",
+            "observed": "Promote READY descendants with compare-and-swap against the active capsule."
+          },
+          "q10": {
+            "status": "correct",
+            "expected": "okapi",
+            "observed": "okapi"
+          },
+          "q11": {
+            "status": "correct",
+            "expected": "black coffee",
+            "observed": "black coffee"
+          },
+          "q12": {
+            "status": "correct",
+            "expected": "teal",
+            "observed": "teal"
+          }
+        },
+        "correct_count": 11,
+        "missing_count": 1,
+        "stale_count": 0,
+        "invented_count": 0,
+        "score": 0.9166666666666666
+      },
+      "recall_probes": [
+        {
+          "name": "awake_recall",
+          "passed": false,
+          "detail": "q4 expected 'Postgres' got None"
+        },
+        {
+          "name": "recall_no_invented_state",
+          "passed": true,
+          "detail": "no extra recall claims"
+        }
+      ]
+    }
+  }
+}

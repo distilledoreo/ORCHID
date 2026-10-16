@@ -1,0 +1,17 @@
+{
+  "bound_semantics": "event-prefix bound measured using serialized source-item envelopes; one oversized first event is admitted so the watermark can progress",
+  "derived_source_window_tokens": 119466,
+  "fixed_overhead_tokens": 4096,
+  "provider_context_tokens": 524288,
+  "request_amplification_factor": 3.0,
+  "reserved_output_tokens": 8192,
+  "runtime_env": {
+    "ORCHID_CANONICALIZER_ENABLED": "0 for selected selector-to-consolidator path",
+    "ORCHID_COMPACTION_CONTEXT_TOKENS": "524288",
+    "ORCHID_COMPACTION_FIXED_OVERHEAD_TOKENS": "4096",
+    "ORCHID_COMPACTION_REQUEST_AMPLIFICATION": "3.0",
+    "ORCHID_COMPACTION_RESERVED_OUTPUT_TOKENS": "8192",
+    "ORCHID_COMPACTION_SAFETY_MARGIN": "0.7"
+  },
+  "safety_margin": 0.7
+}

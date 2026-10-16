@@ -1,0 +1,20 @@
+{
+  "active_memory_count": 100,
+  "memory_count": 105,
+  "project_id": "phase1-project",
+  "status_policy": {
+    "explicit": [
+      "ACTIVE",
+      "SUPERSEDED"
+    ],
+    "implicit": [
+      "ACTIVE"
+    ],
+    "scope": {
+      "project_id": "phase1-project",
+      "thread_id": "phase1-thread"
+    }
+  },
+  "superseded_memory_count": 5,
+  "thread_id": "phase1-thread"
+}

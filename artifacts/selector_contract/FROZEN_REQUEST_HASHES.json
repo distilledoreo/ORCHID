@@ -1,0 +1,1235 @@
+{
+  "schema_version": "orchid.selector_contract.frozen_request_hashes.v1",
+  "source_replay": "artifacts/agent_benchmarks/panoref_direct_generalization_bounded_v2/frozen_panoref_replay/events.jsonl",
+  "source_sample": "artifacts/agent_benchmarks/panoref_selector_microprofile_v1/FROZEN_SAMPLE.json",
+  "contract": {
+    "schema_version": "orchid.selector_contract.v1",
+    "model": "qwen3.5-4b@q6_k",
+    "prompt_version": "selector-v1",
+    "system_prompt": "You select durable-memory source items. Return JSON only with exactly {\"selected_event_ids\":[\"source-item-id\"]}. Select only whole-event or source-span IDs present in the input; do not summarize or rewrite items.",
+    "chunk_target_tokens": 1200,
+    "timeout_seconds": 180.0,
+    "selector_context_tokens": 32768,
+    "span_safety_margin": 0.8,
+    "serial_execution": true,
+    "generation_settings": {
+      "temperature": 0,
+      "top_p": 1,
+      "stream": false,
+      "reasoning_effort": "none"
+    },
+    "response_schema_name": "selector_response_v1",
+    "chunk_payload_keys": [
+      "events",
+      "event_ids_in_order",
+      "source_ids_in_order"
+    ]
+  },
+  "contract_sha256": "19117704791408c22e194d0da0dee5da43e7803785b2eab6e20a6b86f961b14f",
+  "chunk_indices": [
+    0,
+    5,
+    9,
+    14,
+    19,
+    24,
+    28,
+    33,
+    38,
+    43,
+    47,
+    52,
+    57,
+    62,
+    66,
+    71,
+    76,
+    81,
+    85,
+    90,
+    95,
+    100,
+    104,
+    109,
+    114,
+    119,
+    123,
+    128,
+    133,
+    138,
+    142,
+    147
+  ],
+  "chunks": [
+    {
+      "chunk_index": 0,
+      "event_ids": [
+        "panoref_evt_000582::span::000000"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_000582::span::000000",
+          "sequence": 582,
+          "event_type": "message",
+          "role": "user",
+          "content": "{\"content\": [{\"text\": \"Yes—this is now a real implementation of the algorithm, not merely the occlusion foundation. The latest head adds 17 coverage-engine files, a worker, UI, and tests. Joint mode genuinely evaluates candidate pairs rather than greedily selecting the best first origin.\\n\\nRevised verdict\\n\\nAlgorithm architecture for normal graybox sets: 8/10\\n\\nCorrectness of the two search modes: 7.5/10\\n\\nReadiness for complex imported sets: 4/10\\n\\nOverall: promising, but I would not merge it as production-ready yet.\\n\\n\\nThe math/search design is mostly right. The blockers are implementation scale and one dangerous workflow decision.\\n\\nWhat it got right\\n\\nThe surface sampler is deterministic and correctly samples triangles in proportion to world-space area using barycentric coordinates.\\n\\nOrigin evaluation includes:\\n\\nactual segment occlusion,\\n\\ngeometric face normals,\\n\\nviewing angle,\\n\\napproximate projected texel density,\\n\\nseparate visibility and usable-coverage bitsets,\\n\\ncontinuous quality values.\\n\\n\\nThat closely follows the algorithm we designed.\\n\\nThe joint-pair mode is genuinely joint. It checks every legal coarse pair, ranks them by bitset union, and only then applies quality and contribution tie-breakers. It does not discard individually mediocre but complementary origins prematurely.\\n\\nThe shared coarse-to-fine engine is also sensibly organized:\\n\\n4,096 coarse samples,\\n\\n256 candidates,\\n\\nretained pair seeds,\\n\\n24,576 fine samples,\\n\\nlocal offsets,\\n\\nseparate fixed-first and joint branches.\\n\\n\\nThe tests cover deterministic sampling, double-sided occlusion, marginal second-origin ranking, non-greedy pair ranking, candidate generation, and both search modes.\\n\\nBlockers\\n\\n1. Imported sets can produce zero legal candidates\\n\\nThis is the biggest correctness issue.\\n\\nFor every non-floor scene object, the extractor stores the entire object’s axis-aligned bounding box as an obstacle.\\n\\nCandidate clearance is then the distance from the origin point to those bounding boxes, and candidates within 0.3 meters are rejected. A point anywhere inside an AABB has a distance of zero.\\n\\nConsider a typical imported model:\\n\\nImported Set\\n├── floor\\n├── walls\\n├── furniture\\n└── props\\n\\nPanoRef represents that as one imported SceneObject. Its AABB may enclose the entire room. Every sensible camera origin inside the room is therefore “inside the obstacle bounds,” gets zero clearance, and is rejected.\\n\\nThis can affect:\\n\\na complete Maya set imported as one GLB,\\n\\na room shell and furniture combined into one mesh,\\n\\nconcave geometry,\\n\\nL-shaped walls,\\n\\nany large model whose AABB contains empty navigable space.\\n\\n\\nFix\\n\\nUse actual geometry clearance, not object AABBs:\\n\\ncandidate valid =\\n    camera sphere/capsule does not intersect nearby triangles\\n\\nThe coverage BVH can support this through point-to-triangle distance, sphere intersection, or a shapecast. At minimum, obstacle bounds should be per connected mesh or spatial cluster—not per imported set object.\\n\\nAdd a regression test with one imported object containing a room floor, walls, and empty interior.\\n\\n2. The geometry representation will not scale to heavy imports\\n\\nEvery triangle is expanded in",
+          "content_hash": "d1455864305e01d2485272bd31b529e9f65fd2283626f1b4e3553fabae7c549a",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_000582",
+          "parent_content_hash": "828cd405ffe0b1a2f0eb389f3011fbb6efb7fcc98997f531223c67e1bff0936f",
+          "parent_sequence": 582,
+          "parent_event_type": "message",
+          "parent_role": "user",
+          "span_index": 0,
+          "source_start": 0,
+          "source_end": 3248
+        }
+      ],
+      "request_payload_hash": "d6338a2b82639cd099f2411fbedecb69e11caf37d8457d2390113383a1ae3122",
+      "response_schema_hash": "e0e29a8acb441bece3ca5ffb399e090c5c8f318ee482a7c5c9e1f95c58e66bf8"
+    },
+    {
+      "chunk_index": 5,
+      "event_ids": [
+        "panoref_evt_000923::span::000001"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_000923::span::000001",
+          "sequence": 923,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "yOcclusionFaceSize,\\r\\n      projectedOcclusionBias,\\r\\n      projectedOcclusionSoftness\\r\\n    );\\r\\n  }\\r\\n\\r\\n  vec3 primarySample = fallbackAlbedo;\\r\\n  vec3 secondarySample = fallbackAlbedo;\\r\\n  float secondaryValid = 0.0;\\r\\n\\r\\n  // Primary pano sample.\\r\\n  {\\r\\n    vec3 offset = vProjectedWorldPos - projectedPanoOrigin;\\r\\n    if (dot(offset, offset) >= 1e-8) {\\r\\n      vec3 direction = applyInversePanoYaw(normalize(offset), projectedPanoYaw);\\r\\n      vec2 panoUv = equirectUvFromDirection(direction);\\r\\n      panoUv.x = fract(panoUv.x);\\r\\n      panoUv.y = clamp(panoUv.y, 0.0, 1.0);\\r\\n      vec4 panoSample = texture2D(projectedPanoMap, panoUv);\\r\\n      primarySample = panoSample.rgb * projectedExposure;\\r\\n    }\\r\\n  }\\r\\n\\r\\n  // Secondary pano sample (only when a secondary projector exists).\\r\\n  if (projectedUseSecondary == 1) {\\r\\n    vec3 offset = vProjectedWorldPos - projectedSecondaryOrigin;\\r\\n    if (dot(offset, offset) >= 1e-8) {\\r\\n      vec3 direction = applyInversePanoYaw(normalize(offset), projectedSecondaryYaw);\\r\\n      vec2 panoUv = equirectUvFromDirection(direction);\\r\\n      panoUv.x = fract(panoUv.x);\\r\\n      panoUv.y = clamp(panoUv.y, 0.0, 1.0);\\r\\n      vec4 panoSample = texture2D(projectedSecondaryPanoMap, panoUv);\\r\\n      secondarySample = panoSample.rgb * projectedExposure;\\r\\n    }\\r\\n    secondaryValid = 1.0;\\r\\n  }\\r\\n\\r\\n  // --- Continuous visibility scores (no hard 0.5 thresholding) ---\\r\\n  // Gate everything by the actual availability of a secondary projector AND the\\r\\n  // selected blend mode, so single-projector output is never mixed with the\\r\\n  // fallback and blend modes are honored.\\r\\n  float hasSecondary = (projectedUseSecondary == 1 && secondaryValid > 0.5) ? 1.0 : 0.0;\\r\\n\\r\\n  float primaryEnabled = projectedBlendMode == 1 ? 0.0 : 1.0;\\r\\n  float secondaryEnabled = projectedBlendMode == 0 ? 0.0 : hasSecondary;\\r\\n\\r\\n  float primaryQuality = projectedQualityAt(\\r\\n    vProjectedWorldPos,\\r\\n    projectedPanoOrigin,\\r\\n    projectedPrimaryTexelConstant\\r\\n  );\\r\\n  float secondaryQuality = hasSecondary > 0.5\\r\\n    ? projectedQualityAt(vProjectedWorldPos, projectedSecondaryOrigin, projectedSecondaryTexelConstant)\\r\\n    : 0.0;\\r\\n\\r\\n  float primaryDominance = projectedBlendMode == 2 ? 1.15 : 1.0;\\r\\n  float secondaryDominance = projectedBlendMode == 3 ? 1.15 : 1.0;\\r\\n  float primaryScore = primaryEnabled * primaryVisibility * primaryQuality * primaryDominance;\\r\\n  float secondaryScore = secondaryEnabled * secondaryVisibility * secondaryQuality * secondaryDominance;\\r\\n  // Winner-takes-most weighting follows the optimizer's max-quality objective\\r\\n  // while retaining a narrow transition when qualities are nearly equal.\\r\\n  float primaryWeight = pow(primaryScore, 4.0);\\r\\n  float secondaryWeight = pow(secondaryScore, 4.0);\\r\\n  float scoreTotal = primaryWeight + secondaryWeight;\\r\\n\\r\\n  float coverage = max(\\r\\n    primaryScore,\\r\\n    secondaryScore\\r\\n  );\\r\\n\\r\\n  // --- Coverage diagnostic (four-state: red/cyan/magenta/white) ---\\r\\n  if (projectedDebugCoverage == 1) {\\r\\n    float p = primaryScore;\\r\\n    float s = secondaryScore;\\r\\n    float ",
+          "content_hash": "eff9d501ebbfbb18377a7b505b772ab02eccd3db8622fdf3d0fd831e761c89fa",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_000923",
+          "parent_content_hash": "6f992cc93e6027baa2343bef947baf28991d1df4e52ec2e4c6db3f4ccaf7b03b",
+          "parent_sequence": 923,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 1,
+          "source_start": 3149,
+          "source_end": 6320
+        }
+      ],
+      "request_payload_hash": "c8ca6fc6efa7d6facab1a0ff39713b22ffef2c207c51fe96831e59609f1c25ce",
+      "response_schema_hash": "455f619b144d370ab5a532eb4901540d1142284801ef80845f94fd71a09f1417"
+    },
+    {
+      "chunk_index": 9,
+      "event_ids": [
+        "panoref_evt_000934::span::000000"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_000934::span::000000",
+          "sequence": 934,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_1d55AigiYaQ2qiDIJfqkQdK4\", \"id\": \"fco_019f7a82-b5d4-7bc1-b0da-7d092f749f53\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 24.1 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"=== unit ===\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 43.7 seconds\\nOutput:\\n\\n> continuity-stage@0.0.0 test\\n> vitest run --run\\n\\n\\n\\u001b[1m\\u001b[46m RUN \\u001b[49m\\u001b[22m \\u001b[36mv3.2.6 \\u001b[39m\\u001b[90mC:/Users/disti/.t3/worktrees/PanoRef/t3code-aefd2138\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/uiFidelity.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m40 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 62\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/modelAssetStore.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 50\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/sceneObjects.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m4 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 24\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/cameraMoveCubemap.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 29\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/humanMannequinModel.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 92\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/transformGizmo.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m12 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 31\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/renderOutput.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m11 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 35\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/packageExport.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m4 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 30\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/shotThumbnailComponent.test.tsx \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 17\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/sandbox.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m16 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 29\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/projectWorkflow.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m25 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 29\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/buildClipboard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 14\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/projectorOcclusion.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m31 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 15\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/buildEditorStore.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m4 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 14\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/modelImport.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m17 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 563\\u001b[2mms\\u001b[22m\\u001b[39m\\n",
+          "content_hash": "c97143ce4e857e365b6adc9f40b0b29203b7a544bb6c46fa7c640d699ea773a0",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_000934",
+          "parent_content_hash": "33c7fd1f51678c38c04f6b7f7f91d2158d66efd006d1ce52d624495373662c24",
+          "parent_sequence": 934,
+          "parent_event_type": "function_call_output",
+          "parent_role": "tool",
+          "span_index": 0,
+          "source_start": 0,
+          "source_end": 3077
+        }
+      ],
+      "request_payload_hash": "2a0a6220ff8a16db0e9c1e2c62adbf3d2d69dc9d2d86b21a2a1faf7b954aa689",
+      "response_schema_hash": "eeec47d69cd71ca6c9a0671a050d1bb4b4fd13dbdcde0b85b21661a1dd81f106"
+    },
+    {
+      "chunk_index": 14,
+      "event_ids": [
+        "panoref_evt_000936",
+        "panoref_evt_000937",
+        "panoref_evt_000938",
+        "panoref_evt_000939",
+        "panoref_evt_000940",
+        "panoref_evt_000941",
+        "panoref_evt_000942"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_000936",
+          "sequence": 936,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_5hfKZIrAUXMy82eGXTeg8ubk\", \"id\": \"ctco_019f7a82-ce93-7081-a8c4-293e9c6b5949\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 1.8 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 1.8 seconds\\nOutput:\\n\\r\\n\\u001b[32;1mLocalAddress\\u001b[0m\\u001b[32;1m LocalPort\\u001b[0m\\u001b[32;1m OwningProcess\\u001b[0m\\r\\n\\u001b[32;1m------------\\u001b[0m \\u001b[32;1m---------\\u001b[0m \\u001b[32;1m-------------\\u001b[0m\\r\\n127.0.0.1         4173         33292\\r\\n                                    \\r\\n\\r\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "db925a368ccd9d6064d9327f6b4d49269e312570d26329a8ee16b6b2f4a8e2db"
+        },
+        {
+          "id": "panoref_evt_000937",
+          "sequence": 937,
+          "event_type": "message",
+          "role": "assistant",
+          "content": "{\"content\": [{\"text\": \"The complete automated gate is green: 371 unit/integration tests (including both optimizer modes over 101,250 triangles), TypeScript, production build, and the real WebGL compile/pixel checks all pass. I’m moving through the app-level browser workflow next.\", \"type\": \"output_text\"}], \"id\": \"msg_0cc9ec57757b3be5016a5ccd8865d881948c52449599048881\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"phase\": \"commentary\", \"role\": \"assistant\", \"type\": \"message\"}",
+          "content_hash": "ebfe9baa0c87d4f74f7f1844d8b591bf84095ebe9662ee1e9e957cc3d1b59275"
+        },
+        {
+          "id": "panoref_evt_000938",
+          "sequence": 938,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_TRFSm40R8ifZiACQG42hP9Lb\", \"id\": \"ctc_0cc9ec57757b3be5016a5ccd89bd6c8194a0ffbe34229f8dc6\", \"input\": \"const r = await tools.shell_command({command:\\\"$env:PLAYWRIGHT_BASE_URL='http://127.0.0.1:4173'; npm run test:e2e\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":900000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "4960eff5289d919062cdef84741ffb7f8cb5029699883e5e5d62ea274ec29247"
+        },
+        {
+          "id": "panoref_evt_000939",
+          "sequence": 939,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_TRFSm40R8ifZiACQG42hP9Lb\", \"id\": \"ctco_019f7a83-0e8b-7fc0-98d8-2201fc55a033\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"Script running with cell ID 323\\nWall time 10.0 seconds\\nOutput:\\n\", \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "a815e92a63be4e02e919ef7ea081c051413185779362770d8a1898b8859b1bd6"
+        },
+        {
+          "id": "panoref_evt_000940",
+          "sequence": 940,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"cell_id\\\":\\\"323\\\",\\\"yield_time_ms\\\":30000,\\\"max_tokens\\\":10000}\", \"call_id\": \"call_8e63XGOUAKJJV97cLZMoCri5\", \"id\": \"fc_0cc9ec57757b3be5016a5ccd97ae24819493dcc401d50aed6c\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait\", \"type\": \"function_call\"}",
+          "content_hash": "99d713cd044f59e2da43ebc97be8c7914d2d7cf397254d3466230c0600c8291b"
+        },
+        {
+          "id": "panoref_evt_000941",
+          "sequence": 941,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_8e63XGOUAKJJV97cLZMoCri5\", \"id\": \"fco_019f7a83-8faa-7790-8409-7919757dc48c\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"Script running with cell ID 323\\nWall time 30.0 seconds\\nOutput:\\n\", \"type\": \"function_call_output\"}",
+          "content_hash": "b1c35376743603f194b9d5f33421797605ef083a8b12f7aa97c1c14a7b44ee0a"
+        },
+        {
+          "id": "panoref_evt_000942",
+          "sequence": 942,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"cell_id\\\":\\\"323\\\",\\\"yield_time_ms\\\":30000,\\\"max_tokens\\\":10000}\", \"call_id\": \"call_EvxOBs3H19nKtvKKz7hVl3Q1\", \"id\": \"fc_0cc9ec57757b3be5016a5ccdb96764819499ff66ba35656f9a\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait\", \"type\": \"function_call\"}",
+          "content_hash": "d6a8e3208e6e66e88a0cc7b89769571a75477ece26f155822bc203036919d236"
+        }
+      ],
+      "request_payload_hash": "85e1e7efcbe5b1a7f8f866e7236c0976b981dad76db9918889fbf5351f8469f2",
+      "response_schema_hash": "139b10fc7d75fdbace8c5163838afa28bce3a6bef47fe42a326a3d0335410b1c"
+    },
+    {
+      "chunk_index": 19,
+      "event_ids": [
+        "panoref_evt_000958"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_000958",
+          "sequence": 958,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_5k0dtYtSaEVvjL7q6ghdlHCA\", \"id\": \"ctc_0cc9ec57757b3be5016a5cce8d6ea081948bd6696a9f5b4d34\", \"input\": \"const r = await tools.shell_command({command:\\\"git diff --stat; git diff --check; rg -n \\\\\\\"^(<<<<<<< |>>>>>>> )\\\\\\\" . --glob '!node_modules/**' --glob '!dist/**' --glob '!artifacts/**'; git merge-base --is-ancestor origin/main HEAD; if ($LASTEXITCODE -eq 0) { Write-Output 'origin/main is an ancestor of HEAD' }; git status --short; git log --oneline --decorate --max-count=10\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":30000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "f6bfeed08fab086759d8587ba2e93b86872e194d747b46878aeeb209214f524a"
+        }
+      ],
+      "request_payload_hash": "e0f7d79bd4026d68f97bca85ff2fa5254f56ab6a49c2dc45428a9c8e87dbe7dd",
+      "response_schema_hash": "885f0989e6b0717024d01d69b82fd2975e078625ed3704e0a274259560384f97"
+    },
+    {
+      "chunk_index": 24,
+      "event_ids": [
+        "panoref_evt_000961::span::000002"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_000961::span::000002",
+          "sequence": 961,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "}\\r\\n\\r\\nfunction yieldToMainThread(): Promise<void> {\\r\\n  return new Promise((resolve) => setTimeout(resolve, 0));\\r\\n}\\r\\n\\r\\nasync function forEachProjectMesh(\\r\\n  project: LocationProject,\\r\\n  visit: (mesh: THREE.Mesh, explicitFloor: boolean) => Promise<void> | void,\\r\\n  onProgress?: CoverageExtractionProgress,\\r\\n  progressStart = 0,\\r\\n  progressSpan = 1,\\r\\n): Promise<void> {\\r\\n  const objects = project.scene.objects.filter(\\r\\n    (object) => object.visible && object.type !== 'sun_marker' && object.category !== 'helper',\\r\\n  );\\r\\n  for (let objectIndex = 0; objectIndex < objects.length; objectIndex += 1) {\\r\\n    const object = objects[objectIndex];\\r\\n    const root = createObject3D(object, false, 'light', project.assets);\\r\\n    root.updateMatrixWorld(true);\\r\\n    const meshes: THREE.Mesh[] = [];\\r\\n    root.traverse((child) => {\\r\\n      const mesh = child as THREE.Mesh;\\r\\n      if (mesh.isMesh && mesh.geometry.getAttribute('position')) meshes.push(mesh);\\r\\n    });\\r\\n    for (const mesh of meshes) await visit(mesh, object.type === 'floor');\\r\\n    disposeExtractedNode(root);\\r\\n    onProgress?.(\\r\\n      progressStart + progressSpan * ((objectIndex + 1) / Math.max(1, objects.length)),\\r\\n      'Preparing indexed scene geometry…',\\r\\n    );\\r\\n    await yieldToMainThread();\\r\\n  }\\r\\n}\\r\\n\\r\\nasync function copyPositionAttribute(\\r\\n  target: Float32Array,\\r\\n  targetOffset: number,\\r\\n  attribute: THREE.BufferAttribute | THREE.InterleavedBufferAttribute,\\r\\n): Promise<void> {\\r\\n  if (!attribute.normalized && !(attribute instanceof THREE.InterleavedBufferAttribute) && attribute.itemSize === 3) {\\r\\n    const source = attribute.array;\\r\\n    for (let offset = 0; offset < source.length; offset += COPY_CHUNK_VALUES) {\\r\\n      const end = Math.min(source.length, offset + COPY_CHUNK_VALUES);\\r\\n      target.set(source.subarray(offset, end), targetOffset + offset);\\r\\n      if (end < source.length) await yieldToMainThread();\\r\\n    }\\r\\n    return;\\r\\n  }\\r\\n  for (let vertex = 0; vertex < attribute.count; vertex += 1) {\\r\\n    const offset = targetOffset + vertex * 3;\\r\\n    target[offset] = attribute.getX(vertex);\\r\\n    target[offset + 1] = attribute.getY(vertex);\\r\\n    target[offset + 2] = attribute.getZ(vertex);\\r\\n    if (vertex > 0 && vertex % (COPY_CHUNK_VALUES / 3) === 0) await yieldToMainThread();\\r\\n  }\\r\\n}\\r\\n\\r\\n/**\\r\\n * Extract indexed mesh buffers without expanding triangles. Work is chunked\\r\\n * between objects and large buffer ranges so complex imports do not monopolize\\r\\n * the browser event loop before worker optimization begins.\\r\\n */\\r\\nexport async function extractCoverageScene(\\r\\n  project: LocationProject,\\r\\n  onProgress?: CoverageExtractionProgress,\\r\\n): Promise<CoverageSceneData> {\\r\\n  let vertexCount = 0;\\r\\n  let indexCount = 0;\\r\\n  let meshCount = 0;\\r\\n  const sceneBounds = new THREE.Box3();\\r\\n\\r\\n  await forEachProjectMesh(project, (mesh) => {\\r\\n    const position = mesh.geometry.getAttribute('position');\\r\\n    const index = mesh.geometry.index;\\r\\n    const meshIndexCount = index ? Math.floor(index.count / 3) * 3 : Math.floor(position.count / 3) * 3;",
+          "content_hash": "82f5c3844ada8cffbbb5cea8aae4f07f4a843681858e57ed23a84a801b88bdbe",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_000961",
+          "parent_content_hash": "198cade4aed801baddcf24d1a589ec985ebb26da0d3a5e9924fd385a453e9b21",
+          "parent_sequence": 961,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 2,
+          "source_start": 6310,
+          "source_end": 9479
+        }
+      ],
+      "request_payload_hash": "3f6665ed8f7d5f7e9443946e3d13d3315770b7aa629b9f60afd1b89a0351e3a4",
+      "response_schema_hash": "5dd8ea1147b760c17093202b841bd925189cc10f17e983f64ce4056e965461ac"
+    },
+    {
+      "chunk_index": 28,
+      "event_ids": [
+        "panoref_evt_000961::span::000006"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_000961::span::000006",
+          "sequence": 961,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": ": number, quality: number[], position: Vec3): OriginEvaluation {\\r\\n  return {\\r\\n    position,\\r\\n    coverageBits: new Uint32Array([bits]),\\r\\n    visibleBits: new Uint32Array([bits]),\\r\\n    quality: new Uint8Array(quality),\\r\\n    individualCoverage: quality.filter((_, index) => Boolean(bits & (1 << index))).length / quality.length,\\r\\n    averageQuality: quality.reduce((sum, value) => sum + value, 0) / (255 * quality.length),\\r\\n    clearance: 1,\\r\\n  };\\r\\n}\\r\\n\\r\\ndescribe('projection coverage engine', () => {\\r\\n  it('samples world-space surface area deterministically and proportionally', () => {\\r\\n    const scene = packedScene([\\r\\n      { a: [0, 0, 0], b: [1, 0, 0], c: [0, 1, 0] },\\r\\n      { a: [2, 0, 0], b: [6, 0, 0], c: [2, 2, 0] },\\r\\n    ]);\\r\\n    const first = sampleMeshSurface(scene, 5_000, 1234);\\r\\n    const second = sampleMeshSurface(scene, 5_000, 1234);\\r\\n    expect(second).toEqual(first);\\r\\n    const largeCount = first.filter((sample) => sample.triangleIndex === 1).length;\\r\\n    expect(largeCount / first.length).toBeGreaterThan(0.86);\\r\\n    expect(largeCount / first.length).toBeLessThan(0.92);\\r\\n  });\\r\\n\\r\\n  it('uses double-sided BVH segment hits to reject geometry-hidden samples', () => {\\r\\n    const scene = packedScene([\\r\\n      { a: [1, -1, -1], b: [1, 1, -1], c: [1, 0, 1] },\\r\\n      { a: [2, -1, -1], b: [2, 0, 1], c: [2, 1, -1] },\\r\\n    ]);\\r\\n    const acceleration = buildSceneAcceleration(scene);\\r\\n    expect(acceleration.raycastAny([0, 0, 0], [1, 0, 0], 1.99, 1)).toBe(true);\\r\\n    const options = resolveCoverageOptions(floorScene(), { minimumTexelDensity: 0, targetTexelDensity: 1 });\\r\\n    const result = evaluateOrigin(\\r\\n      { position: [0, 0, 0], clearance: 1 },\\r\\n      [{ position: [2, 0, 0], geometricNormal: [-1, 0, 0], meshId: 0, triangleId: 1, triangleIndex: 1 }],\\r\\n      acceleration,\\r\\n      4,\\r\\n      options,\\r\\n    );\\r\\n    expect(result.individualCoverage).toBe(0);\\r\\n  });\\r\\n\\r\\n  it('ranks fixed-first marginal union and joint complementary pairs', () => {\\r\\n    const first = evaluation(0b0011, [220, 220, 0, 0], [0, 0, 0]);\\r\\n    const redundant = evaluation(0b0011, [255, 255, 0, 0], [1, 0, 0]);\\r\\n    const complementary = evaluation(0b1100, [0, 0, 200, 200], [2, 0, 0]);\\r\\n    const partial = evaluation(0b0110, [0, 180, 180, 0], [3, 0, 0]);\\r\\n    expect(rankSecondOrigins(first, [redundant, complementary, partial])[0].evaluation).toBe(complementary);\\r\\n    const bestPair = rankAllPairs([redundant, complementary, partial], 0.5, 4, 1)[0];\\r\\n    expect(new Set([bestPair.evaluationA, bestPair.evaluationB])).toEqual(new Set([redundant, complementary]));\\r\\n    expect(compareOriginPair(redundant, complementary).unionCoverage).toBe(1);\\r\\n  });\\r\\n\\r\\n  it('keeps imported-room interior candidates by using triangle clearance instead of an enclosing AABB', () => {\\r\\n    const triangles = [...floorTriangles(0, 3)];\\r\\n    // One imported mesh can contain floor and all four walls; its object AABB encloses the room.\\r\\n    triangles.push(\\r\\n      { a: [-3, 0, -3], b: [-3, 3, -3], c: [3, 3, -3] },\\r\\n      { a: [-3, 0, -3], b: [3, 3, -3], c: [3, 0, -3] },\\r\\n      { a: [3, 0, ",
+          "content_hash": "bfd59a53a72298417d1528f5b344f3d92c05aea268f61f1dda41d0516046ab8e",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_000961",
+          "parent_content_hash": "198cade4aed801baddcf24d1a589ec985ebb26da0d3a5e9924fd385a453e9b21",
+          "parent_sequence": 961,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 6,
+          "source_start": 18975,
+          "source_end": 22170
+        }
+      ],
+      "request_payload_hash": "dcd2b19d1c1104ad746a84befae9f72cfb7586268c5ed2ec1c027b21a61becd3",
+      "response_schema_hash": "29f1f260e92279addb4da8cef4080726bcd681c37de9590411af4e53acfc11d1"
+    },
+    {
+      "chunk_index": 33,
+      "event_ids": [
+        "panoref_evt_000961::span::000011"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_000961::span::000011",
+          "sequence": 961,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "0_000 }),\\r\\n    analysis.waitFor({ state: 'visible', timeout: 900_000 }),\\r\\n  ]);\\r\\n  if (await analysis.isVisible().catch(() => false)) {\\r\\n    const extreme = dialog.locator('[data-extreme-import-confirmation]');\\r\\n    if (await extreme.isVisible().catch(() => false)) await extreme.fill('IMPORT');\\r\\n    await dialog.getByRole('button', { name: /Import (heavy|extreme) scene/i }).click();\\r\\n    await success.waitFor({ state: 'visible', timeout: 1_800_000 });\\r\\n  }\\r\\n  const importFinishedAt = Date.now();\\r\\n  const importReport = await success.innerText();\\r\\n  const analysisText = await analysis.isVisible().catch(() => false) ? await analysis.innerText() : undefined;\\r\\n  await dialog.getByText('Close', { exact: true }).last().click();\\r\\n\\r\\n  const renderReference = page.getByRole('button', { name: /Render 360 Reference/i });\\r\\n  await renderReference.click();\\r\\n  await page.getByRole('button', { name: /Download Graybox|Re-render after scene changes/i }).first()\\r\\n    .waitFor({ state: 'visible', timeout: 900_000 });\\r\\n  await dismissOverlays();\\r\\n\\r\\n  await workspaceTab('Reference').click();\\r\\n  await page.waitForTimeout(1_000);\\r\\n  await dismissOverlays();\\r\\n  const useAttached = page.getByRole('button', { name: /Use Attached Reference/i });\\r\\n  if (await useAttached.isVisible().catch(() => false)) {\\r\\n    await useAttached.click();\\r\\n    const startChecking = page.getByRole('button', { name: 'Start checking', exact: true });\\r\\n    await startChecking.waitFor({ state: 'visible', timeout: 10_000 }).catch(() => undefined);\\r\\n    if (await startChecking.isVisible().catch(() => false)) await startChecking.click();\\r\\n    await dismissOverlays();\\r\\n  }\\r\\n  await page.getByRole('button', { name: 'More', exact: true }).click();\\r\\n  const drawer = page.getByRole('dialog', { name: 'Reference Settings' });\\r\\n  await drawer.locator('[data-coverage-optimizer] summary').click();\\r\\n  optimizationStartedAt = Date.now();\\r\\n  await drawer.locator('[data-coverage-analyze]').click();\\r\\n  const result = drawer.locator('[data-coverage-result]');\\r\\n  const failed = drawer.locator('[data-coverage-status=\\\"failed\\\"]');\\r\\n  await Promise.race([\\r\\n    result.waitFor({ state: 'visible', timeout: 1_800_000 }),\\r\\n    failed.waitFor({ state: 'visible', timeout: 1_800_000 }),\\r\\n  ]);\\r\\n  if (await failed.isVisible().catch(() => false)) throw new Error(`Coverage optimizer failed: ${await failed.innerText()}`);\\r\\n  const optimizationFinishedAt = Date.now();\\r\\n  const heap = await page.evaluate(() => {\\r\\n    const memory = performance.memory;\\r\\n    return memory ? {\\r\\n      usedJSHeapSize: memory.usedJSHeapSize,\\r\\n      totalJSHeapSize: memory.totalJSHeapSize,\\r\\n      jsHeapSizeLimit: memory.jsHeapSizeLimit,\\r\\n    } : undefined;\\r\\n  });\\r\\n  const report = {\\r\\n    ok: pageErrors.length === 0,\\r\\n    model: { path: path.resolve(modelPath), bytes: model.size },\\r\\n    importMilliseconds: importFinishedAt - importStartedAt,\\r\\n    optimizationMilliseconds: optimizationFinishedAt - optimizationStartedAt,\\r\\n    totalMilliseconds: Date.now() - startedAt,\\r\\n    importReport,\\r\\n    analysisText,\\r\\n    originA: (await resu",
+          "content_hash": "7b6b6d2ebc97a845ed3ef325aa79324aec8a2480af428bfafc7374351898da2c",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_000961",
+          "parent_content_hash": "198cade4aed801baddcf24d1a589ec985ebb26da0d3a5e9924fd385a453e9b21",
+          "parent_sequence": 961,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 11,
+          "source_start": 34941,
+          "source_end": 38133
+        }
+      ],
+      "request_payload_hash": "bf3920ddf7bd9cb114fc6b4e9acf5016dc8da77e20b6d9ae9ec1c26708e8499c",
+      "response_schema_hash": "3217e9ba43b8a9f712bc05dfa73aab3767427d2080f2096891faf43b7b19ec17"
+    },
+    {
+      "chunk_index": 38,
+      "event_ids": [
+        "panoref_evt_000970",
+        "panoref_evt_000971",
+        "panoref_evt_000972",
+        "panoref_evt_000973",
+        "panoref_evt_000974",
+        "panoref_evt_000975",
+        "panoref_evt_000976",
+        "panoref_evt_000977"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_000970",
+          "sequence": 970,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_DcYGhY0BCwaesABu2YX2qNrx\", \"id\": \"ctco_019f7a87-e277-7d52-840c-ecf194d36b21\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 0.0 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"{}\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "4dfdf831f985893f5b850f03ae8829b98940a762ec40670d960a7271daf1cc8e"
+        },
+        {
+          "id": "panoref_evt_000971",
+          "sequence": 971,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"timeout_ms\\\":20000}\", \"call_id\": \"call_Izbvvi98R0Yz1EPHCqZHxflB\", \"id\": \"fc_0cc9ec57757b3be5016a5cced316508194955a2f781f9bdcb9\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait_agent\", \"namespace\": \"collaboration\", \"type\": \"function_call\"}",
+          "content_hash": "4bde7ab198fa12ecdd3439d02305ac4937b6ca0ca5e54a9006e2ed73669ff08f"
+        },
+        {
+          "id": "panoref_evt_000972",
+          "sequence": 972,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_Izbvvi98R0Yz1EPHCqZHxflB\", \"id\": \"fco_019f7a88-37cb-7172-bc6f-16ca9b6ee81d\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"{\\\"message\\\":\\\"Wait timed out.\\\",\\\"timed_out\\\":true}\", \"type\": \"function_call_output\"}",
+          "content_hash": "ce2bc723312fd23474a146c719cfe17e76bd5dc26831462fad2e93dd6d270830"
+        },
+        {
+          "id": "panoref_evt_000973",
+          "sequence": 973,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"timeout_ms\\\":30000}\", \"call_id\": \"call_s9fMkGYJ922Dd9IFZ7NRbZax\", \"id\": \"fc_0cc9ec57757b3be5016a5ccee9bbac81948509ae4b3f73362c\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait_agent\", \"namespace\": \"collaboration\", \"type\": \"function_call\"}",
+          "content_hash": "b1f047b56aa3e8268159a160f1f7f6c3c114be9581dfa228c94b45f6439a02b1"
+        },
+        {
+          "id": "panoref_evt_000974",
+          "sequence": 974,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_s9fMkGYJ922Dd9IFZ7NRbZax\", \"id\": \"fco_019f7a88-b74d-7930-9500-b9e654ec07d1\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"{\\\"message\\\":\\\"Wait timed out.\\\",\\\"timed_out\\\":true}\", \"type\": \"function_call_output\"}",
+          "content_hash": "50f9f059b7b81e9bf2a06617947c9e7c7b16920fd24b5a4aae5a8e5edabd1788"
+        },
+        {
+          "id": "panoref_evt_000975",
+          "sequence": 975,
+          "event_type": "message",
+          "role": "assistant",
+          "content": "{\"content\": [{\"text\": \"The auditor is still working through the committed diff and evidence. I’m deliberately not changing the candidate underneath it; once it reports, I’ll address each concrete gap and send the revised state through a fresh audit.\", \"type\": \"output_text\"}], \"id\": \"msg_0cc9ec57757b3be5016a5ccf0a366881948317b30e7107a93a\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"phase\": \"commentary\", \"role\": \"assistant\", \"type\": \"message\"}",
+          "content_hash": "ed4f330132ebd53569bf2fbbe7d61dd89c5442c9f1fd1b5f23e91f52c1891bdf"
+        },
+        {
+          "id": "panoref_evt_000976",
+          "sequence": 976,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"timeout_ms\\\":30000}\", \"call_id\": \"call_QQfoFo9UbKxGqhyOf2g1AfBx\", \"id\": \"fc_0cc9ec57757b3be5016a5ccf0c12d48194a366a210803f2759\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait_agent\", \"namespace\": \"collaboration\", \"type\": \"function_call\"}",
+          "content_hash": "8999ea926f106e3a889572be23cb9871dd08897a35aac640856336cd074f7187"
+        },
+        {
+          "id": "panoref_evt_000977",
+          "sequence": 977,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_QQfoFo9UbKxGqhyOf2g1AfBx\", \"id\": \"fco_019f7a89-3d5e-72a1-9bae-04da79f434b4\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"{\\\"message\\\":\\\"Wait timed out.\\\",\\\"timed_out\\\":true}\", \"type\": \"function_call_output\"}",
+          "content_hash": "d464e8f8a859182f984bb1dff50078102fc5d14e6f397dd67f36bb74afdd4eaf"
+        }
+      ],
+      "request_payload_hash": "70884d18cbfad6222b5049f0fbd576e5e64d895204d307fbd7e3b03bac41420f",
+      "response_schema_hash": "862bd3380cc45fe3f8b8acf3d0964090dbfd2813d3efb821fd2d91970e42f530"
+    },
+    {
+      "chunk_index": 43,
+      "event_ids": [
+        "panoref_evt_001002::span::000000"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001002::span::000000",
+          "sequence": 1002,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_LZluxHCMerDOmUqV87JY3KeI\", \"id\": \"ctco_019f7a8d-73df-7110-a5ac-e37e9db918bf\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script failed\\nWall time 1.0 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Script error:\\nExit code: 1\\nWall time: 0.9 seconds\\nOutput:\\ntests\\\\projectionCoverage.test.ts:15:  resolveCoverageOptions,\\r\\ntests\\\\projectionCoverage.test.ts:19:} from '../src/engine/projectionCoverage';\\r\\ntests\\\\projectionCoverage.test.ts:104:    const options = resolveCoverageOptions(floorScene(), { minimumTexelDensity: 0, targetTexelDensity: 1 });\\r\\ntests\\\\projectionCoverage.test.ts:140:    const options = resolveCoverageOptions(scene, { candidateSpacing: 1, cameraClearanceRadius: 0.3 });\\r\\ntests\\\\projectionCoverage.test.ts:183:    const options = resolveCoverageOptions(scene, { candidateSpacing: 1, cameraClearanceRadius: 0.3 });\\r\\ntests\\\\projectionCoverage.test.ts:191:    const options = resolveCoverageOptions(scene, {\\r\\ntests\\\\projectionCoverage.test.ts:192:      candidateSpacing: 1,\\r\\ntests\\\\projectionCoverage.test.ts:233:    const options = resolveCoverageOptions(scene, {\\r\\ntests\\\\projectionCoverage.test.ts:234:      candidateSpacing: 1, maximumCandidateCount: 16, cameraClearanceRadius: 0.1,\\r\\ntests\\\\projectionCoverage.test.ts:311:    const options = resolveCoverageOptions(scene, {\\r\\ntests\\\\projectionCoverage.test.ts:312:      candidateSpacing: 5,\\r\\nsrc\\\\components\\\\common\\\\CoverageOptimizerPanel.tsx:9:} from '../../engine/projectionCoverage';\\r\\nsrc\\\\components\\\\common\\\\CoverageOptimizerPanel.tsx:62:            panoramaHeight: primaryPano?.height ?? 4_096,\\r\\nsrc\\\\components\\\\common\\\\CoverageOptimizerPanel.tsx:63:            panoramaHeightMeters: project.settings.defaultCameraHeightMeters ?? 1.6,\\r\\nsrc\\\\components\\\\viewers\\\\SceneViewport.tsx:1607:          panoramaHeight: projectedPano.height,\\r\\nsrc\\\\engine\\\\projectedStyleMaterials.ts:172:  panoramaHeight?: number;\\r\\nsrc\\\\engine\\\\projectedStyleMaterials.ts:274:      value: texelConstant(params.panoramaWidth ?? 8_192, params.panoramaHeight ?? 4_096),\\r\\nsrc\\\\engine\\\\renderers.ts:529:    panoramaHeight: pano.height,\\r\\nsrc\\\\engine\\\\sceneObjects.ts:189:  panoramaHeight?: number;\\r\\nsrc\\\\engine\\\\sceneObjects.ts:370:    panoramaHeight: projected.panoramaHeight,\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:24:  panoramaHeightMeters: number,\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:44:  return bestFloorY === undefined ? undefined : [x, bestFloorY + panoramaHeightMeters, z];\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:51:  panoramaHeightMeters: number,\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:61:    panoramaHeightMeters,\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:62:    position[1] - panoramaHeightMeters,\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:96:  const spacing = Math.max(options.candidateSpacing, 0.05);\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:115:          [x, floorY + options.panoramaHeightMeters",
+          "content_hash": "6ea1cc0e421561e6f72a1c76468ec5078aaddc4a535054db2d8da35d2b57e384",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001002",
+          "parent_content_hash": "e2b23e35c21853a027369ef46a0895ca5d379d75cff53db50e27b80c3e28d10b",
+          "parent_sequence": 1002,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 0,
+          "source_start": 0,
+          "source_end": 3126
+        }
+      ],
+      "request_payload_hash": "80bb41da7d28fb37b7edacdfa506cb548f50802117a3e97299a67185a1613b4d",
+      "response_schema_hash": "ae10adbab94af7dd8fffd941b0a08e9f1294c08b8ccba6f87a51597b907dee4c"
+    },
+    {
+      "chunk_index": 47,
+      "event_ids": [
+        "panoref_evt_001002::span::000004"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001002::span::000004",
+          "sequence": 1002,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "      {dualAvailable && (\\r\\n        <>\\r\\n          <Field\\r\\n            label=\\\"Multi-origin blend\\\"\\r\\n            hint=\\\"Dominant modes fill weak regions of the dominant pano using distance from each origin (not true occlusion).\\\"\\r\\n          >\\r\\n            <Select\\r\\n              value={settings.blendMode ?? 'primary_only'}\\r\\n              onChange={(event) => {\\r\\n                update({ blendMode: event.target.value as ProjectorBlendMode });\\r\\n              }}\\r\\n              data-projected-blend-mode\\r\\n            >\\r\\n              {BLEND_OPTIONS.map((mode) => (\\r\\n                <option key={mode} value={mode}>\\r\\n                  {PROJECTOR_BLEND_MODE_LABELS[mode]}\\r\\n                </option>\\r\\n              ))}\\r\\n            </Select>\\r\\n          </Field>\\r\\n\\r\\n          {settings.blendMode !== 'primary_only' && (\\r\\n            <Field label=\\\"Secondary panorama\\\">\\r\\n              <Select\\r\\n                value={settings.secondaryPanoId ?? resolved.secondary?.id ?? ''}\\r\\n                onChange={(event) => {\\r\\n                  const value = event.target.value;\\r\\n                  update({ secondaryPanoId: value || undefined });\\r\\n                }}\\r\\n                disabled={secondaryCandidates.length === 0}\\r\\n                data-projected-secondary-pano\\r\\n              >\\r\\n                <option value=\\\"\\\">Auto (next eligible)</option>\\r\\n                {secondaryCandidates.map((pano) => (\\r\\n                  <option key={pano.id} value={pano.id}>\\r\\n                    {pano.name}\\r\\n                    {pano.isCanonical ? ' · canonical' : ''}\\r\\n                    {` · ${pano.origin.map((v) => v.toFixed(1)).join(', ')} m`}\\r\\n                  </option>\\r\\n                ))}\\r\\n              </Select>\\r\\n            </Field>\\r\\n          )}\\r\\n\\r\\n          {settings.blendMode !== 'primary_only' && !dualReady && (\\r\\n            <p className=\\\"text-xs text-amber-800 dark:text-amber-200\\\">\\r\\n              Dual blend needs two panoramas with image assets. Import and align a second styled\\r\\n              panorama from a different capture origin.\\r\\n            </p>\\r\\n          )}\\r\\n        </>\\r\\n      )}\\r\\n\\r\\n      {eligible.length === 0 && (\\r\\n        <p className=\\\"text-xs text-secondary\\\">\\r\\n          Import and align a styled panorama first for best results. Graybox can be selected\\r\\n          explicitly if needed.\\r\\n        </p>\\r\\n      )}\\r\\n\\r\\n      <Field\\r\\n        label=\\\"Geometry occlusion\\\"\\r\\n        hint=\\\"Behaves like a real 360° projector. Surfaces hidden behind other geometry do not receive this panorama.\\\"\\r\\n      >\\r\\n        <Toggle\\r\\n          checked={settings.occlusionEnabled ?? true}\\r\\n          onChange={(value) => update({ occlusionEnabled: value })}\\r\\n        />\\r\\n      </Field>\\r\\n\\r\\n      {settings.occlusionEnabled && (\\r\\n        <div className=\\\"rounded-lg border border-subtle bg-surface-base px-3 py-2 text-xs\\\">\\r\\n          <div className=\\\"flex items-center justify-between\\\">\\r\\n            <span className=\\\"font-semibold text-primary\\\">Occlusion status</span>\\r\\n   ",
+          "content_hash": "92198fdc9fd947801e4d46a53ff2852b49886873fdd3a27585f8a963e5fd1433",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001002",
+          "parent_content_hash": "e2b23e35c21853a027369ef46a0895ca5d379d75cff53db50e27b80c3e28d10b",
+          "parent_sequence": 1002,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 4,
+          "source_start": 12454,
+          "source_end": 15577
+        }
+      ],
+      "request_payload_hash": "b03240681bb747e02b756fcf76d83c58c1091f619609d7c54bd30803e6416b17",
+      "response_schema_hash": "656e50f740434f05bf0e3c5a62d7e6a0f994802c6f642f013a5c1a590c365b9a"
+    },
+    {
+      "chunk_index": 52,
+      "event_ids": [
+        "panoref_evt_001004::span::000002"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001004::span::000002",
+          "sequence": 1004,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "r\\n            {statusMessage}\\r\\n          </p>\\r\\n        )}\\r\\n\\r\\n        {result && (\\r\\n          <div\\r\\n            className=\\\"space-y-3\\\"\\r\\n            data-coverage-result\\r\\n            data-coverage-origin-a={result.originA.join(',')}\\r\\n            data-coverage-origin-b={result.originB.join(',')}\\r\\n          >\\r\\n            <div className=\\\"grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg border border-subtle bg-surface-raised p-2 tabular-nums\\\">\\r\\n              <span className=\\\"text-secondary\\\">Origin A usable</span><strong className=\\\"text-right text-primary\\\">{percent(result.originACoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">Origin B usable</span><strong className=\\\"text-right text-primary\\\">{percent(result.originBCoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">A only</span><strong className=\\\"text-right text-primary\\\">{percent(result.originAOnlyCoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">B only</span><strong className=\\\"text-right text-primary\\\">{percent(result.originBOnlyCoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">Overlap</span><strong className=\\\"text-right text-primary\\\">{percent(result.overlapCoverage)}</strong>\\r\\n              <span className=\\\"font-semibold text-primary\\\">Combined</span><strong className=\\\"text-right text-[var(--accent)]\\\">{percent(result.combinedCoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">Reachable upper bound</span><strong className=\\\"text-right text-primary\\\">{percent(result.reachableCoverage)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">Reachable captured</span><strong className=\\\"text-right text-primary\\\">{percent(result.reachableEfficiency)}</strong>\\r\\n              <span className=\\\"text-secondary\\\">Estimated remaining</span><strong className=\\\"text-right text-primary\\\">{percent(result.estimatedRemainingSurface)}</strong>\\r\\n            </div>\\r\\n\\r\\n            <div className=\\\"space-y-1 rounded-lg border border-subtle px-2 py-1.5 font-mono text-[10px] text-secondary\\\">\\r\\n              <div><span className=\\\"font-sans font-semibold text-primary\\\">A</span> {originLabel(result.originA)}</div>\\r\\n              <div><span className=\\\"font-sans font-semibold text-primary\\\">B</span> {originLabel(result.originB)}</div>\\r\\n              <div className=\\\"font-sans text-muted\\\">\\r\\n                {result.candidateCount} candidates · {result.sampleCount.toLocaleString()} fine samples · {(result.elapsedMilliseconds / 1000).toFixed(1)}s\\r\\n              </div>\\r\\n            </div>\\r\\n\\r\\n            <div className=\\\"flex flex-col gap-2\\\">\\r\\n              {onSetCaptureOrigin && mode === 'joint-pair' && (\\r\\n                <button\\r\\n                  type=\\\"button\\\"\\r\\n                  onClick={() => onSetCaptureOrigin(result.originA)}\\r\\n                  className=\\\"rounded-lg border border-subtle px-3 py-2 font-semibold text-primary transition hover:border-[var(--accent)] hover:text-[var(--accent)]\\\"\\r\\n                  data-coverage-apply-capture-a\\r\\n                >\\r\\n   ",
+          "content_hash": "432cd8241b507e6268ec0385303857ae09d0623c7089af8ad62cafd21f767603",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001004",
+          "parent_content_hash": "b77941ae9c8b7e2192b8f800da51d6b213f115dd08d05a5f3b51c4d27430c6f7",
+          "parent_sequence": 1004,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 2,
+          "source_start": 6261,
+          "source_end": 9391
+        }
+      ],
+      "request_payload_hash": "e1cba05a508ba85b9ddb49c46654946d565aeae4df3d396d904a084a3be11655",
+      "response_schema_hash": "3ae5f72eefe2a95150db4c98837be39d6b3ab92d03a8a3973d1463cf4596dee8"
+    },
+    {
+      "chunk_index": 57,
+      "event_ids": [
+        "panoref_evt_001004::span::000007",
+        "panoref_evt_001005"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001004::span::000007",
+          "sequence": 1004,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "SeedCount,\\r\\n  );\\r\\n  if (coarsePairs.length === 0) throw new Error('No valid origin pair satisfies the minimum separation.');\\r\\n  const fineByPosition = new Map(reachableEvaluations.map((evaluation) => [candidateKey(evaluation.position), evaluation]));\\r\\n  const seedEvaluations: OriginEvaluation[] = [];\\r\\n  for (const pair of coarsePairs) {\\r\\n    for (const endpoint of [pair.evaluationA, pair.evaluationB]) {\\r\\n      const evaluation = fineByPosition.get(candidateKey(endpoint.position));\\r\\n      if (evaluation && !seedEvaluations.includes(evaluation)) seedEvaluations.push(evaluation);\\r\\n    }\\r\\nsrc\\\\components\\\\common\\\\CoverageOptimizerPanel.tsx:49:      const scene = await extractCoverageScene(project, (_progress, message) => {\\r\\ntests\\\\projectionCoverage.test.ts:180:    const scene = await extractCoverageScene(project);\\ntests\\\\projectionCoverage.test.ts:249:    const scene = await extractCoverageScene(createDefaultProject());\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\surfaceSampler.ts:213:export async function extractCoverageScene(\\r\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "6b06221f06c41997e4e5df498390dd11598c5089b09a299669488a95e364ee02",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001004",
+          "parent_content_hash": "b77941ae9c8b7e2192b8f800da51d6b213f115dd08d05a5f3b51c4d27430c6f7",
+          "parent_sequence": 1004,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 7,
+          "source_start": 22009,
+          "source_end": 23129
+        },
+        {
+          "id": "panoref_evt_001005",
+          "sequence": 1005,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_18JCa7KLDlbmBV3EgDAjeIdd\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd06b29748194892f8efa7e69a10f\", \"input\": \"const r = await tools.shell_command({command:\\\"Get-Content src/engine/projectionCoverage/index.ts; Get-Content src/engine/projectionCoverage/candidateGenerator.ts; Get-Content src/components/common/Field.tsx | Select-Object -First 220; Get-Content tests/projectionCoverage.test.ts | Select-Object -Skip 275 -First 110\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":30000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "1cdbf7a4b927334918a31b4c2cd0892927c7dfc46abeae050980bbedcecc9933"
+        }
+      ],
+      "request_payload_hash": "cecab46cc9dfb00a237e9718bb1df098d6208f21999af1f0aadc00649d25d08d",
+      "response_schema_hash": "425924a28c53fc572abe71282bab2ec8d0e7c12eb3f2734ce609f25e78f165a3"
+    },
+    {
+      "chunk_index": 62,
+      "event_ids": [
+        "panoref_evt_001006::span::000004"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001006::span::000004",
+          "sequence": 1006,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "r\\n    for (let triangleIndex = 0; triangleIndex < scene.floorTriangleIndices.length; triangleIndex += 1) {\\r\\n      scene.floorTriangleIndices[triangleIndex] = triangleIndex;\\r\\n      const indexOffset = triangleIndex * 3;\\r\\n      const a = scene.indices[indexOffset] * 3;\\r\\n      const b = scene.indices[indexOffset + 1] * 3;\\r\\n      const c = scene.indices[indexOffset + 2] * 3;\\r\\n      scene.floorBounds.set([\\r\\n        Math.min(scene.positions[a], scene.positions[b], scene.positions[c]),\\r\\n        Math.max(scene.positions[a], scene.positions[b], scene.positions[c]),\\r\\n        Math.min(scene.positions[a + 2], scene.positions[b + 2], scene.positions[c + 2]),\\r\\n        Math.max(scene.positions[a + 2], scene.positions[b + 2], scene.positions[c + 2]),\\r\\n      ], triangleIndex * 4);\\r\\n    }\\r\\n    const packedBytes = positions.byteLength + indices.byteLength\\r\\n      + scene.triangleMeshIds.byteLength + scene.meshMatrices.byteLength;\\r\\n    expect(indices.length / 3).toBeGreaterThan(100_000);\\r\\n    expect(packedBytes).toBeLessThan(3_000_000);\\r\\n    const acceleration = buildSceneAcceleration(scene);\\r\\n    expect(acceleration.distanceToGeometry([11, 1.6, 11])).toBeCloseTo(1.6, 3);\\r\\n    const options = resolveCoverageOptions(scene, {\\r\\n      candidateSpacing: 5,\\r\\n      maximumCandidateCount: 16,\\r\\n      cameraClearanceRadius: 0.3,\\r\\n      minimumOriginSeparation: 4,\\r\\n      coarseSampleCount: 128,\\r\\n      fineSampleCount: 256,\\r\\n      coarsePairSeedCount: 4,\\r\\n      localRefinementLevels: 1,\\r\\n      minimumTexelDensity: 0,\\r\\n      targetTexelDensity: 1,\\r\\n    });\\r\\n    const fixed = optimizeProjectionCoverage({\\r\\n      mode: 'fixed-first',\\r\\n      scene,\\r\\n      firstOrigin: [2.5, 1.6, 2.5],\\r\\n      options,\\r\\n    });\\r\\n    const joint = optimizeProjectionCoverage({ mode: 'joint-pair', scene, options });\\r\\n    for (const result of [fixed, joint]) {\\r\\n      expect(result.sampleCount).toBe(256);\\r\\n      expect(result.candidateCount).toBeGreaterThan(2);\\r\\n      expect(result.reachableCoverage).toBeGreaterThanOrEqual(result.combinedCoverage);\\r\\n      expect(result.originA.every(Number.isFinite)).toBe(true);\\r\\n      expect(result.originB.every(Number.isFinite)).toBe(true);\\r\\n      expect(Math.hypot(\\r\\n        result.originA[0] - result.originB[0],\\r\\n        result.originA[1] - result.originB[1],\\r\\n        result.originA[2] - result.originB[2],\\r\\n      )).toBeGreaterThanOrEqual(4);\\r\\n    }\\r\\n  }, 60_000);\\r\\n});\\r\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "263fb8115a624825261a59e0dc2ec6d58842bbe6c8a787f2d6d5cf2ec8cf24ff",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001006",
+          "parent_content_hash": "bcedfb0852f7c95f11e9c69b9a109df897a537c30cdd0ebfcde8595b81203158",
+          "parent_sequence": 1006,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 4,
+          "source_start": 12592,
+          "source_end": 15146
+        }
+      ],
+      "request_payload_hash": "629c2b2f00c5fd86d5ee5d6ff76768a1f411bc0fc491a57c6443de006aae292a",
+      "response_schema_hash": "a0507673e3742c076db6068f8f32ff1964f363cd36edc49dd6afc6d02cbe8bb7"
+    },
+    {
+      "chunk_index": 66,
+      "event_ids": [
+        "panoref_evt_001007::span::000003"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001007::span::000003",
+          "sequence": 1007,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "or-max={axis.toLowerCase()}\\\\n+                />\\\\n+              </Field>,\\\\n+            ]))}\\\\n+          </div>\\\\n+        )}\\\\n*** Update File: C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\\\\\\tests\\\\\\\\projectionCoverage.test.ts\\\\n@@\\\\n   it('extracts one imported room object and retains its concave empty interior', async () => {\\\\n@@\\\\n     expect(candidates.every((candidate) => candidate.position[1] < 2)).toBe(true);\\\\n   });\\\\n+\\\\n+  it('uses an explicit allowed floor region to reject a large prop top in one imported object', async () => {\\\\n+    const triangles = [...floorTriangles(0, 3), ...floorTriangles(0.8, 1.5)];\\\\n+    const positions = new Float32Array(triangles.length * 9);\\\\n+    const indices = new Uint32Array(triangles.length * 3);\\\\n+    triangles.forEach((triangle, triangleIndex) => {\\\\n+      positions.set([...triangle.a, ...triangle.b, ...triangle.c], triangleIndex * 9);\\\\n+      indices.set([triangleIndex * 3, triangleIndex * 3 + 1, triangleIndex * 3 + 2], triangleIndex * 3);\\\\n+    });\\\\n+    const asset: ProjectAsset = {\\\\n+      id: 'coverage_imported_large_top', type: 'model', name: 'large-top.panoref-mesh',\\\\n+      uri: encodePackedGrayboxMesh(positions, indices).uri, createdAt: new Date(0).toISOString(),\\\\n+    };\\\\n+    const object: SceneObject = {\\\\n+      id: 'coverage_large_top_object', name: 'Imported Floor and Large Top', type: 'imported_model',\\\\n+      transform: createTransform([0, 0, 0]), dimensions: [6, 1, 6],\\\\n+      category: 'architecture', locked: false, visible: true, modelAssetId: asset.id,\\\\n+    };\\\\n+    const project = createDefaultProject();\\\\n+    project.scene.objects = [object];\\\\n+    project.assets.assets[asset.id] = asset;\\\\n+    const scene = await extractCoverageScene(project, undefined, [{\\\\n+      min: [-3.1, -0.1, -3.1],\\\\n+      max: [3.1, 0.1, 3.1],\\\\n+    }]);\\\\n+    expect(Array.from(scene.floorTriangleIndices)).toEqual([0, 1]);\\\\n+    const candidates = generateOriginCandidates(\\\\n+      scene,\\\\n+      resolveCoverageOptions(scene, { candidateSpacing: 1, cameraClearanceRadius: 0.3 }),\\\\n+      buildSceneAcceleration(scene),\\\\n+    );\\\\n+    expect(candidates.length).toBeGreaterThan(0);\\\\n+    expect(candidates.every((candidate) => candidate.position[1] === 1.6)).toBe(true);\\\\n+  });\\\\n*** Update File: C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\\\\\\README.md\\\\n@@\\\\n-The optimizer uses connected-component filtering to keep substantial imported floor surfaces while rejecting isolated prop/table tops, and uses triangle clearance rather than enclosing object bounds so concave imported rooms retain interior candidates.\\\\n+The optimizer uses connected-component filtering to discard small isolated prop/table tops and triangle clearance rather than enclosing object bounds so concave imported rooms retain interior candidates. For geometrically ambiguous large roofs, platforms, or prop tops, enable **Allowed floor region** and enter world-space X/Y/Z bounds; only floor points inside those bounds are eligible.\\\\n*** Update File: C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\",
+          "content_hash": "52a78a902fce57e5a0cabd874f6c89fa2580ab65fe9e50082d79b9d532e5486f",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001007",
+          "parent_content_hash": "bc460343148030bee7f1f8504370a60095bb99ee2e2a2b0ce33e343ba0a343bc",
+          "parent_sequence": 1007,
+          "parent_event_type": "custom_tool_call",
+          "parent_role": "assistant",
+          "span_index": 3,
+          "source_start": 9309,
+          "source_end": 12449
+        }
+      ],
+      "request_payload_hash": "cd3fd006d907a32ec32a0b93994e90e5ba2025617a6ca9ef3c152f22703b956e",
+      "response_schema_hash": "2faa2fc4a55500c6186dfb0371d289823f5234f45264f6ed58f6b75313da0096"
+    },
+    {
+      "chunk_index": 71,
+      "event_ids": [
+        "panoref_evt_001013::span::000001",
+        "panoref_evt_001014"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001013::span::000001",
+          "sequence": 1013,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "    : explicitFloorSeen\\\\n+      ? floorFlags\\\\n+      : filterImportedFloorComponents(scene, floorFlags);\\\\n+  const selectedFlag = normalizedAllowedFloorRegions ? undefined : explicitFloorSeen ? 2 : 1;\\\\n+  const isSelectedFloor = (triangleIndex: number): boolean => {\\\\n+    if (selectedFlag !== undefined) return selectedFloorFlags[triangleIndex] === selectedFlag;\\\\n+    if (selectedFloorFlags[triangleIndex] === 0 || !normalizedAllowedFloorRegions) return false;\\\\n+    readWorldTriangle(scene, triangleIndex, triangleScratch);\\\\n+    return triangleIntersectsAllowedFloorRegion(triangleScratch, normalizedAllowedFloorRegions);\\\\n+  };\\\\n   let floorCount = 0;\\\\n   for (let triangleIndex = 0; triangleIndex < floorFlags.length; triangleIndex += 1) {\\\\n-    if (selectedFloorFlags[triangleIndex] === selectedFlag) floorCount += 1;\\\\n+    if (isSelectedFloor(triangleIndex)) floorCount += 1;\\\\n@@\\\\n   let floorOffset = 0;\\\\n   for (let triangleIndex = 0; triangleIndex < floorFlags.length; triangleIndex += 1) {\\\\n-    if (selectedFloorFlags[triangleIndex] !== selectedFlag) continue;\\\\n+    if (!isSelectedFloor(triangleIndex)) continue;\\\\n*** Update File: C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\\\\\\src\\\\\\\\engine\\\\\\\\projectionCoverage\\\\\\\\candidateGenerator.ts\\\\n@@\\\\n import type {\\\\n+  CoverageBounds,\\\\n   CoverageOptimizationOptions,\\\\n@@\\\\n } from './types';\\\\n+\\\\n+function floorPointIsAllowed(\\\\n+  regions: readonly CoverageBounds[] | undefined,\\\\n+  x: number,\\\\n+  floorY: number,\\\\n+  z: number,\\\\n+): boolean {\\\\n+  return !regions || regions.some((region) => (\\\\n+    x >= region.min[0] && x <= region.max[0]\\\\n+    && floorY >= region.min[1] && floorY <= region.max[1]\\\\n+    && z >= region.min[2] && z <= region.max[2]\\\\n+  ));\\\\n+}\\\\n@@\\\\n-    if (floorY === undefined) continue;\\\\n+    if (floorY === undefined || !floorPointIsAllowed(scene.allowedFloorRegions, x, floorY, z)) continue;\\\\n@@\\\\n-        if (floorY === undefined) continue;\\\\n+        if (floorY === undefined || !floorPointIsAllowed(scene.allowedFloorRegions, x, floorY, z)) continue;\\\\n@@\\\\n     const position: Vec3 = [\\\\n@@\\\\n     ];\\\\n+    if (!floorPointIsAllowed(\\\\n+      scene.allowedFloorRegions,\\\\n+      position[0],\\\\n+      position[1] - options.panoramaHeightMeters,\\\\n+      position[2],\\\\n+    )) continue;\\\\n*** End Patch\\\";\\ntext(await tools.apply_patch(patch));\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "a29948d6520df278a7acd9c3d03bb93d4b89afdbf8a9ede7090bb75773855646",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001013",
+          "parent_content_hash": "1bf121cf3ef86f0ed432eeb57a8dc07cb9da219251378a96bed0833867811fb1",
+          "parent_sequence": 1013,
+          "parent_event_type": "custom_tool_call",
+          "parent_role": "assistant",
+          "span_index": 1,
+          "source_start": 3093,
+          "source_end": 5664
+        },
+        {
+          "id": "panoref_evt_001014",
+          "sequence": 1014,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_qimuN2ZJgQXY3qsoFJuEPm51\", \"id\": \"ctco_019f7a90-0013-78a1-ad5a-db5ec3f7591a\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 0.0 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"{}\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "e95af36a0935a37d1e8909b14c6ee0d009e1dd5f960db65b1fe58ca145db0ebe"
+        }
+      ],
+      "request_payload_hash": "b3ddf8b4a65ac607d70a06320e44d390186879d2e18fc16bcf7b0562868cfac2",
+      "response_schema_hash": "804f0016b277927b91632eae1718d8c0cd3f76e39d6f84eefd83d21ea4669faa"
+    },
+    {
+      "chunk_index": 76,
+      "event_ids": [
+        "panoref_evt_001022",
+        "panoref_evt_001023",
+        "panoref_evt_001024"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001022",
+          "sequence": 1022,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_kSwp6hA4DFnqYzqJzhZGMcV3\", \"id\": \"ctco_019f7a91-0e01-7423-b9b3-35d39bca2ed0\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 0.1 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"{}\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "db2c6f4c8fb2d897a5c212551c9cffabeaa9cea0a630cd2e81f0ac2514ac21eb"
+        },
+        {
+          "id": "panoref_evt_001023",
+          "sequence": 1023,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_UZ4QcNB2TSALa2fsg2bsRegm\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd12e3e50819481b9e468043b0d28\", \"input\": \"const r = await tools.shell_command({command:\\\"Get-Content src/components/common/CoverageOptimizerPanel.tsx | Select-Object -Skip 135 -First 55\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":10000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "361558feec8bb15428ef84e1416a0a7da066a60ba4bd3ea22987fa1c8e5d04b3"
+        },
+        {
+          "id": "panoref_evt_001024",
+          "sequence": 1024,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_UZ4QcNB2TSALa2fsg2bsRegm\", \"id\": \"ctco_019f7a91-2352-7c20-a2a5-bf5d0cc2696f\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 0.4 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 0.4 seconds\\nOutput:\\n            onChange={(value) => {\\r\\n              setRestrictFloorRegion(value);\\r\\n              setStatus('idle');\\r\\n              setResult(undefined);\\r\\n            }}\\r\\n            label=\\\"Restrict optimizer to an allowed floor region\\\"\\r\\n          />\\r\\n        </Field>\\r\\n\\r\\n        {restrictFloorRegion && (\\r\\n          <div className=\\\"grid grid-cols-2 gap-2 rounded-lg border border-subtle p-2\\\" data-coverage-floor-region>\\r\\n            {(['X', 'Y', 'Z'] as const).map((axis, axisIndex) => (\\r\\n              <div key={axis} className=\\\"contents\\\">\\r\\n              <Field label={`${axis} minimum`}>\\r\\n                <TextInput\\r\\n                  type=\\\"number\\\"\\r\\n                  step=\\\"0.1\\\"\\r\\n                  value={floorRegion.min[axisIndex]}\\r\\n                  onChange={(event) => setFloorRegion((current) => {\\r\\n                    const min = [...current.min] as Vec3;\\r\\n                    min[axisIndex] = Number(event.target.value);\\r\\n                    return { ...current, min };\\r\\n                  })}\\r\\n                  data-coverage-floor-min={axis.toLowerCase()}\\r\\n                />\\r\\n              </Field>,\\r\\n              <Field label={`${axis} maximum`}>\\r\\n                <TextInput\\r\\n                  type=\\\"number\\\"\\r\\n                  step=\\\"0.1\\\"\\r\\n                  value={floorRegion.max[axisIndex]}\\r\\n                  onChange={(event) => setFloorRegion((current) => {\\r\\n                    const max = [...current.max] as Vec3;\\r\\n                    max[axisIndex] = Number(event.target.value);\\r\\n                    return { ...current, max };\\r\\n                  })}\\r\\n                  data-coverage-floor-max={axis.toLowerCase()}\\r\\n                />\\r\\n              </Field>,\\r\\n              </div>\\r\\n            ))}\\r\\n          </div>\\r\\n        )}\\r\\n\\r\\n        <button\\r\\n          type=\\\"button\\\"\\r\\n          onClick={() => void analyze()}\\r\\n          disabled={status === 'running' || project.scene.objects.every((object) => !object.visible)}\\r\\n          className=\\\"w-full rounded-lg bg-[var(--accent)] px-3 py-2 font-semibold text-white transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-45\\\"\\r\\n          data-coverage-analyze\\r\\n        >\\r\\n          {status === 'running' ? 'Analyzing coverage…' : 'Analyze panorama origins'}\\r\\n        </button>\\r\\n\\r\\n        {status === 'running' && (\\r\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "1eef04d5aee879d8cb746ac2041dcf0d7f0eb8a2ba779b2dba914e81ef14ff15"
+        }
+      ],
+      "request_payload_hash": "18681597c6b0409dc5ff86a0e39303c6a33fdde4a2f13ca00a0a0abb9d2b6aad",
+      "response_schema_hash": "e713692877e9b8a1530d2cef4802909ac5d195176c12a536cf67849467b18ea0"
+    },
+    {
+      "chunk_index": 81,
+      "event_ids": [
+        "panoref_evt_001036::span::000001"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001036::span::000001",
+          "sequence": 1036,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "await startChecking.isVisible().catch(() => false)) await startChecking.click();\\r\\n      await dismissOverlays(page);\\r\\n    }\\r\\n    await page.getByRole('button', { name: 'More', exact: true }).click();\\r\\n    const drawer = page.getByRole('dialog', { name: 'Reference Settings' });\\r\\n    await expect(drawer).toBeVisible();\\r\\n    await page.locator('[data-coverage-optimizer] summary').click();\\r\\n\\r\\n    const layout = await drawer.evaluate((element) => {\\r\\n      const rect = element.getBoundingClientRect();\\r\\n      return {\\r\\n        left: rect.left,\\r\\n        right: rect.right,\\r\\n        viewportWidth: window.innerWidth,\\r\\n        clientWidth: element.clientWidth,\\r\\n        scrollWidth: element.scrollWidth,\\r\\n      };\\r\\n    });\\r\\n    expect(layout.left).toBeGreaterThanOrEqual(0);\\r\\n    expect(layout.right).toBeLessThanOrEqual(layout.viewportWidth);\\r\\n    expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);\\r\\n\\r\\n    await page.locator('[data-coverage-analyze]').click();\\r\\n    const result = page.locator('[data-coverage-result]');\\r\\n    await expect(result).toBeVisible({ timeout: 90_000 });\\r\\n    await expect(result).toContainText('24,576 fine samples');\\r\\n    const originB = (await result.getAttribute('data-coverage-origin-b'))\\r\\n      ?.split(',').map((value) => Number(value));\\r\\n    expect(originB).toHaveLength(3);\\r\\n    expect(originB?.every(Number.isFinite)).toBe(true);\\r\\n    // The default set has an authored ground floor; props/rooftops must not\\r\\n    // become candidate platforms.\\r\\n    expect(originB?.[1]).toBeLessThan(2.5);\\r\\n    await expect(page.locator('[data-coverage-capture-plan]')).toContainText('Existing panorama origins are never rewritten');\\r\\n    await expect(page.locator('[data-coverage-apply-pair]')).toHaveCount(0);\\r\\n\\r\\n    if (testInfo.project.name === 'desktop-chromium') {\\r\\n      await page.locator('[data-coverage-mode]').selectOption('joint-pair');\\r\\n      await page.locator('[data-coverage-analyze]').click();\\r\\n      await expect(result).toBeVisible({ timeout: 120_000 });\\r\\n      const originA = (await result.getAttribute('data-coverage-origin-a'))\\r\\n        ?.split(',').map((value) => Number(value));\\r\\n      const jointOriginB = (await result.getAttribute('data-coverage-origin-b'))\\r\\n        ?.split(',').map((value) => Number(value));\\r\\n      expect(originA?.every(Number.isFinite)).toBe(true);\\r\\n      expect(jointOriginB?.every(Number.isFinite)).toBe(true);\\r\\n      expect(Math.hypot(\\r\\n        (originA?.[0] ?? 0) - (jointOriginB?.[0] ?? 0),\\r\\n        (originA?.[1] ?? 0) - (jointOriginB?.[1] ?? 0),\\r\\n        (originA?.[2] ?? 0) - (jointOriginB?.[2] ?? 0),\\r\\n      )).toBeGreaterThan(1);\\r\\n      await expect(page.locator('[data-coverage-apply-capture-a]')).toBeVisible();\\r\\n    }\\r\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "5750f983b389bb048dda7d052448a8fda8724f078003ab319769eee76b71288a",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001036",
+          "parent_content_hash": "36f07c3fa31942635389085f6f07da1874b21c2857e097f5bca45093e45e69ba",
+          "parent_sequence": 1036,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 1,
+          "source_start": 3177,
+          "source_end": 6058
+        }
+      ],
+      "request_payload_hash": "771a8e2f8b95ce251f2c8c0c60b986bfc5fa02f67a9110721c20bf72a1a64243",
+      "response_schema_hash": "522f3d53d655b85a93daf92c12b7ba2f05ab7f42690d2a420526cc56407454f1"
+    },
+    {
+      "chunk_index": 85,
+      "event_ids": [
+        "panoref_evt_001043",
+        "panoref_evt_001044",
+        "panoref_evt_001045",
+        "panoref_evt_001046",
+        "panoref_evt_001047",
+        "panoref_evt_001048",
+        "panoref_evt_001049"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001043",
+          "sequence": 1043,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_tv5JQZ1DEJmjWpYWsH4BIvm8\", \"id\": \"ctco_019f7a93-09b6-7b12-807d-7c91c00e1dbb\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"Script running with cell ID 347\\nWall time 10.0 seconds\\nOutput:\\n\", \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "887752c724fa302805fcfbf75e82505d4957159158a4c3db00f34e61419bbd25"
+        },
+        {
+          "id": "panoref_evt_001044",
+          "sequence": 1044,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"cell_id\\\":\\\"347\\\",\\\"yield_time_ms\\\":30000,\\\"max_tokens\\\":10000}\", \"call_id\": \"call_9NC2P1NxKSEF4plwBOH12EGL\", \"id\": \"fc_0cc9ec57757b3be5016a5cd1ae0bf0819481c69e8984abf557\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait\", \"type\": \"function_call\"}",
+          "content_hash": "216f91013b18c93646d25323cdc3395dd08b52de268a19d2bc00fb73a07e307a"
+        },
+        {
+          "id": "panoref_evt_001045",
+          "sequence": 1045,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_9NC2P1NxKSEF4plwBOH12EGL\", \"id\": \"fco_019f7a93-8729-7cf1-81d3-237753d06099\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"Script running with cell ID 347\\nWall time 30.0 seconds\\nOutput:\\n\", \"type\": \"function_call_output\"}",
+          "content_hash": "810c156f5a337965b3f3563a412be091324b7c74381cd1176482cc23d214b0dc"
+        },
+        {
+          "id": "panoref_evt_001046",
+          "sequence": 1046,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"cell_id\\\":\\\"347\\\",\\\"yield_time_ms\\\":30000,\\\"max_tokens\\\":10000}\", \"call_id\": \"call_NABLURQ9zHe6z2wQonCn1t0G\", \"id\": \"fc_0cc9ec57757b3be5016a5cd1cef0588194884a50cdae420927\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait\", \"type\": \"function_call\"}",
+          "content_hash": "e52384c6c1d1b630c522e52b8ab2a7d1d21289ea4b1e3ec9356d50de322e615a"
+        },
+        {
+          "id": "panoref_evt_001047",
+          "sequence": 1047,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_NABLURQ9zHe6z2wQonCn1t0G\", \"id\": \"fco_019f7a94-07af-7563-b974-290504ccca0b\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"Script running with cell ID 347\\nWall time 30.0 seconds\\nOutput:\\n\", \"type\": \"function_call_output\"}",
+          "content_hash": "4fda7cfd7dfde5f17fc64edf4c41e9160b34e9a1af571fc2cdd691bf236ab369"
+        },
+        {
+          "id": "panoref_evt_001048",
+          "sequence": 1048,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"cell_id\\\":\\\"347\\\",\\\"yield_time_ms\\\":30000,\\\"max_tokens\\\":10000}\", \"call_id\": \"call_yURazXOd7ffjxv2KBn3bdYhN\", \"id\": \"fc_0cc9ec57757b3be5016a5cd1ef2f4481949807e7228e628cc9\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait\", \"type\": \"function_call\"}",
+          "content_hash": "af553aacebc4b4a7a214fb5a98ddf70cbdb6d65e59c4a327d1800d268440a257"
+        },
+        {
+          "id": "panoref_evt_001049",
+          "sequence": 1049,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_yURazXOd7ffjxv2KBn3bdYhN\", \"id\": \"fco_019f7a94-5fdc-7611-96de-738e2520b8ef\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 20.3 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 97.6 seconds\\nOutput:\\n\\n> continuity-stage@0.0.0 test:e2e\\n> playwright test --grep coverage optimizer completes\\n\\n\\nRunning 2 tests using 1 worker\\n\\n  ok 1 [desktop-chromium] › e2e\\\\layout-and-workflow.spec.ts:498:3 › workflow path smoke › coverage optimizer completes without overflowing the Reference drawer (1.0m)\\n  ok 2 [phone-390] › e2e\\\\layout-and-workflow.spec.ts:498:3 › workflow path smoke › coverage optimizer completes without overflowing the Reference drawer (32.6s)\\n\\n  2 passed (1.6m)\\n\", \"type\": \"input_text\"}], \"type\": \"function_call_output\"}",
+          "content_hash": "c32386501c46ec6d2b1a4e2ea49ec45bd6d48298e3dc3bad48aa28dd7b7b3b59"
+        }
+      ],
+      "request_payload_hash": "f0e4e68ecda793dc9a0a04f12db53afd5fa0c5e383ca5a4cfa32068d6c6a4155",
+      "response_schema_hash": "68720ffefcee553c0e19ada715be74bee4d36536aee1649cdff50376545c6093"
+    },
+    {
+      "chunk_index": 90,
+      "event_ids": [
+        "panoref_evt_001063",
+        "panoref_evt_001064",
+        "panoref_evt_001065",
+        "panoref_evt_001066",
+        "panoref_evt_001067",
+        "panoref_evt_001068"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001063",
+          "sequence": 1063,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_XWvfSB6DEmeWtNYHO9ueT36d\", \"id\": \"fco_019f7a95-2a70-71e0-a620-e2844c578bc7\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"\", \"type\": \"function_call_output\"}",
+          "content_hash": "f5af90df855a74db5076d18e7dc60a9dd8ae98b4e1af9c43ec9cd207fe51a5f3"
+        },
+        {
+          "id": "panoref_evt_001064",
+          "sequence": 1064,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_vAwSDT5q3M3XYdlGB4i0dmXm\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd242a1708194a455eba7ad7f75b8\", \"input\": \"const r = await tools.update_plan({explanation:\\\"The first independent audit found an unpublished rebase and ambiguity for large prop tops. Both are fixed: explicit allowed-floor bounds were added and tested, the rebased branch was force-pushed with lease, and GitHub now reports PR #23 mergeable. Audit round two is running.\\\",\\\"plan\\\":[{\\\"step\\\":\\\"Inspect repository instructions, branch divergence, and available complex imported-set fixtures\\\",\\\"status\\\":\\\"completed\\\"},{\\\"step\\\":\\\"Fetch origin/main, rebase the feature branch, and resolve semantic conflicts\\\",\\\"status\\\":\\\"completed\\\"},{\\\"step\\\":\\\"Implement robust imported-floor component filtering plus explicit allowed-floor regions with regression coverage\\\",\\\"status\\\":\\\"completed\\\"},{\\\"step\\\":\\\"Add a 100K+ full optimizer integration test and execute a real complex imported-set benchmark\\\",\\\"status\\\":\\\"completed\\\"},{\\\"step\\\":\\\"Run unit, type, build, WebGL, browser, and workflow verification\\\",\\\"status\\\":\\\"completed\\\"},{\\\"step\\\":\\\"Run independent adversarial completion audits and repair every concrete gap\\\",\\\"status\\\":\\\"in_progress\\\"},{\\\"step\\\":\\\"Publish the rebased branch, verify PR conflict resolution, and report evidence\\\",\\\"status\\\":\\\"completed\\\"}]}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "69b626dc7fe93282a6aca523ef77a3ebe122c4ffc98e8c759a940376e49abfb1"
+        },
+        {
+          "id": "panoref_evt_001065",
+          "sequence": 1065,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_vAwSDT5q3M3XYdlGB4i0dmXm\", \"id\": \"ctco_019f7a95-549a-7a32-a9d4-486689a4c7cd\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 0.0 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"{}\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "c9f087347dbdc2f0bab14bdbc20b8520b760241d289eee69025edb0d134b495b"
+        },
+        {
+          "id": "panoref_evt_001066",
+          "sequence": 1066,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"timeout_ms\\\":30000}\", \"call_id\": \"call_8IKD7ifAagB4MHqSyfuaaOlQ\", \"id\": \"fc_0cc9ec57757b3be5016a5cd24a21a08194ad5db7b45e71567a\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait_agent\", \"namespace\": \"collaboration\", \"type\": \"function_call\"}",
+          "content_hash": "02d4c83e04a72a7f3770d7391f88e16ea212457973eb5cbbad51e016eed0d3a1"
+        },
+        {
+          "id": "panoref_evt_001067",
+          "sequence": 1067,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_8IKD7ifAagB4MHqSyfuaaOlQ\", \"id\": \"fco_019f7a95-e6f7-73d1-b2af-a24aaeea1d59\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"{\\\"message\\\":\\\"Wait timed out.\\\",\\\"timed_out\\\":true}\", \"type\": \"function_call_output\"}",
+          "content_hash": "b09d10a4e93d20bf541351c0bb5f6770a754086269b5f09e7d63971ff301a872"
+        },
+        {
+          "id": "panoref_evt_001068",
+          "sequence": 1068,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"timeout_ms\\\":30000}\", \"call_id\": \"call_kxyLI8azpQXUuCnaBJd3ABqU\", \"id\": \"fc_0cc9ec57757b3be5016a5cd26a27b88194a6971430e26d6bc2\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait_agent\", \"namespace\": \"collaboration\", \"type\": \"function_call\"}",
+          "content_hash": "f9768de6808be87427d01eadf0c3db532edea2fabf457e8a5d3407cb8eee9ea0"
+        }
+      ],
+      "request_payload_hash": "0abb2271b211faf5ecf0f5722b726d4063165dad5fb2b6d6e1ae4efdbc78e916",
+      "response_schema_hash": "f0549be1858ed5dc383d8182d77eade25bf7581cb69460cbc9ddf93889a788c3"
+    },
+    {
+      "chunk_index": 95,
+      "event_ids": [
+        "panoref_evt_001085::span::000000"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001085::span::000000",
+          "sequence": 1085,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_8IThBhNayfB0rqY9EoPNIHWh\", \"id\": \"fco_019f7a98-df3f-7661-b493-3578586250e0\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 0.0 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"=== lint ===\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 10.1 seconds\\nOutput:\\n\\n> continuity-stage@0.0.0 lint\\n> tsc --noEmit\\n\\n\", \"type\": \"input_text\"}, {\"text\": \"=== tests ===\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 46.8 seconds\\nOutput:\\n\\n> continuity-stage@0.0.0 test\\n> vitest run --run tests/uiFidelity.test.ts tests/projectionCoverage.test.ts\\n\\n\\n\\u001b[1m\\u001b[46m RUN \\u001b[49m\\u001b[22m \\u001b[36mv3.2.6 \\u001b[39m\\u001b[90mC:/Users/disti/.t3/worktrees/PanoRef/t3code-aefd2138\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/uiFidelity.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m40 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 40\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/projectionCoverage.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m11 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 43650\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m projection coverage engine\\u001b[2m > \\u001b[22mruns both complete optimizer modes on a 100k+ triangle indexed fixture \\u001b[33m 43327\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m2 passed\\u001b[39m\\u001b[22m\\u001b[90m (2)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m51 passed\\u001b[39m\\u001b[22m\\u001b[90m (51)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 09:37:01\\n\\u001b[2m   Duration \\u001b[22m 44.71s\\u001b[2m (transform 296ms, setup 0ms, collect 571ms, tests 43.69s, environment 1ms, prepare 475ms)\\u001b[22m\\n\\n\", \"type\": \"input_text\"}, {\"text\": \"=== build ===\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 10.1 seconds\\nOutput:\\n\\n> continuity-stage@0.0.0 build\\n> vite build\\n\\n\\u001b[36mvite v6.4.3 \\u001b[32mbuilding for production...\\u001b[36m\\u001b[39m\\ntransforming...\\n\\u001b[32m✓\\u001b[39m 1777 modules transformed.\\nrendering chunks...\\ncomputing gzip size...\\n\\u001b[2mdist/\\u001b[22m\\u001b[32mindex.html                              \\u001b[39m\\u001b[1m\\u001b[2m    0.53 kB\\u001b[22m\\u001b[1m\\u001b[22m\\u001b[2m │ gzip:   0.32 kB\\u001b[22m\\n\\u001b[2mdist/\\u001b[22m\\u001b[32massets/coverage.worker-C9f-rfy6.js      \\u001b[39m\\u001b[1m\\u001b[2m   98.40 kB\\u001b[22m\\u001b[1m\\u001b[22m\\n\\u001b[2mdist/\\u001b[22m\\u001b[35massets/index-BiqfSBz2.css               \\u001b[39m\\u001b[1m\\u001b[2m   72.78 kB\\u001b[22m\\u001b[1m\\u001b[22m\\u001b[2m │ gzip:  12.83 kB\\u001b[22m\\n\\u001b[2mdist/\\u001b[22m\\u001b[36massets/WorkspaceShell-DnYqpra0.js       \\u001b[39m\\u001b[1m\\u001b[2m    0.24 kB\\u001b[22m\\u001b[1m\\u001b[22m\\u001b[2m │ gzip:   0.21 kB\\u001b[22m\\n\\u001b[2mdist/\\u001b[22m\\u001b[36massets/ContextualPanel-Cc2XTMVe.js      \\u001b[39m\\u001b[1m\\u001b[2m    0.27 kB\\u001b[22m\\u001b[1m\\u001b[22m\\u001b[2m │ gzip:   0.23 kB\\u001b[22m\\n\\u001b[2mdist/\\u001b[22m\\u001b[36massets/loader-c",
+          "content_hash": "fafc4d7b55ad1a4ae8f3340074a223a0e67faa1241dd7bd2d96402ff102a1fd7",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001085",
+          "parent_content_hash": "8563352c3dcdeebd83e4c92260d1448d37ea66d8599b118911049b613c952e50",
+          "parent_sequence": 1085,
+          "parent_event_type": "function_call_output",
+          "parent_role": "tool",
+          "span_index": 0,
+          "source_start": 0,
+          "source_end": 3087
+        }
+      ],
+      "request_payload_hash": "bf4daafb24988234d9dbb631d9a2ec476ee8afa527ad2cc315bc3e04ac0dbbd9",
+      "response_schema_hash": "984d9abff2ecc22f8596da083e3e9ef48d00f2c1389c60d730f60cd62d5d96da"
+    },
+    {
+      "chunk_index": 100,
+      "event_ids": [
+        "panoref_evt_001097",
+        "panoref_evt_001098",
+        "panoref_evt_001099"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001097",
+          "sequence": 1097,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_hfkF4uhRJAzFSeEVVK7ColnD\", \"id\": \"ctco_019f7a9a-b3ae-7de2-bb63-46dda8128234\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 1.2 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 1.2 seconds\\nOutput:\\n4153429 Lock coverage floor bounds during analysis\\n e2e/layout-and-workflow.spec.ts                  |  8 ++++++-\\n src/components/common/CoverageOptimizerPanel.tsx | 11 +++++----\\n src/components/common/Field.tsx                  | 29 +++++++++++++-----------\\n 3 files changed, 30 insertions(+), 18 deletions(-)\\ndiff --git a/src/components/common/Field.tsx b/src/components/common/Field.tsx\\nindex b99dbef..7b97eba 100644\\n--- a/src/components/common/Field.tsx\\n+++ b/src/components/common/Field.tsx\\n@@ -45,23 +45,26 @@ export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {\\n   );\\r\\n }\\r\\n \\r\\n-export function Toggle({\\r\\n-  checked,\\r\\n-  onChange,\\r\\n-  label,\\r\\n-}: {\\r\\n-  checked: boolean;\\r\\n-  onChange: (value: boolean) => void;\\r\\n-  label?: string;\\r\\n-}) {\\r\\n+export function Toggle({\\n+  checked,\\n+  onChange,\\n+  label,\\n+  disabled = false,\\n+}: {\\n+  checked: boolean;\\n+  onChange: (value: boolean) => void;\\n+  label?: string;\\n+  disabled?: boolean;\\n+}) {\\n   return (\\r\\n     <button\\r\\n       type=\\\"button\\\"\\r\\n       role=\\\"switch\\\"\\r\\n-      aria-checked={checked}\\r\\n-      aria-label={label}\\r\\n-      onClick={() => onChange(!checked)}\\r\\n-      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${\\r\\n+      aria-checked={checked}\\n+      aria-label={label}\\n+      disabled={disabled}\\n+      onClick={() => onChange(!checked)}\\n+      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-45 ${\\n         checked ? 'bg-[var(--accent)]' : 'bg-surface-raised border border-subtle'\\r\\n       }`}\\r\\n     >\\r\\n{\\\"headRefOid\\\":\\\"41534294b0f5b67b82317c50a7060352576675c5\\\",\\\"mergeStateStatus\\\":\\\"UNKNOWN\\\",\\\"mergeable\\\":\\\"UNKNOWN\\\",\\\"url\\\":\\\"https://github.com/distilledoreo/PanoRef/pull/23\\\"}\\n## t3code/projector-occlusion...origin/t3code/projector-occlusion\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "b92c25315019fabd7b889fa45ff1be36373d24f815a43d41d965c6d835584c12"
+        },
+        {
+          "id": "panoref_evt_001098",
+          "sequence": 1098,
+          "event_type": "message",
+          "role": "assistant",
+          "content": "{\"content\": [{\"text\": \"The stale-result race is fixed, tested on desktop and phone, committed, and pushed. The optimizer now locks the region toggle and every bound field until its current job finishes, then unlocks them. I’m beginning adversarial audit round three against commit `4153429`.\", \"type\": \"output_text\"}], \"id\": \"msg_0cc9ec57757b3be5016a5cd3a8186081948cd6860f40bcfd41\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"phase\": \"commentary\", \"role\": \"assistant\", \"type\": \"message\"}",
+          "content_hash": "f0a36d2832f0efcdf227b49dd8945c39326ceec3d1ec0852e9dded681f46ae6e"
+        },
+        {
+          "id": "panoref_evt_001099",
+          "sequence": 1099,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_eFyKccXjDq5YzzKUyXj0WUK1\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd3a98aa88194848844282b840a7b\", \"input\": \"const r = await tools.shell_command({command:\\\"gh pr view 23 --json headRefOid,mergeable,mergeStateStatus,url\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":30000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "2022c7205ecac1110005ede3c2591080601d8ea19bd6fff54b52190a1f3a3de2"
+        }
+      ],
+      "request_payload_hash": "646b6a35eeea759d4457c917ecfe597601337324cb61cfe884203cd892977104",
+      "response_schema_hash": "c9de1b0a635725ddf9ede489b17f14ae81aacf9e83423db4b39596ac2c12f833"
+    },
+    {
+      "chunk_index": 104,
+      "event_ids": [
+        "panoref_evt_001111::span::000000"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001111::span::000000",
+          "sequence": 1111,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_qunLtZnYs1Lr7GEwdJ57pqC8\", \"id\": \"ctco_019f7a9c-0c7e-7a62-9d43-f73eb61463c1\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 0.4 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 0.4 seconds\\nOutput:\\nimport React, { useEffect, useRef, useState } from 'react';\\r\\nimport type { LocationProject, PanoReference, Vec3 } from '../../domain/types';\\r\\nimport {\\r\\n  extractCoverageScene,\\r\\n  runCoverageOptimization,\\r\\n  type CoverageBounds,\\r\\n  type CoverageOptimizationMode,\\r\\n  type CoverageOptimizationResult,\\r\\n  type CoverageOptimizationTask,\\r\\n} from '../../engine/projectionCoverage';\\r\\nimport { Field, Select, TextInput, Toggle } from './Field';\\r\\n\\r\\nfunction percent(value: number): string {\\r\\n  return `${(value * 100).toFixed(1)}%`;\\r\\n}\\r\\n\\r\\nfunction originLabel(origin: Vec3): string {\\r\\n  return origin.map((value) => value.toFixed(2)).join(', ');\\r\\n}\\r\\n\\r\\nexport function CoverageOptimizerPanel({\\r\\n  project,\\r\\n  primaryPano,\\r\\n  onSetCaptureOrigin,\\r\\n}: {\\r\\n  project: LocationProject;\\r\\n  primaryPano?: PanoReference;\\r\\n  onSetCaptureOrigin?: (origin: Vec3) => void;\\r\\n}) {\\r\\n  const [mode, setMode] = useState<CoverageOptimizationMode>('fixed-first');\\r\\n  const [status, setStatus] = useState<'idle' | 'running' | 'complete' | 'failed'>('idle');\\r\\n  const [statusMessage, setStatusMessage] = useState('');\\r\\n  const [result, setResult] = useState<CoverageOptimizationResult>();\\r\\n  const cameraHeight = project.settings.defaultCameraHeightMeters ?? 1.6;\\r\\n  const captureOrigin = primaryPano?.origin ?? project.scene.panoOrigin;\\r\\n  const [restrictFloorRegion, setRestrictFloorRegion] = useState(false);\\r\\n  const [floorRegion, setFloorRegion] = useState<CoverageBounds>(() => ({\\r\\n    min: [captureOrigin[0] - 5, captureOrigin[1] - cameraHeight - 0.25, captureOrigin[2] - 5],\\r\\n    max: [captureOrigin[0] + 5, captureOrigin[1] - cameraHeight + 0.25, captureOrigin[2] + 5],\\r\\n  }));\\r\\n  const floorRegionIsValid = floorRegion.min.every(Number.isFinite)\\r\\n    && floorRegion.max.every(Number.isFinite)\\r\\n    && floorRegion.min.every((value, axis) => value <= floorRegion.max[axis]);\\r\\n  const taskRef = useRef<CoverageOptimizationTask>();\\r\\n  const analysisIdRef = useRef(0);\\r\\n\\r\\n  useEffect(() => () => {\\r\\n    analysisIdRef.current += 1;\\r\\n    taskRef.current?.cancel();\\r\\n  }, []);\\r\\n\\r\\n  const analyze = async () => {\\r\\n    taskRef.current?.cancel();\\r\\n    const analysisId = analysisIdRef.current + 1;\\r\\n    analysisIdRef.current = analysisId;\\r\\n    setResult(undefined);\\r\\n    setStatus('running');\\r\\n    setStatusMessage('Preparing indexed scene geometry…');\\r\\n    try {\\r\\n      const scene = await extractCoverageScene(\\r\\n        project,\\r\\n        (_progress, message) => {\\r\\n          if (analysisIdRef.current === analysisId) setStatusMessage(message);\\r\\n        },\\r\\n        restrictFloorRegion ? [floorRegion] : undefined,\\r\\n      );\\r\\n      if (analysisIdRef.current !== analysisId) return;\\r\\n      const task = r",
+          "content_hash": "5c6900fae1220039ede63c46e76e6e173b499e893a7adedbf06fd5d0f80844f3",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001111",
+          "parent_content_hash": "98cdab358b2852e9282850712fac204bd5e7ad49bdbc22512d9414cd7b6dd66c",
+          "parent_sequence": 1111,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 0,
+          "source_start": 0,
+          "source_end": 3153
+        }
+      ],
+      "request_payload_hash": "f23109cdb07aa86603c247b96f8becaf8218f2a819c30ee1946dcee64d3d881b",
+      "response_schema_hash": "4e7772d924948d0e86909d650f1736d104239608d4a1bc05fa6f7a3664fad6a4"
+    },
+    {
+      "chunk_index": 109,
+      "event_ids": [
+        "panoref_evt_001112::span::000001",
+        "panoref_evt_001112::span::000002"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001112::span::000001",
+          "sequence": 1112,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "   setStatus('idle');\\\\n-              setResult(undefined);\\\\n+              invalidateAnalysis();\\\\n@@\\\\n                 <Field label={`${axis} minimum`}>\\\\n                   <TextInput\\\\n-                  type=\\\\\\\"number\\\\\\\"\\\\n-                  step=\\\\\\\"0.1\\\\\\\"\\\\n-                  disabled={status === 'running'}\\\\n+                    type=\\\\\\\"number\\\\\\\"\\\\n+                    step=\\\\\\\"0.1\\\\\\\"\\\\n+                    disabled={status === 'running'}\\\\n                     value={floorRegion.min[axisIndex]}\\\\n-                    onChange={(event) => setFloorRegion((current) => {\\\\n-                      const min = [...current.min] as Vec3;\\\\n-                      min[axisIndex] = Number(event.target.value);\\\\n-                      return { ...current, min };\\\\n-                    })}\\\\n+                    onChange={(event) => {\\\\n+                      floorRegionTouchedRef.current = true;\\\\n+                      setFloorRegion((current) => {\\\\n+                        const min = [...current.min] as Vec3;\\\\n+                        min[axisIndex] = Number(event.target.value);\\\\n+                        return { ...current, min };\\\\n+                      });\\\\n+                      invalidateAnalysis();\\\\n+                    }}\\\\n@@\\\\n                 <Field label={`${axis} maximum`}>\\\\n                   <TextInput\\\\n-                  type=\\\\\\\"number\\\\\\\"\\\\n-                  step=\\\\\\\"0.1\\\\\\\"\\\\n-                  disabled={status === 'running'}\\\\n+                    type=\\\\\\\"number\\\\\\\"\\\\n+                    step=\\\\\\\"0.1\\\\\\\"\\\\n+                    disabled={status === 'running'}\\\\n                     value={floorRegion.max[axisIndex]}\\\\n-                    onChange={(event) => setFloorRegion((current) => {\\\\n-                      const max = [...current.max] as Vec3;\\\\n-                      max[axisIndex] = Number(event.target.value);\\\\n-                      return { ...current, max };\\\\n-                    })}\\\\n+                    onChange={(event) => {\\\\n+                      floorRegionTouchedRef.current = true;\\\\n+                      setFloorRegion((current) => {\\\\n+                        const max = [...current.max] as Vec3;\\\\n+                        max[axisIndex] = Number(event.target.value);\\\\n+                        return { ...current, max };\\\\n+                      });\\\\n+                      invalidateAnalysis();\\\\n+                    }}\\\\n*** Update File: C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\\\\\\e2e\\\\\\\\layout-and-workflow.spec.ts\\\\n@@\\\\n     await expect(result).toBeVisible({ timeout: 90_000 });\\\\n     await expect(floorRegionToggle).toBeEnabled();\\\\n@@\\\\n     await expect(page.locator('[data-coverage-capture-plan]')).toContainText('Existing panorama origins are never rewritten');\\\\n     await expect(page.locator('[data-coverage-apply-pair]')).toHaveCount(0);\\\\n+\\\\n+    await drawer.locator('[data-coverage-floor-min=\\\\\\\"x\\\\\\\"]').fill('-4');\\\\n+    await expect(result).toHaveCount(0);\\\\n+    await expect(page.locator('[data-coverage-apply-capture]')).toHaveCount",
+          "content_hash": "7c61e8eb3631dce103085b702fcce2996e62144014be79f6bc2531fc9726e6ab",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001112",
+          "parent_content_hash": "e9311ff1399219f1f1bf69aa2c7c3f69a1401d846b96fddc4bc0d541bf040d74",
+          "parent_sequence": 1112,
+          "parent_event_type": "custom_tool_call",
+          "parent_role": "assistant",
+          "span_index": 1,
+          "source_start": 3119,
+          "source_end": 6214
+        },
+        {
+          "id": "panoref_evt_001112::span::000002",
+          "sequence": 1112,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "(0);\\\\n \\\\n     if (testInfo.project.name === 'desktop-chromium') {\\\\n*** End Patch\\\";\\ntext(await tools.apply_patch(patch));\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "5a3c12ddbd7e3f936cb88bb96a6f46ad2409a09c7b9040d05331b73028db3031",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001112",
+          "parent_content_hash": "e9311ff1399219f1f1bf69aa2c7c3f69a1401d846b96fddc4bc0d541bf040d74",
+          "parent_sequence": 1112,
+          "parent_event_type": "custom_tool_call",
+          "parent_role": "assistant",
+          "span_index": 2,
+          "source_start": 6214,
+          "source_end": 6509
+        }
+      ],
+      "request_payload_hash": "ff4a7f7a692394d267040a10f05be8b317fb195ce85805b506de7dc3f39bf746",
+      "response_schema_hash": "97433a843c3c1a9dd56c386e64298bea439a7a8ea8e9337ae8ab13a406aebc06"
+    },
+    {
+      "chunk_index": 114,
+      "event_ids": [
+        "panoref_evt_001122",
+        "panoref_evt_001123",
+        "panoref_evt_001124",
+        "panoref_evt_001125",
+        "panoref_evt_001126"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001122",
+          "sequence": 1122,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"cell_id\\\":\\\"363\\\",\\\"yield_time_ms\\\":30000,\\\"max_tokens\\\":12000}\", \"call_id\": \"call_kZKhYQ7fMfzh6qCdtnmvT6gY\", \"id\": \"fc_0cc9ec57757b3be5016a5cd48f33cc81948e7633ef7808cfc4\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait\", \"type\": \"function_call\"}",
+          "content_hash": "159c1f85998f3a2081d6a07c70d33df7beb4abda8c59ae29648724d34cd73ef3"
+        },
+        {
+          "id": "panoref_evt_001123",
+          "sequence": 1123,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_kZKhYQ7fMfzh6qCdtnmvT6gY\", \"id\": \"fco_019f7a9e-c6d9-7db3-b09a-a05445695581\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"Script running with cell ID 363\\nWall time 30.0 seconds\\nOutput:\\n\", \"type\": \"function_call_output\"}",
+          "content_hash": "2c36c23c9ed8ca297223b2757c10679d97b9e8a97e2cf7854737046ca50997fd"
+        },
+        {
+          "id": "panoref_evt_001124",
+          "sequence": 1124,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"cell_id\\\":\\\"363\\\",\\\"yield_time_ms\\\":30000,\\\"max_tokens\\\":12000}\", \"call_id\": \"call_lb8yA0QoPgrKu24wRiH0zCBo\", \"id\": \"fc_0cc9ec57757b3be5016a5cd4b049988194bb4d0ce4fba26cf0\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait\", \"type\": \"function_call\"}",
+          "content_hash": "dda16398d01407313d982fbd00156fbcb260fd49bfebcf1eea138bb36a327605"
+        },
+        {
+          "id": "panoref_evt_001125",
+          "sequence": 1125,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_lb8yA0QoPgrKu24wRiH0zCBo\", \"id\": \"fco_019f7a9f-1445-7e31-8029-47c1e23b06e0\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 16.8 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 98.4 seconds\\nOutput:\\n\\n> continuity-stage@0.0.0 test:e2e\\n> playwright test --grep coverage optimizer completes\\n\\n\\nRunning 2 tests using 1 worker\\n\\n  ok 1 [desktop-chromium] › e2e\\\\layout-and-workflow.spec.ts:498:3 › workflow path smoke › coverage optimizer completes without overflowing the Reference drawer (1.0m)\\n  ok 2 [phone-390] › e2e\\\\layout-and-workflow.spec.ts:498:3 › workflow path smoke › coverage optimizer completes without overflowing the Reference drawer (34.5s)\\n\\n  2 passed (1.6m)\\n\", \"type\": \"input_text\"}], \"type\": \"function_call_output\"}",
+          "content_hash": "29d4a2edae1d86cfc54ec5c13b3656ff7d3ccd0649083506b6ec652ff2f6809a"
+        },
+        {
+          "id": "panoref_evt_001126",
+          "sequence": 1126,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_FZTNvXekPgme8Mbw06zmofdH\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd4c5317881948885dc16ef6190ff\", \"input\": \"const r = await tools.shell_command({command:\\\"git diff --check; git status --short; git add e2e/layout-and-workflow.spec.ts src/components/common/CoverageOptimizerPanel.tsx; git diff --cached --check; git commit -m \\\\\\\"Invalidate stale coverage optimizer results\\\\\\\"; git push origin t3code/projector-occlusion; gh pr view 23 --json headRefOid,mergeable,mergeStateStatus,url\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":180000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "bd072e75b27744315571d971caf8e17ed2400d0d4be0aec9ab236ef276ad7a51"
+        }
+      ],
+      "request_payload_hash": "e268b33aa34b53a6a75bf11842a80d81b64549548c5fb995d0f248e5d01c8955",
+      "response_schema_hash": "ac58b1bb326bb165b3a88d7a8523f5b41d4f11fbf10641e2aab36a027545c8b8"
+    },
+    {
+      "chunk_index": 119,
+      "event_ids": [
+        "panoref_evt_001142",
+        "panoref_evt_001143"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001142",
+          "sequence": 1142,
+          "event_type": "message",
+          "role": "assistant",
+          "content": "{\"content\": [{\"text\": \"Round four isolated one final cancellation edge: a stale extraction error could bypass the success-path identity guard and overwrite a newer run’s status. I’m adding the same identity check to the extraction catch and a regression guard around that cancellation boundary, then I’ll publish and run another adversarial pass.\", \"type\": \"output_text\"}], \"id\": \"msg_0cc9ec57757b3be5016a5cd53bf4e48194aeeae1b07e87ffe2\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"phase\": \"commentary\", \"role\": \"assistant\", \"type\": \"message\"}",
+          "content_hash": "d85c671408858858a71f6c228e1f06e2e02f5d5ffb27335cd22b935b73da5d03"
+        },
+        {
+          "id": "panoref_evt_001143",
+          "sequence": 1143,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_H5VXpt9P6gswB7tm31tP89op\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd53d8c0881948ab30efe137ee625\", \"input\": \"const r = await tools.shell_command({command:\\\"Get-Content package.json; rg -n \\\\\\\"render\\\\\\\\(|@testing-library|react-test-renderer|CoverageOptimizerPanel\\\\\\\" tests src | Select-Object -First 120; Get-Content tests/uiFidelity.test.ts | Select-Object -First 90\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":10000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "a61faee67c7eafc447b5fe1c51df96b0584db560287464c7ccd08ef244714289"
+        }
+      ],
+      "request_payload_hash": "9611ac1f0edc3b5ace4c03e9d416ef7bc5c977f09afe901be434a4e761a29a1a",
+      "response_schema_hash": "a4dedd8d8f5b501edad3ac6bd6423b94d5a293064fb36e3f831d28ab2144dde2"
+    },
+    {
+      "chunk_index": 123,
+      "event_ids": [
+        "panoref_evt_001145",
+        "panoref_evt_001146::span::000000"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001145",
+          "sequence": 1145,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_ucbB4t1xMAgcIUL1FiEoqa2F\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd541aac48194beaa4efd8c896397\", \"input\": \"const r = await tools.shell_command({command:\\\"Get-Content tests/uiFidelity.test.ts | Select-Object -Skip 105 -First 70\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":10000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "45b0a41eecde6187bcf6bdf31ba6f19e461c38554166c3630b045adaf4c2f163"
+        },
+        {
+          "id": "panoref_evt_001146::span::000000",
+          "sequence": 1146,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_ucbB4t1xMAgcIUL1FiEoqa2F\", \"id\": \"ctco_019f7aa1-0fee-7f33-b0c1-d78569951e3c\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 0.4 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 0.4 seconds\\nOutput:\\n    expect(shortcuts).not.toContain(\\\"'ControlRight'\\\");\\r\\n    expect(reference).toContain('ProjectedStylePanel');\\r\\n    expect(exportWorkspace).toContain('includeProjectedViewport');\\r\\n    expect(exportWorkspace).toContain('includeProjectedCameraMoveVideo');\\r\\n    expect(packageExport).toContain('viewport_projected.png');\\r\\n    expect(packageExport).toContain('viewport_projected_motion.mp4');\\r\\n    expect(packageExport).toContain(\\\"appearance: 'projected'\\\");\\r\\n    expect(help).toContain('Projected Style');\\r\\n    expect(help).toContain('double-tap W');\\r\\n  });\\r\\n\\r\\n  it('keeps optimized origins as a capture plan without relocating existing panorama pixels', () => {\\r\\n    const reference = readFileSync(new URL('../src/components/workspaces/ReferenceWorkspace.tsx', import.meta.url), 'utf8');\\r\\n    const projectedPanel = readFileSync(new URL('../src/components/common/ProjectedStylePanel.tsx', import.meta.url), 'utf8');\\r\\n    const coveragePanel = readFileSync(new URL('../src/components/common/CoverageOptimizerPanel.tsx', import.meta.url), 'utf8');\\r\\n    expect(reference).not.toContain('onApplyPanoramaOrigins');\\r\\n    expect(projectedPanel).not.toContain('onApplyPanoramaOrigins');\\r\\n    expect(coveragePanel).not.toContain('data-coverage-apply-pair');\\r\\n    expect(coveragePanel).toContain('data-coverage-apply-capture-a');\\r\\n    expect(coveragePanel).toContain('data-coverage-apply-capture');\\r\\n    expect(coveragePanel).toContain('Existing panorama origins are never rewritten');\\r\\n  });\\r\\n\\r\\n  it('pauses automatic shot frame preview renders while fly camera is active', () => {\\r\\n    const shots = readFileSync(new URL('../src/components/workspaces/ShotsWorkspace.tsx', import.meta.url), 'utf8');\\r\\n    expect(shots).not.toContain('flyCameraRevision');\\r\\n    expect(shots).toMatch(/useEffect\\\\(\\\\(\\\\) => \\\\{[\\\\s\\\\S]*if \\\\(shotCameraFlying\\\\) return;[\\\\s\\\\S]*renderShotFrame\\\\(project, previewShot\\\\)/);\\r\\n    expect(shots).toMatch(/handleFramingCameraChange[\\\\s\\\\S]*if \\\\(shotCameraFlying\\\\) return;/);\\r\\n    expect(shots).not.toMatch(/handleFramingCameraChange[\\\\s\\\\S]*setFlyCameraRevision/);\\r\\n    expect(shots).not.toMatch(/startFlyCamera[\\\\s\\\\S]*setFramePreviewUrl\\\\(undefined\\\\)/);\\r\\n  });\\r\\n\\r\\n  it('keeps filmstrip overlay dots decorative and surfaces warning details on demand', () => {\\r\\n    const filmstrip = readFileSync(new URL('../src/components/common/ShotFilmstrip.tsx', import.meta.url), 'utf8');\\r\\n    expect(filmstrip).toContain('aria-hidden');\\r\\n    expect(filmstrip).toContain('pointer-events-none');\\r\\n    expect(filmstrip).toContain('WarningPopover');\\r\\n    expect(filmstrip).not.toContain('Shot ${shot.shotNumber} options');\\r\\n  });\\r\\n\\r\\n  it('keeps native graybox download in build and surfaces it in the reference startin",
+          "content_hash": "f263d898486ac8899b5462f84ad1c9b31cdcdd63a330f7310ecda76bb768d8b1",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001146",
+          "parent_content_hash": "9752cfb49d06e602d08fba9fbdf7292d9616200af091066977eec60e2031a2de",
+          "parent_sequence": 1146,
+          "parent_event_type": "custom_tool_call_output",
+          "parent_role": "tool",
+          "span_index": 0,
+          "source_start": 0,
+          "source_end": 3155
+        }
+      ],
+      "request_payload_hash": "8a255f6f00cd9897c7b2adb83762f71c53bf28b75bd129884e87214fa1691c76",
+      "response_schema_hash": "9cd7ccd63bc60750dec437ae84b54624b717f620c58f5dd0ce0dab53043e1bd2"
+    },
+    {
+      "chunk_index": 128,
+      "event_ids": [
+        "panoref_evt_001152::span::000002"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001152::span::000002",
+          "sequence": 1152,
+          "event_type": "function_call_output",
+          "role": "tool",
+          "content": " mode with download current view\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22madvances video shutter record → stop → export without requiring fly to stop\\u001b[32m 2\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mkeeps export multi-select reconciled and add-camera local to export\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mkeeps export shot rows and composed package summary with a docked CTA footer\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mprioritizes key export output paths in capped last-export preview\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mreserves a dedicated CTA lane so the reference landmark strip does not span underneath\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mreserves space for the camera shutter chrome on shots\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mbundles a CC0 human mannequin glb for person scale references\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mshows build drag guidance near the gizmo when an object is selected\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mkeeps Build floating controls below the mobile-safe header\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22msizes the Build tray to its tools while constraining the mobile scroller\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mrenders polished theme-aware shot thumbnail fallbacks for missing media\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22muses compact shot thumbnail fallbacks without cramped labels in export rows\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22muses theme-aware pano viewer colors and build tray glow tokens\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[31m1 failed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[31m1 failed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[1m\\u001b[32m40 passed\\u001b[39m\\u001b[22m\\u001b[90m (41)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 09:47:07\\n\\u001b[2m   Duration \\u001b[22m 679ms\\u001b[2m (transform 65ms, setup 0ms, collect 70ms, tests 44ms, environment 0ms, prepare 192ms)\\u001b[22m\\n\\n\\n> continuity-stage@0.0.0 lint\\n> tsc --noEmit\\n\\n\\n\\u001b[31m⎯⎯⎯⎯⎯⎯⎯\\u001b[39m\\u001b[1m\\u001b[41m Failed Tests 1 \\u001b[49m\\u001b[22m\\u001b[31m⎯⎯⎯⎯⎯⎯⎯\\u001b[39m\\n\\n\\u",
+          "content_hash": "484deeb200db7afcc2ef5d485fc241812ec98cd5829031b2e2b626ed30f4dcc3",
+          "source_kind": "span",
+          "parent_event_id": "panoref_evt_001152",
+          "parent_content_hash": "19c90878afb49d9d79d589a24011d00474b836588480d7df1657be51d405a369",
+          "parent_sequence": 1152,
+          "parent_event_type": "function_call_output",
+          "parent_role": "tool",
+          "span_index": 2,
+          "source_start": 6325,
+          "source_end": 9476
+        }
+      ],
+      "request_payload_hash": "c09d595b78bdd05330234bd69849effffb406faf61933dd00be963d4ff99f34c",
+      "response_schema_hash": "6ccf883b55525ba529582804363358fea95be13ab7f10cdfdb7f0dd1b7c6219d"
+    },
+    {
+      "chunk_index": 133,
+      "event_ids": [
+        "panoref_evt_001167",
+        "panoref_evt_001168",
+        "panoref_evt_001169",
+        "panoref_evt_001170",
+        "panoref_evt_001171"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001167",
+          "sequence": 1167,
+          "event_type": "agent_message",
+          "role": "assistant",
+          "content": "{\"author\": \"/root/goal_completion_audit_1\", \"content\": [{\"text\": \"Message Type: FINAL_ANSWER\\nTask name: /root\\nSender: /root/goal_completion_audit_1\\nPayload:\\nI’m unable to find any remaining concrete holes.\\n\\nVerified:\\n\\n- PR #23 is `MERGEABLE/CLEAN`; latest Netlify checks passed.\\n- Local and remote heads match `80882e3`, rebased on current `origin/main`.\\n- Stale success, worker, and extraction-failure paths all enforce analysis identity.\\n- Bounds/capture changes invalidate results and apply actions correctly.\\n- Allowed regions constrain extraction, candidate generation, reprojection, and refinement through worker transfer.\\n- Large-tabletop regression passes.\\n- The 101,250-triangle test executes both complete optimizer modes.\\n- Real production-scene benchmark succeeded with no page errors.\\n- Typecheck and targeted tests pass on final HEAD; prior build, WebGL, browser, and workflow evidence remains applicable.\\n- Documentation covers the workflow and benchmark.\", \"type\": \"input_text\"}], \"id\": \"amsg_019f7aa3-11c7-7191-b954-6985ed86efdb\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"recipient\": \"/root\", \"type\": \"agent_message\"}",
+          "content_hash": "df6940d2943a16f3b19d1c2304277829398c64317759fb8bb0f55dd62da7e02d"
+        },
+        {
+          "id": "panoref_evt_001168",
+          "sequence": 1168,
+          "event_type": "message",
+          "role": "assistant",
+          "content": "{\"content\": [{\"text\": \"Audit round five is the requested stopping condition: the independent auditor was unable to find any remaining concrete hole. I’m running one final clean-head unit/workflow confirmation and checking the published PR state, then I’ll close the measurable goal with the exact verification and benchmark evidence.\", \"type\": \"output_text\"}], \"id\": \"msg_0cc9ec57757b3be5016a5cd5ceaa908194a0e12a8d7081a9e6\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"phase\": \"commentary\", \"role\": \"assistant\", \"type\": \"message\"}",
+          "content_hash": "754d0cee468cd7497a930f5bd0497ba1ab700decb103f7dd6709834742b3191c"
+        },
+        {
+          "id": "panoref_evt_001169",
+          "sequence": 1169,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_fIWUbSw1iSArPxdeXstB4EZd\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd5d0f5b081948dffaf5044388508\", \"input\": \"const out = await Promise.all([\\n  tools.shell_command({command:\\\"npm test -- --run\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":900000}),\\n  tools.shell_command({command:\\\"$env:CONTINUITY_STAGE_URL='http://127.0.0.1:4173'; npm run goal:smoke\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":480000})\\n]);\\ntext(\\\"=== full unit/integration ===\\\"); text(out[0]); text(\\\"=== workflow smoke ===\\\"); text(out[1]);\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "023eb6b3cf8b0cf197e47586c46078e54b75ca9cf492df14b5bc548011e298f2"
+        },
+        {
+          "id": "panoref_evt_001170",
+          "sequence": 1170,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_fIWUbSw1iSArPxdeXstB4EZd\", \"id\": \"ctco_019f7aa3-6975-75d1-9c4f-d27ebbe0ac42\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": \"Script running with cell ID 373\\nWall time 10.0 seconds\\nOutput:\\n\", \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "7a7d7300b7555a8e33a4c0f879a7a7b320f0651680f63351023ec16c9caac888"
+        },
+        {
+          "id": "panoref_evt_001171",
+          "sequence": 1171,
+          "event_type": "function_call",
+          "role": "assistant",
+          "content": "{\"arguments\": \"{\\\"cell_id\\\":\\\"373\\\",\\\"yield_time_ms\\\":30000,\\\"max_tokens\\\":16000}\", \"call_id\": \"call_7QejfsrKcVsNWcQFwJcSyxnU\", \"id\": \"fc_0cc9ec57757b3be5016a5cd5df16088194a22a3e75a07361e9\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"wait\", \"type\": \"function_call\"}",
+          "content_hash": "c643bf96a11df28e5d4195547a6ebbd5fe5f123548cedf1c36ffeee5075fb4cb"
+        }
+      ],
+      "request_payload_hash": "6105fa1a32d8382862300b936aa207a6a8e88d4dd4eed20808ce3ba880ceda47",
+      "response_schema_hash": "88f6e2d016bb731cfdb4f86fa3e66dc3f3571cae7792b265fdb5b1c311e425f8"
+    },
+    {
+      "chunk_index": 138,
+      "event_ids": [
+        "panoref_evt_001175",
+        "panoref_evt_001176",
+        "panoref_evt_001177"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001175",
+          "sequence": 1175,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_JR5JUrshrcrFj3vqxrVYbc0r\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd6124688819482e20f5b529f5df5\", \"input\": \"const r = await tools.shell_command({command:\\\"rg -n \\\\\\\"303|371|372|373|test count|tests pass\\\\\\\" docs README.md; gh pr view 23 --json headRefOid,mergeable,mergeStateStatus,statusCheckRollup,url; git status --short --branch; git rev-parse HEAD; git ls-remote origin refs/heads/main refs/heads/t3code/projector-occlusion\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":30000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "ed026122db3172f929eda5ce76ebaa16070179b9f51a2777e344e65a97e6a032"
+        },
+        {
+          "id": "panoref_evt_001176",
+          "sequence": 1176,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_JR5JUrshrcrFj3vqxrVYbc0r\", \"id\": \"ctco_019f7aa4-474c-7af1-a6aa-8911951db79f\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 1.4 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 1.4 seconds\\nOutput:\\ndocs\\\\ui-revamp-regression-audit.md:298:| `npm test` | 303/303 passed |\\r\\n{\\\"headRefOid\\\":\\\"80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\\",\\\"mergeStateStatus\\\":\\\"CLEAN\\\",\\\"mergeable\\\":\\\"MERGEABLE\\\",\\\"statusCheckRollup\\\":[{\\\"__typename\\\":\\\"CheckRun\\\",\\\"completedAt\\\":\\\"2026-07-19T13:48:03Z\\\",\\\"conclusion\\\":\\\"NEUTRAL\\\",\\\"detailsUrl\\\":\\\"https://app.netlify.com/projects/panoref/deploys/6a5cd583b860f600070846ce\\\",\\\"name\\\":\\\"Header rules - panoref\\\",\\\"startedAt\\\":\\\"2026-07-19T13:47:48Z\\\",\\\"status\\\":\\\"COMPLETED\\\",\\\"workflowName\\\":\\\"\\\"},{\\\"__typename\\\":\\\"CheckRun\\\",\\\"completedAt\\\":\\\"2026-07-19T13:48:03Z\\\",\\\"conclusion\\\":\\\"NEUTRAL\\\",\\\"detailsUrl\\\":\\\"https://app.netlify.com/projects/panoref/deploys/6a5cd583b860f600070846ce\\\",\\\"name\\\":\\\"Pages changed - panoref\\\",\\\"startedAt\\\":\\\"2026-07-19T13:47:48Z\\\",\\\"status\\\":\\\"COMPLETED\\\",\\\"workflowName\\\":\\\"\\\"},{\\\"__typename\\\":\\\"CheckRun\\\",\\\"completedAt\\\":\\\"2026-07-19T13:48:03Z\\\",\\\"conclusion\\\":\\\"NEUTRAL\\\",\\\"detailsUrl\\\":\\\"https://app.netlify.com/projects/panoref/deploys/6a5cd583b860f600070846ce\\\",\\\"name\\\":\\\"Redirect rules - panoref\\\",\\\"startedAt\\\":\\\"2026-07-19T13:47:48Z\\\",\\\"status\\\":\\\"COMPLETED\\\",\\\"workflowName\\\":\\\"\\\"},{\\\"__typename\\\":\\\"StatusContext\\\",\\\"context\\\":\\\"netlify/panoref/deploy-preview\\\",\\\"startedAt\\\":\\\"2026-07-19T13:48:07Z\\\",\\\"state\\\":\\\"SUCCESS\\\",\\\"targetUrl\\\":\\\"https://deploy-preview-23--panoref.netlify.app\\\"}],\\\"url\\\":\\\"https://github.com/distilledoreo/PanoRef/pull/23\\\"}\\n## t3code/projector-occlusion...origin/t3code/projector-occlusion\\n80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\n3a9017438ef6ecccd4d029bc8b10f9eec4352c66\\trefs/heads/main\\n80882e3360c0a08b9f1b4b6e9301fa0c1622ae8a\\trefs/heads/t3code/projector-occlusion\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "2f14e5d728d8949e1b23605bd1ed8987014b79b6caa3a078c5b8ffa7127fbe6b"
+        },
+        {
+          "id": "panoref_evt_001177",
+          "sequence": 1177,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_Ns5SV3dzRavXNMYzVZ8qJzvi\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd61e9d0881948ce7de0a54997328\", \"input\": \"const r = await tools.shell_command({command:\\\"Get-Content docs/ui-revamp-regression-audit.md | Select-Object -Skip 282 -First 25; git diff --check origin/main...HEAD\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":30000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "ed026fce70eec1e8cdc9bb447b73bb6cee3c2dd3ba95d0fc14d20228a6cc867d"
+        }
+      ],
+      "request_payload_hash": "427653d35fcb8afebeca73d245afde468f569b2a6a05f0a1e44fb7de09ead30e",
+      "response_schema_hash": "beccfdf0f7db3e2615cefc2d1ed2aacafe837da011bc408529e715bbaf2c8d09"
+    },
+    {
+      "chunk_index": 142,
+      "event_ids": [
+        "panoref_evt_001180",
+        "panoref_evt_001181",
+        "panoref_evt_001182",
+        "panoref_evt_001183"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001180",
+          "sequence": 1180,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_E3A8Eb2XjK9Dj9Uz3uWSpD2c\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd626b62c8194b104f34b48ec0b74\", \"input\": \"const patch = \\\"*** Begin Patch\\\\n*** Update File: C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\\\\\\docs\\\\\\\\ui-revamp-regression-audit.md\\\\n@@\\\\n-| `npm test` | 303/303 passed |\\\\n+| `npm test -- --run` | 373/373 passed |\\\\n*** End Patch\\\";\\ntext(await tools.apply_patch(patch));\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "e83aa5c654f42d51cc109f628501f584a5693df6a4495879f68b671984e5f46e"
+        },
+        {
+          "id": "panoref_evt_001181",
+          "sequence": 1181,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_E3A8Eb2XjK9Dj9Uz3uWSpD2c\", \"id\": \"ctco_019f7aa4-994e-7cf3-a963-c307f264da69\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 0.1 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"{}\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "1f8c5ee25d7d989349525139f983ef5b9d55b349c8a6d102b06ac883dcdec253"
+        },
+        {
+          "id": "panoref_evt_001182",
+          "sequence": 1182,
+          "event_type": "custom_tool_call",
+          "role": "assistant",
+          "content": "{\"call_id\": \"call_x28tQwXN5QIuFoEnApkqw2eS\", \"id\": \"ctc_0cc9ec57757b3be5016a5cd6350c5c819496c1ee85e25823f0\", \"input\": \"const r = await tools.shell_command({command:\\\"git add docs/ui-revamp-regression-audit.md; git diff --cached --check; git commit -m \\\\\\\"Update coverage verification count\\\\\\\"; git push origin t3code/projector-occlusion; git status --short --branch\\\",\\\"workdir\\\":\\\"C:\\\\\\\\Users\\\\\\\\disti\\\\\\\\.t3\\\\\\\\worktrees\\\\\\\\PanoRef\\\\\\\\t3code-aefd2138\\\",\\\"timeout_ms\\\":180000}); text(r)\\n\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"name\": \"exec\", \"status\": \"completed\", \"type\": \"custom_tool_call\"}",
+          "content_hash": "4eafcbf2f39150a985a6ae02adf7f65c05c984b2dd329045fac640c62faca177"
+        },
+        {
+          "id": "panoref_evt_001183",
+          "sequence": 1183,
+          "event_type": "custom_tool_call_output",
+          "role": "tool",
+          "content": "{\"call_id\": \"call_x28tQwXN5QIuFoEnApkqw2eS\", \"id\": \"ctco_019f7aa4-d215-7e21-9366-d8537d76a884\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script completed\\nWall time 2.4 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Exit code: 0\\nWall time: 2.4 seconds\\nOutput:\\n[t3code/projector-occlusion c1f6c8d] Update coverage verification count\\n 1 file changed, 1 insertion(+), 1 deletion(-)\\n## t3code/projector-occlusion...origin/t3code/projector-occlusion\\nwarning: in the working copy of 'docs/ui-revamp-regression-audit.md', LF will be replaced by CRLF the next time Git touches it\\nTo https://github.com/distilledoreo/PanoRef.git\\n   80882e3..c1f6c8d  t3code/projector-occlusion -> t3code/projector-occlusion\\n\", \"type\": \"input_text\"}], \"type\": \"custom_tool_call_output\"}",
+          "content_hash": "b1482b2e40a0445df2e497bc33e053314a94f221f8371677b85d34ffdfa37378"
+        }
+      ],
+      "request_payload_hash": "f86b12b6073986b92c19f8719d5cf292b29eca5dfbaa082bfe531ab42abb8897",
+      "response_schema_hash": "7bd47cb40f245f8206cd11fd504c36ffdb24f6763e957f077df8c0d1bf857d33"
+    },
+    {
+      "chunk_index": 147,
+      "event_ids": [
+        "panoref_evt_001195"
+      ],
+      "events": [
+        {
+          "id": "panoref_evt_001195",
+          "sequence": 1195,
+          "event_type": "message",
+          "role": "assistant",
+          "content": "{\"content\": [{\"text\": \"## Implementation\\n\\n- Rebased `t3code/projector-occlusion` onto current `origin/main`, preserving main’s multi-origin behavior and the occlusion/coverage implementation.\\n- Added explicit world-space X/Y/Z allowed-floor regions, connected-component filtering, exact candidate/refinement enforcement, validation, and stale-analysis protection.\\n- Published final commit `c1f6c8d`. [PR #23](https://github.com/distilledoreo/PanoRef/pull/23) is `MERGEABLE/CLEAN` with successful Netlify checks.\\n\\n## Documentation\\n\\nUpdated [README.md](C:/Users/disti/.t3/worktrees/PanoRef/t3code-aefd2138/README.md) and added the repeatable [coverage benchmark guide](C:/Users/disti/.t3/worktrees/PanoRef/t3code-aefd2138/docs/coverage-optimizer-benchmark.md).\\n\\n## Tests\\n\\n- 42 files, 373/373 tests passed.\\n- Full fixed-first and joint optimization over 101,250 triangles passed.\\n- TypeScript and production build passed.\\n- 22 full browser scenarios passed; the final allowed-floor workflow passed on desktop and phone.\\n- Real WebGL shader compilation and pixel-readback tests passed.\\n\\n## Runtime verification\\n\\n- Real Blender production set: 171.2 MB, 191 mesh nodes, 36,788 triangles.\\n- Full optimizer: 24,576 fine samples in 36.9 seconds, with no browser errors.\\n- Final build→reference→shots→export smoke produced a valid 33,120,308-byte package.\\n\\nSix adversarial audit rounds were completed. Four rounds found actionable gaps, all were fixed; rounds five and six found no remaining concrete holes.\\n\\nGoal usage: 688,000 tokens over approximately 1 hour 4 minutes.\\n\\n::git-commit{cwd=\\\"C:\\\\Users\\\\disti\\\\.t3\\\\worktrees\\\\PanoRef\\\\t3code-aefd2138\\\"}\\n\\n::git-push{cwd=\\\"C:\\\\Users\\\\disti\\\\.t3\\\\worktrees\\\\PanoRef\\\\t3code-aefd2138\\\" branch=\\\"t3code/projector-occlusion\\\"}\", \"type\": \"output_text\"}], \"id\": \"msg_0cc9ec57757b3be5016a5cd696204881948b93c3145c262c7e\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"phase\": \"final_answer\", \"role\": \"assistant\", \"type\": \"message\"}",
+          "content_hash": "2583e535166badb69fc95103e670d0b0ff63992fdc2a18b56a1abbb9338f590b"
+        }
+      ],
+      "request_payload_hash": "8da474bbfa9f9e97904016434bd04b0123969b40f2e229cd7f6cb83f1d7c746c",
+      "response_schema_hash": "a8c23b9a951202b65f813a1bcef1bb656bf92b752135c38c051f8edf548c4467"
+    }
+  ]
+}

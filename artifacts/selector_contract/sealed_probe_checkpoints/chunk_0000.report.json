@@ -1,0 +1,47 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 1,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_234d88f67e867946f00253b0",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_234d88f67e867946f00253b0",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_a7e7e97102c26157ccc7d916",
+        "item mem_a7e7e97102c26157ccc7d916 text is not grounded in cited evidence",
+        "item mem_c9c7ba9546ae7ab720c0845a text is not grounded in cited evidence"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The normal graybox coverage algorithm implementation (8/10 architecture, 7.5/10 correctness) is not production-ready due to two blockers: (1) imported sets can produce zero legal candidates because clearance uses entire object AABBs—points inside a room's bounding box are rejected—and (2) the triangle-based geometry representation will not scale to heavy imports.",
+      "envelope_json": "{\"generation\":1,\"items\":[{\"evidence\":[{\"excerpt\":\"Algorithm architecture for normal graybox sets: 8/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Correctness of the two search modes: 7.5/10\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Overall: promising, but I would not merge it as production-ready yet.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_d26764dd71d1e81f932e40a6\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Algorithm implementation rated 8/10 architecture and 7.5/10 correctness; not ready for production merge.\"},{\"evidence\":[{\"excerpt\":\"Imported sets can produce zero legal candidates\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"the extractor stores the entire object’s axis-aligned bounding box as an obstacle. Candidate clearance is then the distance from the origin point to those bounding boxes, and candidates within 0.3 meters are rejected. A point anywhere inside an AABB has a distance of zero.\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"This can affect: a complete Maya set imported as one GLB, a room shell and furniture combined into one mesh, concave geometry, L-shaped walls, any large model whose AABB contains empty navigable space.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_234d88f67e867946f00253b0\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blocker: Imported sets produce zero legal candidates because clearance uses object AABBs instead of actual geometry; points inside AABBs (e.g., inside a room mesh) are incorrectly rejected.\"},{\"evidence\":[{\"excerpt\":\"Use actual geometry clearance, not object AABBs: candidate valid = camera sphere/capsule does not intersect nearby triangles\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"At minimum, obstacle bounds should be per connected mesh or spatial cluster—not per imported set object.\",\"source_id\":\"panoref_evt_000582::span::000000\"},{\"excerpt\":\"Add a regression test with one imported object containing a room floor, walls, and empty interior.\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_a7e7e97102c26157ccc7d916\",\"kind\":\"next_action\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Fix blocker 1: Replace AABB clearance with actual triangle/shapecast-based collision detection using the coverage BVH; restrict obstacle bounds to per connected-mesh or spatial-cluster; add regression test for room-shaped single-object import.\"},{\"evidence\":[{\"excerpt\":\"The geometry representation will not scale to heavy imports\",\"source_id\":\"panoref_evt_000582::span::000000\"}],\"id\":\"mem_c9c7ba9546ae7ab720c0845a\",\"kind\":\"blocker\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Blocker 2: Current per-triangle geometry representation will not scale to heavy imports.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 1,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_234d88f67e867946f00253b0",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_234d88f67e867946f00253b0",
+        "excerpt not found in source 'panoref_evt_000582::span::000000' for item mem_a7e7e97102c26157ccc7d916",
+        "item mem_a7e7e97102c26157ccc7d916 text is not grounded in cited evidence",
+        "item mem_c9c7ba9546ae7ab720c0845a text is not grounded in cited evidence"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/sealed_probe_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

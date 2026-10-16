@@ -10,8 +10,10 @@ from pathlib import Path
 import pytest
 
 from memory_gateway.compaction import (
+    Capsule,
     CompactionWorker,
     Event,
+    RetireMemory,
     SourceSpan,
     compute_input_hash,
     expand_source_items,
@@ -22,22 +24,24 @@ from memory_gateway.context import estimate_tokens
 from memory_gateway.db import SQLiteStore
 from memory_gateway.openai_adapter import ModelProtocolError
 from memory_gateway.pipeline import (
-    CanonicalizerBatchError,
     CanonicalizationResult,
+    CanonicalizerBatchError,
     ConsolidationResult,
     LosslessCompactionEngine,
     SelectionResult,
     build_lossless_packet,
 )
 from memory_gateway.pipeline_adapters import (
-    CANONICALIZER_RESPONSE_FORMAT,
     CONSOLIDATOR_RESPONSE_FORMAT,
     OpenAICompatCanonicalizerEngine,
     OpenAICompatConsolidatorEngine,
     OpenAICompatSelectorEngine,
-    SELECTOR_RESPONSE_FORMAT,
     _chunk_events,
     _event_payload,
+    base_record_context_for_packet,
+    canonicalizer_response_format_for_batch,
+    consolidator_response_format_for_sources,
+    selector_response_format_for_chunk,
 )
 
 
@@ -77,6 +81,27 @@ class Selector:
         )
 
 
+class EmptySelector:
+    async def select(self, *, events):
+        return SelectionResult(
+            selected_event_ids=(),
+            input_hash="selector-empty",
+            output_hash="selector-empty-out",
+            model_identity="fake-selector",
+            prompt_version="selector-v1",
+            generation_settings={},
+        )
+
+
+class RecordingConsolidator:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    async def consolidate(self, *, base_capsule, events, snapshot_end_event_id, packet):
+        self.calls += 1
+        raise AssertionError("consolidator must not run for an empty selection")
+
+
 class Canonicalizer:
     async def canonicalize(self, *, events):
         return CanonicalizationResult(
@@ -98,6 +123,18 @@ class Consolidator:
         content = "rendered capsule"
         return ConsolidationResult(
             content=content,
+            evidence_event_ids=tuple(item.id for item in events),
+            model_identity="fake-consolidator",
+            prompt_version="consolidator-v1",
+            generation_settings={},
+        )
+
+
+class BypassConsolidator:
+    async def consolidate(self, *, base_capsule, events, snapshot_end_event_id, packet):
+        assert packet.canonical_text == ""
+        return ConsolidationResult(
+            content="selector-to-consolidator capsule",
             evidence_event_ids=tuple(item.id for item in events),
             model_identity="fake-consolidator",
             prompt_version="consolidator-v1",
@@ -163,14 +200,17 @@ class ChunkSelectorClient:
     model = "fake-selector"
     prompt_version = "selector-v1"
     generation_settings = {"temperature": 0}
+    response_format = None
 
     def __init__(self, responses):
         self.responses = list(responses)
         self.calls = []
+        self.response_formats: list[dict | None] = []
         self.last_telemetry = None
 
     async def complete_json(self, input_payload):
         self.calls.append(input_payload)
+        self.response_formats.append(self.response_format)
         response = self.responses[len(self.calls) - 1]
         self.last_telemetry = {"status": "SUCCEEDED", "request_number": len(self.calls)}
         return response
@@ -483,6 +523,67 @@ def test_selector_rejects_id_outside_current_chunk() -> None:
     assert engine.chunk_telemetry[0]["status"] == "SUCCEEDED"
 
 
+def _selector_enum(schema: dict) -> list[str]:
+    return schema["json_schema"]["schema"]["properties"]["selected_event_ids"]["items"]["enum"]
+
+
+def test_selector_response_format_enum_matches_current_chunk_only() -> None:
+    chunk_a = ("evt_a", "evt_b")
+    chunk_b = ("evt_c",)
+    enum_a = _selector_enum(selector_response_format_for_chunk(chunk_a))
+    enum_b = _selector_enum(selector_response_format_for_chunk(chunk_b))
+    assert enum_a == ["evt_a", "evt_b"]
+    assert enum_b == ["evt_c"]
+    assert "evt_c" not in enum_a
+    assert "evt_a" not in enum_b
+
+
+def test_selector_response_format_rejects_truncated_prefix_not_in_enum() -> None:
+    full_id = "evt_783902ce5fd74b72a2da2a4e9aa25fd4"
+    truncated = "evt_783902ce5fd74b72a2da2a4e9aa25fd"
+    enum = _selector_enum(selector_response_format_for_chunk([full_id]))
+    assert full_id in enum
+    assert truncated not in enum
+
+
+def test_selector_response_format_includes_source_span_ids() -> None:
+    oversized = sized_event("oversized", 1, content_length=6_000)
+    items = list(
+        expand_source_items([oversized], selector_budget_tokens=200, safety_margin=0.8)
+    )
+    item_ids = [item.id for item in items]
+    enum = _selector_enum(selector_response_format_for_chunk(item_ids))
+    assert enum == item_ids
+    assert all(item_id.startswith("oversized::span::") for item_id in enum)
+
+
+def test_selector_sets_per_chunk_enum_schema_before_inference() -> None:
+    events = [sized_event(f"event-{index}", index) for index in range(4)]
+    event_tokens = estimate_tokens(
+        json.dumps(_event_payload(events[0]), ensure_ascii=False)
+    )
+    client = ChunkSelectorClient(
+        [
+            {"selected_event_ids": ["event-1", "event-0"]},
+            {"selected_event_ids": ["event-3", "event-2"]},
+        ]
+    )
+    engine = OpenAICompatSelectorEngine(client, chunk_target_tokens=event_tokens * 2)
+    asyncio.run(engine.select(events=events))
+    assert len(client.response_formats) == 2
+    assert _selector_enum(client.response_formats[0]) == ["event-0", "event-1"]
+    assert _selector_enum(client.response_formats[1]) == ["event-2", "event-3"]
+    assert "event-2" not in _selector_enum(client.response_formats[0])
+
+
+def test_selector_subset_validation_unchanged_with_enum_schema() -> None:
+    events = [sized_event(f"event-{index}", index) for index in range(2)]
+    client = ChunkSelectorClient([{"selected_event_ids": ["not-in-chunk"]}])
+    engine = OpenAICompatSelectorEngine(client, chunk_target_tokens=1)
+    with pytest.raises(ModelProtocolError, match="outside current chunk"):
+        asyncio.run(engine.select(events=events))
+
+
 def test_lossless_pipeline_moves_authoritative_data_in_software() -> None:
     engine = LosslessCompactionEngine(Selector(), Canonicalizer(), Consolidator())
     result = asyncio.run(
@@ -501,6 +602,94 @@ def test_lossless_pipeline_moves_authoritative_data_in_software() -> None:
         "event-2",
     )
     assert result.output_hash == sha256(b"rendered capsule").hexdigest()
+    assert engine.last_telemetry is not None
+    assert engine.last_telemetry["status"] == "SUCCEEDED"
+    assert engine.last_telemetry["source_event_count"] == 2
+    assert engine.last_telemetry["source_tokens"] == sum(
+        estimate_tokens(item.content) for item in (event("event-1", 1), event("event-2", 2))
+    )
+    assert engine.last_telemetry["source_tokens_per_second"] > 0
+    assert engine.last_telemetry["selector"]["status"] == "SUCCEEDED"
+    assert engine.last_telemetry["canonicalizer"]["status"] == "SUCCEEDED"
+    assert engine.last_telemetry["consolidator"]["status"] == "SUCCEEDED"
+    assert engine.last_telemetry["validation_ms"] >= 0
+
+
+def test_empty_selection_carries_base_capsule_without_consolidator() -> None:
+    consolidator = RecordingConsolidator()
+    base_capsule = Capsule(
+        id="cap-active",
+        thread_id="thread-1",
+        content="prior capsule",
+        capsule_hash=sha256(b"prior capsule").hexdigest(),
+        covered_end_event_id="event-0",
+    )
+    engine = LosslessCompactionEngine(EmptySelector(), Canonicalizer(), consolidator)
+    events = [event("event-1", 1), event("event-2", 2)]
+    result = asyncio.run(
+        engine.compact(
+            base_capsule=base_capsule,
+            events=events,
+            snapshot_end_event_id="event-2",
+        )
+    )
+    assert consolidator.calls == 0
+    assert result.content == "prior capsule"
+    assert result.covered_event_ids == ("event-1", "event-2")
+    assert result.evidence_event_ids == ()
+    assert result.prompt_version == "consolidator-carried-empty-selection-v1"
+    assert engine.last_telemetry is not None
+    assert engine.last_telemetry["canonicalizer"]["status"] == "SKIPPED"
+    assert engine.last_telemetry["consolidator"]["status"] == "SKIPPED"
+
+
+def test_compose_incremental_content_does_not_duplicate_settled_text() -> None:
+    from memory_gateway.pipeline_adapters import compose_incremental_content
+
+    settled = [{"text": "lease is 900"}, {"text": "owner is Disti"}]
+    composed = compose_incremental_content(
+        model_content="generation is 2",
+        settled_items=settled,
+    )
+    assert composed.startswith("lease is 900")
+    assert "owner is Disti" in composed
+    assert compose_incremental_content(
+        model_content="lease is 900\n\ngeneration is 2",
+        settled_items=settled[:1],
+    ) == "lease is 900\n\ngeneration is 2"
+
+
+def test_compose_incremental_content_omits_superseded_prior_text() -> None:
+    from memory_gateway.pipeline_adapters import compose_incremental_content
+
+    composed = compose_incremental_content(
+        model_content="lease is 900",
+        settled_items=[
+            {"id": "mem_old", "text": "lease is 30"},
+            {"id": "mem_owner", "text": "owner is Disti"},
+        ],
+        patch_items=[{"supersedes_item_ids": ["mem_old"]}],
+    )
+    assert "lease is 30" not in composed
+    assert "owner is Disti" in composed
+    assert "lease is 900" in composed
+
+
+def test_lossless_pipeline_can_bypass_legacy_canonicalizer() -> None:
+    engine = LosslessCompactionEngine(Selector(), None, BypassConsolidator())
+
+    result = asyncio.run(
+        engine.compact(
+            base_capsule=None,
+            events=[event("event-1", 1), event("event-2", 2)],
+            snapshot_end_event_id="event-2",
+        )
+    )
+
+    assert result.content == "selector-to-consolidator capsule"
+    assert engine.last_telemetry is not None
+    assert engine.last_telemetry["canonicalizer"]["status"] == "BYPASSED"
+    assert engine.last_telemetry["canonicalizer"]["call_count"] == 0
 
 
 def test_concrete_stage_adapters_keep_distinct_output_contracts() -> None:
@@ -534,9 +723,28 @@ def test_concrete_stage_adapters_keep_distinct_output_contracts() -> None:
     assert canonical.cited_source_refs == ()
     assert consolidation.evidence_event_ids == ("event-2",)
     assert selector_client.input_payload["event_ids_in_order"] == ["event-1", "event-2"]
-    assert selector_client.response_format == SELECTOR_RESPONSE_FORMAT
-    assert canonicalizer_client.response_format == CANONICALIZER_RESPONSE_FORMAT
-    assert consolidator_client.response_format == CONSOLIDATOR_RESPONSE_FORMAT
+    selector_enum = selector_client.response_format["json_schema"]["schema"]["properties"][
+        "selected_event_ids"
+    ]["items"]["enum"]
+    assert selector_enum == ["event-1", "event-2"]
+    assert canonicalizer_client.response_format["json_schema"]["name"] == "canonicalizer_response_v1"
+    assert canonicalizer_client.response_format["json_schema"]["schema"]["properties"][
+        "cited_source_refs"
+    ]["items"]["enum"] == ["event-2"]
+    assert consolidator_client.response_format == consolidator_response_format_for_sources(
+        ["event-2"]
+    )
+
+
+def test_canonicalizer_response_format_allows_only_exact_batch_ids() -> None:
+    schema = canonicalizer_response_format_for_batch(
+        ["evt_a::span::000000", "evt_a::span::000001"]
+    )
+    enum = schema["json_schema"]["schema"]["properties"]["cited_source_refs"]["items"][
+        "enum"
+    ]
+    assert enum == ["evt_a::span::000000", "evt_a::span::000001"]
+    assert "evt_a" not in enum
 
 
 def test_consolidator_schema_is_strict_and_requires_both_fields() -> None:
@@ -550,10 +758,244 @@ def test_consolidator_schema_is_strict_and_requires_both_fields() -> None:
                 "type": "array",
                 "items": {"type": "string"},
             },
+            "retire": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "content": {"type": "string"},
+                        "memory_type": {"type": "string"},
+                        "importance": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1,
+                        },
+                        "evidence_event_ids": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                    },
+                    "required": [
+                        "content",
+                        "memory_type",
+                        "importance",
+                        "evidence_event_ids",
+                    ],
+                    "additionalProperties": False,
+                },
+            },
         },
         "required": ["content", "evidence_event_ids"],
         "additionalProperties": False,
     }
+
+
+def test_consolidator_response_format_can_require_memory_items() -> None:
+    schema = consolidator_response_format_for_sources(
+        ["evt_a"],
+        require_memory_items=True,
+    )["json_schema"]["schema"]
+    assert "items" in schema["required"]
+    assert schema["properties"]["items"]["minItems"] == 1
+    excerpt = schema["properties"]["items"]["items"]["properties"]["evidence"][
+        "items"
+    ]["properties"]["excerpt"]
+    assert excerpt == {"type": "string", "minLength": 1, "maxLength": 512}
+
+
+def test_consolidator_receives_the_admission_citation_view() -> None:
+    raw = json.dumps(
+        {
+            "output": [
+                {"text": "Script completed"},
+                {"text": "Exit code: 0\n51 tests passed"},
+            ]
+        }
+    )
+    source = Event(
+        id="event-1",
+        sequence=1,
+        content=raw,
+        content_hash=sha256(raw.encode()).hexdigest(),
+        event_type="tool_result",
+        role="tool",
+    )
+    canonical_result = asyncio.run(Canonicalizer().canonicalize(events=[source]))
+    client = StructuredClient(
+        {"content": "rendered", "evidence_event_ids": ["event-1"]}
+    )
+
+    asyncio.run(
+        OpenAICompatConsolidatorEngine(client).consolidate(
+            base_capsule=None,
+            events=[source],
+            snapshot_end_event_id="event-1",
+            packet=build_lossless_packet(canonical_result, [source]),
+        )
+    )
+
+    event_payload = client.input_payload["lossless_packet"]["authoritative_events"][0]
+    assert "content" not in event_payload
+    assert "content_hash" not in event_payload
+    assert "source_start" not in event_payload
+    assert "parent_content_hash" not in event_payload
+    assert set(event_payload) <= {"id", "citation_text", "event_type", "role"}
+    assert event_payload["citation_text"] == "Script completed\nExit code: 0\n51 tests passed"
+
+
+def test_settled_items_are_those_whose_evidence_is_outside_the_new_window() -> None:
+    from memory_gateway.pipeline_adapters import settled_items_for_new_sources
+
+    items = (
+        {
+            "id": "mem_keep",
+            "kind": "state",
+            "status": "active",
+            "text": "lease is 900",
+            "evidence": [{"source_id": "old-event", "excerpt": "lease is 900"}],
+        },
+        {
+            "id": "mem_overlap",
+            "kind": "state",
+            "status": "active",
+            "text": "owner is Disti",
+            "evidence": [{"source_id": "new-event", "excerpt": "owner is Disti"}],
+        },
+    )
+    settled = settled_items_for_new_sources(items, ("new-event",))
+    assert [item["id"] for item in settled] == ["mem_keep"]
+
+
+def test_consolidator_sends_only_bounded_record_context_and_returns_patch_items() -> None:
+    source = event("new-event", 2)
+    canonical_result = asyncio.run(Canonicalizer().canonicalize(events=[source]))
+    settled = {
+        "id": "mem_keep",
+        "kind": "state",
+        "status": "active",
+        "text": "lease is 900",
+        "evidence": [{"source_id": "old-event", "excerpt": "lease is 900"}],
+        "supersedes_item_ids": [],
+    }
+    base_capsule = Capsule(
+        id="cap-active",
+        thread_id="thread-1",
+        content="prior capsule",
+        capsule_hash=sha256(b"prior capsule").hexdigest(),
+        covered_end_event_id="old-event",
+        memory_items=(settled,),
+    )
+    client = StructuredClient(
+        {
+            "content": "updated capsule",
+            "evidence_event_ids": ["new-event"],
+            "items": [
+                {
+                    "id": "mem_new",
+                    "kind": "state",
+                    "status": "active",
+                    "text": "generation is 2",
+                    "evidence": [{"source_id": "new-event", "excerpt": "generation is 2"}],
+                }
+            ],
+        }
+    )
+    result = asyncio.run(
+        OpenAICompatConsolidatorEngine(client).consolidate(
+            base_capsule=base_capsule,
+            events=[source],
+            snapshot_end_event_id="new-event",
+            packet=build_lossless_packet(canonical_result, [source]),
+        )
+    )
+    assert "settled_items" not in client.input_payload
+    assert client.input_payload["base_record_context"] == []
+    assert client.input_payload["base_record_context_truncated"] is True
+    assert "content" not in client.input_payload["base_capsule"]
+    assert "lease is 900" in result.content
+    assert [item["id"] for item in result.memory_items] == ["mem_new"]
+
+
+def test_base_record_context_is_relevant_bounded_and_has_no_old_evidence() -> None:
+    source = event("new-event", 2)
+    canonical_result = asyncio.run(Canonicalizer().canonicalize(events=[source]))
+    packet = build_lossless_packet(canonical_result, [source])
+    items = [
+        {
+            "id": "mem_relevant",
+            "kind": "state",
+            "status": "active",
+            "text": "content-new-event changes owner",
+            "evidence": [{"source_id": "old-event", "excerpt": "old evidence"}],
+        },
+        {
+            "id": "mem_pinned",
+            "kind": "blocker",
+            "status": "active",
+            "text": "unrelated blocker",
+            "evidence": [{"source_id": "older-event", "excerpt": "private"}],
+        },
+        {
+            "id": "mem_irrelevant",
+            "kind": "artifact",
+            "status": "active",
+            "text": "completely unrelated artifact",
+            "evidence": [{"source_id": "older-event", "excerpt": "private"}],
+        },
+    ]
+    context = base_record_context_for_packet(items, packet, max_records=2)
+    assert [item["id"] for item in context] == ["mem_relevant", "mem_pinned"]
+    assert all(set(item) == {"id", "kind", "status", "text"} for item in context)
+    assert all("evidence" not in item for item in context)
+
+
+def test_capsule_from_row_loads_active_v2_items() -> None:
+    from memory_gateway.admission.envelope import (
+        CAPSULE_SCHEMA_V2,
+        CapsuleEnvelopeV2,
+        MemoryEvidence,
+        MemoryItemV2,
+        envelope_to_dict,
+    )
+    from memory_gateway.db import canonical_json
+
+    envelope = CapsuleEnvelopeV2(
+        schema_version=CAPSULE_SCHEMA_V2,
+        generation=1,
+        items=(
+            MemoryItemV2(
+                id="mem_keep",
+                kind="state",
+                status="active",
+                text="lease is 900",
+                evidence=(MemoryEvidence(source_id="old-event", excerpt="lease is 900"),),
+            ),
+            MemoryItemV2(
+                id="mem_old",
+                kind="state",
+                status="superseded",
+                text="lease is 30",
+                evidence=(MemoryEvidence(source_id="older-event", excerpt="lease is 30"),),
+            ),
+        ),
+    )
+    capsule = Capsule.from_row(
+        {
+            "id": "cap-1",
+            "thread_id": "thread-1",
+            "content": "rendered",
+            "capsule_hash": "hash",
+            "covered_end_event_id": "old-event",
+            "model_metadata_json": canonical_json(
+                {
+                    "semantic_admission_ok": True,
+                    "envelope_json": canonical_json(envelope_to_dict(envelope)),
+                }
+            ),
+        }
+    )
+    assert capsule is not None
+    assert [item["id"] for item in capsule.memory_items] == ["mem_keep"]
 
 
 def test_consolidator_accepts_semantic_citation_subset() -> None:
@@ -574,6 +1016,86 @@ def test_consolidator_accepts_semantic_citation_subset() -> None:
     )
 
     assert result.evidence_event_ids == ("event-2",)
+
+
+def test_consolidator_constrains_citations_to_exact_supplied_source_ids() -> None:
+    oversized = sized_event("oversized", 1, content_length=6_000)
+    source_span = expand_source_items(
+        [oversized],
+        selector_budget_tokens=200,
+        safety_margin=0.8,
+    )[0]
+    base_capsule = Capsule(
+        id="cap-active",
+        thread_id="thread-1",
+        content="prior capsule",
+        capsule_hash=sha256(b"prior capsule").hexdigest(),
+        covered_end_event_id="prior-event",
+    )
+    canonical_result = asyncio.run(
+        Canonicalizer().canonicalize(events=[source_span])
+    )
+    client = StructuredClient(
+        {"content": "rendered", "evidence_event_ids": [source_span.id]}
+    )
+
+    asyncio.run(
+        OpenAICompatConsolidatorEngine(client).consolidate(
+            base_capsule=base_capsule,
+            events=[source_span],
+            snapshot_end_event_id=oversized.id,
+            packet=build_lossless_packet(canonical_result, [source_span]),
+        )
+    )
+
+    schema = client.response_format["json_schema"]["schema"]
+    assert schema["properties"]["evidence_event_ids"]["items"]["enum"] == [
+        source_span.id
+    ]
+    assert schema["properties"]["retire"]["items"]["properties"][
+        "evidence_event_ids"
+    ]["items"]["enum"] == [source_span.id]
+    assert base_capsule.id not in json.dumps(schema)
+    assert client.input_payload["base_capsule"]["content"] == "prior capsule"
+    assert "settled_items" not in client.input_payload
+
+
+def test_consolidator_accepts_optional_retire_memories() -> None:
+    events = [event("event-1", 1)]
+    canonical_result = asyncio.run(Canonicalizer().canonicalize(events=events))
+    client = StructuredClient(
+        {
+            "content": "rendered",
+            "evidence_event_ids": ["event-1"],
+            "retire": [
+                {
+                    "content": "renew_lease must verify worker ownership",
+                    "memory_type": "decision",
+                    "importance": 0.9,
+                    "evidence_event_ids": ["event-1"],
+                }
+            ],
+        }
+    )
+
+    result = asyncio.run(
+        OpenAICompatConsolidatorEngine(client).consolidate(
+            base_capsule=None,
+            events=events,
+            snapshot_end_event_id="event-1",
+            packet=build_lossless_packet(canonical_result, events),
+        )
+    )
+
+    assert result.content == "rendered"
+    assert result.retire_memories == (
+        RetireMemory(
+            content="renew_lease must verify worker ownership",
+            memory_type="decision",
+            importance=0.9,
+            evidence_event_ids=("event-1",),
+        ),
+    )
 
 
 @pytest.mark.parametrize(
@@ -611,7 +1133,6 @@ def test_adapter_consolidator_failure_leaves_active_capsule_untouched(
     tmp_path: Path,
 ) -> None:
     store, old_id, job_id = store_with_old_capsule(tmp_path)
-    events = [event("event-1", 1), event("event-2", 2)]
     client = StructuredClient(
         {"content": "rendered", "evidence_event_ids": ["missing"]}
     )

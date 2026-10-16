@@ -1,0 +1,30 @@
+{
+  "started_at": "2026-08-28T12:50:22.033Z",
+  "ended_at": "2026-08-28T13:10:27.182Z",
+  "reason": "wall_clock_limit",
+  "max_runtime_ms": 1200000,
+  "arms": {
+    "arm_b_orchid": {
+      "name": "ORCHID",
+      "launch_count": 1,
+      "prompt_count": 2,
+      "continuation_count": 1,
+      "provider_messages": 82,
+      "tool_calls": 192,
+      "tool_failures": 2,
+      "pi_native_compactions": 0,
+      "request_responses": 3,
+      "errors": [
+        {
+          "at": "2026-08-28T12:54:34.461Z",
+          "category": "provider_response_error",
+          "error": "Stream ended without finish_reason"
+        }
+      ],
+      "git": {
+        "head": "af2057323a7e76664c3fc8d0b5911616d1e39532",
+        "status": " M apps/web/src/App.tsx\n M apps/web/src/editor/types.ts\n M apps/web/src/shell/ToolOptionsBar.tsx\n M apps/web/src/tools/toolRegistry.ts\n M apps/web/src/ui/Icon.tsx\n M packages/raster-engine/src/index.test.ts\n M packages/raster-engine/src/index.ts\n?? BENCHMARK_GOAL.md\n"
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "backend_before": {
+    "health": {
+      "status": 200,
+      "value": {
+        "status": "ok"
+      }
+    },
+    "metrics": {
+      "parsed": {
+        "llamacpp:n_busy_slots_per_decode": 0.0,
+        "llamacpp:n_tokens_max": 0.0,
+        "llamacpp:predicted_tokens_seconds": 0.0,
+        "llamacpp:prompt_seconds_total": 0.0,
+        "llamacpp:prompt_tokens_seconds": 0.0,
+        "llamacpp:prompt_tokens_total": 0.0,
+        "llamacpp:tokens_predicted_seconds_total": 0.0,
+        "llamacpp:tokens_predicted_total": 0.0
+      },
+      "raw": "# HELP llamacpp:prompt_tokens_total Number of prompt tokens processed.\n# TYPE llamacpp:prompt_tokens_total counter\nllamacpp:prompt_tokens_total 0\n# HELP llamacpp:prompt_seconds_total Prompt process time\n# TYPE llamacpp:prompt_seconds_total counter\nllamacpp:prompt_seconds_total 0\n# HELP llamacpp:tokens_predicted_total Number of generation tokens processed.\n# TYPE llamacpp:tokens_predicted_total counter\nllamacpp:tokens_predicted_total 0\n# HELP llamacpp:tokens_predicted_seconds_total Predict process time\n# TYPE llamacpp:tokens_predicted_seconds_total counter\nllamacpp:tokens_predicted_seconds_total 0\n# HELP llamacpp:n_decode_total Total number of llama_decode() calls\n# TYPE llamacpp:n_decode_total counter\nllamacpp:n_decode_total 0\n# HELP llamacpp:n_tokens_max Largest observed n_tokens.\n# TYPE llamacpp:n_tokens_max counter\nllamacpp:n_tokens_max 0\n# HELP llamacpp:prompt_tokens_seconds Average prompt throughput in tokens/s.\n# TYPE llamacpp:prompt_tokens_seconds gauge\nllamacpp:prompt_tokens_seconds 0\n# HELP llamacpp:predicted_tokens_seconds Average generation throughput in tokens/s.\n# TYPE llamacpp:predicted_tokens_seconds gauge\nllamacpp:predicted_tokens_seconds 0\n# HELP llamacpp:requests_processing Number of requests processing.\n# TYPE llamacpp:requests_processing gauge\nllamacpp:requests_processing 0\n# HELP llamacpp:requests_deferred Number of requests deferred.\n# TYPE llamacpp:requests_deferred gauge\nllamacpp:requests_deferred 0\n# HELP llamacpp:n_busy_slots_per_decode Average number of busy slots per llama_decode() call\n# TYPE llamacpp:n_busy_slots_per_decode gauge\nllamacpp:n_busy_slots_per_decode 0\n",
+      "status": 200
+    },
+    "slots": {
+      "status": 200,
+      "value": [
+        {
+          "id": 0,
+          "is_processing": false,
+          "n_ctx": 32768,
+          "speculative": false
+        }
+      ]
+    }
+  },
+  "condition": "LLAMA_CPP_EXPLICIT",
+  "condition_data": {
+    "backend": "llama-server explicit serial slot/prompt-cache path",
+    "endpoint": "http://127.0.0.1:18080/v1",
+    "instance_identifier": "llama-server-qwen3.5-4b-q6_k",
+    "launch_flags": [
+      "--ctx-size 32768",
+      "--parallel 1",
+      "--no-cont-batching",
+      "--flash-attn on",
+      "--n-gpu-layers all",
+      "--cache-prompt",
+      "--cache-reuse 256",
+      "--ctx-checkpoints 148",
+      "--cache-ram 8192",
+      "--slot-prompt-similarity 0.1",
+      "--slots",
+      "--metrics"
+    ],
+    "model": "qwen3.5-4b@q6_k",
+    "observability_endpoint": "http://127.0.0.1:18080"
+  },
+  "no_concurrency": true,
+  "no_retries": true,
+  "plan_sha256": "3be117f6334f6875519269af59523855d1a23a78a1bbd11d5da52d2f615182c5",
+  "schema_version": "panoref-selector-llama-server-ab-run-v1",
+  "source_commit": "78be7ffd157c62bd6fedbb9de166547bb1f43498",
+  "started_at": "2026-08-22T23:48:41.658+00:00"
+}

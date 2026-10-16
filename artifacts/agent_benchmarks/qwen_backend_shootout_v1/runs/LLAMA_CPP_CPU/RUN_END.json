@@ -1,0 +1,8 @@
+{
+  "calls_recorded": 6,
+  "ended_at": "2026-08-23T03:23:19.546+00:00",
+  "process": {
+    "returncode": 1
+  },
+  "startup_error": null
+}

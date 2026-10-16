@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-from contextlib import suppress
 import hashlib
 import json
-from dataclasses import dataclass
-from typing import Any, Iterable, Protocol
+from collections.abc import Callable, Iterable
+from contextlib import suppress
+from dataclasses import asdict, dataclass
+from typing import Any, Protocol
 
 from .context import estimate_tokens
 from .db import SQLiteStore, canonical_json, content_hash
@@ -25,7 +26,7 @@ class Event:
     role: str | None
 
     @classmethod
-    def from_row(cls, row: dict[str, Any]) -> "Event":
+    def from_row(cls, row: dict[str, Any]) -> Event:
         return cls(
             id=row["id"],
             sequence=int(row["sequence"]),
@@ -54,6 +55,16 @@ class SourceSpan:
 
 
 SourceItem = Event | SourceSpan
+DEFAULT_COMPACTION_SOURCE_WINDOW_TOKENS = 8_000
+SELECTOR_CHUNK_TARGET_TOKENS = 1_200
+# T113449Z generation 6 packed a 26,999-token provider window into 30 serial
+# selector calls. Cap each generation so the watermark moves after a few
+# frozen-size chunks instead of waiting for the whole backlog.
+MAX_SELECTOR_CHUNKS_PER_GENERATION = 4
+_MODEL_IDENTITY_MARKERS = (
+    "language model developed",
+    "a language model developed by",
+)
 
 
 def source_item_payload(item: SourceItem) -> dict[str, Any]:
@@ -89,6 +100,50 @@ def source_item_payload(item: SourceItem) -> dict[str, Any]:
 
 def source_item_parent_event_id(item: SourceItem) -> str:
     return item.id if isinstance(item, Event) else item.parent_event_id
+
+
+def chunk_source_items(
+    events: list[SourceItem],
+    target_tokens: int = SELECTOR_CHUNK_TARGET_TOKENS,
+) -> list[list[SourceItem]]:
+    """Pack source items into frozen-size selector calls without reordering."""
+
+    if target_tokens <= 0:
+        raise ValueError("target_tokens must be positive")
+    chunks: list[list[SourceItem]] = []
+    current: list[SourceItem] = []
+    current_tokens = 0
+    for event in events:
+        event_tokens = estimate_tokens(
+            json.dumps(source_item_payload(event), ensure_ascii=False)
+        )
+        if current and current_tokens + event_tokens > target_tokens:
+            chunks.append(current)
+            current = []
+            current_tokens = 0
+        current.append(event)
+        current_tokens += event_tokens
+    if current:
+        chunks.append(current)
+    return chunks
+
+
+def selector_chunk_count_for_events(
+    event_rows: list[dict[str, Any]],
+    *,
+    chunk_target_tokens: int = SELECTOR_CHUNK_TARGET_TOKENS,
+) -> int:
+    """How many serial selector calls the frozen chunker would issue."""
+
+    if not event_rows:
+        return 0
+    from .source_projection import project_compaction_events
+
+    items = expand_source_items(
+        project_compaction_events([Event.from_row(row) for row in event_rows]),
+        selector_budget_tokens=chunk_target_tokens,
+    )
+    return len(chunk_source_items(list(items), chunk_target_tokens))
 
 
 def split_event_into_spans(
@@ -229,9 +284,10 @@ class Capsule:
     content: str
     capsule_hash: str
     covered_end_event_id: str | None
+    memory_items: tuple[dict[str, Any], ...] = ()
 
     @classmethod
-    def from_row(cls, row: dict[str, Any] | None) -> "Capsule | None":
+    def from_row(cls, row: dict[str, Any] | None) -> Capsule | None:
         if row is None:
             return None
         return cls(
@@ -240,7 +296,40 @@ class Capsule:
             content=row["content"],
             capsule_hash=row["capsule_hash"],
             covered_end_event_id=row["covered_end_event_id"],
+            memory_items=_memory_items_from_metadata(row.get("model_metadata_json")),
         )
+
+
+def _memory_items_from_metadata(raw: Any) -> tuple[dict[str, Any], ...]:
+    """Load active V2 items from a stored capsule so consolidation can be incremental."""
+
+    if not raw:
+        return ()
+    if isinstance(raw, str):
+        try:
+            metadata = json.loads(raw)
+        except json.JSONDecodeError:
+            return ()
+    elif isinstance(raw, dict):
+        metadata = raw
+    else:
+        return ()
+    if metadata.get("semantic_admission_ok") is not True:
+        return ()
+    envelope_raw = metadata.get("envelope_json")
+    if not isinstance(envelope_raw, str) or not envelope_raw.strip():
+        return ()
+    from .admission.envelope import envelope_to_dict, parse_envelope
+
+    try:
+        envelope = parse_envelope(envelope_raw)
+    except ValueError:
+        return ()
+    return tuple(
+        item
+        for item in envelope_to_dict(envelope)["items"]
+        if item.get("status") != "superseded"
+    )
 
 
 @dataclass(frozen=True)
@@ -268,6 +357,19 @@ class CompactionResult:
     prompt_version: str
     generation_settings: dict[str, Any]
     evidence_source_ids: tuple[str, ...] = ()
+    retire_memories: tuple[RetireMemory, ...] = ()
+    memory_items: tuple[dict[str, Any], ...] = ()
+    observer_state: dict[str, Any] | None = None
+
+
+@dataclass(frozen=True)
+class RetireMemory:
+    """A semantic cold-memory object with event provenance."""
+
+    content: str
+    memory_type: str
+    importance: float
+    evidence_event_ids: tuple[str, ...]
 
 
 class CompactionEngine(Protocol):
@@ -322,6 +424,8 @@ def freeze_snapshot(
     *,
     expected_base_capsule_id: str | None = None,
     snapshot_end_event_id: str | None = None,
+    source_window_tokens: int | None = None,
+    raw_events: bool = False,
 ) -> CompactionSnapshot:
     active_row = store.get_active_capsule(thread_id)
     active = Capsule.from_row(active_row)
@@ -344,11 +448,39 @@ def freeze_snapshot(
     else:
         snapshot_end_sequence = events[-1]["sequence"] if events else base_end_sequence
 
-    snapshot_events = tuple(
+    candidate_events = [
         event
         for event in events
         if base_end_sequence < event["sequence"] <= snapshot_end_sequence
-    )
+    ]
+    if source_window_tokens is not None:
+        if source_window_tokens <= 0:
+            raise ValueError("source_window_tokens must be positive")
+        base_capsule_tokens = estimate_tokens(active.content) if active else 0
+        effective_source_window_tokens = max(
+            1_000,
+            source_window_tokens - base_capsule_tokens,
+        )
+        bounded_events: list[dict[str, Any]] = []
+        bounded_tokens = 0
+        projection_seen: dict[str, int] = {}
+        from .source_projection import projected_source_tokens
+
+        for event in candidate_events:
+            event_tokens = projected_source_tokens(event, projection_seen)
+            if bounded_events and (
+                bounded_tokens + event_tokens > effective_source_window_tokens
+                or selector_chunk_count_for_events(bounded_events + [event])
+                > MAX_SELECTOR_CHUNKS_PER_GENERATION
+            ):
+                break
+            # Include one event even when its provenance envelope is larger
+            # than the target; otherwise a valid watermark could never move.
+            bounded_events.append(event)
+            bounded_tokens += event_tokens
+        snapshot_events = tuple(bounded_events)
+    else:
+        snapshot_events = tuple(candidate_events)
     start_id = snapshot_events[0]["id"] if snapshot_events else None
     end_id = (
         snapshot_events[-1]["id"]
@@ -357,7 +489,10 @@ def freeze_snapshot(
         if active
         else None
     )
-    event_objects = tuple(Event.from_row(event) for event in snapshot_events)
+    from .source_projection import project_compaction_events
+
+    raw_objects = [Event.from_row(event) for event in snapshot_events]
+    event_objects = tuple(raw_objects if raw_events else project_compaction_events(raw_objects))
     source_event_hash = compute_source_event_hash(active, event_objects)
     input_hash = compute_input_hash(active, event_objects, end_id)
     return CompactionSnapshot(
@@ -372,9 +507,31 @@ def freeze_snapshot(
     )
 
 
-def queue_snapshot_job(store: SQLiteStore, thread_id: str, priority: int = 0) -> str:
-    snapshot = freeze_snapshot(store, thread_id)
-    return store.create_compaction_job(
+def queue_snapshot_job(
+    store: SQLiteStore,
+    thread_id: str,
+    priority: int = 0,
+    *,
+    source_window_tokens: int | None = DEFAULT_COMPACTION_SOURCE_WINDOW_TOKENS,
+) -> str | None:
+    snapshot = freeze_snapshot(
+        store,
+        thread_id,
+        source_window_tokens=source_window_tokens,
+    )
+    # Keep the low-level test/maintenance helper compatible with empty
+    # snapshots. Production pressure scheduling already avoids calling this
+    # path when there is no novel history, while lease/recovery callers may
+    # still need a durable empty job to exercise ownership semantics.
+    if snapshot.snapshot_start_event_id is None or snapshot.snapshot_end_event_id is None:
+        return store.create_compaction_job(
+            thread_id=thread_id,
+            base_capsule_id=snapshot.base_capsule_id,
+            snapshot_start_event_id=None,
+            snapshot_end_event_id=None,
+            priority=priority,
+        )
+    return store.request_coalesced_compaction_job(
         thread_id=thread_id,
         base_capsule_id=snapshot.base_capsule_id,
         snapshot_start_event_id=snapshot.snapshot_start_event_id,
@@ -389,6 +546,11 @@ def validate_compaction_result(
 ) -> tuple[str, dict[str, Any]]:
     if not result.content.strip():
         raise ValueError("candidate content is empty")
+    lowered = result.content.strip().casefold()
+    if any(marker in lowered for marker in _MODEL_IDENTITY_MARKERS):
+        raise ValueError("candidate content is a model-identity leak")
+    if result.observer_state is None and len(snapshot.events) >= 10 and len(result.content.strip()) < 80:
+        raise ValueError("candidate content does not preserve required snapshot state")
     expected_events = tuple(event["id"] for event in snapshot.events)
     if result.covered_event_ids != expected_events:
         raise ValueError("covered_event_ids do not exactly match the frozen snapshot")
@@ -423,6 +585,7 @@ def validate_compaction_result(
             "model_identity": result.model_identity,
             "prompt_version": result.prompt_version,
             "generation_settings": result.generation_settings,
+            **({"observer_state": result.observer_state} if result.observer_state is not None else {}),
         }
     )
     metadata = {
@@ -432,7 +595,10 @@ def validate_compaction_result(
         "covered_event_ids": result.covered_event_ids,
         "evidence_event_ids": result.evidence_event_ids,
         "evidence_source_ids": result.evidence_source_ids,
+        "retire_memory_count": len(getattr(result, "retire_memories", ())),
     }
+    if result.observer_state is not None:
+        metadata["observer_state"] = result.observer_state
     return capsule_hash, metadata
 
 
@@ -450,6 +616,13 @@ class CompactionWorker:
         lease_seconds: int = 900,
         renewal_interval_seconds: float = 30.0,
         recover_expired_jobs: bool = False,
+        on_job_finished: Callable[[str], None] | None = None,
+        memory_format: str = "v1",
+        capsule_max_tokens: int = 2_048,
+        capsule_verifier: Any | None = None,
+        publication_min_savings_ratio: float = 1.25,
+        publication_economics_enabled: bool = False,
+        publication_horizon_turns: int = 8,
     ):
         self.store = store
         self.engine = engine
@@ -457,6 +630,13 @@ class CompactionWorker:
         self.lease_seconds = lease_seconds
         self.renewal_interval_seconds = renewal_interval_seconds
         self.recover_expired_jobs = recover_expired_jobs
+        self.on_job_finished = on_job_finished
+        self.memory_format = memory_format
+        self.capsule_max_tokens = capsule_max_tokens
+        self.capsule_verifier = capsule_verifier
+        self.publication_min_savings_ratio = publication_min_savings_ratio
+        self.publication_economics_enabled = publication_economics_enabled
+        self.publication_horizon_turns = publication_horizon_turns
 
     def _assert_ownership(self, job: dict[str, Any]) -> None:
         lease_token = job.get("lease_token")
@@ -561,6 +741,7 @@ class CompactionWorker:
                     job["thread_id"],
                     expected_base_capsule_id=job["base_capsule_id"],
                     snapshot_end_event_id=job["snapshot_end_event_id"],
+                    raw_events=bool(getattr(self.engine, "uses_raw_events", False)),
                 )
             except RuntimeError as error:
                 if not self.store.finish_job(
@@ -574,7 +755,10 @@ class CompactionWorker:
                 return "STALE"
 
             base_capsule = Capsule.from_row(active)
-            events = [Event.from_row(event) for event in snapshot.events]
+            from .source_projection import project_compaction_events
+
+            raw = [Event.from_row(event) for event in snapshot.events]
+            events = raw if getattr(self.engine, "uses_raw_events", False) else project_compaction_events(raw)
             self._assert_ownership(job)
             result = await self._run_owned_compaction(
                 job,
@@ -584,8 +768,108 @@ class CompactionWorker:
                 lease_lost=lease_lost,
             )
             self._assert_ownership(job)
+            promotion_content = result.content
+            admission_metadata: dict[str, Any] = {}
+            thread_memory_format = self.store.get_thread_memory_format(snapshot.thread_id)
+            if thread_memory_format in {"v2", "v2_shadow"} and result.observer_state is None:
+                from .capsule_admission import admit_capsule_v2
+
+                base_metadata: dict[str, Any] | None = None
+                if active is not None:
+                    try:
+                        base_metadata = json.loads(active.get("model_metadata_json") or "{}")
+                    except (TypeError, json.JSONDecodeError):
+                        base_metadata = {}
+                verifier = self.capsule_verifier
+                if verifier is None:
+                    from .capsule_admission import DeterministicSemanticVerifier
+
+                    verifier = DeterministicSemanticVerifier()
+                admission = await admit_capsule_v2(
+                    result=result,
+                    generation=int(job["generation"]),
+                    events=events,
+                    base_metadata=base_metadata,
+                    allowed_source_ids=frozenset(
+                        str(event["id"]) for event in snapshot.events
+                    ),
+                    max_tokens=self.capsule_max_tokens,
+                    verifier=verifier,
+                    shadow_only=thread_memory_format == "v2_shadow",
+                    require_items=thread_memory_format == "v2",
+                )
+                admission_metadata = admission.metadata
+                if admission.envelope_json:
+                    admission_metadata["envelope_json"] = admission.envelope_json
+                if not admission.ok and thread_memory_format != "v2_shadow":
+                    if not self.store.finish_job(
+                        job["id"],
+                        "FAILED",
+                        admission.error or "FAILED: semantic_rejection",
+                        worker_id=self.worker_id,
+                        lease_token=job["lease_token"],
+                    ):
+                        return "LOST"
+                    return "FAILED"
+                # Shadow admission is observational. A rejected V2 envelope is
+                # retained in metadata for analysis, while the already-valid
+                # legacy result continues through the normal CAS publication
+                # path. Only strict V2 may block publication.
+                promotion_content = admission.rendered_content
+            if promotion_content != result.content:
+                promotion_content_bytes = promotion_content.encode("utf-8")
+                result = CompactionResult(
+                    content=promotion_content,
+                    covered_event_ids=result.covered_event_ids,
+                    evidence_event_ids=result.evidence_event_ids,
+                    input_hash=result.input_hash,
+                    output_hash=hashlib.sha256(promotion_content_bytes).hexdigest(),
+                    model_identity=result.model_identity,
+                    prompt_version=result.prompt_version,
+                    generation_settings=result.generation_settings,
+                    evidence_source_ids=result.evidence_source_ids,
+                    retire_memories=result.retire_memories,
+                    memory_items=result.memory_items,
+                )
             capsule_hash, model_metadata = validate_compaction_result(snapshot, result)
+            remember_validated_result = getattr(
+                self.engine, "remember_validated_result", None
+            )
+            if callable(remember_validated_result):
+                remember_validated_result()
+            if admission_metadata:
+                model_metadata = {**model_metadata, **admission_metadata}
+            compacted_source_tokens = sum(estimate_tokens(event.content) for event in events)
+            promoted_capsule_tokens = estimate_tokens(result.content)
+            from .publication_economics import (
+                cached_prefix_tokens_from_report,
+                economics_to_dict,
+                estimate_publication_economics,
+            )
+
+            cache = self.store.get_thread_prompt_cache(snapshot.thread_id)
+            current_prompt = None
+            if cache and isinstance(cache.get("current_prompt_tokens"), (int, float)):
+                current_prompt = int(cache["current_prompt_tokens"])
+            job_priority = int(job.get("priority") or 0)
+            force_publish = job_priority >= 100
+            economics = estimate_publication_economics(
+                compacted_source_tokens=compacted_source_tokens,
+                promoted_capsule_tokens=promoted_capsule_tokens,
+                min_savings_ratio=self.publication_min_savings_ratio,
+                current_prompt_tokens=current_prompt,
+                recently_cached_prefix_tokens=cached_prefix_tokens_from_report(cache),
+                horizon_turns=self.publication_horizon_turns,
+                urgent=force_publish,
+            )
+            model_metadata["publication_economics"] = economics_to_dict(economics)
+            defer_publication = (
+                self.publication_economics_enabled
+                and not force_publish
+                and not economics.should_publish
+            )
             self._assert_ownership(job)
+            self.store.stale_ready_capsules(snapshot.thread_id)
             candidate_id = self.store.create_capsule(
                 thread_id=snapshot.thread_id,
                 base_capsule_id=snapshot.base_capsule_id,
@@ -599,25 +883,44 @@ class CompactionWorker:
                 covered_start_event_id=snapshot.snapshot_start_event_id,
                 covered_end_event_id=snapshot.snapshot_end_event_id,
                 model_metadata=model_metadata,
+                source_event_ids=tuple(event["id"] for event in snapshot.events),
             )
             self._assert_ownership(job)
             if not self.store.mark_capsule_ready(candidate_id):
                 raise RuntimeError("candidate could not enter READY state")
             self._assert_ownership(job)
-            if self.store.promote_capsule_cas(
+            if defer_publication:
+                model_metadata["publication_deferred"] = True
+                if not self.store.finish_job(
+                    job["id"],
+                    "READY",
+                    "DEFERRED: publication economics",
+                    worker_id=self.worker_id,
+                    lease_token=job["lease_token"],
+                ):
+                    return "LOST"
+                return "DEFERRED"
+            if self.store.promote_capsule_cas_and_finish_job(
                 snapshot.thread_id,
                 candidate_id,
                 job_id=job["id"],
                 worker_id=self.worker_id,
                 lease_token=job["lease_token"],
             ):
-                if not self.store.finish_job(
-                    job["id"],
-                    "PROMOTED",
-                    worker_id=self.worker_id,
-                    lease_token=job["lease_token"],
-                ):
-                    return "LOST"
+                # Cold persistence is deliberately after the hot CAS and
+                # fail-open: a sidecar/index problem must not turn a valid
+                # ACTIVE promotion into a failed compaction.
+                try:
+                    self.store.persist_long_term_memories(
+                        thread_id=snapshot.thread_id,
+                        memories=[
+                            asdict(memory)
+                            for memory in getattr(result, "retire_memories", ())
+                            if isinstance(memory, RetireMemory)
+                        ],
+                    )
+                except Exception:
+                    pass
                 return "PROMOTED"
             if not self.store.finish_job(
                 job["id"],
@@ -658,3 +961,10 @@ class CompactionWorker:
                     thread_id=None,
                     generation=None,
                 )
+            if self.on_job_finished is not None:
+                try:
+                    self.on_job_finished(job["thread_id"])
+                except Exception:
+                    # The dirty state is durable; a callback failure must not
+                    # turn a completed lease into a gateway failure.
+                    pass

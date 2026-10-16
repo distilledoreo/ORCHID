@@ -1,0 +1,17 @@
+{
+  "arm": "ARM_B_SELECTOR_SOLAR",
+  "batch_policy_hash": "3610172d0e6d66f3ca3f0555358b53808251388dd0512d586e2abaccc2d45be2",
+  "canonicalizer": false,
+  "direct_solar_target_tokens": 12000,
+  "generation": {
+    "reasoning_effort": "none",
+    "stream": false,
+    "temperature": 0,
+    "top_p": 1
+  },
+  "local_model": "qwen3.5-4b@q6_k",
+  "selector": true,
+  "selector_target_tokens": 1200,
+  "solar_model": "upstage/solar-pro4",
+  "solar_timeout_seconds": 180.0
+}

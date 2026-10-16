@@ -1,0 +1,31 @@
+{
+  "generation": 44,
+  "content": "Script test failure in projectionCoverage.test.ts showing unresolved function resolveCoverageOptions across multiple test cases.",
+  "events": [
+    {
+      "id": "panoref_evt_001002::span::000000",
+      "sequence": 1002,
+      "content": "{\"call_id\": \"call_LZluxHCMerDOmUqV87JY3KeI\", \"id\": \"ctco_019f7a8d-73df-7110-a5ac-e37e9db918bf\", \"internal_chat_message_metadata_passthrough\": {\"turn_id\": \"019f7a6b-112b-7ac3-b68a-59df7d242b90\"}, \"output\": [{\"text\": \"Script failed\\nWall time 1.0 seconds\\nOutput:\\n\", \"type\": \"input_text\"}, {\"text\": \"Script error:\\nExit code: 1\\nWall time: 0.9 seconds\\nOutput:\\ntests\\\\projectionCoverage.test.ts:15:  resolveCoverageOptions,\\r\\ntests\\\\projectionCoverage.test.ts:19:} from '../src/engine/projectionCoverage';\\r\\ntests\\\\projectionCoverage.test.ts:104:    const options = resolveCoverageOptions(floorScene(), { minimumTexelDensity: 0, targetTexelDensity: 1 });\\r\\ntests\\\\projectionCoverage.test.ts:140:    const options = resolveCoverageOptions(scene, { candidateSpacing: 1, cameraClearanceRadius: 0.3 });\\r\\ntests\\\\projectionCoverage.test.ts:183:    const options = resolveCoverageOptions(scene, { candidateSpacing: 1, cameraClearanceRadius: 0.3 });\\r\\ntests\\\\projectionCoverage.test.ts:191:    const options = resolveCoverageOptions(scene, {\\r\\ntests\\\\projectionCoverage.test.ts:192:      candidateSpacing: 1,\\r\\ntests\\\\projectionCoverage.test.ts:233:    const options = resolveCoverageOptions(scene, {\\r\\ntests\\\\projectionCoverage.test.ts:234:      candidateSpacing: 1, maximumCandidateCount: 16, cameraClearanceRadius: 0.1,\\r\\ntests\\\\projectionCoverage.test.ts:311:    const options = resolveCoverageOptions(scene, {\\r\\ntests\\\\projectionCoverage.test.ts:312:      candidateSpacing: 5,\\r\\nsrc\\\\components\\\\common\\\\CoverageOptimizerPanel.tsx:9:} from '../../engine/projectionCoverage';\\r\\nsrc\\\\components\\\\common\\\\CoverageOptimizerPanel.tsx:62:            panoramaHeight: primaryPano?.height ?? 4_096,\\r\\nsrc\\\\components\\\\common\\\\CoverageOptimizerPanel.tsx:63:            panoramaHeightMeters: project.settings.defaultCameraHeightMeters ?? 1.6,\\r\\nsrc\\\\components\\\\viewers\\\\SceneViewport.tsx:1607:          panoramaHeight: projectedPano.height,\\r\\nsrc\\\\engine\\\\projectedStyleMaterials.ts:172:  panoramaHeight?: number;\\r\\nsrc\\\\engine\\\\projectedStyleMaterials.ts:274:      value: texelConstant(params.panoramaWidth ?? 8_192, params.panoramaHeight ?? 4_096),\\r\\nsrc\\\\engine\\\\renderers.ts:529:    panoramaHeight: pano.height,\\r\\nsrc\\\\engine\\\\sceneObjects.ts:189:  panoramaHeight?: number;\\r\\nsrc\\\\engine\\\\sceneObjects.ts:370:    panoramaHeight: projected.panoramaHeight,\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:24:  panoramaHeightMeters: number,\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:44:  return bestFloorY === undefined ? undefined : [x, bestFloorY + panoramaHeightMeters, z];\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:51:  panoramaHeightMeters: number,\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:61:    panoramaHeightMeters,\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:62:    position[1] - panoramaHeightMeters,\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:96:  const spacing = Math.max(options.candidateSpacing, 0.05);\\r\\nsrc\\\\engine\\\\projectionCoverage\\\\candidateGenerator.ts:115:          [x, floorY + options.panoramaHeightMeters",
+      "content_hash": "6ea1cc0e421561e6f72a1c76468ec5078aaddc4a535054db2d8da35d2b57e384",
+      "event_type": "custom_tool_call_output",
+      "role": "tool"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "tests\\\\projectionCoverage.test.ts:15:  resolveCoverageOptions",
+          "source_id": "panoref_evt_001002::span::000000"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "supersedes_item_ids": [],
+      "text": "Script test failure in projectionCoverage.test.ts showing unresolved function resolveCoverageOptions across multiple test cases."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_001002::span::000000"
+  ]
+}

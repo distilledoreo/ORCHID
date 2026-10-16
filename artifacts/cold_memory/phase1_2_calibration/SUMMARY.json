@@ -1,0 +1,130 @@
+{
+  "artifacts": [
+    "REPORT.md",
+    "SUMMARY.json",
+    "CONFIG.json",
+    "CORPUS.json",
+    "frozen_calibration_traces.jsonl",
+    "calibration_comparison.jsonl",
+    "development_holdout_results.jsonl",
+    "holdout_results.jsonl"
+  ],
+  "calibration": {
+    "baseline": {
+      "exact_would_inject_expected_rate": 1.0,
+      "expected_query_count": 21,
+      "fail_open_count": 0,
+      "false_injected_memory_count": 2,
+      "false_injection_query_rate": 0.076923,
+      "lexical_would_inject_expected_rate": 0.375,
+      "negative_would_inject_rate": 0.0,
+      "query_count": 26,
+      "recall_at_1": 0.571429,
+      "recall_at_3": 0.619048,
+      "recall_at_5": 0.619048,
+      "timeout_count": 0,
+      "would_inject_expected_rate": 0.52381,
+      "zero_candidate_rate": 0.192308
+    },
+    "baseline_replay_consistency": {
+      "candidate_ids_match": 26,
+      "query_count": 26,
+      "would_inject_ids_match": 26
+    },
+    "calibrated": {
+      "exact_would_inject_expected_rate": 1.0,
+      "expected_query_count": 21,
+      "fail_open_count": 0,
+      "false_injected_memory_count": 0,
+      "false_injection_query_rate": 0.0,
+      "lexical_would_inject_expected_rate": 0.875,
+      "negative_would_inject_rate": 0.0,
+      "query_count": 26,
+      "recall_at_1": 0.761905,
+      "recall_at_3": 0.761905,
+      "recall_at_5": 0.761905,
+      "timeout_count": 0,
+      "would_inject_expected_rate": 0.714286,
+      "zero_candidate_rate": 0.192308
+    },
+    "recovered_ranking_or_threshold_misses": [
+      "lexical_cas",
+      "lexical_sqlite",
+      "lexical_provenance",
+      "lexical_budget"
+    ],
+    "unresolved_ranking_or_threshold_misses": [
+      "lexical_timeout"
+    ]
+  },
+  "development_holdout": {
+    "baseline": {
+      "exact_would_inject_expected_rate": 0.888889,
+      "expected_query_count": 15,
+      "fail_open_count": 0,
+      "false_injected_memory_count": 1,
+      "false_injection_query_rate": 0.055556,
+      "lexical_would_inject_expected_rate": 0.833333,
+      "negative_would_inject_rate": 0.333333,
+      "query_count": 18,
+      "recall_at_1": 0.933333,
+      "recall_at_3": 0.933333,
+      "recall_at_5": 0.933333,
+      "timeout_count": 0,
+      "would_inject_expected_rate": 0.866667,
+      "zero_candidate_rate": 0.055556
+    },
+    "calibrated": {
+      "exact_would_inject_expected_rate": 1.0,
+      "expected_query_count": 15,
+      "fail_open_count": 0,
+      "false_injected_memory_count": 0,
+      "false_injection_query_rate": 0.0,
+      "lexical_would_inject_expected_rate": 1.0,
+      "negative_would_inject_rate": 0.0,
+      "query_count": 18,
+      "recall_at_1": 1.0,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "timeout_count": 0,
+      "would_inject_expected_rate": 1.0,
+      "zero_candidate_rate": 0.055556
+    }
+  },
+  "holdout": {
+    "baseline": {
+      "exact_would_inject_expected_rate": 0.727273,
+      "expected_query_count": 15,
+      "fail_open_count": 0,
+      "false_injected_memory_count": 4,
+      "false_injection_query_rate": 0.222222,
+      "lexical_would_inject_expected_rate": 1.0,
+      "negative_would_inject_rate": 0.333333,
+      "query_count": 18,
+      "recall_at_1": 0.933333,
+      "recall_at_3": 0.933333,
+      "recall_at_5": 0.933333,
+      "timeout_count": 0,
+      "would_inject_expected_rate": 0.8,
+      "zero_candidate_rate": 0.0
+    },
+    "calibrated": {
+      "exact_would_inject_expected_rate": 1.0,
+      "expected_query_count": 15,
+      "fail_open_count": 0,
+      "false_injected_memory_count": 0,
+      "false_injection_query_rate": 0.0,
+      "lexical_would_inject_expected_rate": 1.0,
+      "negative_would_inject_rate": 0.0,
+      "query_count": 18,
+      "recall_at_1": 1.0,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "timeout_count": 0,
+      "would_inject_expected_rate": 1.0,
+      "zero_candidate_rate": 0.0
+    }
+  },
+  "next_capability": "synchronous_telemetry_reduction",
+  "phase": "cold_memory_phase1_2_calibration"
+}

@@ -1,0 +1,97 @@
+{
+  "benchmark": "FreetoShop Pi-vs-ORCHID All-Solar Architecture Feasibility A/B",
+  "run_id": "freetoshop_pi_vs_orchid_all_solar_20260823",
+  "status": "INCOMPLETE_POST_STOP",
+  "design": "sealed contemporaneous paired run, n=1",
+  "frozen_at": "2026-08-23T19:55:48+00:00",
+  "repository_commit_at_freeze": "3647e70ab4e5d18e4e9c5107075a2b8d179835d3",
+  "historical_source_manifest": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_20260820\\BENCHMARK_MANIFEST.json",
+  "historical_source_manifest_sha256": "316445e4ea13665e389ce798c3e85e32f8b3d8da36a72886ae913ce19d5b7961",
+  "start_commit": "db24908e582c1642a001abd2feca4ec47b1947f8",
+  "start_tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+  "target_commit_hidden_from_agents": "71ed699e605ddfcec6f172d529040f39544dcc8f",
+  "target_tree": "032d926eeed1bdff5586f9aeb0d063ea6d876284",
+  "public_goal": {
+    "path": "BENCHMARK_GOAL.md",
+    "sha256": "d789f01c840878946c1cd885bcd48dfb4f96b4db2eafb82615dfdd4064290e7e",
+    "byte_identical_between_arms": true
+  },
+  "sealed_arms": {
+    "PI_NATIVE": {
+      "baseline_commit": "ee8c62638a27aeb534f5a5f9ded1c92755b571aa",
+      "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+      "model": "openrouter/upstage/solar-pro4",
+      "native_compaction": true
+    },
+    "ORCHID_ALL_SOLAR": {
+      "baseline_commit": "ef22afee503843305c28d47dbf966cd644f52401",
+      "tree": "1507e5b4565e3c86d98bb245ea3fad29801989c3",
+      "model": "orchid/upstage/solar-pro4",
+      "native_compaction": false,
+      "selector_model": "upstage/solar-pro4",
+      "canonicalizer_model": "upstage/solar-pro4",
+      "consolidator_model": "upstage/solar-pro4"
+    }
+  },
+  "solar": {
+    "provider": "OpenRouter",
+    "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+    "model": "upstage/solar-pro4",
+    "context_window": 524288,
+    "api_key_source": "OPENROUTER_API_KEY user environment; value excluded"
+  },
+  "pi": {
+    "version": "0.84.2",
+    "mode": "rpc",
+    "extensions": "disabled",
+    "skills": "disabled",
+    "context_files": "disabled",
+    "prompt_templates": "disabled",
+    "thinking": "medium",
+    "goal_mode": "disabled_for_both_arms"
+  },
+  "orchid": {
+    "compaction_model_roles": [
+      "selector",
+      "canonicalizer",
+      "consolidator"
+    ],
+    "selector_chunk_target_tokens": 1200,
+    "selector_exact_id_hardening": true,
+    "cold_memory_mode": "inject",
+    "dense_production_injection": false,
+    "scheduler": "existing coalesced scheduler",
+    "database": "fresh benchmark-only database"
+  },
+  "run_policy": {
+    "max_wall_clock_ms_per_arm": 21600000,
+    "checkpoint_interval_ms": 900000,
+    "launch": "paired, as close together as practical",
+    "controller_restart_limit": 0,
+    "manual_intervention": "none",
+    "manual_rescue": "forbidden",
+    "tuning_after_launch": "forbidden",
+    "provider_retry": "existing client policy only"
+  },
+  "predeclared_stop_conditions": [
+    "unrecoverable integration stall",
+    "asymmetric provider outage",
+    "repository corruption",
+    "benchmark leakage",
+    "resource exhaustion invalidating comparison"
+  ],
+  "stage": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_all_solar_20260823",
+  "oracle_root": "C:\\Users\\disti\\Documents\\App Development\\FreetoShop",
+  "source_protocol": "reused historical sealed FreetoShop protocol; no hidden target exposed to agents",
+  "reported_at": "2026-08-23T20:58:53+00:00",
+  "termination": {
+    "status": "STOPPED_UNDER_PREDECLARED_CONDITION",
+    "recorded_at": "2026-08-23T20:58:39+00:00",
+    "reason": "resource exhaustion invalidating comparison",
+    "detail": "Four ORCHID compaction failures were recorded, including repeated canonicalizer/provenance failure and a 524288-token provider context rejection; generation 6 remained running when the controller and private gateway were stopped.",
+    "manual_rescue": false,
+    "controller_restart_count": 0,
+    "os_restarted": false,
+    "user_processes_touched": false
+  }
+}

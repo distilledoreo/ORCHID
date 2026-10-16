@@ -1,0 +1,39 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 82,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001036::span::000001' for item mem_0e7a3faa2e671f0c7c94674b"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "The test performs a coverage analysis on a desktop-chromium configuration by opening Reference Settings, clicking the coverage optimizer summary, and analyzing results. It verifies that the drawer layout stays within viewport bounds, that 24,576 fine samples are reported, and that originB has 3 finite values with the second value less than 2.5 (ensuring props/rooftops do not become candidate platforms). It confirms existing panorama origins are never rewritten and no capture pair applies. In desktop-chromium specifically, after switching to joint-pair mode, it analyzes again and validates that both originA and jointOriginB contain finite values with a Euclidean distance greater than 1 between them, and that a capture element becomes visible.",
+      "envelope_json": "{\"generation\":82,\"items\":[{\"evidence\":[{\"excerpt\":\"await expect(result).toContainText('24,576 fine samples');\",\"source_id\":\"panoref_evt_001036::span::000001\"}],\"id\":\"mem_c16c902f7697c149388493bf\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Coverage analysis reports exactly 24,576 fine samples for the default ground-floor-authored set.\"},{\"evidence\":[{\"excerpt\":\"expect(originB?.[1]).toBeLessThan(2.5);\",\"source_id\":\"panoref_evt_001036::span::000001\"}],\"id\":\"mem_86d281cf7bb13d6b64831e3d\",\"kind\":\"constraint\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"OriginB's second coordinate must remain below 2.5, enforcing that props and rooftops do not become candidate platforms.\"},{\"evidence\":[{\"excerpt\":\"await expect(page.locator('[data-coverage-capture-plan]')).toContainText('Existing panorama origins are never rewritten');\",\"source_id\":\"panoref_evt_001036::span::000001\"}],\"id\":\"mem_f7df0a68ddb50521d5690e1c\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"UI confirms that existing panorama origins are never rewritten during coverage optimization.\"},{\"evidence\":[{\"excerpt\":\"await expect(page.locator('[data-coverage-apply-pair]')).toHaveCount(0);\",\"source_id\":\"panoref_evt_001036::span::000001\"}],\"id\":\"mem_0a2a168dcc03466d4967a82c\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"No capture-pair apply elements are present in default mode.\"},{\"evidence\":[{\"excerpt\":\"if (testInfo.project.name === 'desktop-chromium') { await page.locator('[data-coverage-mode]').selectOption('joint-pair'); ... expect(Math.hypot((originA?.[0] ?? 0) - (jointOriginB?.[0] ?? 0), (originA?.[1] ?? 0) - (jointOriginB?.[1] ?? 0), (originA?.[2] ?? 0) - (jointOriginB?.[2] ?? 0))).toBeGreaterThan(1); ... await expect(page.locator('[data-coverage-apply-capture-a]')).toBeVisible(); }\",\"source_id\":\"panoref_evt_001036::span::000001\"}],\"id\":\"mem_0e7a3faa2e671f0c7c94674b\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"In desktop-chromium, joint-pair mode is supported: originA and jointOriginB are finite, separated by more than 1 unit, and a capture-a apply element becomes visible.\"},{\"evidence\":[{\"excerpt\":\"expect(layout.left).toBeGreaterThanOrEqual(0); expect(layout.right).toBeLessThanOrEqual(layout.viewportWidth); expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);\",\"source_id\":\"panoref_evt_001036::span::000001\"}],\"id\":\"mem_aab1ffec49911ea0a7a515c3\",\"kind\":\"constraint\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"The Reference Settings drawer must remain within viewport bounds and not exceed its client width via scrolling.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 82,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_001036::span::000001' for item mem_0e7a3faa2e671f0c7c94674b"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

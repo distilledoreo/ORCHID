@@ -1,0 +1,279 @@
+{
+  "path": "C:\\Users\\disti\\orchid_memory_gateway_v1\\artifacts\\agent_benchmarks\\freetoshop_pi_vs_orchid_all_solar\\orchid_all_solar\\telemetry.jsonl",
+  "rpc_lines": 38894,
+  "event_counts": {
+    "response": 2,
+    "agent_start": 1,
+    "turn_start": 94,
+    "message_start": 212,
+    "message_end": 212,
+    "message_update": 37996,
+    "tool_execution_start": 117,
+    "tool_execution_update": 46,
+    "tool_execution_end": 117,
+    "turn_end": 94,
+    "agent_end": 1,
+    "agent_settled": 1,
+    "queue_update": 1
+  },
+  "assistant_messages": 94,
+  "tool_calls": 117,
+  "tool_failures": 3,
+  "pi_native_compactions": 0,
+  "agent_settled": 1,
+  "provider_errors": 0,
+  "errors": [],
+  "usage_samples": 94,
+  "input_tokens_observed": 15965998.0,
+  "output_tokens_observed": 46882.0,
+  "cache_read_tokens_observed": 65280.0,
+  "cost_observed": 0.0,
+  "gateway": {
+    "path": "C:\\Users\\disti\\benchmark_work\\freetoshop_pi_vs_orchid_all_solar_20260823\\orchid-state\\memory.db",
+    "status": "OK",
+    "bytes": 3203072,
+    "events": 213,
+    "compaction_jobs": 6,
+    "capsules": 1,
+    "long_term_memories": 0,
+    "model_runs": 855,
+    "job_status_counts": {
+      "FAILED": 4,
+      "PROMOTED": 1,
+      "RUNNING": 1
+    },
+    "promotion_count": 1,
+    "model_runs_by_stage": [
+      {
+        "stage": "canonicalizer",
+        "calls": 61,
+        "input_tokens": 636714,
+        "output_tokens": 25949,
+        "wall_ms": 647322.7046999964
+      },
+      {
+        "stage": "consolidator",
+        "calls": 3,
+        "input_tokens": 487246,
+        "output_tokens": 625,
+        "wall_ms": 49375.46609999845
+      },
+      {
+        "stage": "selector",
+        "calls": 791,
+        "input_tokens": 1175523,
+        "output_tokens": 42431,
+        "wall_ms": 2182679.369600286
+      }
+    ],
+    "jobs": [
+      {
+        "id": "job_7a7a497478944adf9c101509b2cc8fd9",
+        "generation": 1,
+        "status": "PROMOTED",
+        "created_at": "2026-08-23T20:01:31.319+00:00",
+        "started_at": "2026-08-23T20:01:31.482+00:00",
+        "finished_at": "2026-08-23T20:04:41.879+00:00",
+        "error": null,
+        "snapshot_start_event_id": "evt_97cd801eb3cd4d709701ca74b0a4d617",
+        "snapshot_end_event_id": "evt_275da1694443494f9382a7842fa72dc7"
+      },
+      {
+        "id": "job_d6512bdead954f1898041a4ae83b7626",
+        "generation": 2,
+        "status": "FAILED",
+        "created_at": "2026-08-23T20:04:41.894+00:00",
+        "started_at": "2026-08-23T20:04:41.901+00:00",
+        "finished_at": "2026-08-23T20:13:28.564+00:00",
+        "error": "canonicalizer stage failed at batch 8: canonicalizer cited source references must remain in supplied source order",
+        "snapshot_start_event_id": "evt_8f547d00903047bfb5e1231d4aff4973",
+        "snapshot_end_event_id": "evt_472dfb18e4694dfa83a28f24e2372930"
+      },
+      {
+        "id": "job_5597ba4b02944b0999dd1d00958c85fc",
+        "generation": 3,
+        "status": "FAILED",
+        "created_at": "2026-08-23T20:13:28.579+00:00",
+        "started_at": "2026-08-23T20:13:28.849+00:00",
+        "finished_at": "2026-08-23T20:22:57.456+00:00",
+        "error": "consolidator stage failed: consolidator returned unknown evidence event ID(s): evt_275da1694443494f9382a7842fa72dc7",
+        "snapshot_start_event_id": "evt_8f547d00903047bfb5e1231d4aff4973",
+        "snapshot_end_event_id": "evt_3a0d62cd79164ccaa7eedce97ea21acf"
+      },
+      {
+        "id": "job_1ec4b2339e0c4ac4a4a302a891c78286",
+        "generation": 4,
+        "status": "FAILED",
+        "created_at": "2026-08-23T20:22:57.475+00:00",
+        "started_at": "2026-08-23T20:22:57.727+00:00",
+        "finished_at": "2026-08-23T20:36:01.281+00:00",
+        "error": "consolidator stage failed: HTTP 400: {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\n  \\\"error\\\": {\\n    \\\"message\\\": \\\"This model's maximum context length is 524288 tokens, but your request contains 547802 tokens. Please shorten your input text or split it into multiple requests. For model-specific token limits, please refer to our API reference documentation (https://console.upstage.ai/api/chat)\\\",\\n    \\\"type\\\": \\\"invalid_request_error\\\",\\n    \\\"param\\\": null,\\n    \\\"code\\\": \\\"context_length_exceed",
+        "snapshot_start_event_id": "evt_8f547d00903047bfb5e1231d4aff4973",
+        "snapshot_end_event_id": "evt_2a8a4be86a254d1d8fdeda8e28c7dc12"
+      },
+      {
+        "id": "job_094059934f6f4b0a9729a9822947b390",
+        "generation": 5,
+        "status": "FAILED",
+        "created_at": "2026-08-23T20:36:01.298+00:00",
+        "started_at": "2026-08-23T20:36:01.586+00:00",
+        "finished_at": "2026-08-23T20:48:50.452+00:00",
+        "error": "canonicalizer stage failed at batch 5: canonicalizer cited source references must remain in supplied source order",
+        "snapshot_start_event_id": "evt_8f547d00903047bfb5e1231d4aff4973",
+        "snapshot_end_event_id": "evt_76bf52316519475cb93f1278427dcc9c"
+      },
+      {
+        "id": "job_d1ffaa3309294eed9aa77f14e562df2c",
+        "generation": 6,
+        "status": "RUNNING",
+        "created_at": "2026-08-23T20:48:50.476+00:00",
+        "started_at": "2026-08-23T20:48:50.730+00:00",
+        "finished_at": null,
+        "error": null,
+        "snapshot_start_event_id": "evt_8f547d00903047bfb5e1231d4aff4973",
+        "snapshot_end_event_id": "evt_24a3d4508a524afba677bedb8520c511"
+      }
+    ],
+    "capsules_detail": [
+      {
+        "id": "cap_d911b3740aea4093854b9fca9e35dc1f",
+        "state": "ACTIVE",
+        "created_at": "2026-08-23T20:04:41.855+00:00",
+        "validated_at": "2026-08-23T20:04:41.863+00:00",
+        "covered_start_event_id": "evt_97cd801eb3cd4d709701ca74b0a4d617",
+        "covered_end_event_id": "evt_275da1694443494f9382a7842fa72dc7"
+      }
+    ],
+    "model_runs_detail": [
+      {
+        "generation": 1,
+        "stage": "canonicalizer",
+        "calls": 4,
+        "input_tokens": 35471,
+        "output_tokens": 2127,
+        "wall_ms": 76064.12509997608
+      },
+      {
+        "generation": 1,
+        "stage": "consolidator",
+        "calls": 1,
+        "input_tokens": 77838,
+        "output_tokens": 398,
+        "wall_ms": 12265.98730002297
+      },
+      {
+        "generation": 1,
+        "stage": "selector",
+        "calls": 31,
+        "input_tokens": 41348,
+        "output_tokens": 1562,
+        "wall_ms": 101436.50150005124
+      },
+      {
+        "generation": 2,
+        "stage": "canonicalizer",
+        "calls": 9,
+        "input_tokens": 95423,
+        "output_tokens": 2589,
+        "wall_ms": 85407.9346000508
+      },
+      {
+        "generation": 2,
+        "stage": "selector",
+        "calls": 148,
+        "input_tokens": 216490,
+        "output_tokens": 7427,
+        "wall_ms": 438841.01800006465
+      },
+      {
+        "generation": 3,
+        "stage": "canonicalizer",
+        "calls": 18,
+        "input_tokens": 189313,
+        "output_tokens": 8487,
+        "wall_ms": 171292.2010999464
+      },
+      {
+        "generation": 3,
+        "stage": "consolidator",
+        "calls": 1,
+        "input_tokens": 409408,
+        "output_tokens": 227,
+        "wall_ms": 34051.44039998413
+      },
+      {
+        "generation": 3,
+        "stage": "selector",
+        "calls": 148,
+        "input_tokens": 217613,
+        "output_tokens": 7491,
+        "wall_ms": 360846.1817000061
+      },
+      {
+        "generation": 4,
+        "stage": "canonicalizer",
+        "calls": 24,
+        "input_tokens": 253331,
+        "output_tokens": 10370,
+        "wall_ms": 261426.18250002852
+      },
+      {
+        "generation": 4,
+        "stage": "consolidator",
+        "calls": 1,
+        "input_tokens": null,
+        "output_tokens": null,
+        "wall_ms": 3058.0383999913465
+      },
+      {
+        "generation": 4,
+        "stage": "selector",
+        "calls": 195,
+        "input_tokens": 292130,
+        "output_tokens": 10632,
+        "wall_ms": 516157.56679998594
+      },
+      {
+        "generation": 5,
+        "stage": "canonicalizer",
+        "calls": 6,
+        "input_tokens": 63176,
+        "output_tokens": 2376,
+        "wall_ms": 53132.261399994604
+      },
+      {
+        "generation": 5,
+        "stage": "selector",
+        "calls": 247,
+        "input_tokens": 374800,
+        "output_tokens": 14218,
+        "wall_ms": 712224.2015000957
+      },
+      {
+        "generation": 6,
+        "stage": "selector",
+        "calls": 22,
+        "input_tokens": 33142,
+        "output_tokens": 1101,
+        "wall_ms": 53173.90010008239
+      }
+    ],
+    "event_timing": {
+      "first_event": "2026-08-23T20:00:56.299+00:00",
+      "last_event": "2026-08-23T20:40:00.173+00:00",
+      "event_count": 213,
+      "token_count": 224283
+    },
+    "active_capsules": [
+      {
+        "id": "cap_d911b3740aea4093854b9fca9e35dc1f",
+        "state": "ACTIVE",
+        "created_at": "2026-08-23T20:04:41.855+00:00",
+        "validated_at": "2026-08-23T20:04:41.863+00:00",
+        "covered_start_event_id": "evt_97cd801eb3cd4d709701ca74b0a4d617",
+        "covered_end_event_id": "evt_275da1694443494f9382a7842fa72dc7",
+        "content_chars": 844
+      }
+    ]
+  }
+}

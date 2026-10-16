@@ -1,0 +1,192 @@
+{
+  "by_mode_and_corpus": {
+    "off:100": {
+      "cold_retrieval_ms": {
+        "count": 0,
+        "max": 0.0,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 7.3818,
+        "mean": 2.504821,
+        "p50": 2.179,
+        "p95": 4.3354,
+        "p99": 5.5465
+      },
+      "corpus_size": 100,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "off",
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 0,
+      "would_inject_sample_rate": 0.0
+    },
+    "off:200": {
+      "cold_retrieval_ms": {
+        "count": 0,
+        "max": 0.0,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 69.5816,
+        "mean": 4.226123,
+        "p50": 2.7374,
+        "p95": 8.3768,
+        "p99": 10.8881
+      },
+      "corpus_size": 200,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "off",
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 0,
+      "would_inject_sample_rate": 0.0
+    },
+    "off:25": {
+      "cold_retrieval_ms": {
+        "count": 0,
+        "max": 0.0,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 14.8168,
+        "mean": 2.226664,
+        "p50": 1.8633,
+        "p95": 5.0148,
+        "p99": 7.9109
+      },
+      "corpus_size": 25,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "off",
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 0,
+      "would_inject_sample_rate": 0.0
+    },
+    "shadow:100": {
+      "cold_retrieval_ms": {
+        "count": 520,
+        "max": 16.0,
+        "mean": 1.407692,
+        "p50": 0.0,
+        "p95": 16.0,
+        "p99": 16.0
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 38.0375,
+        "mean": 19.179024,
+        "p50": 20.083,
+        "p95": 23.626,
+        "p99": 27.8838
+      },
+      "corpus_size": 100,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "shadow",
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 260,
+      "would_inject_sample_rate": 0.461538
+    },
+    "shadow:200": {
+      "cold_retrieval_ms": {
+        "count": 520,
+        "max": 16.0,
+        "mean": 1.351923,
+        "p50": 0.0,
+        "p95": 16.0,
+        "p99": 16.0
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 82.7318,
+        "mean": 20.910659,
+        "p50": 21.1311,
+        "p95": 26.0305,
+        "p99": 34.5708
+      },
+      "corpus_size": 200,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "shadow",
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 260,
+      "would_inject_sample_rate": 0.461538
+    },
+    "shadow:25": {
+      "cold_retrieval_ms": {
+        "count": 520,
+        "max": 16.0,
+        "mean": 1.355769,
+        "p50": 0.0,
+        "p95": 16.0,
+        "p99": 16.0
+      },
+      "context_assembly_ms": {
+        "count": 520,
+        "max": 31.0775,
+        "mean": 18.012179,
+        "p50": 18.7335,
+        "p95": 22.7938,
+        "p99": 24.5666
+      },
+      "corpus_size": 25,
+      "fail_open_count": 0,
+      "fail_open_rate": 0.0,
+      "injected_token_estimate_total": 0,
+      "mode": "shadow",
+      "timeout_count": 0,
+      "timeout_rate": 0.0,
+      "would_inject_count": 300,
+      "would_inject_sample_rate": 0.5
+    }
+  },
+  "paired_shadow_minus_off_ms": {
+    "100": {
+      "count": 520,
+      "max": 35.896,
+      "mean": 16.674203,
+      "p50": 17.5557,
+      "p95": 21.2386,
+      "p99": 25.674
+    },
+    "200": {
+      "count": 520,
+      "max": 75.484,
+      "mean": 16.684536,
+      "p50": 17.5533,
+      "p95": 21.2942,
+      "p99": 28.5094
+    },
+    "25": {
+      "count": 520,
+      "max": 29.1593,
+      "mean": 15.785515,
+      "p50": 16.6576,
+      "p95": 20.8663,
+      "p99": 22.7781
+    }
+  }
+}

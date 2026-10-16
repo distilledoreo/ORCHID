@@ -1,0 +1,28 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 1,
+  "rejected": 0,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 67,
+      "ok": true,
+      "error": null,
+      "deterministic_violations": [],
+      "semantic_violations": [],
+      "rendered_content": "The projection coverage optimizer uses connected-component filtering to discard small isolated prop/table tops and triangle clearance rather than enclosing object bounds so concave imported rooms retain interior candidates. For geometrically ambiguous large roofs, platforms, or prop tops, enable Allowed floor region and enter world-space X/Y/Z bounds; only floor points inside those bounds are eligible.",
+      "envelope_json": "{\"generation\":67,\"items\":[{\"evidence\":[{\"excerpt\":\"The optimizer uses connected-component filtering to discard small isolated prop/table tops and triangle clearance rather than enclosing object bounds so concave imported rooms retain interior candidates. For geometrically ambiguous large roofs, platforms, or prop tops, enable **Allowed floor region** and enter world-space X/Y/Z bounds; only floor points inside those bounds are eligible.\",\"source_id\":\"panoref_evt_001007::span::000003\"}],\"id\":\"mem_4539bb09a00df5833ab51dbc\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"The projection coverage optimizer uses connected-component filtering to discard small isolated prop/table tops and triangle clearance rather than enclosing object bounds so concave imported rooms retain interior candidates. For geometrically ambiguous large roofs, platforms, or prop tops, enable Allowed floor region and enter world-space X/Y/Z bounds; only floor points inside those bounds are eligible.\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

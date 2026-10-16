@@ -1,0 +1,68 @@
+{
+  "backend_timing_fields_observed_count": 0,
+  "calls_failed": 0,
+  "calls_planned": 32,
+  "calls_succeeded": 32,
+  "completed_at": "2026-08-22T21:05:50.866+00:00",
+  "config_sha256": "4c4519e2833867c47715b0899696720f5246863468ad2554ed4488cd432c225d",
+  "decode_ms_backend": {
+    "count": 0,
+    "mean": null,
+    "p50": null,
+    "p95": null
+  },
+  "decode_ms_client_observed": {
+    "count": 32,
+    "mean": 2470.934271875194,
+    "p50": 1984.665899988613,
+    "p95": 4274.326610006391
+  },
+  "input_tok_s_ttft_proxy": {
+    "count": 32,
+    "mean": 361.9599676279755,
+    "p50": 188.4564238280494,
+    "p95": 192.80440498560787
+  },
+  "input_tokens_total": 52380.0,
+  "output_tok_s_client_observed": {
+    "count": 32,
+    "mean": 13.118371380461298,
+    "p50": 13.12796578411421,
+    "p95": 13.473199147580248
+  },
+  "output_tokens_total": 1032.0,
+  "prompt_eval_ms_backend": {
+    "count": 0,
+    "mean": null,
+    "p50": null,
+    "p95": null
+  },
+  "queue_wait_ms_backend": {
+    "count": 0,
+    "mean": null,
+    "p50": null,
+    "p95": null
+  },
+  "sample_sha256": "fa4083f3fc17978cc255cd52e1a305daed4e10b6573b3b43cdc0d4477f227aa4",
+  "source_commit": "297b80e692777ad7c1dbe7b4198cc44bf3dc9f74",
+  "ttft_dominant_calls": 31,
+  "ttft_share_of_wall": {
+    "count": 32,
+    "mean": 0.7543867138558075,
+    "p50": 0.7744256387337867,
+    "p95": 0.8904796703609216
+  },
+  "timeouts": 0,
+  "total_wall_ms": {
+    "count": 32,
+    "mean": 11041.898362499524,
+    "p50": 10689.065850005136,
+    "p95": 16755.83847999951
+  },
+  "ttft_ms": {
+    "count": 32,
+    "mean": 8570.96409062433,
+    "p50": 8015.1346499915235,
+    "p95": 13351.392474991735
+  }
+}

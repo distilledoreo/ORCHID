@@ -1,0 +1,55 @@
+{
+  "provider": "OpenRouter",
+  "pricing_usd_per_million_tokens": {
+    "input": 0.03,
+    "output": 0.12
+  },
+  "counting_rule": "assistant message_end records with nonzero usage; streaming message_update records excluded",
+  "pi_foreground": {
+    "usage_responses": 43,
+    "input_tokens": 1811513.0,
+    "output_tokens": 71785.0,
+    "cache_read_tokens": 612544.0,
+    "reported_cost_usd": 0.06295958999999998,
+    "calculated_cost_usd": 0.06295959,
+    "largest_context_tokens": 88291.0,
+    "mean_context_tokens": 42128.20930232558
+  },
+  "orchid_foreground": {
+    "usage_responses": 57,
+    "input_tokens": 7864313.0,
+    "output_tokens": 39284.0,
+    "cache_read_tokens": 80512.0,
+    "reported_cost_usd": 0.0,
+    "calculated_cost_usd": 0.24064346999999997,
+    "largest_context_tokens": 173929.0,
+    "mean_context_tokens": 137970.40350877194
+  },
+  "orchid_memory_pipeline": [
+    {
+      "stage": "consolidator",
+      "calls": 5,
+      "input_tokens": 368740,
+      "output_tokens": 4490,
+      "wall_ms": 116216.97949999361
+    },
+    {
+      "stage": "selector",
+      "calls": 272,
+      "input_tokens": 415863,
+      "output_tokens": 18094,
+      "wall_ms": 831358.302500099
+    }
+  ],
+  "orchid_memory_input_tokens": 784603,
+  "orchid_memory_output_tokens": 22584,
+  "orchid_memory_cost_usd": 0.026248169999999998,
+  "orchid_total_provider_equivalent_cost_usd": 0.26689164,
+  "cumulative_foreground_context_token_area": {
+    "pi_native": 1811513.0,
+    "orchid": 7864313.0,
+    "absolute_difference_pi_minus_orchid": -6052800.0,
+    "fraction_saved_vs_pi": -3.3412953702236745,
+    "caveat": "raw cumulative and per-response means are both reported because arm trajectories and response counts may diverge"
+  }
+}

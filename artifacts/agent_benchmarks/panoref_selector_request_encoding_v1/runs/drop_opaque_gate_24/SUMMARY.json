@@ -1,0 +1,78 @@
+{
+  "calls_failed": 0,
+  "calls_planned": 24,
+  "calls_recorded": 24,
+  "calls_succeeded": 24,
+  "completed_at": "2026-08-23T01:16:54.564+00:00",
+  "decision_equivalence": false,
+  "decision_matches": 19,
+  "decision_mismatches": [
+    {
+      "actual": [
+        "panoref_evt_000924",
+        "panoref_evt_000925"
+      ],
+      "chunk_index": 6,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_000970",
+        "panoref_evt_000975"
+      ],
+      "chunk_index": 38,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001105",
+        "panoref_evt_001106"
+      ],
+      "chunk_index": 102,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001112::span::000001"
+      ],
+      "chunk_index": 109,
+      "historical": null
+    },
+    {
+      "actual": [
+        "panoref_evt_001179"
+      ],
+      "chunk_index": 141,
+      "historical": null
+    }
+  ],
+  "decision_total": 24,
+  "decode_ms": {
+    "p50": 2031.7839000053937,
+    "p95": 3905.856305024645
+  },
+  "failed_rows": [],
+  "full_trace": true,
+  "historical_input_tokens_total": 40529.0,
+  "historical_output_tokens_total": 695.0,
+  "input_tokens_p50": 1492.5,
+  "input_tokens_total": 40769.0,
+  "output_tokens_p50": 27.0,
+  "output_tokens_total": 730.0,
+  "plan_sha256": "ee0e056f215c881640fd6ac3caededac735aecac5fe558cbc057402fccddfd19",
+  "protocol_or_schema_failures": 0,
+  "run_id": "drop_opaque_gate_24",
+  "selector_wall_ms": 273638.82700016256,
+  "source_commit": "a699d6a4af3696dc2992049b2ebbc748493eb3d9",
+  "timeouts": 0,
+  "ttft_ms": {
+    "p50": 7840.763400003198,
+    "p95": 14972.14523001312,
+    "p99": 15267.348446997348
+  },
+  "variant": "DROP_OPAQUE",
+  "wall_ms": {
+    "p50": 9864.89265000273,
+    "p95": 18483.92444500641
+  }
+}

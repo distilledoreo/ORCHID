@@ -1,0 +1,39 @@
+{
+  "schema_version": "orchid.v2_offline_gate.consolidator_report.v1",
+  "generation_count": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "shadow_only": true,
+  "require_items": true,
+  "reports": [
+    {
+      "generation": 20,
+      "ok": false,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000958' for item mem_c2bfa9d102622e89e41c45ed"
+      ],
+      "semantic_violations": [],
+      "rendered_content": "Git context check completed for worktree PanoRef at C:\\Users\\disti\\.t3\\worktrees\\PanoRef\\t3code-aefd2138. The check ran git diff --stat, git diff --check, grep for merge conflict markers (<<<<<<< and >>>>>>>) excluding node_modules, dist, and artifacts directories, verified if origin/main is an ancestor of HEAD, checked git status, and showed recent commit history.",
+      "envelope_json": "{\"generation\":20,\"items\":[{\"evidence\":[{\"excerpt\":\"git diff --stat; git diff --check; rg -n \\\\\\\"^(<<<<<<< |>>>>>>> )\\\\\\\" . --glob '!node_modules/**' --glob '!dist/**' --glob '!artifacts/**'; git merge-base --is-ancestor origin/main HEAD; if ($LASTEXITCODE -eq 0) { Write-Output 'origin/main is an ancestor of HEAD' }; git status --short; git log --oneline --decorate --max-count=10\",\"source_id\":\"panoref_evt_000958\"}],\"id\":\"mem_c2bfa9d102622e89e41c45ed\",\"kind\":\"state\",\"status\":\"active\",\"supersedes_item_ids\":[],\"text\":\"Git context check completed for worktree PanoRef at C:\\\\Users\\\\disti\\\\.t3\\\\worktrees\\\\PanoRef\\\\t3code-aefd2138 including diff stats, diff check, conflict marker scan, ancestry check against origin/main, status, and recent log\"}],\"schema_version\":\"orchid.capsule.v2\"}"
+    }
+  ],
+  "rejections": [
+    {
+      "generation": 20,
+      "error": "FAILED: semantic_rejection",
+      "deterministic_violations": [
+        "excerpt not found in source 'panoref_evt_000958' for item mem_c2bfa9d102622e89e41c45ed"
+      ],
+      "semantic_violations": []
+    }
+  ],
+  "chunk_count": 1,
+  "mode": "live",
+  "consolidator_model": "agnes-2.5-flash",
+  "consolidator_url": "https://apihub.agnes-ai.com/v1",
+  "isolate_chunks": true,
+  "subprocess_chunks": true,
+  "checkpoint_dir": "/media/distilledoreo/Storage/orchid_memory_gateway_v1/artifacts/selector_contract/consolidator_gate_checkpoints",
+  "input": "artifacts/selector_contract/FROZEN_REQUEST_HASHES.json"
+}

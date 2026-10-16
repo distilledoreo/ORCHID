@@ -1,0 +1,26 @@
+{
+  "status": "MEASURED",
+  "file": "canonicalizer_12k_full199.json",
+  "replay_sha256": "6feb697961f22654d813159d07e2e519492b9ec431cdf8df08ae549508c26b16",
+  "events_used": 199,
+  "expanded_source_item_count": 317,
+  "source_tokens_planned": 202761,
+  "batch_target_tokens": 12000,
+  "planned_batch_count": 18,
+  "attempted_batch_count": 3,
+  "successful_valid_batch_count": 2,
+  "timeout_count": 1,
+  "completed_source_tokens": 22993,
+  "attempted_source_tokens": 34799,
+  "completed_valid_batch_wall_ms": 308138.5841,
+  "partial_successful_batch_tokens_per_second": 74.6190226944708,
+  "status_from_harness": "FAILED",
+  "error": "model request timed out after 180.0s",
+  "first_failed_batch": 2,
+  "remaining_unattempted_batch_count": 15,
+  "production_gate": {
+    "zero_unresolved_canonicalizer_timeouts": false,
+    "full_replay_completed": false,
+    "throughput_at_least_75_source_tokens_per_second": false
+  }
+}

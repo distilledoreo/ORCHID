@@ -1,0 +1,83 @@
+{
+  "generation": 129,
+  "content": "UI revamp fidelity surfaces completed 12 items including: export workflow without fly-to-stop, multi-select reconciled with local add-camera, docked CTA footer with shot rows and package summary, capped last-export preview prioritizing key paths, dedicated CTA lane reserving space for camera shutter chrome on shots, CC0 human mannequin GLB bundled for scale references, build drag guidance near gizmo when object selected, floating controls below mobile-safe header, Build tray sized to tools with constrained mobile scroller, theme-aware shot thumbnail fallbacks (polished for missing media, compact without cramped labels in export rows), and theme-aware pano viewer colors with build tray glow tokens. Test run showed 40 passed, 1 failed (679ms duration).",
+  "events": [
+    {
+      "id": "panoref_evt_001152::span::000002",
+      "sequence": 1152,
+      "content": " mode with download current view\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22madvances video shutter record → stop → export without requiring fly to stop\\u001b[32m 2\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mkeeps export multi-select reconciled and add-camera local to export\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mkeeps export shot rows and composed package summary with a docked CTA footer\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mprioritizes key export output paths in capped last-export preview\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mreserves a dedicated CTA lane so the reference landmark strip does not span underneath\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mreserves space for the camera shutter chrome on shots\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mbundles a CC0 human mannequin glb for person scale references\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mshows build drag guidance near the gizmo when an object is selected\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mkeeps Build floating controls below the mobile-safe header\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22msizes the Build tray to its tools while constraining the mobile scroller\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22mrenders polished theme-aware shot thumbnail fallbacks for missing media\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22muses compact shot thumbnail fallbacks without cramped labels in export rows\\u001b[32m 0\\u001b[2mms\\u001b[22m\\u001b[39m\\n   \\u001b[32m✓\\u001b[39m ui revamp fidelity surfaces\\u001b[2m > \\u001b[22muses theme-aware pano viewer colors and build tray glow tokens\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[31m1 failed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[31m1 failed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[1m\\u001b[32m40 passed\\u001b[39m\\u001b[22m\\u001b[90m (41)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 09:47:07\\n\\u001b[2m   Duration \\u001b[22m 679ms\\u001b[2m (transform 65ms, setup 0ms, collect 70ms, tests 44ms, environment 0ms, prepare 192ms)\\u001b[22m\\n\\n\\n> continuity-stage@0.0.0 lint\\n> tsc --noEmit\\n\\n\\n\\u001b[31m⎯⎯⎯⎯⎯⎯⎯\\u001b[39m\\u001b[1m\\u001b[41m Failed Tests 1 \\u001b[49m\\u001b[22m\\u001b[31m⎯⎯⎯⎯⎯⎯⎯\\u001b[39m\\n\\n\\u",
+      "content_hash": "484deeb200db7afcc2ef5d485fc241812ec98cd5829031b2e2b626ed30f4dcc3",
+      "event_type": "function_call_output",
+      "role": "tool"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > advances video shutter record → stop → export without requiring fly to stop",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > keeps export multi-select reconciled and add-camera local to export",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > keeps export shot rows and composed package summary with a docked CTA footer",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > prioritizes key export output paths in capped last-export preview",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > reserves a dedicated CTA lane so the reference landmark strip does not span underneath",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > reserves space for the camera shutter chrome on shots",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > bundles a CC0 human mannequin glb for person scale references",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > shows build drag guidance near the gizmo when an object is selected",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > keeps Build floating controls below the mobile-safe header",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > sizes the Build tray to its tools while constraining the mobile scroller",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > renders polished theme-aware shot thumbnail fallbacks for missing media",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > uses compact shot thumbnail fallbacks without cramped labels in export rows",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "✓ ui revamp fidelity surfaces > uses theme-aware pano viewer colors and build tray glow tokens",
+          "source_id": "panoref_evt_001152::span::000002"
+        },
+        {
+          "excerpt": "Tests 1 failed | 40 passed (41)",
+          "source_id": "panoref_evt_001152::span::000002"
+        }
+      ],
+      "kind": "completed",
+      "status": "resolved",
+      "supersedes_item_ids": [],
+      "text": "UI revamp fidelity surfaces: 12 tasks completed across export workflow, CTA/shot layout, reference assets, Build tray/mobile constraints, and theme-aware fallbacks. 1 test failure remains (40/41 passed)."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_001152::span::000002"
+  ]
+}

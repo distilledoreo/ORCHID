@@ -1,0 +1,150 @@
+{
+  "generation": 34,
+  "content": "Automation script executed scene import, render reference, and coverage optimizer steps. Import phase completed with timing measured; dialog interactions handled extreme/import confirmation and close actions. Reference workflow included clicking 'Render 360 Reference', waiting for graybox/re-render prompt, dismissing overlays, switching to Reference workspace tab, and optionally using attached reference with start-checking action. Coverage optimizer was triggered via Reference Settings dialog; result or failure status was awaited with 1,800,000ms timeout. If failed, error thrown with message from failed locator. Post-optimization, heap metrics (usedJSHeapSize, totalJSHeapSize, jsHeapSizeLimit) were captured from performance.memory if available. Report object includes ok flag, model path/bytes, importMilliseconds, optimizationMilliseconds, totalMilliseconds, importReport, and analysisText.",
+  "events": [
+    {
+      "id": "panoref_evt_000961::span::000011",
+      "sequence": 961,
+      "content": "0_000 }),\\r\\n    analysis.waitFor({ state: 'visible', timeout: 900_000 }),\\r\\n  ]);\\r\\n  if (await analysis.isVisible().catch(() => false)) {\\r\\n    const extreme = dialog.locator('[data-extreme-import-confirmation]');\\r\\n    if (await extreme.isVisible().catch(() => false)) await extreme.fill('IMPORT');\\r\\n    await dialog.getByRole('button', { name: /Import (heavy|extreme) scene/i }).click();\\r\\n    await success.waitFor({ state: 'visible', timeout: 1_800_000 });\\r\\n  }\\r\\n  const importFinishedAt = Date.now();\\r\\n  const importReport = await success.innerText();\\r\\n  const analysisText = await analysis.isVisible().catch(() => false) ? await analysis.innerText() : undefined;\\r\\n  await dialog.getByText('Close', { exact: true }).last().click();\\r\\n\\r\\n  const renderReference = page.getByRole('button', { name: /Render 360 Reference/i });\\r\\n  await renderReference.click();\\r\\n  await page.getByRole('button', { name: /Download Graybox|Re-render after scene changes/i }).first()\\r\\n    .waitFor({ state: 'visible', timeout: 900_000 });\\r\\n  await dismissOverlays();\\r\\n\\r\\n  await workspaceTab('Reference').click();\\r\\n  await page.waitForTimeout(1_000);\\r\\n  await dismissOverlays();\\r\\n  const useAttached = page.getByRole('button', { name: /Use Attached Reference/i });\\r\\n  if (await useAttached.isVisible().catch(() => false)) {\\r\\n    await useAttached.click();\\r\\n    const startChecking = page.getByRole('button', { name: 'Start checking', exact: true });\\r\\n    await startChecking.waitFor({ state: 'visible', timeout: 10_000 }).catch(() => undefined);\\r\\n    if (await startChecking.isVisible().catch(() => false)) await startChecking.click();\\r\\n    await dismissOverlays();\\r\\n  }\\r\\n  await page.getByRole('button', { name: 'More', exact: true }).click();\\r\\n  const drawer = page.getByRole('dialog', { name: 'Reference Settings' });\\r\\n  await drawer.locator('[data-coverage-optimizer] summary').click();\\r\\n  optimizationStartedAt = Date.now();\\r\\n  await drawer.locator('[data-coverage-analyze]').click();\\r\\n  const result = drawer.locator('[data-coverage-result]');\\r\\n  const failed = drawer.locator('[data-coverage-status=\\\"failed\\\"]');\\r\\n  await Promise.race([\\r\\n    result.waitFor({ state: 'visible', timeout: 1_800_000 }),\\r\\n    failed.waitFor({ state: 'visible', timeout: 1_800_000 }),\\r\\n  ]);\\r\\n  if (await failed.isVisible().catch(() => false)) throw new Error(`Coverage optimizer failed: ${await failed.innerText()}`);\\r\\n  const optimizationFinishedAt = Date.now();\\r\\n  const heap = await page.evaluate(() => {\\r\\n    const memory = performance.memory;\\r\\n    return memory ? {\\r\\n      usedJSHeapSize: memory.usedJSHeapSize,\\r\\n      totalJSHeapSize: memory.totalJSHeapSize,\\r\\n      jsHeapSizeLimit: memory.jsHeapSizeLimit,\\r\\n    } : undefined;\\r\\n  });\\r\\n  const report = {\\r\\n    ok: pageErrors.length === 0,\\r\\n    model: { path: path.resolve(modelPath), bytes: model.size },\\r\\n    importMilliseconds: importFinishedAt - importStartedAt,\\r\\n    optimizationMilliseconds: optimizationFinishedAt - optimizationStartedAt,\\r\\n    totalMilliseconds: Date.now() - startedAt,\\r\\n    importReport,\\r\\n    analysisText,\\r\\n    originA: (await resu",
+      "content_hash": "7b6b6d2ebc97a845ed3ef325aa79324aec8a2480af428bfafc7374351898da2c",
+      "event_type": "custom_tool_call_output",
+      "role": "tool"
+    }
+  ],
+  "items": [
+    {
+      "evidence": [
+        {
+          "excerpt": "analysis.waitFor({ state: 'visible', timeout: 900_000 })",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await extreme.fill('IMPORT')",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await dialog.getByRole('button', { name: /Import (heavy|extreme) scene/i }).click()",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await success.waitFor({ state: 'visible', timeout: 1_800_000 })",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const importFinishedAt = Date.now();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const importReport = await success.innerText();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const analysisText = await analysis.isVisible().catch(() => false) ? await analysis.innerText() : undefined;",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await dialog.getByText('Close', { exact: true }).last().click();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const renderReference = page.getByRole('button', { name: /Render 360 Reference/i });",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await renderReference.click();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await page.getByRole('button', { name: /Download Graybox|Re-render after scene changes/i }).first().waitFor({ state: 'visible', timeout: 900_000 });",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await dismissOverlays();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await workspaceTab('Reference').click();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await page.waitForTimeout(1_000);",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const useAttached = page.getByRole('button', { name: /Use Attached Reference/i });",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "if (await useAttached.isVisible().catch(() => false)) { await useAttached.click(); }",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const startChecking = page.getByRole('button', { name: 'Start checking', exact: true };",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await startChecking.waitFor({ state: 'visible', timeout: 10_000 }).catch(() => undefined);",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "if (await startChecking.isVisible().catch(() => false)) await startChecking.click();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await page.getByRole('button', { name: 'More', exact: true }).click();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const drawer = page.getByRole('dialog', { name: 'Reference Settings' });",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await drawer.locator('[data-coverage-optimizer] summary').click();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "optimizationStartedAt = Date.now();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await drawer.locator('[data-coverage-analyze]').click();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const result = drawer.locator('[data-coverage-result]');",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const failed = drawer.locator('[data-coverage-status=\"failed\"]');",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "await Promise.race([result.waitFor({ state: 'visible', timeout: 1_800_000 }), failed.waitFor({ state: 'visible', timeout: 1_800_000 })]);",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "if (await failed.isVisible().catch(() => false)) throw new Error(`Coverage optimizer failed: ${await failed.innerText()}`);",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const optimizationFinishedAt = Date.now();",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const heap = await page.evaluate(() => { const memory = performance.memory; return memory ? { usedJSHeapSize: memory.usedJSHeapSize, totalJSHeapSize: memory.totalJSHeapSize, jsHeapSizeLimit: memory.jsHeapSizeLimit } : undefined; });",
+          "source_id": "panoref_evt_000961::span::000011"
+        },
+        {
+          "excerpt": "const report = { ok: pageErrors.length === 0, model: { path: path.resolve(modelPath), bytes: model.size }, importMilliseconds: importFinishedAt - importStartedAt, optimizationMilliseconds: optimizationFinishedAt - optimizationStartedAt, totalMilliseconds: Date.now() - startedAt, importReport, analysisText, originA: (await resu",
+          "source_id": "panoref_evt_000961::span::000011"
+        }
+      ],
+      "kind": "state",
+      "status": "active",
+      "text": "Panoref automation completed import, render reference, and coverage optimization with timing and heap reporting."
+    }
+  ],
+  "evidence_event_ids": [
+    "panoref_evt_000961::span::000011"
+  ]
+}

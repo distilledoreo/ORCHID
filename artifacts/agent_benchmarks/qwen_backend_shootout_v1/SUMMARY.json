@@ -1,0 +1,183 @@
+{
+  "conditions": {
+    "LLAMA_CPP_CPU": {
+      "backend_prompt_eval_ms": {
+        "count": 5,
+        "mean": 9642.199999999999,
+        "p50": 9628.999999999998
+      },
+      "backend_prompt_tok_s": {
+        "count": 5,
+        "mean": 157.54183917929228,
+        "p50": 157.75262228684187
+      },
+      "backend_prompt_tokens": {
+        "count": 5,
+        "mean": 1519.0,
+        "p50": 1519.0
+      },
+      "calls": 5,
+      "decode_ms": {
+        "count": 5,
+        "mean": 207.18158000381663,
+        "p50": 200.9383000258822,
+        "p95": 229.46905998978764
+      },
+      "failures": [],
+      "input_tokens": {
+        "count": 5,
+        "mean": 1519.0,
+        "p50": 1519.0,
+        "p95": 1519.0
+      },
+      "succeeded": 5,
+      "ttft_ms": {
+        "count": 5,
+        "mean": 9697.637240000768,
+        "p50": 9690.132599993376,
+        "p95": 9778.58696001349
+      },
+      "wall_ms": {
+        "count": 5,
+        "mean": 9904.818820004584,
+        "p50": 9887.05900000059,
+        "p95": 9985.126700007822
+      }
+    },
+    "LLAMA_CPP_VULKAN_ALL": {
+      "backend_prompt_eval_ms": {
+        "count": 5,
+        "mean": 8247.800000000001,
+        "p50": 8248.000000000005
+      },
+      "backend_prompt_tok_s": {
+        "count": 5,
+        "mean": 184.5343391523779,
+        "p50": 184.52958292919485
+      },
+      "backend_prompt_tokens": {
+        "count": 5,
+        "mean": 1522.0,
+        "p50": 1522.0
+      },
+      "calls": 5,
+      "decode_ms": {
+        "count": 5,
+        "mean": 80.83974001347087,
+        "p50": 80.9204000106547,
+        "p95": 81.05270001105964
+      },
+      "failures": [],
+      "input_tokens": {
+        "count": 5,
+        "mean": 1522.0,
+        "p50": 1522.0,
+        "p95": 1522.0
+      },
+      "succeeded": 5,
+      "ttft_ms": {
+        "count": 5,
+        "mean": 8373.112219985342,
+        "p50": 8358.954399998765,
+        "p95": 8424.853779975092
+      },
+      "wall_ms": {
+        "count": 5,
+        "mean": 8453.951959998813,
+        "p50": 8439.87480000942,
+        "p95": 8505.66151998355
+      }
+    },
+    "LLAMA_CPP_VULKAN_PARTIAL": {
+      "backend_prompt_eval_ms": {
+        "count": 5,
+        "mean": 14708.199999999999,
+        "p50": 14712.000000000004
+      },
+      "backend_prompt_tok_s": {
+        "count": 5,
+        "mean": 103.20981730930635,
+        "p50": 103.18107667210438
+      },
+      "backend_prompt_tokens": {
+        "count": 5,
+        "mean": 1518.0,
+        "p50": 1518.0
+      },
+      "calls": 5,
+      "decode_ms": {
+        "count": 5,
+        "mean": 119.78926000301726,
+        "p50": 117.85960002453066,
+        "p95": 128.5772199917119
+      },
+      "failures": [],
+      "input_tokens": {
+        "count": 5,
+        "mean": 1518.0,
+        "p50": 1518.0,
+        "p95": 1518.0
+      },
+      "succeeded": 5,
+      "ttft_ms": {
+        "count": 5,
+        "mean": 14790.230279997922,
+        "p50": 14777.627999981632,
+        "p95": 14904.065580002498
+      },
+      "wall_ms": {
+        "count": 5,
+        "mean": 14910.01954000094,
+        "p50": 14895.487600006163,
+        "p95": 15032.64279999421
+      }
+    },
+    "LM_STUDIO_CURRENT": {
+      "backend_prompt_eval_ms": {
+        "count": 0,
+        "mean": null,
+        "p50": null
+      },
+      "backend_prompt_tok_s": {
+        "count": 0,
+        "mean": null,
+        "p50": null
+      },
+      "backend_prompt_tokens": {
+        "count": 0,
+        "mean": null,
+        "p50": null
+      },
+      "calls": 5,
+      "decode_ms": {
+        "count": 5,
+        "mean": 80.74618001119234,
+        "p50": 80.59090000460856,
+        "p95": 81.80772002087906
+      },
+      "failures": [],
+      "input_tokens": {
+        "count": 5,
+        "mean": 1519.0,
+        "p50": 1519.0,
+        "p95": 1519.0
+      },
+      "succeeded": 5,
+      "ttft_ms": {
+        "count": 5,
+        "mean": 8143.842019996373,
+        "p50": 8149.2328999738675,
+        "p95": 8155.146379995858
+      },
+      "wall_ms": {
+        "count": 5,
+        "mean": 8224.588200007565,
+        "p50": 8230.046900018351,
+        "p95": 8236.041520000435
+      }
+    }
+  },
+  "generated_at": "2026-08-23T03:24:24.943+00:00",
+  "plan_sha256": "45a06f9caa36761322f83a258777618706bab8f4010afc52d906f78a2c9db914",
+  "schema_version": "qwen-backend-shootout-summary-v1"
+}
