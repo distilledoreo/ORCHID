@@ -152,6 +152,13 @@ def test_latency_comparison_uses_paired_cases():
     assert result["bootstrap_95_interval_ms"] == [20, 20]
 
 
+def test_stopped_pilot_cannot_generate_a_final_viability_finding(tmp_path):
+    from experiments.specprefill.report import generate
+    (tmp_path / "PILOT_STATUS.json").write_text('{"status":"stopped_exploratory_pilot"}')
+    with pytest.raises(ValueError, match="Stopped exploratory pilot"):
+        generate(tmp_path)
+
+
 def test_quality_replay_protocol_is_balanced_held_out_and_immutable(tmp_path):
     import json
 

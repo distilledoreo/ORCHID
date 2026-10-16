@@ -120,6 +120,8 @@ def arm_summary(rows):
 
 def generate(root):
     root = Path(root)
+    if (root / "PILOT_STATUS.json").exists():
+        raise ValueError("Stopped exploratory pilot: do not generate a final viability finding; see PILOT_STATUS.json")
     requests, classifiers = load(root / "requests.jsonl"), load(root / "classifier.jsonl")
     if not requests:
         raise ValueError("No measured requests")
@@ -128,6 +130,8 @@ def generate(root):
         groups[row["split"], row["category"], row["arm"]].append(row)
     summary = {"by_category": {"|".join(key): arm_summary(rows) for key, rows in groups.items()},
                "by_split": {}, "paired": {}, "classifier": {}}
+    full_inputs = [r["main"]["usage"]["prompt_tokens"] for r in requests if r["arm"] == "A" and r.get("main")]
+    summary["full_input_token_distribution"] = {"minimum": min(full_inputs), "median": statistics.median(full_inputs), "maximum": max(full_inputs)}
     for split in ("development", "held_out"):
         rows = [r for r in requests if r["split"] == split]
         summary["by_split"][split] = {arm: arm_summary([r for r in rows if r["arm"] == arm]) for arm in "ABCDEF"}
@@ -234,6 +238,7 @@ def generate(root):
     lines = ["# Controlled SpecPrefill / evidence experiment", "", f"**Finding: {finding}.**", "",
              interpretation, "", f"Nominal proposed-target finding: {nominal_finding}. The final finding separates empirical target checks from interpretation of measurement uncertainty.", "",
              f"Completed primary measurement set: {complete}. Requests: {len(requests)}; expected 768 across 128 cases. All measurement stages complete: {summary['complete']}.", "",
+             f"Actual full-context input tokens: minimum {min(full_inputs)}, median {statistics.median(full_inputs):.0f}, maximum {max(full_inputs)}. These are short-to-moderate synthetic inputs; this is not a long-context scaling study.", "",
              "Primary condition: 50% eligible-source budget, 64 main-token chunks, last prompt plus up to eight new query positions; 13-token aggregate-then-pool smoothing. No original position IDs restored.", "",
              "| Held-out arm | Accuracy | Evidence recall | Actual input tokens | Main TTFT ms | End-to-end TTFT ms | Full fallback |", "|---|---:|---:|---:|---:|---:|---:|"]
     def fmt(value, percent=False):

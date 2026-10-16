@@ -1,5 +1,13 @@
 # SpecPrefill routing and evidence sufficiency experiment
 
+**Status: stopped exploratory pilot.** The corrected run stopped at a clean
+42/128-case boundary (252 primary requests; zero API errors). The 39-case snapshot
+advanced before shutdown. All code, logs, and partial artifacts are preserved;
+no final Proceed/Revise/Reject finding is established. Both queued experiments
+were canceled and temporary model servers stopped. Production remains unchanged.
+See [the SpecPrefill-first reproduction plan](specprefill-standalone-plan.md).
+Commands below describe the preserved pilot, not authorization to resume it.
+
 This experiment lives under `experiments/specprefill`. The production gateway,
 configuration defaults, memory format, and existing summarizer are unchanged.
 The earlier generative prefill prototype is preserved on the separate local
