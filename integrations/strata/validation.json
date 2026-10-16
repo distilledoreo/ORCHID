@@ -66,12 +66,16 @@
     "strata_server_tests_passed": true,
     "selected_prefill_tests_included": 9,
     "cpp_position_test": "passed",
-    "orchid_tests_passed": 422,
+    "orchid_tests_passed": 407,
     "orchid_tests_skipped": 5,
     "patch_application_and_hash_checks": "passed",
     "ruff": "passed",
     "hip": "not built: compiler unavailable",
-    "sycl": "separate engine, unchanged"
+    "sycl": "separate engine, unchanged",
+    "experiment_branch_regression": {
+      "passed": 422,
+      "skipped": 5
+    }
   },
   "startup_rejections": {
     "cache": {
@@ -96,5 +100,10 @@
     "Strict logit parity passed with diagnostic controls; default-runtime ordinary repeats differed numerically.",
     "Original rotary coordinates with compact KV and retained-stream recurrent/PLE history; not restored full-context computation.",
     "No latency, quality, or SpecPrefill-paper reproduction claim."
-  ]
+  ],
+  "cleanup": {
+    "diagnostic_port_18585": "closed",
+    "p100_memory_mib": 0,
+    "production_service_changed": false
+  }
 }

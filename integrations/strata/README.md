@@ -160,8 +160,9 @@ the sparse version retained 171. Each valid request generated at most eight IDs.
   was 305, rather than retained length 171. Three invalid HTTP requests returned
   400; four incompatible engine configurations were rejected before loading.
 - CUDA build passed. Strata server tests: 305 passed, including nine interface
-  tests. The standalone C++ position test passed. ORCHID regression suite before
-  packaging: 422 passed, five skipped. Probe lint and patch/hash checks passed.
+  tests. The standalone C++ position test passed. ORCHID regression suite on this standalone
+  master-based branch: 407 passed, five skipped (the earlier experiment-branch
+  regression also passed: 422 passed, five skipped). Probe lint and patch/hash checks passed.
 
 With the default approximation/expert-execution settings, generated IDs matched,
 but ordinary repeats already had different logits (maximum difference 0.6742).
