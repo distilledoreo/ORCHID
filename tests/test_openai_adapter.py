@@ -108,11 +108,13 @@ class ScenarioHandler(BaseHTTPRequestHandler):
 
 
 @contextmanager
-def fake_server(scenario: str, delay: float = 0.0) -> Iterator[str]:
+def fake_server(
+    scenario: str, delay: float = 0.0, handler_class: type[ScenarioHandler] = ScenarioHandler
+) -> Iterator[str]:
     ScenarioHandler.scenario = scenario
     ScenarioHandler.delay = delay
     ScenarioHandler.last_request_body = None
-    server = ThreadingHTTPServer(("127.0.0.1", 0), ScenarioHandler)
+    server = ThreadingHTTPServer(("127.0.0.1", 0), handler_class)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     try:
@@ -257,19 +259,39 @@ def test_wrong_evidence_reaches_deterministic_worker_validation() -> None:
 
 def test_cancellation_does_not_return_partial_model_output() -> None:
     event = fixture_event()
+    request_started = threading.Event()
+    release_response = threading.Event()
+
+    class HeldResponseHandler(ScenarioHandler):
+        def do_POST(self) -> None:
+            self.rfile.read(int(self.headers.get("content-length", "0")))
+            request_started.set()
+            release_response.wait(timeout=10)
 
     async def run_cancelled() -> OpenAICompatCompactionEngine:
-        with fake_server("timeout", delay=0.2) as endpoint:
-            engine = adapter(endpoint, timeout=1.0)
+        with fake_server("valid", handler_class=HeldResponseHandler) as endpoint:
+            engine = adapter(endpoint, timeout=10.0)
             task = asyncio.create_task(
                 engine.compact(base_capsule=None, events=[event], snapshot_end_event_id=event.id)
             )
-            await asyncio.sleep(0.02)
-            task.cancel()
-            with pytest.raises(asyncio.CancelledError):
-                await task
-            assert engine.last_telemetry["status"] == "FAILED"
-            return engine
+            try:
+                # Cancel an actual in-flight request, rather than racing a 20-ms timer
+                # against a response that may finish while a loaded runner is descheduled.
+                assert await asyncio.to_thread(request_started.wait, 5)
+                assert not task.done()
+                task.cancel()
+                with pytest.raises(asyncio.CancelledError):
+                    await task
+                assert engine.last_telemetry["status"] == "FAILED"
+                return engine
+            finally:
+                release_response.set()
+                if not task.done():
+                    task.cancel()
+                    try:
+                        await task
+                    except asyncio.CancelledError:
+                        pass
 
     asyncio.run(run_cancelled())
 
