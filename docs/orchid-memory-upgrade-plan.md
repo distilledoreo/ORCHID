@@ -224,3 +224,10 @@ Each phase updates `README.md`, `docs/why-orchid-exists.md`, and
 `docs/invariants.md` as applicable, delivers its harness report against the
 sealed baseline, and states unverified acceptance criteria. The upgrade's
 remaining work is implementation; this document does not claim completion.
+
+## Implementation status
+
+Phases 0-5 are now implemented in stacked draft PRs. See
+[the delivery report](memory-upgrade-delivery.md) for changes, results,
+configuration, and unverified live gates. The original comparison above is
+preserved as the starting audit; the stack is not merged or deployed.

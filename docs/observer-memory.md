@@ -12,6 +12,12 @@ into items or telemetry.
 `ORCHID_CAPSULE_MAX_TOKENS`. Input budgeting currently estimates serialized
 payload tokens; real provider overhead/tokenization must be calibrated separately.
 
+Input admission includes known schema, system text, and framing.
+`ORCHID_OBSERVER_OUTPUT_TOKENS` defaults to 2,048; quotes are limited to 512
+characters. Leave output/provider headroom within the actual model context.
+Final same-fixture accounting including schemas/framing is **12.40x** lower
+observer input. The phase-3 payload-only figure below is historical data.
+
 One observer call receives each batch and bounded similar current-item claims.
 Software retains the complete ledger, validates every new quote/range, assigns
 deterministic IDs and validity sequences, and applies add/supersede/noop deltas.
