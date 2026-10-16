@@ -11,7 +11,7 @@ from .cold_memory import (
     build_retrieval_query_trace,
 )
 from .cold_telemetry import ColdMemoryTelemetrySink
-from .db import SQLiteStore, _ordered_history_overlap_span, content_hash
+from .db import SQLiteStore, content_hash
 
 
 def estimate_tokens(text: str) -> int:
@@ -169,7 +169,11 @@ class ContextAssembler:
         cold_memory_token_budget: int = 512,
         cold_memory_max_injected: int = 3,
         cold_memory_telemetry: ColdMemoryTelemetrySink | None = None,
+        layout: str = "legacy",
     ):
+        if layout not in {"stable", "legacy"}:
+            raise ValueError("layout must be stable or legacy")
+        self.layout = layout
         self.store = store
         self.raw_tail_target_tokens = raw_tail_target_tokens
         self.minimum_raw_tail_tokens = minimum_raw_tail_tokens
@@ -226,6 +230,11 @@ class ContextAssembler:
 
     @staticmethod
     def _render_events(events: list[dict[str, Any]]) -> str:
+        from .compaction import Event
+        from .message_views import model_events
+
+        events = [dict(event, content=view.content) for event, view in
+                  zip(events, model_events([Event.from_row(row) for row in events]))]
         rendered: list[str] = []
         for event in events:
             role = event["role"] or event["event_type"]
@@ -238,7 +247,15 @@ class ContextAssembler:
         request_messages: list[dict[str, Any]],
         *,
         project_id: str | None = None,
+        request_event_ids: tuple[str | None, ...] | None = None,
+        overhead_tokens: int = 0,
+        reserved_output_tokens: int = 0,
     ) -> ContextSnapshot:
+        if self.layout == "stable":
+            from .stable_context import assemble_stable
+            return assemble_stable(self, thread_id, request_messages, project_id=project_id,
+                                   request_event_ids=request_event_ids, overhead_tokens=overhead_tokens,
+                                   reserved_output_tokens=reserved_output_tokens)
         assembly_started = time.perf_counter()
         active = self.store.get_active_capsule(thread_id)
         covered_sequence = self._covered_sequence(active)
@@ -669,18 +686,16 @@ class ContextAssembler:
         ]
         known_hashes = [_event_message_hash(event) or "" for event in chat_events]
         incoming_hashes = [message_hash(message) for message in inbound]
-        overlap_start, overlap = _ordered_history_overlap_span(known_hashes, incoming_hashes)
-        if overlap and incoming_hashes[overlap_start : overlap_start + overlap] == known_hashes[-overlap:]:
-            aligned_events = chat_events[-overlap:]
-        elif overlap and overlap_start == 0 and incoming_hashes[:overlap] == known_hashes[:overlap]:
-            aligned_events = chat_events[:overlap]
-        else:
-            aligned_events = []
-        aligned: list[dict[str, Any] | None] = []
-        for index, _message in enumerate(inbound):
-            relative = index - overlap_start
-            event = aligned_events[relative] if 0 <= relative < overlap else None
-            aligned.append(event)
+        aligned: list[dict[str, Any] | None] = [None] * len(inbound)
+        cursor = 0
+        for index, digest in enumerate(incoming_hashes):
+            found = cursor
+            while found < len(known_hashes) and known_hashes[found] != digest:
+                found += 1
+            if found >= len(known_hashes):
+                continue
+            aligned[index] = chat_events[found]
+            cursor = found + 1
         return aligned
 
     def _inbound_event_id(

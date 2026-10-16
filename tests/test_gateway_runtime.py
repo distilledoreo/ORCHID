@@ -144,8 +144,12 @@ def test_gateway_routes_solar_and_runs_background_compaction(tmp_path: Path) -> 
         assert app.state.cold_memory_telemetry.metrics()["flushed_operation_count"] >= 1
 
 
-def test_gateway_returns_503_when_foreground_hard_limit_exceeded(tmp_path: Path) -> None:
+def test_gateway_returns_503_when_foreground_hard_limit_exceeded(
+    tmp_path: Path, monkeypatch
+) -> None:
     with backend_server() as backend_url:
+        telemetry_path = tmp_path / "foreground.jsonl"
+        monkeypatch.setenv("ORCHID_FOREGROUND_TELEMETRY_PATH", str(telemetry_path))
         config = RuntimeConfig(
             db_path=str(tmp_path / "memory.db"),
             backend_url=backend_url,
@@ -195,6 +199,15 @@ def test_gateway_returns_503_when_foreground_hard_limit_exceeded(tmp_path: Path)
                     assert body["error"]["limit_tokens"] == 16
                     assert body["error"]["estimated_tokens"] > 16
                     assert body["error"]["job_id"]
+                    rows = [
+                        json.loads(line)
+                        for line in telemetry_path.read_text(encoding="utf-8").splitlines()
+                        if line.strip()
+                    ]
+                    assert len(rows) == 1
+                    assert rows[0]["gateway_outcome"] == "context_capacity_exceeded"
+                    assert rows[0]["compaction_wait_ms"] == 0.0
+                    assert rows[0]["memory_maintenance_awaited"] is False
 
         asyncio.run(run())
 
@@ -269,3 +282,113 @@ def test_foreground_request_does_not_await_running_compaction(tmp_path: Path) ->
                     engine.release.set()
 
         asyncio.run(run())
+
+
+def _capacity_snapshot(estimated_tokens: int, *, hard_limit_exceeded: bool = False):
+    from memory_gateway.context import ContextSnapshot
+
+    return ContextSnapshot(
+        active_capsule_id=None,
+        raw_tail_event_ids=(),
+        capsule_tokens=0,
+        raw_tail_tokens=0,
+        request_tokens=estimated_tokens,
+        cold_memory_tokens=0,
+        estimated_tokens=estimated_tokens,
+        messages=[],
+        hard_limit_exceeded=hard_limit_exceeded,
+    )
+
+
+def test_capacity_check_uses_the_declared_hard_ceiling() -> None:
+    from types import SimpleNamespace
+
+    from memory_gateway.gateway import foreground_needs_capacity_wait
+
+    runtime = SimpleNamespace(
+        foreground_hard_limit_tokens=48_000,
+        compaction_reserved_output_tokens=8_192,
+    )
+    assert foreground_needs_capacity_wait(_capacity_snapshot(40_000), runtime) is False
+    assert (
+        foreground_needs_capacity_wait(
+            _capacity_snapshot(40_000, hard_limit_exceeded=True), runtime
+        )
+        is True
+    )
+
+
+def test_capacity_check_does_not_apply_legacy_estimator_scaling() -> None:
+    from types import SimpleNamespace
+
+    from memory_gateway.gateway import foreground_needs_capacity_wait
+
+    runtime = SimpleNamespace(
+        foreground_hard_limit_tokens=128_000,
+        compaction_reserved_output_tokens=8_192,
+    )
+    assert foreground_needs_capacity_wait(_capacity_snapshot(114_716), runtime) is False
+    assert (
+        foreground_needs_capacity_wait(
+            _capacity_snapshot(114_716, hard_limit_exceeded=True), runtime
+        )
+        is True
+    )
+
+
+def test_foreground_capacity_wait_budget_is_zero() -> None:
+    from types import SimpleNamespace
+
+    from memory_gateway.core_goal import MAX_COMPACTION_WAIT_MS as MAXIMUM_FOREGROUND_WAIT_MS
+    from memory_gateway.gateway import foreground_capacity_wait_budget_seconds
+
+    sealed = SimpleNamespace(model_timeout_seconds=180, foreground_hard_limit_tokens=128_000)
+    keep = SimpleNamespace(model_timeout_seconds=180, foreground_hard_limit_tokens=48_000)
+    assert MAXIMUM_FOREGROUND_WAIT_MS == 0
+    assert foreground_capacity_wait_budget_seconds(sealed) == 0
+    assert foreground_capacity_wait_budget_seconds(keep) == 0
+
+
+def test_capacity_path_enqueues_without_waiting(tmp_path: Path) -> None:
+    from types import SimpleNamespace
+
+    from memory_gateway.db import SQLiteStore
+    from memory_gateway.gateway import _wait_out_hard_limit
+
+    store = SQLiteStore(tmp_path / "memory.db")
+    store.create_project("project")
+    store.create_thread("thread", "project")
+    job_id = store.create_compaction_job(
+        thread_id="thread",
+        base_capsule_id=None,
+        snapshot_start_event_id="evt_a",
+        snapshot_end_event_id="evt_a",
+    )
+
+    class Scheduler:
+        def enqueue_urgent(self, thread_id: str) -> str:
+            assert thread_id == "thread"
+            return job_id
+
+    runtime = SimpleNamespace(
+        model_timeout_seconds=180,
+        foreground_hard_limit_tokens=48_000,
+        worker_poll_seconds=0.05,
+    )
+
+    async def run() -> None:
+        context, returned_job_id = await _wait_out_hard_limit(
+            store=store,
+            assembler=object(),
+            scheduler=Scheduler(),
+            runtime=runtime,
+            thread_id="thread",
+            inbound=[{"role": "user", "content": "x"}],
+            project_id="project",
+            context=_capacity_snapshot(70_030, hard_limit_exceeded=True),
+        )
+        assert returned_job_id == job_id
+        assert context.compaction_wait_ms == 0.0
+        assert context.memory_maintenance_awaited is False
+
+    asyncio.run(run())

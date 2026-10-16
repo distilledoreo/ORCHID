@@ -332,6 +332,13 @@ class LosslessCompactionEngine:
         if self._ownership_checker is not None:
             self._ownership_checker()
 
+    def remember_validated_result(self) -> None:
+        """Allow the worker to cache a result after global validation."""
+
+        remember = getattr(self.consolidator, "remember_validated_result", None)
+        if callable(remember):
+            remember()
+
     async def compact(
         self,
         *,

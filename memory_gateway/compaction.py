@@ -56,6 +56,15 @@ class SourceSpan:
 
 SourceItem = Event | SourceSpan
 DEFAULT_COMPACTION_SOURCE_WINDOW_TOKENS = 8_000
+SELECTOR_CHUNK_TARGET_TOKENS = 1_200
+# T113449Z generation 6 packed a 26,999-token provider window into 30 serial
+# selector calls. Cap each generation so the watermark moves after a few
+# frozen-size chunks instead of waiting for the whole backlog.
+MAX_SELECTOR_CHUNKS_PER_GENERATION = 4
+_MODEL_IDENTITY_MARKERS = (
+    "language model developed",
+    "a language model developed by",
+)
 
 
 def source_item_payload(item: SourceItem) -> dict[str, Any]:
@@ -91,6 +100,50 @@ def source_item_payload(item: SourceItem) -> dict[str, Any]:
 
 def source_item_parent_event_id(item: SourceItem) -> str:
     return item.id if isinstance(item, Event) else item.parent_event_id
+
+
+def chunk_source_items(
+    events: list[SourceItem],
+    target_tokens: int = SELECTOR_CHUNK_TARGET_TOKENS,
+) -> list[list[SourceItem]]:
+    """Pack source items into frozen-size selector calls without reordering."""
+
+    if target_tokens <= 0:
+        raise ValueError("target_tokens must be positive")
+    chunks: list[list[SourceItem]] = []
+    current: list[SourceItem] = []
+    current_tokens = 0
+    for event in events:
+        event_tokens = estimate_tokens(
+            json.dumps(source_item_payload(event), ensure_ascii=False)
+        )
+        if current and current_tokens + event_tokens > target_tokens:
+            chunks.append(current)
+            current = []
+            current_tokens = 0
+        current.append(event)
+        current_tokens += event_tokens
+    if current:
+        chunks.append(current)
+    return chunks
+
+
+def selector_chunk_count_for_events(
+    event_rows: list[dict[str, Any]],
+    *,
+    chunk_target_tokens: int = SELECTOR_CHUNK_TARGET_TOKENS,
+) -> int:
+    """How many serial selector calls the frozen chunker would issue."""
+
+    if not event_rows:
+        return 0
+    from .source_projection import project_compaction_events
+
+    items = expand_source_items(
+        project_compaction_events([Event.from_row(row) for row in event_rows]),
+        selector_budget_tokens=chunk_target_tokens,
+    )
+    return len(chunk_source_items(list(items), chunk_target_tokens))
 
 
 def split_event_into_spans(
@@ -306,6 +359,7 @@ class CompactionResult:
     evidence_source_ids: tuple[str, ...] = ()
     retire_memories: tuple[RetireMemory, ...] = ()
     memory_items: tuple[dict[str, Any], ...] = ()
+    observer_state: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -371,6 +425,7 @@ def freeze_snapshot(
     expected_base_capsule_id: str | None = None,
     snapshot_end_event_id: str | None = None,
     source_window_tokens: int | None = None,
+    raw_events: bool = False,
 ) -> CompactionSnapshot:
     active_row = store.get_active_capsule(thread_id)
     active = Capsule.from_row(active_row)
@@ -413,9 +468,10 @@ def freeze_snapshot(
 
         for event in candidate_events:
             event_tokens = projected_source_tokens(event, projection_seen)
-            if (
-                bounded_events
-                and bounded_tokens + event_tokens > effective_source_window_tokens
+            if bounded_events and (
+                bounded_tokens + event_tokens > effective_source_window_tokens
+                or selector_chunk_count_for_events(bounded_events + [event])
+                > MAX_SELECTOR_CHUNKS_PER_GENERATION
             ):
                 break
             # Include one event even when its provenance envelope is larger
@@ -435,11 +491,8 @@ def freeze_snapshot(
     )
     from .source_projection import project_compaction_events
 
-    event_objects = tuple(
-        project_compaction_events(
-            [Event.from_row(event) for event in snapshot_events]
-        )
-    )
+    raw_objects = [Event.from_row(event) for event in snapshot_events]
+    event_objects = tuple(raw_objects if raw_events else project_compaction_events(raw_objects))
     source_event_hash = compute_source_event_hash(active, event_objects)
     input_hash = compute_input_hash(active, event_objects, end_id)
     return CompactionSnapshot(
@@ -493,6 +546,11 @@ def validate_compaction_result(
 ) -> tuple[str, dict[str, Any]]:
     if not result.content.strip():
         raise ValueError("candidate content is empty")
+    lowered = result.content.strip().casefold()
+    if any(marker in lowered for marker in _MODEL_IDENTITY_MARKERS):
+        raise ValueError("candidate content is a model-identity leak")
+    if result.observer_state is None and len(snapshot.events) >= 10 and len(result.content.strip()) < 80:
+        raise ValueError("candidate content does not preserve required snapshot state")
     expected_events = tuple(event["id"] for event in snapshot.events)
     if result.covered_event_ids != expected_events:
         raise ValueError("covered_event_ids do not exactly match the frozen snapshot")
@@ -527,6 +585,7 @@ def validate_compaction_result(
             "model_identity": result.model_identity,
             "prompt_version": result.prompt_version,
             "generation_settings": result.generation_settings,
+            **({"observer_state": result.observer_state} if result.observer_state is not None else {}),
         }
     )
     metadata = {
@@ -538,6 +597,8 @@ def validate_compaction_result(
         "evidence_source_ids": result.evidence_source_ids,
         "retire_memory_count": len(getattr(result, "retire_memories", ())),
     }
+    if result.observer_state is not None:
+        metadata["observer_state"] = result.observer_state
     return capsule_hash, metadata
 
 
@@ -680,6 +741,7 @@ class CompactionWorker:
                     job["thread_id"],
                     expected_base_capsule_id=job["base_capsule_id"],
                     snapshot_end_event_id=job["snapshot_end_event_id"],
+                    raw_events=bool(getattr(self.engine, "uses_raw_events", False)),
                 )
             except RuntimeError as error:
                 if not self.store.finish_job(
@@ -695,9 +757,8 @@ class CompactionWorker:
             base_capsule = Capsule.from_row(active)
             from .source_projection import project_compaction_events
 
-            events = project_compaction_events(
-                [Event.from_row(event) for event in snapshot.events]
-            )
+            raw = [Event.from_row(event) for event in snapshot.events]
+            events = raw if getattr(self.engine, "uses_raw_events", False) else project_compaction_events(raw)
             self._assert_ownership(job)
             result = await self._run_owned_compaction(
                 job,
@@ -710,7 +771,7 @@ class CompactionWorker:
             promotion_content = result.content
             admission_metadata: dict[str, Any] = {}
             thread_memory_format = self.store.get_thread_memory_format(snapshot.thread_id)
-            if thread_memory_format in {"v2", "v2_shadow"}:
+            if thread_memory_format in {"v2", "v2_shadow"} and result.observer_state is None:
                 from .capsule_admission import admit_capsule_v2
 
                 base_metadata: dict[str, Any] | None = None
@@ -771,6 +832,11 @@ class CompactionWorker:
                     memory_items=result.memory_items,
                 )
             capsule_hash, model_metadata = validate_compaction_result(snapshot, result)
+            remember_validated_result = getattr(
+                self.engine, "remember_validated_result", None
+            )
+            if callable(remember_validated_result):
+                remember_validated_result()
             if admission_metadata:
                 model_metadata = {**model_metadata, **admission_metadata}
             compacted_source_tokens = sum(estimate_tokens(event.content) for event in events)
@@ -834,7 +900,7 @@ class CompactionWorker:
                 ):
                     return "LOST"
                 return "DEFERRED"
-            if self.store.promote_capsule_cas(
+            if self.store.promote_capsule_cas_and_finish_job(
                 snapshot.thread_id,
                 candidate_id,
                 job_id=job["id"],
@@ -855,13 +921,6 @@ class CompactionWorker:
                     )
                 except Exception:
                     pass
-                if not self.store.finish_job(
-                    job["id"],
-                    "PROMOTED",
-                    worker_id=self.worker_id,
-                    lease_token=job["lease_token"],
-                ):
-                    return "LOST"
                 return "PROMOTED"
             if not self.store.finish_job(
                 job["id"],

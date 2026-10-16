@@ -12,6 +12,7 @@ from .compaction import (
     RetireMemory,
     SourceItem,
     _hash,
+    chunk_source_items,
     compute_source_event_hash,
     expand_source_items,
     source_item_payload,
@@ -520,24 +521,7 @@ def _chunk_events(
     events: list[SourceItem],
     target_tokens: int = 1_200,
 ) -> list[list[SourceItem]]:
-    if target_tokens <= 0:
-        raise ValueError("target_tokens must be positive")
-    chunks: list[list[SourceItem]] = []
-    current: list[SourceItem] = []
-    current_tokens = 0
-    for event in events:
-        event_tokens = estimate_tokens(
-            json.dumps(_event_payload(event), ensure_ascii=False)
-        )
-        if current and current_tokens + event_tokens > target_tokens:
-            chunks.append(current)
-            current = []
-            current_tokens = 0
-        current.append(event)
-        current_tokens += event_tokens
-    if current:
-        chunks.append(current)
-    return chunks
+    return chunk_source_items(events, target_tokens)
 
 
 @dataclass
@@ -822,6 +806,7 @@ class OpenAICompatConsolidatorEngine:
     client: OpenAICompatStructuredClient
     require_memory_items: bool = False
     patch_telemetry: dict[str, Any] = field(default_factory=dict, init=False)
+    _pending_cache_result: dict[str, Any] | None = field(default=None, init=False, repr=False)
 
     def __post_init__(self) -> None:
         self.client.response_format = CONSOLIDATOR_RESPONSE_FORMAT
@@ -834,6 +819,7 @@ class OpenAICompatConsolidatorEngine:
         snapshot_end_event_id: str | None,
         packet: LosslessPacket,
     ) -> ConsolidationResult:
+        self._pending_cache_result = None
         allowed_ids = tuple(item.id for item in events)
         _set_call_context(
             self.client,
@@ -945,11 +931,7 @@ class OpenAICompatConsolidatorEngine:
                     patch_items=memory_items,
                 )
             self.patch_telemetry["patch_records_returned"] = len(memory_items)
-            remember = getattr(self.client, "remember_validated_result", None)
-            if remember is not None and not (
-                self.client.last_telemetry or {}
-            ).get("cache_hit"):
-                remember(response)
+            self._pending_cache_result = response
             return ConsolidationResult(
                 content=content,
                 evidence_event_ids=tuple(evidence_ids),
@@ -960,8 +942,20 @@ class OpenAICompatConsolidatorEngine:
                 memory_items=tuple(memory_items),
             )
         except Exception as error:
+            self._pending_cache_result = None
             _mark_call_failed(self.client, error)
             raise
+
+    def remember_validated_result(self) -> None:
+        """Cache only after the worker validates the complete candidate."""
+
+        response = self._pending_cache_result
+        self._pending_cache_result = None
+        if response is None or (self.client.last_telemetry or {}).get("cache_hit"):
+            return
+        remember = getattr(self.client, "remember_validated_result", None)
+        if callable(remember):
+            remember(response)
 
     @property
     def last_telemetry(self) -> dict[str, Any] | None:
@@ -1064,7 +1058,7 @@ def build_lossless_engine(
             ),
             system_prompt=consolidator_prompt,
             generation_settings=generation_settings,
-            timeout=config.model_timeout_seconds,
+            timeout=config.effective_consolidator_timeout_seconds(),
             api_key=config.consolidator_api_key,
             telemetry_recorder=telemetry_recorder,
         ),
