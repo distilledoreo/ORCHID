@@ -438,6 +438,7 @@ class SQLiteStore:
     """Small SQLite repository with explicit transaction boundaries."""
 
     def __init__(self, path: str | Path):
+        self.coding_policy = None
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.initialize()
@@ -475,6 +476,17 @@ class SQLiteStore:
             self._migrate_model_runs(connection)
             self._migrate_cold_retrieval_runs(connection)
             self._migrate_stage_result_cache(connection)
+            from .coding import initialize_views
+            initialize_views(connection)
+            try:
+                from .raw_recall import initialize_index
+                initialize_index(connection)
+            except Exception:
+                # Derived indexing must not prevent raw storage from opening.
+                pass
+            connection.execute("""CREATE TABLE IF NOT EXISTS request_usage(
+                thread_id TEXT NOT NULL, request_id TEXT NOT NULL, usage_json TEXT NOT NULL,
+                PRIMARY KEY(thread_id, request_id))""")
 
     @staticmethod
     def _backfill_long_term_memory_index(connection: sqlite3.Connection) -> None:
@@ -893,6 +905,15 @@ class SQLiteStore:
                 )
             return int(result.rowcount)
 
+    def record_request_usage(self, thread_id: str, request_id: str, usage: dict) -> None:
+        # Persist only numeric usage counters, never arbitrary provider payloads.
+        allowed = {key: value for key, value in usage.items()
+                   if key in {"prompt_tokens", "completion_tokens", "total_tokens"}
+                   and isinstance(value, int) and not isinstance(value, bool) and value >= 0}
+        with self.transaction(immediate=True) as connection:
+            connection.execute("INSERT OR IGNORE INTO request_usage VALUES (?, ?, ?)",
+                               (thread_id, request_id, canonical_json(allowed)))
+
     def append_event(
         self,
         *,
@@ -949,6 +970,8 @@ class SQLiteStore:
                 """,
                 event,
             )
+            from .raw_recall import index_event_fail_open
+            index_event_fail_open(connection, event)
             connection.execute(
                 "UPDATE threads SET next_sequence = ? WHERE id = ?",
                 (sequence + 1, thread_id),
@@ -963,6 +986,7 @@ class SQLiteStore:
         messages: tuple[dict[str, Any], ...],
         request_id: str | None,
         source: str,
+        usage: dict | None = None,
     ) -> Any:
         """Append new chat occurrences while suppressing protocol replays.
 
@@ -1024,6 +1048,24 @@ class SQLiteStore:
                     known_hashes, incoming_hashes
                 )
                 reused_indices = _reused_incoming_indices(known_hashes, incoming_hashes)
+            event_ids: list[str | None] = [None] * len(messages)
+            # Match from the right so a truncated resend maps to the latest
+            # occurrence. Persisted request assembly uses these exact identities.
+            cursor = len(known_hashes) - 1
+            for index in sorted(reused_indices, reverse=True):
+                while cursor >= 0 and known_hashes[cursor] != incoming_hashes[index]:
+                    cursor -= 1
+                if cursor >= 0:
+                    event_ids[index] = known_ids[cursor]
+                    cursor -= 1
+            if response_replay:
+                response_rows = [row for row in rows if row["request_id"] == request_id
+                                 and _metadata_is_chat_response(row["metadata_json"])]
+                event_ids = [str(row["id"]) for row in response_rows][:len(messages)]
+            completion_tokens = (usage or {}).get("completion_tokens")
+            real_completion = (source == "response" and len(messages) == 1
+                               and isinstance(completion_tokens, int)
+                               and not isinstance(completion_tokens, bool) and completion_tokens >= 0)
             appended: list[dict[str, Any]] = []
             skipped_duplicate_count = 0
             sequence = int(thread["next_sequence"])
@@ -1051,11 +1093,12 @@ class SQLiteStore:
                             "message_index": index,
                             "message_hash": digest,
                             "request_id": request_id,
+                            "token_count_kind": "provider_completion" if real_completion else "estimate",
                         }
                     ),
                     "content_hash": content_hash(content),
                     "privacy_class": "normal",
-                    "token_count": estimate_tokens(content),
+                    "token_count": completion_tokens if real_completion else estimate_tokens(content),
                     "parent_event_id": parent_event_id,
                     "request_id": request_id,
                 }
@@ -1082,6 +1125,9 @@ class SQLiteStore:
                         """,
                         (event_id, thread_id),
                     )
+                from .raw_recall import index_event_fail_open
+                index_event_fail_open(connection, event)
+                event_ids[index] = event_id
                 appended.append(event)
                 parent_event_id = event_id
                 sequence += 1
@@ -1091,6 +1137,7 @@ class SQLiteStore:
             )
         return {
             "appended_events": tuple(appended),
+            "message_event_ids": tuple(event_ids),
             "reused_prefix_count": reused,
             "reused_prefix_start": reused_start,
             "known_message_count": len(known_hashes),
@@ -2027,6 +2074,8 @@ class SQLiteStore:
         )
         if result.rowcount != 1:
             raise RuntimeError("capsule promotion compare-and-swap failed")
+        from .coding import freeze_view
+        freeze_view(connection, thread_id, candidate_id, self.coding_policy)
         return True
 
     def promote_capsule_cas(

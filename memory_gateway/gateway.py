@@ -76,6 +76,20 @@ async def _wait_out_hard_limit(
     ), in_flight_compaction_job_id(store, thread_id) or job_id
 
 
+def estimate_request_overhead(payload: dict) -> int:
+    from .context import estimate_tokens
+    from .db import canonical_json
+    return sum(estimate_tokens(canonical_json(payload[key])) for key in
+               ("tools", "functions", "response_format", "tool_choice") if key in payload)
+
+
+def completion_reservation(payload: dict, runtime: RuntimeConfig) -> int:
+    value = payload.get("max_completion_tokens", payload.get("max_tokens", runtime.foreground_reserved_output_tokens))
+    if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+        raise ValueError("completion token limit must be positive")
+    return value
+
+
 def create_app(
     *,
     db_path: str | None = None,
@@ -84,7 +98,15 @@ def create_app(
     compaction_engine: CompactionEngine | None = None,
 ) -> FastAPI:
     runtime = config or RuntimeConfig.from_env(db_path=db_path, backend_url=backend_url)
+    from .activity import ActivityGate, ForegroundActivityMiddleware
+    from .observer import build_observer_engine
+    activity_gate = ActivityGate()
     store = SQLiteStore(runtime.db_path)
+    if runtime.coding_agent_mode:
+        store.coding_policy = {"keep_turns": runtime.coding_keep_turns, "offload_tokens": runtime.coding_offload_tokens}
+    from .raw_recall import RawRecall
+    raw_recall = RawRecall(store, embeddings_url=runtime.embeddings_url, embeddings_model=runtime.embeddings_model,
+                           embeddings_api_key=runtime.embeddings_api_key, timeout=runtime.embeddings_timeout_seconds)
     cold_memory_telemetry = (
         BufferedColdMemoryTelemetry(
             store,
@@ -108,6 +130,7 @@ def create_app(
     )
     assembler = ContextAssembler(
         store,
+        layout=runtime.prompt_layout,
         raw_tail_target_tokens=runtime.raw_tail_target_tokens,
         minimum_raw_tail_tokens=runtime.minimum_raw_tail_tokens,
         context_budget_tokens=runtime.foreground_target_tokens,
@@ -136,10 +159,14 @@ def create_app(
         publication_economics_enabled=runtime.publication_economics_enabled,
         publication_horizon_turns=runtime.publication_horizon_turns,
     )
+    configured_engine = (build_observer_engine(runtime, store, activity_gate)
+                         if runtime.memory_engine == "observer" or
+                         (runtime.memory_engine == "auto" and runtime.observer_url and runtime.observer_model)
+                         else build_lossless_engine(runtime, telemetry_recorder=store))
     engine = (
         compaction_engine
         if compaction_engine is not None
-        else build_lossless_engine(runtime, telemetry_recorder=store)
+        else configured_engine
     )
     from .capsule_admission import build_capsule_verifier
 
@@ -172,7 +199,8 @@ def create_app(
             cold_memory_telemetry.start()
         if worker is not None:
             worker_task = asyncio.create_task(
-                _worker_loop(worker, stop_event, runtime.worker_poll_seconds),
+                _worker_loop(worker, stop_event, runtime.worker_poll_seconds,
+                             activity_gate if runtime.background_idle_only else None),
                 name="orchid-compaction-worker",
             )
             app.state.worker_task = worker_task
@@ -192,6 +220,9 @@ def create_app(
 
     backend = runtime.backend_url
     app = FastAPI(title="Orchid Memory Gateway", version="0.1.0", lifespan=lifespan)
+    app.add_middleware(ForegroundActivityMiddleware, gate=activity_gate)
+    app.state.activity_gate = activity_gate
+    app.state.raw_recall = raw_recall
     app.state.store = store
     app.state.runtime = runtime
     app.state.backend_url = backend
@@ -227,6 +258,14 @@ def create_app(
                 status_code=400,
                 content={"error": {"message": "messages must be an array", "type": "invalid_request_error"}},
             )
+        try:
+            completion_reservation(payload, runtime)
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"type": "invalid_request_error", "message": str(error)}})
+        from .ingestion import normalize_message
+        if any(normalize_message(message) is None for message in payload["messages"]):
+            return JSONResponse(status_code=400, content={"error": {"type": "invalid_request_error",
+                                "message": "each message must have a supported role"}})
         project_id = request.headers.get("x-memory-project", "default")
         thread_id = request.headers.get("x-memory-thread", "default")
         request_id = request.headers.get("x-request-id", new_id("req"))
@@ -235,7 +274,7 @@ def create_app(
             thread_id,
             memory_format=runtime.memory_format,
         )
-        append_novel_messages(
+        ingestion = append_novel_messages(
             store,
             project_id=project_id,
             thread_id=thread_id,
@@ -247,6 +286,9 @@ def create_app(
             thread_id,
             payload["messages"],
             project_id=project_id,
+            request_event_ids=ingestion.message_event_ids,
+            overhead_tokens=estimate_request_overhead(payload),
+            reserved_output_tokens=completion_reservation(payload, runtime),
         )
         foreground_record = substitution_record(
             request_id=request_id,
@@ -343,29 +385,61 @@ def create_app(
                     messages=[response_message],
                     request_id=request_id,
                     source="response",
+                    usage=parsed.get("usage") if isinstance(parsed, dict) else None,
                 )
             else:
-                store.append_event(
-                    project_id=project_id,
-                    thread_id=thread_id,
-                    event_type="assistant_response",
-                    role="assistant",
-                    content=response_text,
-                    metadata={"status_code": response.status_code, "stream": False},
-                    request_id=request_id,
-                )
-        else:
-            store.append_event(
-                project_id=project_id,
-                thread_id=thread_id,
-                event_type="backend_error",
-                role="system",
-                content=response_text[:2000],
-                metadata={"status_code": response.status_code, "stream": False},
-                request_id=request_id,
-            )
+                return JSONResponse(status_code=502, content={"error": {
+                    "type": "provider_protocol_error", "message": "provider response has no valid assistant message"}})
+            if isinstance(parsed.get("usage"), dict):
+                store.record_request_usage(thread_id, request_id, parsed["usage"])
         _maybe_enqueue(thread_id, scheduler)
         return JSONResponse(status_code=response.status_code, content=_json_or_text(response))
+
+    def recall_scope(request):
+        project = request.headers.get("x-memory-project")
+        thread = request.headers.get("x-memory-thread")
+        if not project or not thread:
+            raise ValueError("recall requires explicit project and thread headers")
+        return project, thread
+
+    @app.post("/v1/memory/recall")
+    async def recall_events(request: Request):
+        try:
+            project, thread = recall_scope(request)
+            body = await request.json()
+            if not isinstance(body, dict):
+                raise ValueError("recall body must be an object")
+            return await raw_recall.recall(project, thread, body.get("query"), body.get("k", 5))
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"message": str(error)}})
+        except Exception:
+            return JSONResponse(status_code=503, content={"error": {"type": "recall_unavailable"}}, headers={"Retry-After": "1"})
+
+    @app.get("/v1/memory/events/{event_id}")
+    async def read_event(event_id: str, request: Request, start: int = 0, end: int | None = None):
+        try:
+            project, thread = recall_scope(request)
+            result = raw_recall.read(project, thread, event_id, start, end)
+            if result is None:
+                return JSONResponse(status_code=404, content={"error": {"type": "event_not_found"}})
+            return result
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"message": str(error)}})
+        except Exception:
+            return JSONResponse(status_code=503, content={"error": {"type": "recall_unavailable"}})
+
+    @app.post("/v1/memory/index-embeddings")
+    async def index_embeddings(request: Request):
+        try:
+            project, thread = recall_scope(request)
+            body = await request.json()
+            if not isinstance(body, dict):
+                raise ValueError("index body must be an object")
+            return await raw_recall.index_embeddings(project, thread, body.get("batch_size", 32))
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"message": str(error)}})
+        except Exception:
+            return JSONResponse(status_code=503, content={"error": {"type": "index_unavailable"}})
 
     @app.get("/debug/thread/{thread_id}")
     async def debug_thread(thread_id: str) -> dict[str, Any]:
@@ -418,8 +492,11 @@ async def _worker_loop(
     worker: CompactionWorker,
     stop_event: asyncio.Event,
     poll_seconds: float,
+    activity_gate=None,
 ) -> None:
     while not stop_event.is_set():
+        if activity_gate is not None:
+            await activity_gate.idle.wait()
         try:
             result = await worker.run_once()
         except asyncio.CancelledError:
@@ -570,25 +647,15 @@ async def _stream_response(
                     )
                 stream_end_at = _stream_now()
         response_message = parse_stream_message(chunks)
-        if response_message is not None:
-            append_novel_messages(
-                store,
-                project_id=project_id,
-                thread_id=thread_id,
-                messages=[response_message],
-                request_id=request_id,
-                source="response",
-            )
-        else:
-            store.append_event(
-                project_id=project_id,
-                thread_id=thread_id,
-                event_type="assistant_response",
-                role="assistant",
-                content=b"".join(chunks).decode("utf-8", errors="replace"),
-                metadata={"stream": True},
-                request_id=request_id,
-            )
+        if response_message is None:
+            raise ProviderStreamError("invalid_assistant_message", "provider stream has no valid assistant message")
+        append_novel_messages(
+            store, project_id=project_id, thread_id=thread_id,
+            messages=[response_message], request_id=request_id, source="response",
+            usage=(last_usage_payload or {}).get("usage"),
+        )
+        if isinstance((last_usage_payload or {}).get("usage"), dict):
+            store.record_request_usage(thread_id, request_id, last_usage_payload["usage"])
         _maybe_enqueue(thread_id, scheduler)
         status = "SUCCEEDED"
         store.update_gateway_stream_run(

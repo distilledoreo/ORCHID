@@ -359,6 +359,7 @@ class CompactionResult:
     evidence_source_ids: tuple[str, ...] = ()
     retire_memories: tuple[RetireMemory, ...] = ()
     memory_items: tuple[dict[str, Any], ...] = ()
+    observer_state: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -424,6 +425,7 @@ def freeze_snapshot(
     expected_base_capsule_id: str | None = None,
     snapshot_end_event_id: str | None = None,
     source_window_tokens: int | None = None,
+    raw_events: bool = False,
 ) -> CompactionSnapshot:
     active_row = store.get_active_capsule(thread_id)
     active = Capsule.from_row(active_row)
@@ -489,11 +491,8 @@ def freeze_snapshot(
     )
     from .source_projection import project_compaction_events
 
-    event_objects = tuple(
-        project_compaction_events(
-            [Event.from_row(event) for event in snapshot_events]
-        )
-    )
+    raw_objects = [Event.from_row(event) for event in snapshot_events]
+    event_objects = tuple(raw_objects if raw_events else project_compaction_events(raw_objects))
     source_event_hash = compute_source_event_hash(active, event_objects)
     input_hash = compute_input_hash(active, event_objects, end_id)
     return CompactionSnapshot(
@@ -550,7 +549,7 @@ def validate_compaction_result(
     lowered = result.content.strip().casefold()
     if any(marker in lowered for marker in _MODEL_IDENTITY_MARKERS):
         raise ValueError("candidate content is a model-identity leak")
-    if len(snapshot.events) >= 10 and len(result.content.strip()) < 80:
+    if result.observer_state is None and len(snapshot.events) >= 10 and len(result.content.strip()) < 80:
         raise ValueError("candidate content does not preserve required snapshot state")
     expected_events = tuple(event["id"] for event in snapshot.events)
     if result.covered_event_ids != expected_events:
@@ -586,6 +585,7 @@ def validate_compaction_result(
             "model_identity": result.model_identity,
             "prompt_version": result.prompt_version,
             "generation_settings": result.generation_settings,
+            **({"observer_state": result.observer_state} if result.observer_state is not None else {}),
         }
     )
     metadata = {
@@ -597,6 +597,8 @@ def validate_compaction_result(
         "evidence_source_ids": result.evidence_source_ids,
         "retire_memory_count": len(getattr(result, "retire_memories", ())),
     }
+    if result.observer_state is not None:
+        metadata["observer_state"] = result.observer_state
     return capsule_hash, metadata
 
 
@@ -739,6 +741,7 @@ class CompactionWorker:
                     job["thread_id"],
                     expected_base_capsule_id=job["base_capsule_id"],
                     snapshot_end_event_id=job["snapshot_end_event_id"],
+                    raw_events=bool(getattr(self.engine, "uses_raw_events", False)),
                 )
             except RuntimeError as error:
                 if not self.store.finish_job(
@@ -754,9 +757,8 @@ class CompactionWorker:
             base_capsule = Capsule.from_row(active)
             from .source_projection import project_compaction_events
 
-            events = project_compaction_events(
-                [Event.from_row(event) for event in snapshot.events]
-            )
+            raw = [Event.from_row(event) for event in snapshot.events]
+            events = raw if getattr(self.engine, "uses_raw_events", False) else project_compaction_events(raw)
             self._assert_ownership(job)
             result = await self._run_owned_compaction(
                 job,
@@ -769,7 +771,7 @@ class CompactionWorker:
             promotion_content = result.content
             admission_metadata: dict[str, Any] = {}
             thread_memory_format = self.store.get_thread_memory_format(snapshot.thread_id)
-            if thread_memory_format in {"v2", "v2_shadow"}:
+            if thread_memory_format in {"v2", "v2_shadow"} and result.observer_state is None:
                 from .capsule_admission import admit_capsule_v2
 
                 base_metadata: dict[str, Any] | None = None
