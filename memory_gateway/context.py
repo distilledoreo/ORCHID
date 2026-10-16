@@ -169,7 +169,11 @@ class ContextAssembler:
         cold_memory_token_budget: int = 512,
         cold_memory_max_injected: int = 3,
         cold_memory_telemetry: ColdMemoryTelemetrySink | None = None,
+        layout: str = "legacy",
     ):
+        if layout not in {"stable", "legacy"}:
+            raise ValueError("layout must be stable or legacy")
+        self.layout = layout
         self.store = store
         self.raw_tail_target_tokens = raw_tail_target_tokens
         self.minimum_raw_tail_tokens = minimum_raw_tail_tokens
@@ -243,7 +247,15 @@ class ContextAssembler:
         request_messages: list[dict[str, Any]],
         *,
         project_id: str | None = None,
+        request_event_ids: tuple[str | None, ...] | None = None,
+        overhead_tokens: int = 0,
+        reserved_output_tokens: int = 0,
     ) -> ContextSnapshot:
+        if self.layout == "stable":
+            from .stable_context import assemble_stable
+            return assemble_stable(self, thread_id, request_messages, project_id=project_id,
+                                   request_event_ids=request_event_ids, overhead_tokens=overhead_tokens,
+                                   reserved_output_tokens=reserved_output_tokens)
         assembly_started = time.perf_counter()
         active = self.store.get_active_capsule(thread_id)
         covered_sequence = self._covered_sequence(active)

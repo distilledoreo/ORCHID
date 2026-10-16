@@ -18,6 +18,15 @@ A job records `base_capsule_id` and `snapshot_end_event_id` when queued. A worke
 
 ## Capsule lineage
 
+Observer capsules retain a versioned item ledger with claims, kinds, current or
+superseded status, valid-from sequences, source event IDs, and exact quote ranges.
+New quotes must match `message-text-v1` at the cited ranges. Observer input hashes
+use raw immutable events, and capsule hashes include the complete observer state.
+Normal deltas append rendered items; only budget-triggered reflection may rebuild
+the hot view, with exhaustive current-item accounting. Neither supersession nor
+reflection deletes raw events or durable item history. Legacy text is preserved
+until an explicit evidence-backed migration; failed migration cannot erase it.
+
 Capsules are immutable artifacts. A candidate records its base capsule, source range, input/output hashes, capsule hash, and model metadata. A failed candidate cannot become active.
 
 ## Compare-and-swap promotion
@@ -39,6 +48,32 @@ Workers claim jobs with a lease. Expired `RUNNING` jobs can be reclaimed, and th
 
 The scheduler creates jobs before exhaustion. If compaction cannot safely produce a validated candidate, the active capsule and raw events remain unchanged. The HTTP layer must eventually expose a retryable capacity error rather than silently dropping context.
 
+The runtime defaults to the stable layout: client instructions, ACTIVE memory,
+then every uncovered message in event order. The legacy root task is retained
+once for instruction continuity; covered assistant/tool mates may be retained
+to keep a live tool loop valid. Stored occurrences and resent client copies are
+not both forwarded. Tail token targets do not truncate this layout. Serialized
+message overhead, tool schemas, and reserved completion capacity are counted
+before forwarding. Urgent work is queued without foreground maintenance wait;
+an over-capacity request returns a retryable 503 and does not call the provider.
+The instruction/memory prefix is byte-stable between promotions when client
+instructions are unchanged. Request-specific retrieval follows that prefix.
+`overlap_tokens` is an ignored compatibility argument, never coverage policy.
+The legacy layout remains explicitly selectable for historical experiments.
+
+Optional coding mode may substitute indexed handles and bounded outlines.
+Originals remain immutable/range-recoverable; unavailable indexing retains
+original content. Masking boundaries are frozen atomically at promotion, not
+slid every turn. File actions cite call/result events and never turn failed
+writes into successful edits.
+
 ## Cold-memory isolation
+
+Raw recall is a separate scoped index over normalized event views. It never
+creates conversational events or changes ACTIVE. Only normal-privacy events
+may be indexed, returned, or embedded, and project/thread ownership is checked
+at every read. Source-ID lookup and ranges obey the same rules as lexical
+search. Indexing failures cannot prevent raw append; embedding failures cannot
+remove lexical results. The MCP process binds its scope before accepting tools.
 
 `RETIRE` records and their `memory_evidence` are a sidecar to hot memory. They are persisted only after hot promotion, retrieval never mutates `ACTIVE` capsules, and retrieved text is never appended to `events`. Retrieval, indexing, scoring, logging, and injection failures are fail-open: the assembled context must be no worse than the validated hot-memory context.

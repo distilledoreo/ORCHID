@@ -438,6 +438,7 @@ class SQLiteStore:
     """Small SQLite repository with explicit transaction boundaries."""
 
     def __init__(self, path: str | Path):
+        self.coding_policy = None
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.initialize()
@@ -475,6 +476,14 @@ class SQLiteStore:
             self._migrate_model_runs(connection)
             self._migrate_cold_retrieval_runs(connection)
             self._migrate_stage_result_cache(connection)
+            from .coding import initialize_views
+            initialize_views(connection)
+            try:
+                from .raw_recall import initialize_index
+                initialize_index(connection)
+            except Exception:
+                # Derived indexing must not prevent raw storage from opening.
+                pass
             connection.execute("""CREATE TABLE IF NOT EXISTS request_usage(
                 thread_id TEXT NOT NULL, request_id TEXT NOT NULL, usage_json TEXT NOT NULL,
                 PRIMARY KEY(thread_id, request_id))""")
@@ -961,6 +970,8 @@ class SQLiteStore:
                 """,
                 event,
             )
+            from .raw_recall import index_event_fail_open
+            index_event_fail_open(connection, event)
             connection.execute(
                 "UPDATE threads SET next_sequence = ? WHERE id = ?",
                 (sequence + 1, thread_id),
@@ -1114,6 +1125,8 @@ class SQLiteStore:
                         """,
                         (event_id, thread_id),
                     )
+                from .raw_recall import index_event_fail_open
+                index_event_fail_open(connection, event)
                 event_ids[index] = event_id
                 appended.append(event)
                 parent_event_id = event_id
@@ -2061,6 +2074,8 @@ class SQLiteStore:
         )
         if result.rowcount != 1:
             raise RuntimeError("capsule promotion compare-and-swap failed")
+        from .coding import freeze_view
+        freeze_view(connection, thread_id, candidate_id, self.coding_policy)
         return True
 
     def promote_capsule_cas(

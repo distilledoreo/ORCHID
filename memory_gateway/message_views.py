@@ -20,7 +20,10 @@ def event_messages(event: dict) -> list[dict]:
     except (TypeError, json.JSONDecodeError):
         payload = None
     if kind == "request" and isinstance(payload, dict):
-        return [message for raw in payload.get("messages", [])
+        messages = payload.get("messages")
+        if not isinstance(messages, list):
+            return []
+        return [message for raw in messages
                 if (message := normalize_message(raw)) is not None]
     if kind == "assistant_response":
         if isinstance(payload, dict) and "choices" in payload:

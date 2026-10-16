@@ -20,7 +20,13 @@ class IngestionResult:
 
 
 def message_content(message: dict[str, Any]) -> str:
-    """Return the stable event payload for one protocol message."""
+    """Store exact protocol values; identity normalization is separate."""
+    fields = {"role", "content", "name", "tool_calls", "tool_call_id", "function_call", "refusal", "audio"}
+    return canonical_json({key: value for key, value in message.items() if key in fields})
+
+
+def _identity_content(message: dict[str, Any]) -> str:
+    """Compare provider resends without changing the immutable source payload."""
 
     # Pi may attach provider-local reasoning/diagnostic fields when it resends
     # an assistant message. Those fields are not a new conversational event;
@@ -74,7 +80,7 @@ def _normalize_json_text(value: str) -> str:
 
 
 def message_hash(message: dict[str, Any]) -> str:
-    return content_hash(message_content(message))
+    return content_hash(_identity_content(message))
 
 
 def event_to_message(event: dict[str, Any]) -> dict[str, Any] | None:
@@ -155,7 +161,8 @@ def parse_assistant_message(response_payload: Any) -> dict[str, Any] | None:
     if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
         return None
     message = choices[0].get("message")
-    return normalize_message(message)
+    normalized = normalize_message(message)
+    return normalized if normalized and normalized["role"] == "assistant" else None
 
 
 def parse_stream_message(chunks: list[bytes]) -> dict[str, Any] | None:
@@ -221,4 +228,4 @@ def parse_stream_message(chunks: list[bytes]) -> dict[str, Any] | None:
         message["tool_calls"] = [tool_calls[index] for index in sorted(tool_calls)]
     if function_call:
         message["function_call"] = function_call
-    return normalize_message(message)
+    return normalize_message(message) if role == "assistant" else None

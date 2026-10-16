@@ -8,6 +8,12 @@ than asking a single prompt to solve it.
 
 ## Finite active context
 
+The upgraded runtime sends every message after ACTIVE's coverage as a real
+protocol message. A sliding tail is no longer a safety boundary: if the complete
+uncovered history does not fit, the gateway schedules maintenance and returns
+a retryable capacity error. The older capsule-plus-tail architecture below
+remains the selectable legacy comparison arm.
+
 At request time, an agent sees a bounded working set: a durable capsule plus a
 recent raw tail. The tail preserves immediate continuity; the capsule carries
 older distilled state. This is deliberately different from repeatedly
@@ -67,6 +73,12 @@ candidate must become stale rather than replacing newer state.
 
 ## Provenance belongs to software
 
+The observer upgrade replaces repeated prose rewrites with evidence-linked
+operations. Software carries omitted items forward and appends replacements
+with pointers to older facts. Exact source ranges make every new item auditable;
+budget-triggered reflection must explain its treatment of all current items.
+The three-stage pipeline described below remains a selectable evaluation arm.
+
 Models are useful interpreters, but they are not authoritative database
 writers. ORCHID therefore keeps capsule state, source coverage, hashes,
 lineage, leases, and promotion in software.
@@ -102,6 +114,16 @@ fixture and short PASS report as evidence; it does not present the project as
 production-ready.
 
 ## The design stance
+
+Optional coding views retain full sources behind offload/range handles and
+freeze tool masking at promotion. File state is tracked from actual tool
+call/result evidence. This saves prompt space without deleting the episode or
+presenting failed edits as completed work.
+
+Raw recall gives the foreground model a way back to details that an observer
+deliberately omitted from hot memory. Returned excerpts identify their original
+events and ranges. This separates compact working state from source inspection,
+without treating a retrieval result as a new episode or changing ACTIVE.
 
 ORCHID prefers explicit boundaries over clever prompts:
 
