@@ -1,0 +1,6 @@
+# Optional research environment only; do not add these to production dependencies.
+torch>=2.7
+transformers>=5.19
+tokenizers>=0.22
+numpy>=1.26
+# Install ORCHID itself with its existing test extras in this environment.
