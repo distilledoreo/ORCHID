@@ -77,6 +77,39 @@ Credentials are transport configuration only. They are never serialized into cap
 
 ## Development
 
+For the memory upgrade's credential-free gateway replay, see
+[Memory upgrade evaluation](docs/upgrade-evaluation.md). The revised phased
+implementation is described in [the upgrade plan](docs/orchid-memory-upgrade-plan.md).
+
+Ingestion stores normalized message occurrences and provider completion usage.
+Legacy request envelopes and SSE remain readable through immutable-row views;
+raw wire/error payloads are never forwarded to memory models.
+
+The runtime defaults to `ORCHID_PROMPT_LAYOUT=stable`: instructions, memory,
+and every uncovered message with its original role/tool fields. It queues urgent
+maintenance and returns retryable 503 errors when the complete request exceeds
+capacity. `ORCHID_FOREGROUND_RESERVED_OUTPUT_TOKENS` defaults to 2,048;
+`max_completion_tokens` or `max_tokens` overrides the reservation per request.
+Use `ORCHID_PROMPT_LAYOUT=legacy` only for historical comparisons. Direct
+`ContextAssembler` library callers retain the legacy constructor default for
+compatibility and can select `layout="stable"` explicitly. Tail/overlap settings
+do not truncate the stable layout.
+
+Configure `ORCHID_OBSERVER_URL` and `ORCHID_OBSERVER_MODEL` to enable the single
+observer (`ORCHID_MEMORY_ENGINE=auto`), or force `observer`/`legacy` explicitly.
+See [observer memory](docs/observer-memory.md) for item evidence, reflection,
+legacy migration, endpoint configuration, and idle-only admission.
+
+Raw-event recall is available at `POST /v1/memory/recall` and
+`GET /v1/memory/events/{event_id}` under explicit project/thread headers.
+See [raw recall](docs/raw-recall.md) for FTS5, optional embeddings, privacy,
+source ranges, and the scoped `recall(query, k)` stdio MCP adapter.
+
+Optional [coding mode](docs/coding-agent-mode.md) is off by default and adds
+recoverable offload/masking and a file ledger. The
+[delivery report](docs/memory-upgrade-delivery.md) lists the PR stack, results,
+Python 3.11/3.12 checks, configuration, and unverified live gates.
+
 Python 3.11 and 3.12 are supported:
 
 ```powershell

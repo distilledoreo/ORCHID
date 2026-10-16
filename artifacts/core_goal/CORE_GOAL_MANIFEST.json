@@ -53,7 +53,7 @@
     "enabled": true,
     "frozen_gate_verdict": "KEEP",
     "evidence_path": "artifacts/agent_benchmarks/freetoshop_direct_consolidation/semantic_eval/SUMMARY.json",
-    "evidence_sha256": "fd8eb2188025ffcc50aabe439ab854040d91a83d952e0798b65ea5ad26faa1af"
+    "evidence_sha256": "5eef8cbbf61785391eef1dc425aa49bc93cfb24a02f69184460c37e2e5b4e8ea"
   },
   "frozen_replay": {
     "path": "artifacts/agent_benchmarks/freetoshop_operability_hardening/frozen_freetoshop_replay/events.jsonl",
@@ -69,5 +69,5 @@
     "selector_device": "secondary_gpu",
     "selector_related_work_serial": true
   },
-  "manifest_sha256": "9600c508d2292bf21c0dedaa2c469992f234893a5edea16a0b86ce807964b784"
+  "manifest_sha256": "1b45630e2a78a946996de608d417b9eefc6144d8dffe2b8d03ea83fe8e33cba1"
 }

@@ -1,0 +1,3 @@
+# Sealed JSON fixtures are byte-hashed; checkout newline conversion is unsafe.
+*.json text eol=lf
+*.jsonl text eol=lf
