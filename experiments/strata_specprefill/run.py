@@ -4,6 +4,7 @@ import argparse
 import gc
 import hashlib
 import json
+import math
 import os
 import random
 import re
@@ -15,6 +16,20 @@ import urllib.request
 from pathlib import Path
 
 from .core import compatible_ids, token_hash, validate_input
+
+
+def keep_arm(ratio):
+    if not math.isfinite(ratio) or not 0 < ratio <= 1:
+        raise ValueError("Keep rates must be finite and in (0, 1]")
+    return f"keep{ratio * 100:g}"
+
+
+def arm_ratio(arm):
+    if not arm.startswith("keep"):
+        raise ValueError("Unknown selection arm")
+    ratio = float(arm[4:]) / 100
+    keep_arm(ratio)
+    return ratio
 
 
 def post(url, body):
@@ -159,7 +174,7 @@ def run_arm(args, case, arm, epoch, tok, template, student=None):
     trace = None
     body = {"token_ids": ids, "max_tokens": 24, "sampling": {"temperature": 0}}
     if arm != "full":
-        trace = student.trace(ids, 1.0 if arm == "keep100" else 0.5)
+        trace = student.trace(ids, arm_ratio(arm))
         positions = trace["positions"]
         body.update(
             token_ids=[ids[p] for p in positions],
@@ -214,7 +229,13 @@ def main():
     parser.add_argument("--colocated-config", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--port", type=int, default=18586)
+    parser.add_argument("--keep-rates", type=float, nargs="+", default=[1.0, 0.5])
+    parser.add_argument("--cases-from", type=Path, help="Reuse exact cases from a frozen protocol")
     args = parser.parse_args()
+    selected_arms = [keep_arm(ratio) for ratio in args.keep_rates]
+    if "keep100" not in selected_arms or len(set(selected_arms)) != len(selected_arms):
+        raise ValueError("Include the 100% control and use distinct keep rates")
+    arms = ["full", *selected_arms]
     args.url = f"http://127.0.0.1:{args.port}"
     args.output.mkdir(parents=True, exist_ok=False)
     alone, colocated = [
@@ -233,16 +254,31 @@ def main():
         raise ValueError("Resource epochs may differ only in VRAM reserve and log paths")
     tok, template, vocab = load_frontend(args.strata_root, Path(alone["tokenizer"]))
     allowed = compatible_ids(vocab, json.loads((args.student / "tokenizer.json").read_text()))
-    frozen = cases(tok, template)
+    case_origin = None
+    if args.cases_from:
+        previous = json.loads(args.cases_from.read_text())
+        case_origin = previous.pop("sha256")
+        if hashlib.sha256(json.dumps(previous, sort_keys=True).encode()).hexdigest() != case_origin:
+            raise ValueError("Source frozen protocol has changed")
+        frozen = previous["cases"]
+    else:
+        frozen = cases(tok, template)
     for case in frozen:
         validate_input(case["input_ids"], allowed)
+        if (
+            prepare(case, tok, template) != case["input_ids"]
+            or token_hash(case["input_ids"]) != case["input_hash"]
+        ):
+            raise ValueError("Frozen case no longer matches the target template/tokenizer")
     plan = {
         "cases": frozen,
         "seed": 731,
         "chunk_size": 32,
         "pool_kernel": 13,
         "lookahead_query_rows_max": 8,
-        "ratios": [1.0, 0.5],
+        "ratios": args.keep_rates,
+        "arms": arms,
+        "case_origin_protocol_sha256": case_origin,
         "max_output_tokens": 24,
         "student": str(args.student),
         "main_configs": [alone, colocated],
@@ -287,16 +323,14 @@ def main():
 
     with Server(args, args.colocated_config, "colocated"):
         student = Student(args.student, allowed)
-        warmups = [
-            run_arm(args, frozen[0], arm, "warmup", tok, template, student)
-            for arm in ("full", "keep100", "keep50")
-        ]
+        warmups = [run_arm(args, frozen[0], arm, "warmup", tok, template, student) for arm in arms]
         (args.output / "colocated-warmups.json").write_text(json.dumps(warmups))
-        if warmups[0]["output_ids"] != warmups[1]["output_ids"]:
+        control = next(row for row in warmups if row["arm"] == "keep100")
+        if warmups[0]["output_ids"] != control["output_ids"]:
             raise RuntimeError(
                 "100% retention failed generation equivalence; stop before comparing sparse prompts"
             )
-        tasks = [(case, arm) for case in frozen for arm in ("full", "keep100", "keep50")]
+        tasks = [(case, arm) for case in frozen for arm in arms]
         random.Random(731).shuffle(tasks)
         for case, arm in tasks:
             collect(case, arm, "colocated", student)

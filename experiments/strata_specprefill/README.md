@@ -104,3 +104,27 @@ The ordinary offline suite tests tokenizer identity and request/clock invariants
 The scoring tests require PyTorch and otherwise skip; run them in the student
 environment before live inference. They verify pool-before-max order, query-row
 averaging, mean-based chunk ranking, ceil retention, and partial chunks.
+
+## Retention-rate follow-up
+
+The default remains 100% and 50%. To compare 10% and 30% on exactly the same
+frozen prompts, add these arguments to the run command, with a new output directory:
+
+```text
+--cases-from data/strata-specprefill-smoke/protocol.json --keep-rates 1 .5 .3 .1
+```
+
+The source protocol's hash and the current template/tokenizer must reproduce
+every original ID. Include the 100% equivalence control and distinct rates in
+`(0, 1]`. All rates use the same scoring and chunk policy; there is no special
+preservation of the query, answer span, or template suffix. Whole-chunk rounding
+means the actual retained-token percentage can differ from the requested rate.
+
+With four cases and four keep rates, the follow-up has 24 measured requests:
+four main-only full-prefill requests and 20 co-located requests covering full,
+100%, 50%, 30%, and 10%. Six additional warmups are excluded. Each timed selected
+request computes a fresh student trace. The report derives its expected arms,
+case count, and completion count from the frozen protocol and preserves support
+for the original 16-request run. Keep the original results and the follow-up in
+separate artifact directories; compare new rates primarily with their fresh
+controls, rather than treating different runs as simultaneous measurements.

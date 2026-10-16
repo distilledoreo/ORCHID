@@ -1,3 +1,5 @@
+import hashlib
+import json
 import math
 from types import SimpleNamespace
 
@@ -31,7 +33,8 @@ def test_input_identity_is_order_sensitive_and_validated():
     assert token_hash([1, 2]) != token_hash([2, 1])
 
 
-def test_runner_sends_original_ids_and_includes_preparation_in_ttft(monkeypatch):
+@pytest.mark.parametrize("arm,ratio", [("keep50", 0.5), ("keep30", 0.3), ("keep10", 0.1)])
+def test_runner_sends_original_ids_and_includes_preparation_in_ttft(monkeypatch, arm, ratio):
     from experiments.strata_specprefill import run
 
     times = iter([100.0, 101.0, 103.0])
@@ -63,19 +66,92 @@ def test_runner_sends_original_ids_and_includes_preparation_in_ttft(monkeypatch)
     result = run.run_arm(
         SimpleNamespace(url="unused"),
         case,
-        "keep50",
+        arm,
         "test",
         SimpleNamespace(decode=lambda _: "KELP47"),
         None,
         SimpleNamespace(trace=trace),
     )
-    assert calls == [([10, 20, 30], 0.5)]
+    assert calls == [([10, 20, 30], ratio)]
     assert received[0]["token_ids"] == [10, 30]
     assert received[0]["position_ids"] == [0, 2]
     assert received[0]["original_prompt_length"] == 3
     assert result["pipeline_ttft_s"] == 2.0
     assert result["pre_request_s"] == 1.0
     assert result["correct"]
+
+
+@pytest.mark.parametrize("ratio", [0.1, 0.3, 0.5, 1.0])
+def test_keep_rate_arm_roundtrip(ratio):
+    from experiments.strata_specprefill.run import arm_ratio, keep_arm
+
+    assert arm_ratio(keep_arm(ratio)) == ratio
+
+
+@pytest.mark.parametrize("ratio", [0, -0.1, 1.1, float("nan"), float("inf")])
+def test_invalid_keep_rates_are_rejected(ratio):
+    from experiments.strata_specprefill.run import keep_arm
+
+    with pytest.raises(ValueError):
+        keep_arm(ratio)
+
+
+@pytest.mark.parametrize("extended", [False, True])
+def test_report_counts_frozen_arms_and_refuses_incomplete_runs(tmp_path, extended):
+    from experiments.strata_specprefill.report import summarize
+
+    arms = ["full", "keep100", "keep50"] + (["keep30", "keep10"] if extended else [])
+    protocol = {"cases": [{"id": str(i), "input_ids": [10, 20]} for i in range(4)]}
+    if extended:
+        protocol["arms"] = arms
+    digest = hashlib.sha256(json.dumps(protocol, sort_keys=True).encode()).hexdigest()
+    protocol["sha256"] = digest
+    (tmp_path / "protocol.json").write_text(json.dumps(protocol))
+    rows = []
+    for case in protocol["cases"]:
+        for epoch, arm in [("standalone", "full"), *[("colocated", a) for a in arms]]:
+            rows.append(
+                {
+                    "case": case["id"],
+                    "epoch": epoch,
+                    "arm": arm,
+                    "correct": True,
+                    "pipeline_ttft_s": 1.0,
+                    "server_ttft_s": 0.8,
+                    "pre_request_s": 0.1,
+                    "total_s": 2,
+                    "retained_tokens": 2,
+                    "original_tokens": 2,
+                    "output_ids": [99],
+                    "trace": None
+                    if arm == "full"
+                    else {
+                        "student_selection_s": 0.1,
+                        "query_rows": 2,
+                        "attention_layer_ids": [3],
+                        "peak_student_allocator_mib": 1,
+                    },
+                }
+            )
+    requests = tmp_path / "requests.jsonl"
+    requests.write_text("\n".join(json.dumps(row) for row in rows))
+    (tmp_path / "COMPLETE.json").write_text(
+        json.dumps({"requests": len(rows), "protocol_sha256": digest})
+    )
+    summary = summarize(tmp_path)
+    assert summary["measured_requests"] == (24 if extended else 16)
+    assert len(summary["variants"]) == len(arms) + 1
+    assert summary["warmup_requests_excluded"] == len(arms) + 1
+    if extended:
+        assert set(summary["per_case"][0]["selections"]) == {
+            "keep100",
+            "keep50",
+            "keep30",
+            "keep10",
+        }
+    requests.write_text("\n".join(json.dumps(row) for row in rows[:-1]))
+    with pytest.raises(ValueError, match="Incomplete"):
+        summarize(tmp_path)
 
 
 @pytest.fixture

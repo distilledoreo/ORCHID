@@ -15,34 +15,32 @@ def summarize(root):
         raise ValueError("Frozen protocol has changed")
     protocol["sha256"] = frozen_hash
     rows = [json.loads(line) for line in (root / "requests.jsonl").read_text().splitlines()]
+    arms = protocol.get("arms", ["full", "keep100", "keep50"])
+    case_ids = {c["id"] for c in protocol["cases"]}
+    request_count = len(case_ids) * (1 + len(arms))
     if (
         complete["protocol_sha256"] != protocol["sha256"]
-        or complete["requests"] != 16
-        or len(rows) != 16
+        or complete["requests"] != request_count
+        or len(rows) != request_count
     ):
         raise ValueError("Incomplete or mismatched smoke protocol")
-    case_ids = {c["id"] for c in protocol["cases"]}
     expected = {(c, "standalone", "full") for c in case_ids} | {
-        (c, "colocated", arm) for c in case_ids for arm in ("full", "keep100", "keep50")
+        (c, "colocated", arm) for c in case_ids for arm in arms
     }
     if {(r["case"], r["epoch"], r["arm"]) for r in rows} != expected:
         raise ValueError("Missing or duplicate case/epoch/arm")
     summary = {
         "status": "completed_functional_smoke_not_benchmark",
         "protocol_sha256": protocol["sha256"],
-        "cases": 4,
-        "measured_requests": 16,
-        "warmup_requests_excluded": 4,
+        "cases": len(case_ids),
+        "measured_requests": request_count,
+        "warmup_requests_excluded": 1 + len(arms),
+        "case_origin_protocol_sha256": protocol.get("case_origin_protocol_sha256"),
         "variants": {},
         "per_case": [],
         "scope": "Same-model/same-hardware method experiment; no ORCHID retrieval/gating or paper reproduction.",
     }
-    for epoch, arm in (
-        ("standalone", "full"),
-        ("colocated", "full"),
-        ("colocated", "keep100"),
-        ("colocated", "keep50"),
-    ):
+    for epoch, arm in [("standalone", "full"), *[("colocated", arm) for arm in arms]]:
         selected = [r for r in rows if r["epoch"] == epoch and r["arm"] == arm]
         summary["variants"][epoch + "/" + arm] = {
             "correct": sum(r["correct"] for r in selected),
@@ -61,7 +59,8 @@ def summarize(root):
         by_arm = {r["epoch"] + "/" + r["arm"]: r for r in rows if r["case"] == case["id"]}
         if by_arm["colocated/full"]["output_ids"] != by_arm["colocated/keep100"]["output_ids"]:
             raise ValueError("Full-retention generation equivalence failed")
-        sparse = by_arm["colocated/keep50"]
+        primary = "keep50" if "keep50" in arms else next(arm for arm in arms if arm != "full")
+        sparse = by_arm["colocated/" + primary]
         summary["per_case"].append(
             {
                 "case": case["id"],
@@ -74,6 +73,15 @@ def summarize(root):
                 "attention_layers": sparse["trace"]["attention_layer_ids"],
                 "peak_student_allocator_mib": sparse["trace"]["peak_student_allocator_mib"],
                 "full_retention_matches": True,
+                "selections": {
+                    arm: {
+                        "retained_tokens": by_arm["colocated/" + arm]["retained_tokens"],
+                        "student_s": by_arm["colocated/" + arm]["trace"]["student_selection_s"],
+                        "query_rows": by_arm["colocated/" + arm]["trace"]["query_rows"],
+                    }
+                    for arm in arms
+                    if arm != "full"
+                },
             }
         )
     return summary
