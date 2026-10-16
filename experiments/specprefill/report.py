@@ -143,6 +143,8 @@ def generate(root):
                 and all(r.get("main") and not r.get("main_error") for r in requests))
     simpler = bool(e["answer_accuracy"] is not None and f["answer_accuracy"] is not None
                    and f["answer_accuracy"] >= e["answer_accuracy"] - 0.02
+                   and e["required_evidence_recall"] is not None and f["required_evidence_recall"] is not None
+                   and f["required_evidence_recall"] >= e["required_evidence_recall"] - 0.02
                    and f["mean_end_to_end_ttft_ms"] <= e["mean_end_to_end_ttft_ms"])
     finding = "Proceed" if complete and all(tests.values()) else "Revise"
     if complete and (not tests["positive_paired_net_ttft"] or simpler):
@@ -221,6 +223,7 @@ def generate(root):
     lines += ["", "## Decision targets", ""] + [f"- {name}: {'PASS' if passed else 'FAIL'}." for name, passed in tests.items()]
     lines += ["", "## Interpretation and limits", "",
               "Recommend the simpler lexical selector over attention under these measurements." if simpler else "Attention must justify its added full-context read and Q/K capture cost against the lexical control.", "",
+              "The descriptive lexical comparison allows at most two points lower exact-answer accuracy and supporting-span recall, and requires no higher mean end-to-end TTFT. It is not a statistical noninferiority trial.", "",
               "Evidence recall is a supporting-span metric, not an answer-quality substitute. Final correctness uses sealed exact-answer rubrics. Full fallback can raise recall while removing savings. Unsupported-answer rates in summary.json combine correctness with the required-evidence rubric; raw request records also retain their narrower evidence-coverage proxy.", "",
               "The untrained three-label classifier is evaluated separately. Its softmax scores are uncalibrated; held-out Brier/ECE are descriptive and did not select thresholds. The small held-out sample cannot establish a sub-1% population error bound, even if an empirical count is zero.", "",
               "Q/K extraction uses FP32 selected-query scoring and SDPA for normal model execution. The 0.8B hybrid contributes six full-attention layers; recurrent layers have no attention rows. Transformers uses reference GDN kernels. Attention and main inference share the P100; the legacy 4B uses the RX 580. This is not an RX-580 attention implementation or an engine-level position-restoration experiment.", "",
