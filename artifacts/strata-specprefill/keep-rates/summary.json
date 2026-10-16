@@ -1,0 +1,448 @@
+{
+  "status": "completed_functional_smoke_not_benchmark",
+  "protocol_sha256": "fa8ed9466abcc6d9dd246d8f822c109ddd79709faa36d8abdc1c39cb6637b372",
+  "cases": 4,
+  "measured_requests": 24,
+  "warmup_requests_excluded": 6,
+  "case_origin_protocol_sha256": "ef398d5b38ff22a3148f9a5e21656604a6243ba805e93d1ddbe28e5c145e226e",
+  "variants": {
+    "standalone/full": {
+      "correct": 4,
+      "cases": 4,
+      "mean_pipeline_ttft_s": 5.948565837228671,
+      "mean_server_ttft_s": 5.94615508998686,
+      "mean_pre_request_s": 0.0012809902400476858,
+      "mean_total_s": 6.24049342024955,
+      "retained_fraction": 1.0,
+      "mean_student_selection_s": 0
+    },
+    "colocated/full": {
+      "correct": 4,
+      "cases": 4,
+      "mean_pipeline_ttft_s": 5.7407101819699164,
+      "mean_server_ttft_s": 5.7389971369702835,
+      "mean_pre_request_s": 0.000596448007854633,
+      "mean_total_s": 6.007570807487355,
+      "retained_fraction": 1.0,
+      "mean_student_selection_s": 0
+    },
+    "colocated/keep100": {
+      "correct": 4,
+      "cases": 4,
+      "mean_pipeline_ttft_s": 6.146075577751617,
+      "mean_server_ttft_s": 5.7557601647567935,
+      "mean_pre_request_s": 0.3889653827500297,
+      "mean_total_s": 6.412801691243658,
+      "retained_fraction": 1.0,
+      "mean_student_selection_s": 0.3872871072671842
+    },
+    "colocated/keep50": {
+      "correct": 4,
+      "cases": 4,
+      "mean_pipeline_ttft_s": 4.515595400240272,
+      "mean_server_ttft_s": 4.1247538784955395,
+      "mean_pre_request_s": 0.38979533402016386,
+      "mean_total_s": 4.7501480554929,
+      "retained_fraction": 0.49606299212598426,
+      "mean_student_selection_s": 0.38808344675635453
+    },
+    "colocated/keep30": {
+      "correct": 4,
+      "cases": 4,
+      "mean_pipeline_ttft_s": 3.7328646744863363,
+      "mean_server_ttft_s": 3.344805502987583,
+      "mean_pre_request_s": 0.387131013252656,
+      "mean_total_s": 3.9934722975012846,
+      "retained_fraction": 0.30708661417322836,
+      "mean_student_selection_s": 0.3854704652330838
+    },
+    "colocated/keep10": {
+      "correct": 3,
+      "cases": 4,
+      "mean_pipeline_ttft_s": 2.679512199756573,
+      "mean_server_ttft_s": 2.288162940007169,
+      "mean_pre_request_s": 0.3905681580217788,
+      "mean_total_s": 2.943800542750978,
+      "retained_fraction": 0.10236220472440945,
+      "mean_student_selection_s": 0.38888869050424546
+    }
+  },
+  "per_case": [
+    {
+      "case": "tokens512-at20",
+      "original_tokens": 504,
+      "retained_tokens": 248,
+      "ttft_s": {
+        "standalone/full": 4.272992023965344,
+        "colocated/keep10": 2.287641404021997,
+        "colocated/keep100": 4.6056060930131935,
+        "colocated/full": 4.2876337329507805,
+        "colocated/keep30": 2.7735940409475006,
+        "colocated/keep50": 3.3368693799711764
+      },
+      "correct": {
+        "standalone/full": true,
+        "colocated/keep10": false,
+        "colocated/keep100": true,
+        "colocated/full": true,
+        "colocated/keep30": true,
+        "colocated/keep50": true
+      },
+      "student_s": 0.2924465539981611,
+      "query_rows": 7,
+      "attention_layers": [
+        3,
+        7,
+        11,
+        15,
+        19,
+        23
+      ],
+      "peak_student_allocator_mib": 1748.15380859375,
+      "full_retention_matches": true,
+      "selections": {
+        "keep100": {
+          "retained_tokens": 504,
+          "student_s": 0.2939928220002912,
+          "query_rows": 7
+        },
+        "keep50": {
+          "retained_tokens": 248,
+          "student_s": 0.2924465539981611,
+          "query_rows": 7
+        },
+        "keep30": {
+          "retained_tokens": 152,
+          "student_s": 0.2922387250000611,
+          "query_rows": 7
+        },
+        "keep10": {
+          "retained_tokens": 56,
+          "student_s": 0.29236026300350204,
+          "query_rows": 7
+        }
+      },
+      "answer_code_retained": {
+        "keep10": false,
+        "keep30": true,
+        "keep50": true
+      }
+    },
+    {
+      "case": "tokens512-at80",
+      "original_tokens": 504,
+      "retained_tokens": 248,
+      "ttft_s": {
+        "standalone/full": 4.270101691014133,
+        "colocated/full": 4.390499925008044,
+        "colocated/keep10": 2.259119339985773,
+        "colocated/keep100": 4.572691361012403,
+        "colocated/keep30": 2.7497443920001388,
+        "colocated/keep50": 3.325539489975199
+      },
+      "correct": {
+        "standalone/full": true,
+        "colocated/full": true,
+        "colocated/keep10": true,
+        "colocated/keep100": true,
+        "colocated/keep30": true,
+        "colocated/keep50": true
+      },
+      "student_s": 0.24299174098996446,
+      "query_rows": 5,
+      "attention_layers": [
+        3,
+        7,
+        11,
+        15,
+        19,
+        23
+      ],
+      "peak_student_allocator_mib": 1748.15380859375,
+      "full_retention_matches": true,
+      "selections": {
+        "keep100": {
+          "retained_tokens": 504,
+          "student_s": 0.24218601605389267,
+          "query_rows": 5
+        },
+        "keep50": {
+          "retained_tokens": 248,
+          "student_s": 0.24299174098996446,
+          "query_rows": 5
+        },
+        "keep30": {
+          "retained_tokens": 152,
+          "student_s": 0.24081640597432852,
+          "query_rows": 5
+        },
+        "keep10": {
+          "retained_tokens": 56,
+          "student_s": 0.25179009698331356,
+          "query_rows": 5
+        }
+      },
+      "answer_code_retained": {
+        "keep10": true,
+        "keep30": true,
+        "keep50": true
+      }
+    },
+    {
+      "case": "tokens1536-at20",
+      "original_tokens": 1528,
+      "retained_tokens": 760,
+      "ttft_s": {
+        "standalone/full": 8.033728241978679,
+        "colocated/keep10": 3.131776101014111,
+        "colocated/keep30": 4.743456843018066,
+        "colocated/keep100": 7.757554014970083,
+        "colocated/full": 7.107975442952011,
+        "colocated/keep50": 5.7541365480283275
+      },
+      "correct": {
+        "standalone/full": true,
+        "colocated/keep10": true,
+        "colocated/keep30": true,
+        "colocated/keep100": true,
+        "colocated/full": true,
+        "colocated/keep50": true
+      },
+      "student_s": 0.5210725090000778,
+      "query_rows": 6,
+      "attention_layers": [
+        3,
+        7,
+        11,
+        15,
+        19,
+        23
+      ],
+      "peak_student_allocator_mib": 1960.55224609375,
+      "full_retention_matches": true,
+      "selections": {
+        "keep100": {
+          "retained_tokens": 1528,
+          "student_s": 0.5178729179897346,
+          "query_rows": 6
+        },
+        "keep50": {
+          "retained_tokens": 760,
+          "student_s": 0.5210725090000778,
+          "query_rows": 6
+        },
+        "keep30": {
+          "retained_tokens": 472,
+          "student_s": 0.5163368780049495,
+          "query_rows": 6
+        },
+        "keep10": {
+          "retained_tokens": 152,
+          "student_s": 0.522149796015583,
+          "query_rows": 6
+        }
+      },
+      "answer_code_retained": {
+        "keep10": true,
+        "keep30": true,
+        "keep50": true
+      }
+    },
+    {
+      "case": "tokens1536-at80",
+      "original_tokens": 1528,
+      "retained_tokens": 760,
+      "ttft_s": {
+        "standalone/full": 7.217441391956527,
+        "colocated/full": 7.176731626968831,
+        "colocated/keep30": 4.66466342197964,
+        "colocated/keep100": 7.648450842010789,
+        "colocated/keep10": 3.0395119540044107,
+        "colocated/keep50": 5.645836182986386
+      },
+      "correct": {
+        "standalone/full": true,
+        "colocated/full": true,
+        "colocated/keep30": true,
+        "colocated/keep100": true,
+        "colocated/keep10": true,
+        "colocated/keep50": true
+      },
+      "student_s": 0.4958229830372147,
+      "query_rows": 5,
+      "attention_layers": [
+        3,
+        7,
+        11,
+        15,
+        19,
+        23
+      ],
+      "peak_student_allocator_mib": 1960.55224609375,
+      "full_retention_matches": true,
+      "selections": {
+        "keep100": {
+          "retained_tokens": 1528,
+          "student_s": 0.4950966730248183,
+          "query_rows": 5
+        },
+        "keep50": {
+          "retained_tokens": 760,
+          "student_s": 0.4958229830372147,
+          "query_rows": 5
+        },
+        "keep30": {
+          "retained_tokens": 472,
+          "student_s": 0.4924898519529961,
+          "query_rows": 5
+        },
+        "keep10": {
+          "retained_tokens": 152,
+          "student_s": 0.48925460601458326,
+          "query_rows": 5
+        }
+      },
+      "answer_code_retained": {
+        "keep30": true,
+        "keep10": true,
+        "keep50": true
+      }
+    }
+  ],
+  "scope": "Same-model/same-hardware method experiment; no ORCHID retrieval/gating or paper reproduction.",
+  "experiment_implementation_commit": "f66f2c6acac84a8309417130222f42b8da383eab",
+  "environment": {
+    "target": "existing Swift IQ3_S",
+    "student": "Qwen3.5-0.8B FP16",
+    "hardware": "Tesla P100 16GB, same GPU for both models",
+    "target_engine": "Strata 0.1.43 / CUDA 12.9",
+    "student_runtime": "PyTorch 2.7.1+cu126 / Transformers 5.19.0",
+    "context": 4096,
+    "target_kv": "int8",
+    "target_mtp": 4,
+    "chunk_size": 32,
+    "pool_kernel": 13,
+    "lookahead_query_rows_max": 8,
+    "shared_token_ids": 248070,
+    "controls": {
+      "route_tail_skip": 0,
+      "cpu_prefill_share": 0,
+      "pcie_fraction": 1,
+      "prompt_cache": 0
+    }
+  },
+  "resources": {
+    "standalone": {
+      "reserve_mib": 700,
+      "expert_cache_slots": 5014,
+      "expert_cache_gib": 9.54
+    },
+    "colocated": {
+      "reserve_mib": 4096,
+      "expert_cache_slots": 3253,
+      "expert_cache_gib": 6.23
+    }
+  },
+  "answer_code_retention_audit": [
+    {
+      "case": "tokens1536-at20",
+      "arm": "keep10",
+      "correct": true,
+      "answer_code_ids_retained": true
+    },
+    {
+      "case": "tokens1536-at20",
+      "arm": "keep30",
+      "correct": true,
+      "answer_code_ids_retained": true
+    },
+    {
+      "case": "tokens1536-at80",
+      "arm": "keep30",
+      "correct": true,
+      "answer_code_ids_retained": true
+    },
+    {
+      "case": "tokens1536-at80",
+      "arm": "keep10",
+      "correct": true,
+      "answer_code_ids_retained": true
+    },
+    {
+      "case": "tokens512-at20",
+      "arm": "keep10",
+      "correct": false,
+      "answer_code_ids_retained": false
+    },
+    {
+      "case": "tokens512-at80",
+      "arm": "keep10",
+      "correct": true,
+      "answer_code_ids_retained": true
+    },
+    {
+      "case": "tokens512-at80",
+      "arm": "keep30",
+      "correct": true,
+      "answer_code_ids_retained": true
+    },
+    {
+      "case": "tokens512-at80",
+      "arm": "keep50",
+      "correct": true,
+      "answer_code_ids_retained": true
+    },
+    {
+      "case": "tokens1536-at20",
+      "arm": "keep50",
+      "correct": true,
+      "answer_code_ids_retained": true
+    },
+    {
+      "case": "tokens512-at20",
+      "arm": "keep30",
+      "correct": true,
+      "answer_code_ids_retained": true
+    },
+    {
+      "case": "tokens1536-at80",
+      "arm": "keep50",
+      "correct": true,
+      "answer_code_ids_retained": true
+    },
+    {
+      "case": "tokens512-at20",
+      "arm": "keep50",
+      "correct": true,
+      "answer_code_ids_retained": true
+    }
+  ],
+  "failure_finding": "At nominal10%, the short prompt with evidence at20% omitted the correct answer-code IDs and generated a distractor code. Other measured cases answered correctly.",
+  "validation": {
+    "model_api_errors": 0,
+    "full_retention_matches_all_cases": true,
+    "exact_case_identity_matches_original_protocol": true,
+    "all_24_target_ID_position_audits": "passed",
+    "offline_suite": {
+      "passed": 428,
+      "skipped": 10
+    },
+    "student_environment_focused_suite": {
+      "passed": 26
+    },
+    "adapter_suite": {
+      "passed": 10
+    },
+    "ruff": "passed",
+    "port18586": "closed",
+    "p100_after_stop_mib": 0
+  },
+  "excluded_first_student_call_s": 4.065020578971598,
+  "source_sha256": {
+    "experiments/strata_specprefill/__init__.py": "cc07aeb494bd71f00286d473699a47279cb9db0337d7ffe657f83e64ec3d1335",
+    "experiments/strata_specprefill/core.py": "d79f09ee3e6bdfc638cf0d407d07c1a6a1ac0673c04230d8d297f0c0c4b6645f",
+    "experiments/strata_specprefill/report.py": "5d42448b3446e6217172894b6a45a0a211dc33d31c23fc7ad5cd7f9431ce3110",
+    "experiments/strata_specprefill/run.py": "771903360cdb1492b1dd181c54396d45c815c46f2c223772ab474a4429930548",
+    "experiments/strata_specprefill/student.py": "a8709656cdb076f024a5c6f3de75b7c7908ef0a24dcd6541cc3a72537c811eed"
+  }
+}
