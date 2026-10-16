@@ -119,7 +119,10 @@ The main runtime may choose a smaller expert cache under colocation; these
 results therefore apply to that deployment, not an independently sized engine.
 This includes the full-context and lexical arms: their main cache is not resized
 to exploit memory that unloading the student would free. The experiment does
-not measure that memory opportunity cost.
+not measure that memory opportunity cost in the six-arm comparison.
+The separate standalone baseline measures it after unloading both supporting
+models and restoring the original research configuration's 700-MiB reserve,
+while keeping main weights, automatic prefill, MTP, and generation fixed.
 
 ```bash
 python -m experiments.specprefill.run --experiment-enabled \
@@ -179,6 +182,18 @@ Stored attention scores are reused in this replay; its main-only timings do
 not represent complete router TTFT. The subset protocol was specified during
 primary collection after preliminary category summaries, so it is descriptive,
 not an independent confirmatory test or a basis for tuning primary thresholds.
+
+For the independent full-context baseline, freeze
+`python -m experiments.specprefill.quality OUTPUT --standalone-baseline --freeze-protocol`.
+After the primary study and all its model processes exit, run the same module
+with `--standalone-baseline --experiment-enabled`, the main tokenizer, main URL,
+main model, and a standalone `--main-launch-json`. Omit `--speculator`.
+The Strata launch configuration must use auto expert caching and the original
+700-MiB VRAM reserve; the CLI verifies those settings. Eight development cases
+warm the main engine before all 64 held-out full-context requests are measured.
+Their timers include immutable ingestion and candidate preparation. This is a
+separate resource condition, not a tuned selector or a second optimization
+project. Sequential-epoch noise remains a limitation.
 
 The corpus follows ORCHID's tool-log, decision, configuration, and exact-table
 patterns using synthetic text only. Its dense cases exercise exact arithmetic;

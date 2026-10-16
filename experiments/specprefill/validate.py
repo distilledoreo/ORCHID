@@ -81,9 +81,16 @@ def validate(root, tokenizer_path):
     assert Counter((r["case"], r["condition"]) for r in quality) == Counter({
         (c, condition["id"]): 1 for c in plan["cases"] for condition in plan["conditions"]})
     assert len(quality) == 128 and all("main_error" not in r and r.get("main") for r in quality)
+    standalone = load(root / "standalone-baseline.jsonl")
+    if standalone:
+        assert Counter(r["case"] for r in standalone) == Counter({c["id"]: 1 for c in cases if c["split"] == "held_out"})
+        assert all("main_error" not in r and r["end_to_end_ttft_measured"] and not r["scores_replayed"] for r in standalone)
+        assert all(r["end_to_end_ttft_ms"] >= r["ingestion_ms"] + r["candidate_chunking_ms"] for r in standalone)
+        assert len(load(root / "standalone-warmup.jsonl")) == 8
     result = {"passed": True, "requests": len(requests), "chunks_checked": count, "traces": len(traces),
               "ablation_rows": len(grid), "exact_full_source_reconstruction": True,
               "focused_quality_requests": len(quality),
+              "standalone_requests": len(standalone),
               "raw_file_sha256": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(root.glob("*.jsonl"))}}
     (root / "integrity.json").write_text(json.dumps(result, indent=2) + "\n")
     return result

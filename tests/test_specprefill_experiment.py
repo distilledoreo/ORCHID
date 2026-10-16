@@ -155,13 +155,16 @@ def test_latency_comparison_uses_paired_cases():
 def test_quality_replay_protocol_is_balanced_held_out_and_immutable(tmp_path):
     import json
 
-    from experiments.specprefill.quality import protocol
+    from experiments.specprefill.quality import protocol, standalone_protocol
     (tmp_path / "corpus.json").write_text(json.dumps(build_cases()))
     plan = protocol(tmp_path)
     selected = [c for c in build_cases() if c["id"] in plan["cases"]]
     assert len(selected) == 16 and all(c["split"] == "held_out" for c in selected)
     assert all(sum(c["category"] == category for c in selected) == 2 for category in CATEGORIES)
     assert protocol(tmp_path) == plan
+    baseline = standalone_protocol(tmp_path)
+    assert len(baseline["cases"]) == 64 and all(c["split"] == "held_out" for c in build_cases() if c["id"] in baseline["cases"])
+    assert len(baseline["warmup_cases"]) == 8
     plan["keep_ratio_primary"] = 0.9
     (tmp_path / "quality-protocol.json").write_text(json.dumps(plan))
     with pytest.raises(AssertionError, match="protocol changed"):

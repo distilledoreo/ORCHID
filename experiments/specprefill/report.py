@@ -212,10 +212,28 @@ def generate(root):
                                     for category in sorted({r["category"] for r in rows})}}
         for condition in sorted({r["condition"] for r in quality})
         for rows in [[r for r in quality if r["condition"] == condition]]}
+    standalone = load(root / "standalone-baseline.jsonl")
+    deployment_pairs = paired(standalone + [r for r in requests if r["split"] == "held_out" and r["arm"] == "E"], "E")
+    deployment_complete = len(standalone) == 64 and deployment_pairs["pairs"] == 64 and all(r.get("main") and not r.get("main_error") for r in standalone)
+    summary["standalone_deployment"] = {"complete": deployment_complete, "full_context": arm_summary(standalone),
+                                         "attention_gate_paired_against_standalone": deployment_pairs,
+                                         "note": "Separate runtime epoch, no supporting models resident, original standalone 700-MiB VRAM reserve and auto expert cache; same main weights/generation. Eight development warmups excluded."}
+    summary["standalone_deployment"]["by_workload"] = {
+        name: {"full_context": arm_summary([r for r in standalone if (r["category"] == "dense") == dense]),
+               "attention_gate": summary["workload_groups"][name]["E"],
+               "paired": paired([r for r in standalone if (r["category"] == "dense") == dense] +
+                                [r for r in requests if r["split"] == "held_out" and r["arm"] == "E" and (r["category"] == "dense") == dense], "E")}
+        for name, dense in (("dense", True), ("compressible", False))}
+    summary["complete_primary"] = complete
+    summary["complete"] = complete and deployment_complete and len(quality) == 128 and all(r.get("main") and not r.get("main_error") for r in quality)
+    if complete and deployment_complete and deployment_pairs["mean_improvement_ms"] <= 0:
+        finding = "Reject"
+        interpretation += " The independently sized full-context deployment is faster than attention plus gating: supporting-model residency and preprocessing outweigh the main-token savings under these conditions."
+        summary.update(finding=finding, interpretation=interpretation)
     (root / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     lines = ["# Controlled SpecPrefill / evidence experiment", "", f"**Finding: {finding}.**", "",
              interpretation, "", f"Nominal proposed-target finding: {nominal_finding}. The final finding separates empirical target checks from interpretation of measurement uncertainty.", "",
-             f"Completed measurement set: {complete}. Requests: {len(requests)}; expected 768 across 128 cases.", "",
+             f"Completed primary measurement set: {complete}. Requests: {len(requests)}; expected 768 across 128 cases. All measurement stages complete: {summary['complete']}.", "",
              "Primary condition: 50% eligible-source budget, 64 main-token chunks, last prompt plus up to eight new query positions; 13-token aggregate-then-pool smoothing. No original position IDs restored.", "",
              "| Held-out arm | Accuracy | Evidence recall | Actual input tokens | Main TTFT ms | End-to-end TTFT ms | Full fallback |", "|---|---:|---:|---:|---:|---:|---:|"]
     def fmt(value, percent=False):
@@ -238,11 +256,22 @@ def generate(root):
             lines.append(f"| {workload} | {arm} | {fmt(values['answer_accuracy'], True)} | {fmt(values['required_evidence_recall'], True)} | {fmt(values['mean_actual_main_input_tokens'])} | {fmt(values['mean_end_to_end_ttft_ms'])} |")
     lines += ["", "## Paired latency and controller costs", "",
               "Positive paired improvement means faster than full context. Intervals are fixed-seed case bootstrap intervals, not independent-request confidence bounds.", "",
-              "| Arm | Paired TTFT improvement ms | 95% bootstrap interval ms | Router ms | Evaluator ms | Retrieval ms |", "|---|---:|---:|---:|---:|---:|"]
+              "| Arm | Paired TTFT improvement ms | 95% bootstrap interval ms | Router ms | Q/K capture ms | Evaluator ms | Retrieval ms |", "|---|---:|---:|---:|---:|---:|---:|"]
     for arm in "BCDEF":
         values, pair = test[arm], summary["paired"]["held_out"][arm]
         interval = pair.get("bootstrap_95_interval_ms", [None, None])
-        lines.append(f"| {arm} | {fmt(pair.get('mean_improvement_ms'))} | {fmt(interval[0])} to {fmt(interval[1])} | {fmt(values['mean_router_ms'])} | {fmt(values['mean_evaluator_ms'])} | {fmt(values['mean_retrieval_ms'])} |")
+        lines.append(f"| {arm} | {fmt(pair.get('mean_improvement_ms'))} | {fmt(interval[0])} to {fmt(interval[1])} | {fmt(values['mean_router_ms'])} | {fmt(values['mean_qk_extraction_ms'])} | {fmt(values['mean_evaluator_ms'])} | {fmt(values['mean_retrieval_ms'])} |")
+    if standalone:
+        values = summary["standalone_deployment"]["full_context"]
+        interval = deployment_pairs.get("bootstrap_95_interval_ms", [None, None])
+        lines += ["", "## Standalone full-context deployment", "",
+                  f"Completed: {deployment_complete}. Full-context accuracy {fmt(values['answer_accuracy'], True)}, mean end-to-end TTFT {fmt(values['mean_end_to_end_ttft_ms'])} ms. Attention + gate paired improvement against this baseline: {fmt(deployment_pairs.get('mean_improvement_ms'))} ms, 95% case-bootstrap interval {fmt(interval[0])} to {fmt(interval[1])} ms. Positive means attention + gate is faster.", "",
+                  "This secondary hardware condition measures the memory opportunity cost: student and legacy models are unloaded, and the original standalone 700-MiB reserve lets the same native engine size its expert cache independently. Weights, generation settings, source material, and governing instructions stay the same. All 64 held-out cases are measured after eight development warmups. The epochs are sequential, not randomized concurrent hardware trials."]
+        lines += ["", "| Standalone workload | Full accuracy | Attention + gate accuracy | Full TTFT ms | Attention + gate TTFT ms | Paired improvement ms |",
+                  "|---|---:|---:|---:|---:|---:|"]
+        for name, values in summary["standalone_deployment"]["by_workload"].items():
+            full, gated = values["full_context"], values["attention_gate"]
+            lines.append(f"| {name} | {fmt(full['answer_accuracy'], True)} | {fmt(gated['answer_accuracy'], True)} | {fmt(full['mean_end_to_end_ttft_ms'])} | {fmt(gated['mean_end_to_end_ttft_ms'])} | {fmt(values['paired'].get('mean_improvement_ms'))} |")
     lines += ["", "## Evidence evaluator", "",
               "| Gate | False sufficient / needed | False retrieve / initially sufficient | Detection precision | Detection recall |", "|---|---:|---:|---:|---:|"]
     for name, values in [("Deterministic attention", e["evaluator"]), ("Deterministic lexical", f["evaluator"]), ("Untrained classifier", summary["classifier"]["held_out"]["detection"])]:
@@ -272,7 +301,7 @@ def generate(root):
               "Evidence recall is a supporting-span metric, not an answer-quality substitute. Final correctness uses sealed exact-answer rubrics. Full fallback can raise recall while removing savings. Unsupported-answer rates in summary.json combine correctness with the required-evidence rubric; raw request records also retain their narrower evidence-coverage proxy.", "",
               "The untrained three-label classifier is evaluated separately. Its softmax scores are uncalibrated; held-out Brier/ECE are descriptive and did not select thresholds. The small held-out sample cannot establish a sub-1% population error bound, even if an empirical count is zero.", "",
               "Q/K extraction uses FP32 selected-query scoring and SDPA for normal model execution. The 0.8B hybrid contributes six full-attention layers; recurrent layers have no attention rows. Transformers uses reference GDN kernels. Attention and main inference share the P100; the legacy 4B uses the RX 580. This is not an RX-580 attention implementation or an engine-level position-restoration experiment.", "",
-              "Every arm, including full context and lexical selection, uses the same reduced main-engine cache with the student resident. The experiment does not measure the memory opportunity cost against an independently sized main engine with the student unloaded. Conditional paired gains here do not establish a speedup over that deployment. A single sequential run with alternating arm order also cannot eliminate expert-cache or OS noise.", "",
+              "The six primary arms, including full context and lexical selection, use the same reduced main-engine cache with the student resident. Conditional gains in that table do not establish a speedup over independently sized full context; the separate standalone baseline measures that opportunity cost. Sequential epochs and alternating primary arm order cannot eliminate expert-cache or OS noise.", "",
               "TTFT is measured to the first nonempty content delta, using a wall clock beginning before immutable ingestion. Main-only timing is separate. All arms use the same main model and generation settings; alternating arm order and per-request nonces prevent long-prefix cache reuse. Provider cache counters, router/evaluator/retrieval costs and censoring are retained in JSON. Startup/model load is outside request timings.", "",
               "Ablation JSON measures evidence retention across 10/30/50/70/100% budgets, 0/8 look-ahead, raw tokens and 32/64/128-token chunks, aggregate-first and reference pool-first smoothing. It does not claim end-task answer accuracy for every grid point. Post-answer recovery uses UNKNOWN as the main model's request for more evidence; it is a bounded control, not a general agent tool-use evaluation.", "",
               "No production behavior was changed. Stop at this experiment; do not enable the controller or start a compensating kernel/engine optimization based on these results.", ""]
