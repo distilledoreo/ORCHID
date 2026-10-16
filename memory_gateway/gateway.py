@@ -102,6 +102,11 @@ def create_app(
     from .observer import build_observer_engine
     activity_gate = ActivityGate()
     store = SQLiteStore(runtime.db_path)
+    if runtime.coding_agent_mode:
+        store.coding_policy = {"keep_turns": runtime.coding_keep_turns, "offload_tokens": runtime.coding_offload_tokens}
+    from .raw_recall import RawRecall
+    raw_recall = RawRecall(store, embeddings_url=runtime.embeddings_url, embeddings_model=runtime.embeddings_model,
+                           embeddings_api_key=runtime.embeddings_api_key, timeout=runtime.embeddings_timeout_seconds)
     cold_memory_telemetry = (
         BufferedColdMemoryTelemetry(
             store,
@@ -217,6 +222,7 @@ def create_app(
     app = FastAPI(title="Orchid Memory Gateway", version="0.1.0", lifespan=lifespan)
     app.add_middleware(ForegroundActivityMiddleware, gate=activity_gate)
     app.state.activity_gate = activity_gate
+    app.state.raw_recall = raw_recall
     app.state.store = store
     app.state.runtime = runtime
     app.state.backend_url = backend
@@ -388,6 +394,52 @@ def create_app(
                 store.record_request_usage(thread_id, request_id, parsed["usage"])
         _maybe_enqueue(thread_id, scheduler)
         return JSONResponse(status_code=response.status_code, content=_json_or_text(response))
+
+    def recall_scope(request):
+        project = request.headers.get("x-memory-project")
+        thread = request.headers.get("x-memory-thread")
+        if not project or not thread:
+            raise ValueError("recall requires explicit project and thread headers")
+        return project, thread
+
+    @app.post("/v1/memory/recall")
+    async def recall_events(request: Request):
+        try:
+            project, thread = recall_scope(request)
+            body = await request.json()
+            if not isinstance(body, dict):
+                raise ValueError("recall body must be an object")
+            return await raw_recall.recall(project, thread, body.get("query"), body.get("k", 5))
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"message": str(error)}})
+        except Exception:
+            return JSONResponse(status_code=503, content={"error": {"type": "recall_unavailable"}}, headers={"Retry-After": "1"})
+
+    @app.get("/v1/memory/events/{event_id}")
+    async def read_event(event_id: str, request: Request, start: int = 0, end: int | None = None):
+        try:
+            project, thread = recall_scope(request)
+            result = raw_recall.read(project, thread, event_id, start, end)
+            if result is None:
+                return JSONResponse(status_code=404, content={"error": {"type": "event_not_found"}})
+            return result
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"message": str(error)}})
+        except Exception:
+            return JSONResponse(status_code=503, content={"error": {"type": "recall_unavailable"}})
+
+    @app.post("/v1/memory/index-embeddings")
+    async def index_embeddings(request: Request):
+        try:
+            project, thread = recall_scope(request)
+            body = await request.json()
+            if not isinstance(body, dict):
+                raise ValueError("index body must be an object")
+            return await raw_recall.index_embeddings(project, thread, body.get("batch_size", 32))
+        except ValueError as error:
+            return JSONResponse(status_code=400, content={"error": {"message": str(error)}})
+        except Exception:
+            return JSONResponse(status_code=503, content={"error": {"type": "index_unavailable"}})
 
     @app.get("/debug/thread/{thread_id}")
     async def debug_thread(thread_id: str) -> dict[str, Any]:

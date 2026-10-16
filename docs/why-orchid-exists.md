@@ -115,6 +115,16 @@ production-ready.
 
 ## The design stance
 
+Optional coding views retain full sources behind offload/range handles and
+freeze tool masking at promotion. File state is tracked from actual tool
+call/result evidence. This saves prompt space without deleting the episode or
+presenting failed edits as completed work.
+
+Raw recall gives the foreground model a way back to details that an observer
+deliberately omitted from hot memory. Returned excerpts identify their original
+events and ranges. This separates compact working state from source inspection,
+without treating a retrieval result as a new episode or changing ACTIVE.
+
 ORCHID prefers explicit boundaries over clever prompts:
 
 - raw history is append-only;

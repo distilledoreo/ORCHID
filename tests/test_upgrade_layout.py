@@ -82,3 +82,13 @@ def test_tool_mates_keep_original_protocol_across_coverage(tmp_path):
     snapshot = ContextAssembler(store, layout="stable").assemble("t", [assistant, tool], request_event_ids=result.message_event_ids)
     assert snapshot.messages[-2:] == [assistant, tool]
     assert snapshot.substitution.protocol_continuity_messages == 1
+
+
+def test_actual_message_serialization_is_stable_across_key_order(tmp_path):
+    import json
+    store = SQLiteStore(tmp_path / "test.db")
+    store.ensure_project_and_thread("p", "t")
+    assembler = ContextAssembler(store, layout="stable")
+    first = assembler.assemble("t", [{"role": "system", "content": "unchanged", "name": "scope"}])
+    second = assembler.assemble("t", [{"name": "scope", "content": "unchanged", "role": "system"}])
+    assert json.dumps(first.messages) == json.dumps(second.messages)
