@@ -52,6 +52,13 @@ How a turn works:
 | `TARGET_KV` (`int8` or `fp16`) | unset (the config's) |
 | `OUTPUT_TOKENS` (generation length when a request names none) | 4096 |
 | `NATIVE_BELOW_TOKENS` (new threads below this go native) | 1024 |
+| `STUDENT_PARK_RAM_MIB` (parked student states kept in RAM) | 4096 |
+| `STUDENT_PARK_DISK_MIB` (parked student states on disk) | 16384 |
+| `TARGET_PARK_MIB` (Flash-Next parked conversations, RAM) | 0 (session files instead) |
+| `TARGET_DISK_MIB` (Flash-Next session files) | 16384 |
+| `TARGET_HOT_MIB` (Flash-Next session files in `/dev/shm`) | 4096 |
+| `TARGET_RESTORE_FLOOR_MIB` (RAM Strata keeps free when restoring) | 1024 |
+| `PRELOAD` (load models and resume the latest thread at startup) | on for `lean` |
 
 **256K sessions (P100):** `CONTEXT_TOKENS=49152`,
 `STUDENT_CONTEXT_TOKENS=262144`, `VRAM_RESERVE_MIB=8192`,
@@ -103,6 +110,33 @@ chat messages and tools, the chat path answers it, and Strata's assembler
 writes the Responses items and events. It is stateless:
 `previous_response_id` is refused, and the client sends the whole
 conversation in `input`.
+
+**Resume.** Switching threads and restarting don't re-read whole histories:
+- **Student.** A thread's student prefix cache (~12 KB per token of history,
+  ~3 GB at 250K) is parked when another thread takes the student. Recent
+  states stay in RAM; every one is also written to
+  `STATE_DIR/student-cache/` in the background. Resuming copies it back, and
+  the scores are identical to never having left.
+- **Flash-Next.** When a lean turn arrives for a thread other than the one
+  the engine holds, the engine first saves the outgoing thread's K/V to a
+  session file (`STATE_DIR/target-cache/`), then loads the incoming
+  thread's. Session files go to `/dev/shm` first, so a switch costs about
+  1.3 s to save and 1.4 s to restore, and a single background copier puts
+  them on disk for restarts. Shutdown saves the active thread straight to
+  disk; run the gateway as its own service with `KillMode=mixed`, or the
+  engine dies before that save. Idle parked state can be swapped out on a
+  machine short of RAM, which makes resuming a long-idle thread slower:
+  measured 38–45 s at 250K, against ~5 minutes without resume. Strata's RAM conversation parking (`TARGET_PARK_MIB`) is off by
+  default: it restored a 44K-token conversation in 10 s, and two 250K
+  threads don't fit the RAM left beside the experts.
+- **Startup.** With `PRELOAD`, the gateway loads the models and resumes the
+  most recently used thread at startup. Until then, `GET /readyz` answers 503
+  and requests get `503 {"error": {"type": "warming"}}` with `Retry-After`.
+- **All caches are disposable.** A missing, stale or corrupt entry only means
+  the history is read again.
+- **Settings changes keep threads.** On the lean engine, only the ledger
+  format and the model name define a thread. New budgets and windows apply
+  from the next turn, and caches built under other settings are ignored.
 
 **Tools.** The lean route accepts OpenAI `tools` (`tool_choice` `auto`; other
 choices go native).

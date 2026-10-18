@@ -103,6 +103,9 @@ async def handle(request, req, service, store):
     except ValueError as error:
         status, body = failure(error, request_error=True)
         return JSONResponse(body, status_code=status)
+    if service.warming:
+        return JSONResponse(rs.error_body('The models are loading; retry in a few seconds', 'server_error'),
+                            status_code=503, headers={'Retry-After': '15'})
     rid = request.headers.get('x-request-id') or None
     committed = committer(store, None, None, rid, parsed, chat)
     asm = rs.Assembler(req, service.options.model, 0, names, encrypted=False)

@@ -14,6 +14,7 @@ class Student:
         torch.set_num_threads(8)
         self.torch = torch
         self.device = device
+        self.path = str(path)
         self.allowed_ids = allowed_ids
         self.tokenizer = AutoTokenizer.from_pretrained(path, local_files_only=True)
         self.model = (

@@ -8,10 +8,12 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from ..db import new_id
 from ..ingestion import append_novel_messages
 from .scheduling import CapacityError
-from .service import RequestConflict, digest
+from .service import RequestConflict, Warming, digest
 
 
 def failure(error, *, request_error=False):
+    if isinstance(error, Warming):
+        return 503, {'error': {'type': 'warming', 'message': str(error)}}
     if isinstance(error, RequestConflict):
         return 409, {'error': {'type': 'session_conflict', 'message': str(error)}}
     if isinstance(error, CapacityError):
@@ -58,6 +60,9 @@ async def handle(request, payload, service, store):
         status, body = failure(error, request_error=True)
         return JSONResponse(body, status_code=status)
 
+    if getattr(service, 'warming', False):
+        return JSONResponse({'error': {'type': 'warming', 'message': 'The models are loading; retry in a few seconds'}},
+                            status_code=503, headers={'Retry-After': '15'})
     include_usage = bool(getattr(parsed, 'include_usage', False))
     committed = committer(store, project, thread, rid, parsed, payload)
 
@@ -80,7 +85,10 @@ async def handle(request, payload, service, store):
             return JSONResponse(result, headers={'x-request-id': rid or result['id']})
         except Exception as error:
             status, body = failure(error, request_error=isinstance(error, ValueError) and lean)
-            return JSONResponse(body, status_code=status, headers={'x-request-id': rid} if rid else None)
+            headers = {'x-request-id': rid} if rid else {}
+            if body['error']['type'] == 'warming':
+                headers['Retry-After'] = '15'
+            return JSONResponse(body, status_code=status, headers=headers or None)
 
     async def events():
         loop = asyncio.get_running_loop()

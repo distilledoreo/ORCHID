@@ -8,6 +8,7 @@ import json
 import os
 import re
 import sqlite3
+import sys
 import threading
 import time
 from collections import OrderedDict
@@ -29,6 +30,10 @@ TOOL_CONTINUE = 'Continue the task using the tool result above.'
 
 class RequestConflict(ValueError):
     pass
+
+
+class Warming(RuntimeError):
+    """The models are still loading: retry shortly."""
 
 
 class _StopText:
@@ -94,6 +99,22 @@ class GatewayOptions:
     # conversation size below which a new thread is answered by native
     # Flash-Next (SpecPrefill costs a student pass that doesn't pay off there).
     output_tokens: int = 4096
+    # Parked student states (production plan, Phase 2): RAM for fast thread
+    # switches, disk so a restart resumes instead of re-reading histories.
+    student_park_ram_mib: int = 4096
+    student_park_disk_mib: int = 16384
+    # Flash-Next's parked conversations in RAM (Strata's conversation cache). Off by
+    # default: a switch saves and restores session files instead (faster, no RAM).
+    target_park_mib: int = 0
+    target_disk_mib: int = 16384  # Flash-Next session files (~1.5-2 GB per long thread).
+    # Switch-time session files go to RAM-backed /dev/shm first (a save and a restore
+    # are memory copies, ~1 s each); a background copy keeps them on disk too.
+    target_hot_mib: int = 4096  # Two ~250K-token threads.
+    target_hot_dir: str = '/dev/shm'
+    target_restore_floor_mib: int = 1024
+    # Load the models (and resume the most recent thread) when the gateway starts;
+    # requests meanwhile get a 503 "warming" instead of hanging.
+    preload: bool = False
     # Measured (production plan, Phase 1): below the query-split size lean sends the
     # whole message anyway, so its student pass only costs time.
     native_below_tokens: int = 1024
@@ -150,6 +171,17 @@ class GatewayOptions:
             if os.environ.get('ORCHID_SPECPREFILL_STUDENT_SPARSE_ROWS') else None,
             target_kv=os.environ.get('ORCHID_SPECPREFILL_TARGET_KV') or None,
             output_tokens=int(os.environ.get('ORCHID_SPECPREFILL_OUTPUT_TOKENS', str(cls.output_tokens))),
+            student_park_ram_mib=int(os.environ.get('ORCHID_SPECPREFILL_STUDENT_PARK_RAM_MIB',
+                                                    str(cls.student_park_ram_mib))),
+            student_park_disk_mib=int(os.environ.get('ORCHID_SPECPREFILL_STUDENT_PARK_DISK_MIB',
+                                                     str(cls.student_park_disk_mib))),
+            target_park_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_PARK_MIB', str(cls.target_park_mib))),
+            target_disk_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_DISK_MIB', str(cls.target_disk_mib))),
+            target_hot_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_HOT_MIB', str(cls.target_hot_mib))),
+            target_restore_floor_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_RESTORE_FLOOR_MIB',
+                                                        str(cls.target_restore_floor_mib))),
+            preload=_bool_env('ORCHID_SPECPREFILL_PRELOAD',
+                              os.environ.get('ORCHID_SPECPREFILL_ENGINE', cls.engine) == 'lean'),
             native_below_tokens=int(os.environ.get('ORCHID_SPECPREFILL_NATIVE_BELOW_TOKENS',
                                                    str(cls.native_below_tokens))))
         options.validate()
@@ -200,7 +232,11 @@ class SpecPrefillService:
         self._migrate_thread_columns()
         configuration = Path(options.config_path)
         student_configuration = Path(options.student_path) / 'config.json'
-        identity = digest({'runtime': 'specprefill-gateway-v1', 'limits': asdict(options.limits),
+        # Lean threads stay valid when settings change: only the ledger format and the
+        # model name define them. Student and Flash-Next caches check their own settings.
+        identity = digest({'runtime': 'specprefill-gateway-v1', 'engine': 'lean', 'ledger': 'identity-v2',
+                           'model': options.model}) if options.lean else digest({
+            'runtime': 'specprefill-gateway-v1', 'limits': asdict(options.limits),
             **({'engine': 'lean', 'query_split': [options.query_split_tokens, options.query_tail_tokens],
                 **({'student_sparse_keys': options.student_sparse_keys}
                    if options.student_sparse_keys else {}),
@@ -227,6 +263,10 @@ class SpecPrefillService:
         self.resources = None
         self.sessions = OrderedDict()
         self.active_key = None
+        self.parking = None
+        self.target_owner = None  # The thread whose lean turn the engine last ran.
+        self.seen = set()  # Threads served since this process started.
+        self.warming = False
         self.closed = False
 
     def _migrate_history_ledger(self):
@@ -269,6 +309,9 @@ class SpecPrefillService:
         if 'anchor' not in [row[1] for row in self.db.execute('PRAGMA table_info(sessions)')]:
             with self.db:
                 self.db.execute('ALTER TABLE sessions ADD COLUMN anchor TEXT')
+        if 'used_at' not in [row[1] for row in self.db.execute('PRAGMA table_info(sessions)')]:
+            with self.db:
+                self.db.execute('ALTER TABLE sessions ADD COLUMN used_at REAL')
         if 'ours' not in [row[1] for row in self.db.execute('PRAGMA table_info(history_entries)')]:
             with self.db:
                 self.db.execute('ALTER TABLE history_entries ADD COLUMN ours INTEGER NOT NULL DEFAULT 0')
@@ -369,7 +412,9 @@ class SpecPrefillService:
                     archive_cache_bytes=self.options.archive_cache_mib * 1024**2,
                     lean=self.options.lean, vram_reserve_mib=self.options.vram_reserve_mib,
                     sparse_keys=self.options.student_sparse_keys,
-                    sparse_rows=self.options.student_sparse_rows, kv=self.options.target_kv)
+                    sparse_rows=self.options.student_sparse_rows, kv=self.options.target_kv,
+                    target_park_mib=self.options.target_park_mib,
+                    restore_floor_mib=self.options.target_restore_floor_mib)
         return self.resources
 
     @staticmethod
@@ -661,6 +706,7 @@ class SpecPrefillService:
         """Answer with plain Flash-Next. The lean session and ledger are untouched:
         the next lean turn on this thread ingests whatever it hasn't seen."""
         resource = self._resources()
+        self.target_owner = None  # The engine now holds this native conversation.
         result = resource.native(payload, on_text)
         result = {**result, 'orchid': {'engine': 'native', 'reason': reason, 'thread': key}}
         with self.db:
@@ -686,6 +732,8 @@ class SpecPrefillService:
                                                              if k not in ('messages', 'stream', 'stream_options')}})
         # Without a request ID, a repeated request (a client retry) replays its answer.
         rid = rid or 'auto-' + fingerprint
+        if self.warming:
+            raise Warming('The models are loading; retry in a few seconds')
         with self.lock:
             if self.closed:
                 raise RuntimeError('SpecPrefill service is closed')
@@ -761,16 +809,35 @@ class SpecPrefillService:
             pending, ledger = None, []
             novel = [m for m in messages if m['role'] != 'system']
         resource = self._resources()
-        if self.active_key != key:
-            resource.selector.reset()
-            self.active_key = key
+        resume = {}
         if key not in self.sessions:
+            # Before the student switch: restoring a session resets the student, which
+            # would discard the parked state the switch is about to resume.
             self.sessions[key] = resource.session(self.directory / (key + '.json'), system, self.options.limits)
+        if self.active_key != key:
+            started = time.perf_counter()
+            self._switch_student(resource, key)
+            resume['student_s'] = round(time.perf_counter() - started, 3)
+        self.seen.add(key)
+        if self.target_owner != key and hasattr(resource, 'restore_target'):
+            # Flash-Next holds another thread (or none): save that one's K/V to its
+            # session file, then load this thread's, so neither prompt is read again.
+            if self.target_owner:
+                started = time.perf_counter()
+                self._save_target(resource, self.target_owner, hot=True, protect=(key,))
+                resume['target_save_s'] = round(time.perf_counter() - started, 3)
+            started = time.perf_counter()
+            hot = self._target_hot(key)
+            if (hot.exists() and resource.restore_target(hot)) or resource.restore_target(self._target_file(key)):
+                resume['target_restore_s'] = round(time.perf_counter() - started, 3)
+                self.target_owner = key
         session = self.sessions[key]
         if session.system != system:
             raise RequestConflict('Pinned system instructions changed')
         if session.limits != self.options.limits:
-            raise RequestConflict('Session limits changed; restore with the original configuration')
+            # New budgets or windows apply from this turn; the chunking of stored sources stays.
+            from dataclasses import replace
+            session.limits = replace(self.options.limits, chunk_tokens=session.limits.chunk_tokens)
         self.sessions.move_to_end(key)
         while len(self.sessions) > self.options.resident_sessions:
             _, evicted = self.sessions.popitem(last=False)
@@ -837,7 +904,9 @@ class SpecPrefillService:
                     target.cancel.set()
             target.on_token = token if on_text or request.stop else None
             try:
+                self.target_owner = None
                 output = session.answer(question, maximum=maximum)
+                self.target_owner = key
                 if target.on_token is None:
                     stop.feed(self._text(session.tok, output), final=True)
                 else:
@@ -848,6 +917,8 @@ class SpecPrefillService:
         result = self._result(session, output, rid, key, tools=tools,
                               text=stop.text if request.stop else None, stopped=stop.hit)
         result['orchid']['thread'] = key
+        if resume:
+            result['orchid']['resume'] = resume
         if tools and on_text:
             # Text after a tool call (rare) was held back with the call: send what's left.
             content, sent = result['choices'][0]['message'].get('content') or '', calls.text
@@ -863,16 +934,145 @@ class SpecPrefillService:
             self.db.execute('INSERT INTO completions VALUES (?,?,?,?)', (key, rid, fingerprint, json.dumps(result)))
             self.db.executemany('INSERT INTO history_entries(key,seq,hash,ours) VALUES (?,?,?,?)',
                 [(key, pending['base'] + i, h, ours) for i, (h, ours) in enumerate(appended)])
-            self.db.execute('UPDATE sessions SET pending=NULL WHERE key=?', (key,))
+            self.db.execute('UPDATE sessions SET pending=NULL,used_at=? WHERE key=?', (time.time(), key))
         if on_commit:
             on_commit(result)
         return result
+
+    def ready(self):
+        return self.resources is not None and not self.warming and not self.closed
+
+    def start_warm_up(self):
+        """Load the models in the background, then resume the most recently used thread."""
+        self.warming = True
+        threading.Thread(target=self.warm_up, name='orchid-specprefill-warm-up', daemon=True).start()
+
+    def warm_up(self):
+        try:
+            with self.lock:
+                self.warming = True
+                if self.closed:
+                    return
+                resource = self._resources()
+                if not self.options.lean:
+                    return
+                row = self.db.execute('SELECT key,system FROM sessions WHERE used_at IS NOT NULL '
+                                      'ORDER BY used_at DESC LIMIT 1').fetchone()
+                path = row and self.directory / (row[0] + '.json')
+                if not row or not path.exists():
+                    return
+                key, system = row
+                self.sessions[key] = resource.session(path, system, self.options.limits)
+                self._switch_student(resource, key)
+                self.seen.add(key)
+                if hasattr(resource, 'restore_target') and resource.restore_target(self._target_file(key)):
+                    self.target_owner = key
+        finally:
+            self.warming = False
+
+    def _target_file(self, key):
+        return self.directory / 'target-cache' / f'{key}.bin'
+
+    def _target_hot(self, key):
+        directory = (Path(self.options.target_hot_dir)
+                     / f'orchid-{os.getuid()}-{digest(str(self.directory.resolve()))[:12]}')
+        return directory / f'{key}.bin'
+
+    @staticmethod
+    def _trim(directory, budget, keep=1):
+        files = sorted(directory.glob('*.bin'), key=lambda f: f.stat().st_mtime)
+        total = sum(f.stat().st_size for f in files)
+        while len(files) > keep and total > budget:
+            oldest = files.pop(0)
+            total -= oldest.stat().st_size
+            oldest.unlink(missing_ok=True)
+
+    def _save_target(self, resource, key, hot=False, protect=()):
+        """Write a thread's Flash-Next K/V: to /dev/shm at a switch (one background copier
+        puts it on disk too), straight to disk at shutdown. Hot files are evicted only
+        here, only once copied to disk, and never the ones in use (`protect`)."""
+        disk = self._target_file(key)
+        if not hot or self.options.target_hot_mib <= 0:
+            saved = resource.save_target(disk)
+            self._trim(disk.parent, self.options.target_disk_mib * 2**20)
+            return saved
+        path = self._target_hot(key)
+        path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        saved = resource.save_target(path)
+        if saved and path.exists():
+            self._copy_queue().put((key, path.stat().st_mtime))
+        files = sorted(path.parent.glob('*.bin'), key=lambda f: f.stat().st_mtime)
+        total = sum(f.stat().st_size for f in files)
+        for f in files:
+            if total <= self.options.target_hot_mib * 2**20:
+                break
+            if f.stem in (key, *protect) or getattr(self, '_copied', {}).get(f.stem) != f.stat().st_mtime:
+                continue  # In use, or not on disk yet.
+            total -= f.stat().st_size
+            f.unlink(missing_ok=True)
+        return saved
+
+    def _copy_queue(self):
+        if getattr(self, '_copies', None) is None:
+            import queue
+            self._copies, self._copied = queue.Queue(), {}
+            threading.Thread(target=self._copy_loop, name='orchid-target-copy', daemon=True).start()
+        return self._copies
+
+    def _copy_loop(self):
+        import shutil
+        while True:
+            key, mtime = self._copies.get()
+            hot, disk = self._target_hot(key), self._target_file(key)
+            try:
+                if hot.exists() and hot.stat().st_mtime == mtime:
+                    disk.parent.mkdir(parents=True, exist_ok=True)
+                    temporary = disk.with_suffix('.tmp')
+                    shutil.copyfile(hot, temporary)
+                    os.replace(temporary, disk)
+                    self._copied[key] = mtime
+                    self._trim(disk.parent, self.options.target_disk_mib * 2**20)
+            except OSError as error:
+                print(f'orchid: session file copy for {key[:12]} failed ({error})', file=sys.stderr)
+            finally:
+                self._copies.task_done()
+
+    def _switch_student(self, resource, key):
+        """Park the outgoing thread's student state and resume the incoming one's."""
+        student = resource.selector
+        if not hasattr(student, 'export_state'):  # The compacting engine's selector: no parking.
+            student.reset()
+            self.active_key = key
+            return
+        if self.parking is None:
+            from .parking import StudentParking
+            self.parking = StudentParking(self.directory / 'student-cache', self.options.student_park_ram_mib * 2**20,
+                                          self.options.student_park_disk_mib * 2**20, student.student.torch)
+        # Fetch the incoming state before parking the outgoing one: with room for one state
+        # in RAM, parking first would evict exactly the state about to be needed.
+        incoming = self.parking.get(key)
+        if self.active_key is not None:
+            state = student.export_state()
+            if state is not None:
+                self.parking.put(self.active_key, state)
+        student.reset()
+        self.active_key = key
+        student.import_state(incoming)
 
     def close(self):
         with self.lock:
             if self.closed:
                 return
             self.closed = True
+            if self.parking is not None and self.active_key is not None and self.resources:
+                state = self.resources.selector.export_state()
+                if state is not None:
+                    self.parking.put(self.active_key, state)  # Resume after a restart.
+                self.parking.flush()
+            if self.target_owner and self.resources and hasattr(self.resources, 'save_target'):
+                self._save_target(self.resources, self.target_owner)
+            if getattr(self, '_copies', None) is not None:
+                self._copies.join()  # Hot session files reach disk before a reboot can clear them.
             for session in self.sessions.values():
                 session.close()
             self.sessions.clear()

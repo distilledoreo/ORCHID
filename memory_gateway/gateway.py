@@ -208,6 +208,8 @@ def create_app(
                 name="orchid-compaction-worker",
             )
             app.state.worker_task = worker_task
+        if native_service is not None and native_service.options.preload:
+            native_service.start_warm_up()
         try:
             yield
         finally:
@@ -250,6 +252,13 @@ def create_app(
             "status": "ok",
             "compaction": "specprefill" if native_service is not None else ("configured" if worker is not None else "not_configured"),
         }
+
+    @app.get("/readyz")
+    async def readyz() -> JSONResponse:
+        if native_service is None:
+            return JSONResponse({"status": "ready"})
+        ready = native_service.ready()
+        return JSONResponse({"status": "ready" if ready else "warming"}, status_code=200 if ready else 503)
 
     @app.get("/v1/models")
     async def models(request: Request) -> JSONResponse:

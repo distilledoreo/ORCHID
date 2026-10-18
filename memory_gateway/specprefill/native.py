@@ -13,7 +13,8 @@ from .student import Student
 
 class NativeResources:
     def __init__(self, config_path, student_path, limits, log_path, *, archive_cache_bytes=8 * 1024**2,
-                 lean=False, vram_reserve_mib=4096, sparse_keys=None, sparse_rows=None, kv=None):
+                 lean=False, vram_reserve_mib=4096, sparse_keys=None, sparse_rows=None, kv=None,
+                 target_park_mib=0, restore_floor_mib=1024):
         self.archive_cache_bytes = archive_cache_bytes
         self.lean = lean
         cfg = json.loads(Path(config_path).read_text())
@@ -35,7 +36,15 @@ class NativeResources:
         args = [a for a in cfg['args'] if a not in ('--selected-prefill', '--selected-prefix-cache')]
         for flag, value in (('--max-context', limits.target_context), ('--kv-resident', limits.target_context),
                             ('--vram-reserve-mib', vram_reserve_mib), ('--prompt-cache', 6),
-                            ('--conversation-cache-mib', 0), ('--turn-token', 248045),
+                            # Parked conversations: a thread switch keeps the other thread's
+                            # Flash-Next K/V in RAM instead of re-reading its prompt.
+                            ('--conversation-cache-mib', target_park_mib if lean else 0),
+                            *((('--conversation-cache-slots', 4), ('--conversation-cache-min-tokens', 4096))
+                              if lean and target_park_mib else ()),
+                            ('--turn-token', 248045),
+                            # RAM kept free when saving or restoring a session file (Strata's
+                            # default 2560 refuses restores on a 62 GB machine running 47 GB of experts).
+                            ('--conversation-cache-min-free-mib', restore_floor_mib),
                             *((('--kv', kv),) if kv else ())):
             if flag in args:
                 args[args.index(flag)+1] = str(value)
@@ -69,6 +78,35 @@ class NativeResources:
         return CompactingSession(self.tok, self.selector, self.target, self.summarize,
                                  system=system, limits=limits, checkpoint=path,
                                  archive_cache_bytes=self.archive_cache_bytes)
+
+    def save_target(self, path):
+        """Write the engine's current conversation (a thread's Flash-Next K/V) to a session file."""
+        from serve.server import EngineDied, SessionRefused
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        try:
+            return self.engine.session_file('save', str(path))
+        except SessionRefused as error:
+            print(f'orchid: session save of {Path(path).name[:12]} refused ({error.kind}: {error})', file=sys.stderr)
+            return None
+        except (EngineDied, OSError):
+            return None  # Not saved: this thread's prompt is read again when it returns.
+
+    def restore_target(self, path):
+        """Load a thread's saved Flash-Next K/V, so its next prompt is read from where it stopped."""
+        from serve.server import EngineDied, SessionRefused
+        if not Path(path).exists():
+            return None
+        try:
+            return self.engine.session_file('restore', str(path))
+        except EngineDied:
+            return None  # The next request restarts the engine and reads the prompt.
+        except SessionRefused as error:
+            print(f'orchid: session restore of {Path(path).name[:12]} refused ({error.kind}: {error})', file=sys.stderr)
+            if error.kind == 'invalid':
+                Path(path).unlink(missing_ok=True)  # Another engine version or a damaged file.
+            return None  # Memory, storage or I/O: the file stays for a later try.
+        except OSError:
+            return None
 
     def native(self, payload, on_text=None, cancel=None):
         """One plain Flash-Next chat completion through Strata's own OpenAI path.

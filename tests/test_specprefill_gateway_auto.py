@@ -59,7 +59,8 @@ class Resources:
 def service(tmp_path, **kwargs):
     base = GatewayOptions(str(tmp_path / 'native'), 'unused', 'unused', engine='lean',
                           context_tokens=60000, student_context_tokens=60000, answer_tokens=32,
-                          new_rate=0.05, recall_tokens=200, query_split_tokens=1024, query_tail_tokens=200, native_below_tokens=0)
+                          new_rate=0.05, recall_tokens=200, query_split_tokens=1024, query_tail_tokens=200, native_below_tokens=0,
+                          target_hot_dir=str(tmp_path / 'shm'))
     resources = Resources()
     return SpecPrefillService(replace(base, **kwargs), resources_factory=lambda: resources), resources
 
@@ -317,3 +318,39 @@ def test_with_tools_text_before_the_call_streams_and_markup_never_does(tmp_path)
     assert streamed.startswith('Let me read it.') and '<tool' not in streamed and len(pieces) > 1
     assert result['choices'][0]['finish_reason'] == 'tool_calls'
     s.close()
+
+
+def test_changing_settings_keeps_lean_threads(tmp_path):
+    s, _ = service(tmp_path)
+    first = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA')))
+    s.close()
+    s2, _ = service(tmp_path, new_rate=0.2, recall_tokens=400, student_sparse_keys=16384, target_kv='fp16')
+    later = s2.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA'), ('assistant', reply(first)),
+                                               ('user', 'Return KEYB')))
+    assert reply(later) == '22222' and later['orchid']['thread'] == first['orchid']['thread']
+    assert next(iter(s2.sessions.values())).limits.new_rate == 0.2
+    s2.close()
+
+
+def test_warm_up_resumes_the_latest_thread_and_requests_meanwhile_get_503(tmp_path):
+    import threading
+    s, r = service(tmp_path)
+    first = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA')))
+    s.close()
+    gate = threading.Event()
+    s2, r2 = service(tmp_path, preload=True)
+    factory = s2.resources_factory
+    s2.resources_factory = lambda: (gate.wait(5), factory())[1]  # Model loading takes a while.
+    app = create_app(config=RuntimeConfig.from_env(db_path=str(tmp_path / 'gateway.db')), specprefill_service=s2)
+    with TestClient(app) as client:
+        assert client.get('/readyz').status_code == 503
+        busy = client.post('/v1/chat/completions', json=chat(('user', 'x'), stream=True))
+        assert busy.status_code == 503 and busy.headers['retry-after'] == '15'
+        assert busy.json()['error']['type'] == 'warming'
+        gate.set()
+        for _ in range(100):
+            if client.get('/readyz').status_code == 200:
+                break
+            __import__('time').sleep(0.05)
+        assert client.get('/readyz').json() == {'status': 'ready'}
+        assert first['orchid']['thread'] in s2.sessions and s2.active_key == first['orchid']['thread']

@@ -143,6 +143,24 @@ pass offline tests.
     so a changed request could replay an old answer. It now covers every
     field except `stream`/`stream_options`.
 
+**Side test: adaptive prefill stacks with SpecPrefill (2026-10-18).** This is
+not part of the experiments, which all use the stock Strata binary. The
+research build (`~/AI/state-projection-strata-expert`,
+`STRATA_RESEARCH_ADAPTIVE_PREFILL=ON`: 2–3 routed experts at mass 0.35 for
+prefill chunks of 64+ tokens; decode unchanged) ran the same fresh single-turn
+chats, native without thinking, all answers correct:
+
+| Prompt tokens | Lean stock → adaptive | Native stock → adaptive | Lean vs native, stock / adaptive |
+|---:|---|---|---|
+| ~1.1K | 4.38 → 3.60 s (−18%) | 9.26 → 9.31 s (0%) | 2.1× / 2.6× |
+| ~4.1K | 4.86 → 3.70 s (−24%) | 25.29 → 22.65 s (−10%) | 5.2× / 6.1× |
+| ~8.2K | 6.16 → 4.87 s (−21%) | 45.43 → 40.57 s (−11%) | 7.4× / 8.3× |
+| ~16.4K | 9.00 → 7.75 s (−14%) | 88.31 → 81.08 s (−8%) | 9.8× / 10.5× |
+
+The gains stack, and adaptive prefill helps lean about twice as much as
+native: lean's turns are mostly Flash-Next's fixed per-call prefill cost,
+which fewer experts per token cuts.
+
 ### Phase 2: fast resume
 
 1. **Student cache on disk, per thread.** When switching away or going idle,
@@ -163,6 +181,56 @@ pass offline tests.
   excluding engine start.
 - After a reboot, the first answer comes < 10 s after the engine is ready.
 - Answers after a resume match those without one.
+
+**Phase 2 status (2026-10-18): gate passed (offline suite 623 tests, 0 failures, 5 skipped), with the user's sign-off, for
+recently used threads; the idle case is a documented RAM limit of this
+machine.**
+
+Built:
+- Per-thread student parking (`parking.py`: a RAM LRU tier plus background
+  disk files, memory-mapped on load). The resumed scores are identical to
+  never leaving (maximum difference 0.0 on a 40K-token thread).
+- Flash-Next session files on every thread switch: the outgoing thread is
+  saved to `/dev/shm`, one background copier puts it on disk, and the
+  incoming thread is restored. Hot files are evicted only once copied and
+  never while in use.
+- Shutdown save of the active thread, and warm-up of the most recent thread
+  at startup (`PRELOAD`, `/readyz`, `503 warming` with `Retry-After`).
+- Lean threads survive settings changes.
+
+Measured on two ~250K-token threads (204K student tokens, 45K Flash-Next
+tokens each). Resume overhead = student + Flash-Next save + restore:
+
+| Case | Resume overhead | Whole turn |
+|---|---|---|
+| Switch back after ~1 turn (B 120, 123, 124) | **4.5–5.0 s** | 14.9–17.2 s |
+| Switch back after minutes idle (A 120 after a 20-min build, A 123) | 38–45 s | 52–55 s |
+| Gateway restart, first answer, warmed thread | ~0 | 13.7 s |
+| Gateway restart, first answer, other thread | 15.5 s | 26.1 s |
+| Reboot emulation (`/dev/shm` cleared), warmed thread | ~0 | **8.55 s** after ready |
+| Reboot emulation, other thread (from disk) | 18 s | 25.1 s |
+| No resume (re-reading the history) | — | 286–297 s |
+
+- **Answers after a resume match.** Flash-Next save → another conversation
+  → restore reproduced the live follow-up token for token in 5/5 trials
+  (9.5K–12.6K-token prompts from the user's session); a cold re-read
+  matched too. Two independent 250K builds of thread A were identical for
+  121 turns.
+- **The idle case is RAM-bound.** With 47 GB of experts pinned on a 62 GB
+  machine, the kernel swaps out idle parked state (swap use rose from 3 to
+  7 GB during the run), and Strata refuses a restore without 1.4 GB plus its
+  floor free. The restore floor was lowered to 1024 MiB
+  (`TARGET_RESTORE_FLOOR_MIB`), and memory refusals no longer delete the
+  file.
+- **Bugs found and fixed by the live runs:**
+  - parking evicted the state about to be resumed;
+  - a session restore reset the just-resumed student;
+  - the hot tier's trim raced its disk copy;
+  - `systemctl stop` killed the engine before the shutdown save (units need
+    `KillMode=mixed`);
+  - restores refused for lack of RAM deleted the file.
+- Phase 3 must also delete a thread's `/dev/shm` hot file and student cache
+  file.
 
 ### Phase 3: storage and user control
 
