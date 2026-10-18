@@ -4,11 +4,12 @@ from .core import validate_input
 
 
 class CachedStudent:
-    def __init__(self, student, block=1024, prefill_window=None, sparse_keys=None):
+    def __init__(self, student, block=1024, prefill_window=None, sparse_keys=None, sparse_rows=None):
         self.student = student
         self.block = block
         self.prefill_window = prefill_window
         self.sparse_keys = sparse_keys
+        self.sparse_rows = sparse_rows
         self.state = {}
 
     def reset(self):
@@ -20,7 +21,8 @@ class CachedStudent:
                              ids, keep_ratio, prefill_block=self.block,
                              device=self.student.device, prefix_state=self.state,
                              prefill_window=kwargs.pop('prefill_window', self.prefill_window),
-                             sparse_keys=kwargs.pop('sparse_keys', self.sparse_keys), **kwargs)
+                             sparse_keys=kwargs.pop('sparse_keys', self.sparse_keys),
+                             **({'sparse_rows': self.sparse_rows} if self.sparse_rows else {}), **kwargs)
 
     def score(self, ids, **kwargs):
         """One uncached trace that leaves the conversation prefix cache intact."""

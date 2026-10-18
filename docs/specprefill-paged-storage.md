@@ -58,7 +58,7 @@ transactions. Retain the legacy backup until the migrated session is verified.
 Disk usage grows with immutable revisions, metadata, indexes, events, and one
 small history-ledger row per accepted message. This change provides neither
 compression nor automatic retention, quotas, or deletion. Long-running
-capacity/soak checks remain on the production punchlist. Existing model accuracy and latency baselines
+capacity/soak checks remain in the production plan (`specprefill-production-plan.md`). Existing model accuracy and latency baselines
 are unchanged; storage tests do not establish a new live inference speedup.
 
 ## Verification

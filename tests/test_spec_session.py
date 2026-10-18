@@ -294,5 +294,6 @@ def test_sparse_past_with_full_coverage_equals_dense():
     q, k = torch.randn(1, 2, 64, 32), torch.randn(1, 2, 1024, 32)
     v = torch.randn_like(k)
     dense, dense_lse = _tiled_past(torch, q, k, v, 0.2, tile=256)
-    sparse, sparse_lse = _sparse_past(torch, q, k, v, 0.2, keep_keys=1024, local=128, rows_per_select=16)
-    assert torch.allclose(dense, sparse, atol=1e-5) and torch.allclose(dense_lse, sparse_lse, atol=1e-5)
+    for rows in (16, 48, 64):  # per-group, uneven, and one selection for every row
+        sparse, sparse_lse = _sparse_past(torch, q, k, v, 0.2, keep_keys=1024, local=128, rows_per_select=rows)
+        assert torch.allclose(dense, sparse, atol=1e-5) and torch.allclose(dense_lse, sparse_lse, atol=1e-5)

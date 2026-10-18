@@ -212,8 +212,8 @@ Before routing production traffic, validate:
 
 Earlier latency/correctness baselines and native binaries remain unchanged.
 
-The production punchlist, including paged raw archive storage, is maintained in
-[specprefill-production-punchlist.md](../../docs/specprefill-production-punchlist.md).
+The production plan is maintained in
+[specprefill-production-plan.md](../../docs/specprefill-production-plan.md).
 
 If generated summary text fits but per-item provenance addresses push its rendered
 seed over budget, the controller coalesces adjacent items in finite rounds. It

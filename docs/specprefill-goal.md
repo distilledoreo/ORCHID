@@ -244,7 +244,7 @@ table.
 
 ### Phase 4: production
 Point the existing gateway route at the Phase 1–2 path. Then add tool-call
-support, soak tests, and operational limits from the punchlist.
+support, soak tests, and operational limits from the [production plan](specprefill-production-plan.md).
 
 ## Parked (don't work on these until Phase 3 passes)
 Flash-Next structured-summary compaction and provenance JSON repair,
@@ -280,13 +280,14 @@ The goal: a single session grows to ≥250K tokens on the current hardware
 | Flash-Next window | 49,152 | Holds the ~10–14% SpecPrefill delivers over 254K, so no rebuild |
 | `--vram-reserve-mib` | **8192** | Room for the 256K student cache (peak 6.3 GB). At 4096 it runs out of memory at 32K, because Strata's expert cache absorbs any VRAM a smaller Flash-Next window frees |
 | Flash-Next K/V | **fp16** (`--kv fp16`; the baseline config had int8) | Less quantization than the baseline, not more. With int8 K/V, native returns empty replies past ~50K (below). FP16 fits a 262K native window and costs native ~3% |
-| Student prefill | block 2048, **block-sparse, 16,384 keys** per 256 query rows | 46% less student time at depth with the same gold lines delivered (v5 below) |
+| Student prefill | block 2048, **block-sparse, 16,384 keys, one block selection per 2,048-token block** (`sparse_rows` 8192), attention in 1,024-row pieces | Same gold lines as dense; 1.92× overall vs native (final run below) |
 
 Gateway: `ORCHID_SPECPREFILL_ENGINE=lean`,
 `ORCHID_SPECPREFILL_CONTEXT_TOKENS=49152`,
 `ORCHID_SPECPREFILL_STUDENT_CONTEXT_TOKENS=262144`,
 `ORCHID_SPECPREFILL_VRAM_RESERVE_MIB=8192`,
 `ORCHID_SPECPREFILL_STUDENT_SPARSE_KEYS=16384`,
+`ORCHID_SPECPREFILL_STUDENT_SPARSE_ROWS=8192`,
 `ORCHID_SPECPREFILL_TARGET_KV=fp16`.
 
 ### Making a 256K student fit and run fast (`chunked_student.py`)
@@ -465,3 +466,42 @@ Fixes this run found:
 - New option `TARGET_KV` (`GatewayOptions.target_kv`).
 
 Offline suite after these changes: 598 tests, 0 failures, 5 skipped.
+
+#### Coarser sparse selection (2026-10-18)
+
+Choosing the student's sparse blocks once per 2,048-token prefill block,
+instead of every 256 query rows, lets attention run as larger matrix
+multiplies. At 256K that's 105 ms vs 260 ms per layer call, while attention
+is still computed in 1,024-row pieces to stay within memory beside
+Flash-Next. The first version computed all 8,192 rows at once, which ran out
+of memory at turn 52 co-located, though not in the student-only replay.
+
+Student-only replay sweep (122 turns; gold = answer line delivered intact;
+Jaccard = selection overlap with dense):
+
+| Setting | Gold | Student s | Last 30 turns | Jaccard |
+|---|---|---|---|---|
+| Dense | 119 | 375 | 100.5 | 1.00 |
+| 16K keys, 256 rows (block 512, previous) | 119 | 277 | 53.1 | 0.72 |
+| 16K keys, 1,024 rows | 120 | 183 | 36.1 | 0.70 |
+| **16K keys, 8,192 rows (chosen)** | 119 | 166 | 33.5 | **0.73** |
+| 8K keys, 256 rows | 119 | 216 | 41.8 | 0.64 |
+| 8K keys, 1,024 rows | 120 | 154 | 31.8 | 0.62 |
+| 4K keys, 1,024 rows | 120 | 138 | 29.3 | 0.60 |
+
+End to end, matched FP16 against the same native run:
+
+| Depth | Native | SpecPrefill (chosen) | Speedup |
+|---|---|---|---:|
+| 0–64K | 25/29, 467 s | 28/29, 227 s | **2.06×** |
+| 64–128K | 23/27, 462 s | 27/27, 220 s | **2.10×** |
+| 128–192K | 28/33, 532 s | 31/33, 274 s | **1.94×** |
+| 192K+ | 28/33, 407 s | 29/33, 253 s | **1.61×** |
+| Total | 104/122, 1,867 s | **115/122, 974 s** | **1.92×** |
+
+- Recall: in-session 9/9, late block 9/12 (native 10/12), first 50K 8/9
+  (native 4/9).
+- At 192K+, Flash-Next is now ~6 s of the ~7.7 s turn, so a perfectly free
+  student would only reach ~1.9× in that bin.
+- Per-depth JSON: `artifacts/strata-specprefill/log256k-20261017/depth_report_fp16_r8192.json`.
+

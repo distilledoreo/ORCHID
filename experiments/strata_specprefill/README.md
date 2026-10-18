@@ -303,4 +303,4 @@ arms and is not enabled in the production gateway.
 
 The opt-in [native gateway](../../docs/specprefill-gateway.md) adds automatic
 compaction admission, text chat/SSE, durable retries, and scoped session ownership.
-Remaining work is tracked in the [production punchlist](../../docs/specprefill-production-punchlist.md).
+Remaining work is tracked in the [production plan](../../docs/specprefill-production-plan.md).

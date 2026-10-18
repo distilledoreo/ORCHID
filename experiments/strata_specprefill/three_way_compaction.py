@@ -190,7 +190,7 @@ def full_bound(tok, case):
 
 def run_arm(name, cfg, tok, vocab, student_path, case, output, *, student_block=1024,
             exact_lookup=True, lean=None, engine_args=(), reserve_mib=None, target_window=None,
-            sparse_keys=None):
+            sparse_keys=None, sparse_rows=None):
     from serve.server import StrataEngine, child_env
     directory = output/name
     directory.mkdir()
@@ -244,7 +244,7 @@ def run_arm(name, cfg, tok, vocab, student_path, case, output, *, student_block=
             allowed = compatible_ids(vocab, json.loads((student_path/'tokenizer.json').read_text()))
             device = 'cpu' if name == 'lean8ksep' else 'cuda'
             student = CachedStudent(Student(student_path, allowed, device=device), block=student_block,
-                                    sparse_keys=sparse_keys)
+                                    sparse_keys=sparse_keys, sparse_rows=sparse_rows)
             limits = SpecLimits(student_context=262144 if name == 'lean256k' else 32768,
                                 target_context=context, answer_tokens=64, **(lean or {}))
             session = SpecSession(tok, student, target, system=case['system'], limits=limits)
@@ -387,6 +387,7 @@ def main():
     parser.add_argument('--engine-arg', action='append', default=[],
                         help='extra native engine flag applied to every arm, e.g. --kv-grow')
     parser.add_argument('--sparse-keys', type=int, default=None, help='student block-sparse prefill keys')
+    parser.add_argument('--sparse-rows', type=int, default=None, help='query rows per block selection')
     parser.add_argument('--reserve-mib', type=int, default=None, help='override the VRAM reserve for every arm')
     parser.add_argument('--target-window', type=int, default=None, help='lean256k target context')
     parser.add_argument('--log', type=Path, default=None, help='Codex rollout for --case log')
@@ -439,6 +440,7 @@ def main():
                 'exact_lookup': args.exact_lookup,
                 'lean_limits': args.lean,
                 'student_sparse_keys': args.sparse_keys,
+                'student_sparse_rows': args.sparse_rows,
                 'engine_args': args.engine_arg,
                 'timing': 'Turn admission through final token, including compaction/search/student/persistence. Load and warmup excluded.',
                 'design': 'One synthetic code/revision/linked-field conversation; each arm keeps own actual replies. At least two compactions per 8K arm.'}
@@ -458,7 +460,7 @@ def main():
                                      student_block=args.student_block, exact_lookup=args.exact_lookup,
                                      lean=args.lean, engine_args=args.engine_arg,
                                      reserve_mib=args.reserve_mib, target_window=args.target_window,
-                                     sparse_keys=args.sparse_keys))
+                                     sparse_keys=args.sparse_keys, sparse_rows=args.sparse_rows))
     (args.output/'summary.json').write_text(json.dumps(summaries, indent=2))
 
 

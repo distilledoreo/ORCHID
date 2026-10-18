@@ -36,7 +36,8 @@ TOOLS = [{'type': 'function', 'function': {
 def service(args):
     options = GatewayOptions(str(args.state), str(args.config), str(args.student), engine='lean',
                              context_tokens=49152, student_context_tokens=262144, answer_tokens=64,
-                             vram_reserve_mib=8192, student_sparse_keys=args.sparse_keys, target_kv=args.kv)
+                             vram_reserve_mib=8192, student_sparse_keys=args.sparse_keys,
+                             student_sparse_rows=args.sparse_rows, target_kv=args.kv)
     native = SpecPrefillService(options)
     app = create_app(config=RuntimeConfig.from_env(db_path=str(args.state / 'gateway.db')),
                      specprefill_service=native)
@@ -70,6 +71,7 @@ def main():
     parser.add_argument('--seed', type=int, default=31)
     parser.add_argument('--budget', type=int, default=241000)
     parser.add_argument('--sparse-keys', type=int, default=None)
+    parser.add_argument('--sparse-rows', type=int, default=None)
     parser.add_argument('--restart-at', type=int, help='0-based turn of the restart (default: half)')
     parser.add_argument('--turns', type=int, help='stop after this many turns (pilot)')
     parser.add_argument('--kv', choices=('int8', 'fp16'), default=None)

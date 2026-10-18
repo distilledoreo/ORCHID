@@ -87,6 +87,7 @@ def _tiled_past(torch, q, key, value, scale, tile=TILE_KEYS):
 SPARSE_BLOCK = 64      # keys per summarized block for sparse prefill
 SPARSE_LOCAL = 4096    # most recent past keys always attended densely
 SPARSE_ROWS = 256      # query rows sharing one block selection
+SPARSE_STEP = 1024     # query rows per bound/attention piece (memory vs GEMM size)
 
 
 def _sparse_past(torch, q, key, value, scale, keep_keys, local=SPARSE_LOCAL,
@@ -113,23 +114,34 @@ def _sparse_past(torch, q, key, value, scale, keep_keys, local=SPARSE_LOCAL,
     qs = (q[0] * scale).contiguous()
     out = torch.empty((kv, rows, dim), device=q.device)
     lse = torch.empty((kv, rows), device=q.device)
-    for r0 in range(0, rows, rows_per_select):
-        qq = qs[:, r0:r0 + rows_per_select]
-        bound = (torch.bmm(qq.clamp(min=0), kmax.transpose(1, 2))
-                 + torch.bmm(qq.clamp(max=0), kmin.transpose(1, 2)))
-        chosen = bound.amax(1).topk(keep, dim=-1).indices.sort(-1).values  # [kv, keep]
+    # Blocks are chosen once per rows_per_select rows. Bounds and attention run
+    # in SPARSE_STEP pieces: large enough for efficient GEMMs, small enough that
+    # FP32 scores fit beside a co-located Flash-Next (~630 MiB at 256K).
+    step = min(rows_per_select, SPARSE_STEP)
+    for s0 in range(0, rows, rows_per_select):
+        s1 = min(rows, s0 + rows_per_select)
+        best = None
+        for r0 in range(s0, s1, step):
+            qq = qs[:, r0:min(s1, r0 + step)]
+            bound = (torch.bmm(qq.clamp(min=0), kmax.transpose(1, 2))
+                     + torch.bmm(qq.clamp(max=0), kmin.transpose(1, 2))).amax(1)
+            best = bound if best is None else torch.maximum(best, bound)
+        chosen = best.topk(keep, dim=-1).indices.sort(-1).values  # [kv, keep]
         index = chosen[..., None, None].expand(kv, keep, block, dim)
         sel_k = torch.cat([blocks.gather(1, index).reshape(kv, keep * block, dim), near_k], 1)
         sel_v = torch.cat([values.gather(1, index).reshape(kv, keep * block, dim), near_v], 1)
-        scores = torch.bmm(qq, sel_k.transpose(1, 2)).float()
-        part_lse = torch.logsumexp(scores, -1)
-        probs = torch.exp(scores - part_lse[..., None]).to(sel_v.dtype)
-        out[:, r0:r0 + rows_per_select] = torch.bmm(probs, sel_v).float()
-        lse[:, r0:r0 + rows_per_select] = part_lse
+        for r0 in range(s0, s1, step):
+            r1 = min(s1, r0 + step)
+            scores = torch.bmm(qs[:, r0:r1], sel_k.transpose(1, 2)).float()
+            part_lse = torch.logsumexp(scores, -1)
+            probs = torch.exp(scores - part_lse[..., None]).to(sel_v.dtype)
+            out[:, r0:r1] = torch.bmm(probs, sel_v).float()
+            lse[:, r0:r1] = part_lse
     return out[None], lse[None]
 
 
-def gqa_attention(torch, query, key, value, scaling, window=None, sparse_keys=None):
+def gqa_attention(torch, query, key, value, scaling, window=None, sparse_keys=None,
+                  sparse_rows=SPARSE_ROWS):
     """Causal GQA attention for a query block at the end of key/value; no K/V copies.
 
     query [b, heads, q, d]; key/value [b, kv_heads, past + q, d]. With window, the
@@ -157,7 +169,8 @@ def gqa_attention(torch, query, key, value, scaling, window=None, sparse_keys=No
     folded = query.reshape(b, kv_heads, group * q_len, dim)
     past_k, past_v = key[:, :, start:past], value[:, :, start:past]
     if sparse_keys and past - start > 2 * (sparse_keys + SPARSE_LOCAL):
-        out_p, lse_p = _sparse_past(torch, folded, past_k, past_v, scaling, sparse_keys)
+        out_p, lse_p = _sparse_past(torch, folded, past_k, past_v, scaling, sparse_keys,
+                                    rows_per_select=sparse_rows)
     elif past - start > LONG_PAST:
         out_p, lse_p = _tiled_past(torch, folded, past_k, past_v, scaling)
     else:
@@ -282,7 +295,7 @@ def streaming_importance(torch, logits, pool_kernel=13):
 
 def trace_chunked(model, torch, stop_ids, ids, keep_ratio, prefill_block=8192,
                   lookahead=8, pool_kernel=13, chunk_size=32, device="cuda", prefix_state=None,
-                  prefill_window=None, sparse_keys=None):
+                  prefill_window=None, sparse_keys=None, sparse_rows=SPARSE_ROWS):
     """prefill_window: if set, full-attention layers attend only to the most recent
     prefill_window keys (plus the block itself) while prefilling. The last prompt
     query and the lookahead rows still score against every key, and the linear
@@ -291,7 +304,9 @@ def trace_chunked(model, torch, stop_ids, ids, keep_ratio, prefill_block=8192,
 
     sparse_keys: if set (CUDA only), prefill attention over a long cached past
     keeps only the sparse_keys best blocks per query group plus a local window
-    (_sparse_past). Scoring rows and lookahead stay dense over every key."""
+    (_sparse_past). Scoring rows and lookahead stay dense over every key.
+    sparse_rows: folded query rows (head-major, so rows of one head) that share
+    one block selection."""
     from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 
     if lookahead < 1:
@@ -311,7 +326,7 @@ def trace_chunked(model, torch, stop_ids, ids, keep_ratio, prefill_block=8192,
     def attend(module, query, key, value, attention_mask, scaling, window, kwargs, sparse=None):
         if long_context:
             scale = scaling if scaling is not None else 1 / math.sqrt(query.shape[-1])
-            out = gqa_attention(torch, query, key, value, scale, window, sparse)
+            out = gqa_attention(torch, query, key, value, scale, window, sparse, sparse_rows)
             return out.transpose(1, 2).contiguous(), None
         q_len, kv_len = int(query.shape[2]), int(key.shape[2])
         if window and kv_len > window + q_len:

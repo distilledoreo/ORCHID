@@ -4,7 +4,7 @@ The existing `/v1/chat/completions` route can now use the local 0.8B student and
 Flash-Next through the packaged `memory_gateway.specprefill` runtime. The old
 summary/observer/backend route remains the default. This is an implemented text
 integration with offline verification, not a completed production rollout or a
-new live-model latency result. See the [production punchlist](specprefill-production-punchlist.md).
+new live-model latency result. See the [production plan](specprefill-production-plan.md).
 
 ## Lean engine (recommended)
 
@@ -48,11 +48,12 @@ How a turn works:
 | `QUERY_SPLIT_TOKENS` / `QUERY_TAIL_TOKENS` | 1024 / 256 |
 | `VRAM_RESERVE_MIB` (left free for the co-located student) | 4096 |
 | `STUDENT_SPARSE_KEYS` (block-sparse student prefill) | unset (dense) |
+| `STUDENT_SPARSE_ROWS` (query rows per block selection) | unset (256) |
 | `TARGET_KV` (`int8` or `fp16`) | unset (the config's) |
 
 **256K sessions (P100):** `CONTEXT_TOKENS=49152`,
 `STUDENT_CONTEXT_TOKENS=262144`, `VRAM_RESERVE_MIB=8192`,
-`STUDENT_SPARSE_KEYS=16384`, `TARGET_KV=fp16`. See the 256K section of
+`STUDENT_SPARSE_KEYS=16384`, `STUDENT_SPARSE_ROWS=8192`, `TARGET_KV=fp16`. See the 256K section of
 `specprefill-goal.md` for why each value was chosen.
 
 **Tools.** The lean route accepts OpenAI `tools` (`tool_choice` `auto` only).

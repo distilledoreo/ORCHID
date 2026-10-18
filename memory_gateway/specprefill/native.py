@@ -12,7 +12,7 @@ from .student import Student
 
 class NativeResources:
     def __init__(self, config_path, student_path, limits, log_path, *, archive_cache_bytes=8 * 1024**2,
-                 lean=False, vram_reserve_mib=4096, sparse_keys=None, kv=None):
+                 lean=False, vram_reserve_mib=4096, sparse_keys=None, sparse_rows=None, kv=None):
         self.archive_cache_bytes = archive_cache_bytes
         self.lean = lean
         cfg = json.loads(Path(config_path).read_text())
@@ -42,7 +42,8 @@ class NativeResources:
         try:
             allowed = compatible_ids(vocab, json.loads((Path(student_path) / 'tokenizer.json').read_text()))
             self.student = CachedStudent(Student(student_path, allowed), block=2048 if lean else 1024,
-                                         sparse_keys=sparse_keys if lean else None)
+                                         sparse_keys=sparse_keys if lean else None,
+                                         sparse_rows=sparse_rows if lean else None)
             self.selector = self.student if lean else AdaptiveSelector(self.student)
             self.target = NativeTarget(self.engine)
             self.summarize = NativeSummarizer(self.target, self.tok, context_limit=limits.target_context)

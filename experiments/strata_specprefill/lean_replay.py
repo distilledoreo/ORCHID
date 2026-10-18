@@ -68,7 +68,8 @@ def capture(args):
     allowed = compatible_ids(vocab, json.loads((args.student/'tokenizer.json').read_text()))
     student = Recording(CachedStudent(Student(args.student, allowed), block=args.block,
                                       prefill_window=args.prefill_window,
-                                      sparse_keys=args.sparse_keys), args.lookahead)
+                                      sparse_keys=args.sparse_keys, sparse_rows=args.sparse_rows),
+                        args.lookahead)
     limits = SpecLimits(student_context=args.student_context, target_context=10**9, answer_tokens=64,
                         new_rate=0.0, recall_tokens=0)
     session = SpecSession(tok, student, Replayed(tok, [t['text'] for t in turns]),
@@ -266,6 +267,7 @@ def main():
     parser.add_argument('--chunk', type=int, nargs='+', default=[16])
     parser.add_argument('--prefill-window', type=int, default=None)
     parser.add_argument('--sparse-keys', type=int, default=None, help='block-sparse prefill keys')
+    parser.add_argument('--sparse-rows', type=int, default=None, help='query rows per block selection')
     parser.add_argument('--student-context', type=int, default=32768)
     parser.add_argument('--tag', default='', help='replay file suffix, e.g. -w4096')
     parser.add_argument('--against', nargs='+', default=[], help='compare: tags to compare with --tag')

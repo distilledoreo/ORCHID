@@ -173,10 +173,11 @@ def test_256k_settings_come_from_environment_and_validate(monkeypatch, tmp_path)
     import pytest
     for name, value in (('ENABLED', 'true'), ('STATE_DIR', str(tmp_path)), ('CONFIG', str(tmp_path)), ('STUDENT', str(tmp_path)),
                         ('ENGINE', 'lean'), ('STUDENT_SPARSE_KEYS', '16384'), ('TARGET_KV', 'fp16'),
-                        ('VRAM_RESERVE_MIB', '8192')):
+                        ('VRAM_RESERVE_MIB', '8192'), ('STUDENT_SPARSE_ROWS', '8192')):
         monkeypatch.setenv('ORCHID_SPECPREFILL_' + name, value)
     loaded = GatewayOptions.from_env()
-    assert (loaded.student_sparse_keys, loaded.target_kv, loaded.vram_reserve_mib) == (16384, 'fp16', 8192)
+    assert (loaded.student_sparse_keys, loaded.student_sparse_rows, loaded.target_kv,
+            loaded.vram_reserve_mib) == (16384, 8192, 'fp16', 8192)
     with pytest.raises(ValueError, match='K/V'):
         options(tmp_path, target_kv='q4').validate()
 

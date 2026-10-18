@@ -62,6 +62,8 @@ class GatewayOptions:
     vram_reserve_mib: int = 4096
     # Student block-sparse prefill (keys kept per query group); None = dense.
     student_sparse_keys: int | None = None
+    # Folded query rows sharing one block selection; None = the kernel default (256).
+    student_sparse_rows: int | None = None
     # Target K/V cache type ('int8' or 'fp16'); None keeps the config's. Native
     # 256K needs fp16: int8 K/V returns empty replies past ~50K.
     target_kv: str | None = None
@@ -114,6 +116,8 @@ class GatewayOptions:
             vram_reserve_mib=int(os.environ.get('ORCHID_SPECPREFILL_VRAM_RESERVE_MIB', '4096')),
             student_sparse_keys=int(os.environ['ORCHID_SPECPREFILL_STUDENT_SPARSE_KEYS'])
             if os.environ.get('ORCHID_SPECPREFILL_STUDENT_SPARSE_KEYS') else None,
+            student_sparse_rows=int(os.environ['ORCHID_SPECPREFILL_STUDENT_SPARSE_ROWS'])
+            if os.environ.get('ORCHID_SPECPREFILL_STUDENT_SPARSE_ROWS') else None,
             target_kv=os.environ.get('ORCHID_SPECPREFILL_TARGET_KV') or None)
         options.validate()
         return options
@@ -163,7 +167,9 @@ class SpecPrefillService:
         identity = digest({'runtime': 'specprefill-gateway-v1', 'limits': asdict(options.limits),
             **({'engine': 'lean', 'query_split': [options.query_split_tokens, options.query_tail_tokens],
                 **({'student_sparse_keys': options.student_sparse_keys}
-                   if options.student_sparse_keys else {})}
+                   if options.student_sparse_keys else {}),
+                **({'student_sparse_rows': options.student_sparse_rows}
+                   if options.student_sparse_rows else {})}
                if options.lean else {}),
             **({'target_kv': options.target_kv} if options.target_kv else {}),
             'config': str(configuration.resolve()), 'student': str(Path(options.student_path).resolve()),
@@ -306,7 +312,8 @@ class SpecPrefillService:
                     self.options.limits, self.directory / 'engine.log',
                     archive_cache_bytes=self.options.archive_cache_mib * 1024**2,
                     lean=self.options.lean, vram_reserve_mib=self.options.vram_reserve_mib,
-                    sparse_keys=self.options.student_sparse_keys, kv=self.options.target_kv)
+                    sparse_keys=self.options.student_sparse_keys,
+                    sparse_rows=self.options.student_sparse_rows, kv=self.options.target_kv)
         return self.resources
 
     @staticmethod
