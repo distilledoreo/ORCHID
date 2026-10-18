@@ -112,6 +112,10 @@ class GatewayOptions:
     target_hot_mib: int = 4096  # Two ~250K-token threads.
     target_hot_dir: str = '/dev/shm'
     target_restore_floor_mib: int = 1024
+    # Storage (production plan, Phase 3): archives above the quota (0 = none) or a
+    # disk below this much free space make lean turns go native instead of writing.
+    state_quota_mib: int = 0
+    min_free_disk_mib: int = 1024
     # Load the models (and resume the most recent thread) when the gateway starts;
     # requests meanwhile get a 503 "warming" instead of hanging.
     preload: bool = False
@@ -180,6 +184,8 @@ class GatewayOptions:
             target_hot_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_HOT_MIB', str(cls.target_hot_mib))),
             target_restore_floor_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_RESTORE_FLOOR_MIB',
                                                         str(cls.target_restore_floor_mib))),
+            state_quota_mib=int(os.environ.get('ORCHID_SPECPREFILL_STATE_QUOTA_MIB', str(cls.state_quota_mib))),
+            min_free_disk_mib=int(os.environ.get('ORCHID_SPECPREFILL_MIN_FREE_DISK_MIB', str(cls.min_free_disk_mib))),
             preload=_bool_env('ORCHID_SPECPREFILL_PRELOAD',
                               os.environ.get('ORCHID_SPECPREFILL_ENGINE', cls.engine) == 'lean'),
             native_below_tokens=int(os.environ.get('ORCHID_SPECPREFILL_NATIVE_BELOW_TOKENS',
@@ -212,6 +218,7 @@ class SpecPrefillService:
         self.policy = CompactionPolicy(options.high_water)
         self.directory = Path(options.state_dir)
         self.directory.mkdir(parents=True, exist_ok=True)
+        os.chmod(self.directory, 0o700)  # Conversations: readable by their owner only.
         self.owner = (self.directory / 'owner.lock').open('a')
         try:
             fcntl.flock(self.owner, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -765,13 +772,18 @@ class SpecPrefillService:
                 reason = 'short conversation'
             if key is None:
                 key = digest(['auto', anchor, rid])
+            storage = self._storage_check() if self.options.lean else {}
+            reason = reason or storage.get('reason')
             if reason:
                 return self._native_turn(key, rid, fingerprint, payload, request, reason, on_text, on_commit)
             streamed = []
             relay = (lambda text: (streamed.append(True), on_text(text))) if on_text else None
             try:
-                return self._lean_turn(key, explicit, rid, fingerprint, request, system, anchor, hashes,
-                                       relay, on_commit)
+                result = self._lean_turn(key, explicit, rid, fingerprint, request, system, anchor, hashes,
+                                         relay, on_commit)
+                if storage.get('warning'):
+                    result['orchid']['storage_warning'] = True  # Archives past 80% of the quota.
+                return result
             except RequestConflict:
                 raise
             except Exception as error:
@@ -784,6 +796,11 @@ class SpecPrefillService:
                 # its ingested sources are kept and skipped when the turn is retried.
                 with self.db:
                     self.db.execute('UPDATE sessions SET pending=NULL WHERE key=?', (key,))
+                # The in-memory session may be ahead of its checkpoint (a failed write, a
+                # full disk): reload it from disk on the next turn.
+                dropped = self.sessions.pop(key, None)
+                if dropped is not None:
+                    dropped.close()
                 return self._native_turn(key, rid, fingerprint, payload, request, 'lean failure',
                                          on_text, on_commit)
 
@@ -813,7 +830,7 @@ class SpecPrefillService:
         if key not in self.sessions:
             # Before the student switch: restoring a session resets the student, which
             # would discard the parked state the switch is about to resume.
-            self.sessions[key] = resource.session(self.directory / (key + '.json'), system, self.options.limits)
+            self.sessions[key] = resource.session(self._session_path(key), system, self.options.limits)
         if self.active_key != key:
             started = time.perf_counter()
             self._switch_student(resource, key)
@@ -958,8 +975,8 @@ class SpecPrefillService:
                     return
                 row = self.db.execute('SELECT key,system FROM sessions WHERE used_at IS NOT NULL '
                                       'ORDER BY used_at DESC LIMIT 1').fetchone()
-                path = row and self.directory / (row[0] + '.json')
-                if not row or not path.exists():
+                path = row and self._session_path(row[0])
+                if not row or not (path.exists() or path.with_suffix('.json').exists()):
                     return
                 key, system = row
                 self.sessions[key] = resource.session(path, system, self.options.limits)
@@ -969,6 +986,24 @@ class SpecPrefillService:
                     self.target_owner = key
         finally:
             self.warming = False
+
+    def _storage_check(self):
+        """{'reason': ...} when storage forbids a lean write; {'warning': True} past 80% of the quota."""
+        import shutil
+        if shutil.disk_usage(self.directory).free < self.options.min_free_disk_mib * 2**20:
+            return {'reason': 'disk full'}
+        if self.options.state_quota_mib:
+            from .controls import storage
+            used = storage(self)
+            if used['over_quota']:
+                return {'reason': 'storage quota'}
+            if used['warning']:
+                return {'warning': True}
+        return {}
+
+    def _session_path(self, key):
+        """A lean thread's checkpoint (incremental SQLite; a legacy .json migrates on open)."""
+        return self.directory / f'{key}.sqlite3'
 
     def _target_file(self, key):
         return self.directory / 'target-cache' / f'{key}.bin'

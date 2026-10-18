@@ -12,7 +12,7 @@ class Resources:
         self.selector = self.student
 
     def session(self, path, system, limits):
-        if path.exists():
+        if path.exists() or path.with_suffix('.json').exists():
             return SpecSession.restore(path, self.tok, self.student, self.target)
         return SpecSession(self.tok, self.student, self.target, system=system, limits=limits,
                            checkpoint=path)

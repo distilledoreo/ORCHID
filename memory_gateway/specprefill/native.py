@@ -68,7 +68,7 @@ class NativeResources:
     def session(self, path, system, limits):
         if getattr(self, "lean", False):
             from .spec_session import SpecSession
-            if Path(path).exists():
+            if Path(path).exists() or Path(path).with_suffix('.json').exists():
                 return SpecSession.restore(path, self.tok, self.student, self.target)
             return SpecSession(self.tok, self.student, self.target, system=system, limits=limits,
                                checkpoint=path)

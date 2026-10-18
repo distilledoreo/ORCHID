@@ -58,6 +58,8 @@ How a turn works:
 | `TARGET_DISK_MIB` (Flash-Next session files) | 16384 |
 | `TARGET_HOT_MIB` (Flash-Next session files in `/dev/shm`) | 4096 |
 | `TARGET_RESTORE_FLOOR_MIB` (RAM Strata keeps free when restoring) | 1024 |
+| `STATE_QUOTA_MIB` (archive quota; 0 = none) | 0 |
+| `MIN_FREE_DISK_MIB` (below this, turns go native) | 1024 |
 | `PRELOAD` (load models and resume the latest thread at startup) | on for `lean` |
 
 **256K sessions (P100):** `CONTEXT_TOKENS=49152`,
@@ -137,6 +139,17 @@ conversation in `input`.
 - **Settings changes keep threads.** On the lean engine, only the ledger
   format and the model name define a thread. New budgets and windows apply
   from the next turn, and caches built under other settings are ignored.
+
+**Stored threads.** Each lean thread is a SQLite file in `STATE_DIR`,
+updated incrementally after every turn. Archives are kept until you delete
+the thread; caches can be purged at any time. Manage them over HTTP
+(`GET /v1/orchid/threads`, `GET /v1/orchid/threads/{thread}/export`,
+`DELETE /v1/orchid/threads/{thread}`, `POST /v1/orchid/caches/purge`,
+`GET /v1/orchid/storage`) or with
+`python -m memory_gateway.specprefill.admin list|export|delete|purge-caches|storage`.
+
+The state directory is owner-only. Use filesystem encryption (LUKS,
+fscrypt) if threads must be encrypted at rest.
 
 **Tools.** The lean route accepts OpenAI `tools` (`tool_choice` `auto`; other
 choices go native).

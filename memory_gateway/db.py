@@ -751,6 +751,48 @@ class SQLiteStore:
         finally:
             connection.close()
 
+    def delete_thread(self, thread_id: str) -> int:
+        """Remove a thread and everything derived from it; returns the events removed.
+
+        secure_delete overwrites the freed pages and the WAL is truncated afterwards,
+        so the thread's text doesn't stay readable in the database files.
+        """
+        connection = self.connect()
+        try:
+            connection.execute("PRAGMA secure_delete = ON")
+            connection.execute("BEGIN IMMEDIATE")
+            tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            events = [row[0] for row in connection.execute("SELECT id FROM events WHERE thread_id=?", (thread_id,))]
+            capsules = [row[0] for row in connection.execute("SELECT id FROM capsules WHERE thread_id=?", (thread_id,))]
+            memories = [row[0] for row in connection.execute(
+                "SELECT id FROM long_term_memories WHERE thread_id=?", (thread_id,))]
+
+            def delete(table, column, values):
+                if table in tables and values:
+                    for start in range(0, len(values), 500):
+                        part = values[start:start + 500]
+                        connection.execute(f"DELETE FROM {table} WHERE {column} IN ({','.join('?' * len(part))})", part)
+            for table in ("raw_event_documents", "raw_events_fts", "raw_event_embeddings", "capsule_sources",
+                          "memory_evidence"):
+                delete(table, "event_id", events)
+            delete("capsule_sources", "capsule_id", capsules)
+            delete("coding_prompt_views", "capsule_id", capsules)
+            delete("memory_evidence", "memory_id", memories)
+            delete("long_term_memories_fts", "memory_id", memories)
+            for table in ("long_term_memories", "capsules", "compaction_jobs", "model_runs", "cold_retrieval_runs",
+                          "gateway_stream_runs", "request_usage", "events"):
+                if table in tables:
+                    connection.execute(f"DELETE FROM {table} WHERE thread_id=?", (thread_id,))
+            connection.execute("DELETE FROM threads WHERE id=?", (thread_id,))
+            connection.commit()
+            connection.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+            return len(events)
+        except Exception:
+            connection.rollback()
+            raise
+        finally:
+            connection.close()
+
     def create_project(self, project_id: str, name: str | None = None) -> None:
         with self.transaction(immediate=True) as connection:
             connection.execute(

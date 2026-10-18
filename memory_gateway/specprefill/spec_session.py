@@ -119,7 +119,9 @@ class SpecSession:
                      if s.path == path and s.version == version), None)
 
     def close(self):
-        pass
+        store = getattr(self, '_store', None)
+        if store is not None:
+            store.close()
 
     # ----- framing -------------------------------------------------------
     def _encode(self, text, special=False):
@@ -562,8 +564,18 @@ class SpecSession:
 
     # ----- persistence ---------------------------------------------------
     def _save(self):
-        """Atomic checkpoint after every committed change (no-op without a path)."""
+        """Atomic checkpoint after every committed change (no-op without a path).
+
+        A `.sqlite3` checkpoint is written incrementally (session_store); a `.json`
+        one is the earlier whole-file format.
+        """
         if not self.checkpoint:
+            return
+        if self.checkpoint.suffix == '.sqlite3':
+            if getattr(self, '_store', None) is None:
+                from .session_store import SessionStore
+                self._store = SessionStore(self.checkpoint)
+            self._store.write(self.snapshot())
             return
         self.checkpoint.parent.mkdir(parents=True, exist_ok=True)
         tmp = self.checkpoint.with_name(self.checkpoint.name + '.tmp')
@@ -575,7 +587,22 @@ class SpecSession:
 
     @classmethod
     def restore(cls, path, tokenizer, student, target):
-        state = json.loads(Path(path).read_text())
+        path, store = Path(path), None
+        if path.suffix == '.sqlite3':
+            legacy = path.with_suffix('.json')
+            if not path.exists() and legacy.exists():
+                # One-time migration from the whole-file JSON checkpoint; the old file is
+                # kept (renamed), not deleted.
+                obj = cls.restore(legacy, tokenizer, student, target)
+                obj.checkpoint = path
+                obj._save()
+                legacy.rename(legacy.with_name(legacy.name + '.migrated'))
+                return obj
+            from .session_store import SessionStore
+            store = SessionStore(path)
+            state = store.read()
+        else:
+            state = json.loads(path.read_text())
         if state.get('format') != SNAPSHOT_FORMAT:
             raise ValueError('Unrecognized SpecSession checkpoint')
         obj = cls.__new__(cls)
@@ -603,6 +630,7 @@ class SpecSession:
         obj._headers = {}
         obj._line_ends = {}
         obj._bytes = {}
+        obj._store = store
         # The student's prefix cache is process memory; the next trace rebuilds it.
         if hasattr(student, 'reset'):
             student.reset()

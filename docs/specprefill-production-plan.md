@@ -260,6 +260,51 @@ tokens each). Resume overhead = student + Flash-Next save + restore:
   mid-write.
 - A deleted thread leaves no recoverable content in the state directory.
 
+**Phase 3 status (2026-10-18): gate passed.** Offline suite: 635 tests, 0 failures, 5 skipped.
+- **Incremental lean storage** (`session_store.py`): one SQLite file per
+  thread (WAL, `synchronous=FULL`), one transaction per turn.
+  - Sources are inserted once; the student and Flash-Next token lists grow by
+    appended chunks, rewritten only on a rebuild, rollout or rolled-back turn.
+  - A `.json` checkpoint migrates on first open and is kept as
+    `.json.migrated`.
+  - At a ~270K-token synthetic session, a checkpoint takes 91.5 ms vs 304 ms
+    for the JSON rewrite.
+- **Data classes.** Archives (session file, ledger rows, the gateway's event
+  store) are kept until the user deletes the thread. Caches (parked student
+  states 16 GiB on disk / 4 GiB in RAM, Flash-Next session files 16 GiB on
+  disk / 4 GiB in `/dev/shm`) stay within their budgets and can be purged.
+  Compressing idle archives was left out: it's optional, and a 250K thread's
+  archive is only ~7 MB.
+- **Controls** over HTTP (`/v1/orchid/threads`, `.../export`,
+  `DELETE .../{thread}`, `/v1/orchid/caches/purge`, `/v1/orchid/storage`)
+  and a CLI, `python -m memory_gateway.specprefill.admin
+  list|export|delete|purge-caches|storage`. The quota is `STATE_QUOTA_MIB`:
+  past 80% responses carry `orchid.storage_warning`, and at 100% turns go
+  native ("storage quota").
+- **Delete** removes the session file, both caches, the hot file, the ledger
+  rows and every event-store row derived from the thread (events, capsules,
+  memories and their full-text index, raw-recall text and embeddings, jobs,
+  runs, usage). `secure_delete` and a WAL truncate keep freed pages from
+  holding the text.
+- **Safety.**
+  - The state directory is owner-only (0700).
+  - Below `MIN_FREE_DISK_MIB` free, turns go native ("disk full").
+  - A write that fails (out of space, I/O) is answered natively, and the
+    in-memory session is dropped and reloads from its last checkpoint.
+  - Encryption at rest is left to the filesystem (LUKS or fscrypt for the
+    state directory, documented); application-level encryption would need
+    key management the gateway doesn't have.
+- **Gate tests** (`tests/test_specprefill_controls.py`,
+  `tests/test_specprefill_session_store.py`):
+  - every control, including the CLI;
+  - the quota warning and the full quota;
+  - disk full, and out of space in the middle of a write;
+  - a `kill -9` of a process mid-write, 3 times, reopening each time to a
+    consistent state;
+  - a crash inside a commit;
+  - after deleting a thread holding a unique secret, no file anywhere in the
+    test's state, event-store and hot directories contains it.
+
 ### Phase 4: quality beyond exact recall
 
 1. **Whole-history tasks.** Detect requests that need the whole conversation

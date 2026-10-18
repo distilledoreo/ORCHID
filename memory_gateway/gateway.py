@@ -260,6 +260,56 @@ def create_app(
         ready = native_service.ready()
         return JSONResponse({"status": "ready" if ready else "warming"}, status_code=200 if ready else 503)
 
+    def lean_controls():
+        if native_service is None or not native_service.options.lean:
+            return None
+        from .specprefill import controls
+        return controls
+
+    @app.get("/v1/orchid/threads")
+    async def orchid_threads() -> JSONResponse:
+        controls = lean_controls()
+        if controls is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "lean engine only"}})
+        rows = await asyncio.to_thread(controls.list_threads, native_service, store)
+        return JSONResponse({"object": "list", "data": rows})
+
+    @app.get("/v1/orchid/threads/{thread}/export", response_model=None)
+    async def orchid_export(thread: str) -> StreamingResponse | JSONResponse:
+        controls = lean_controls()
+        try:
+            lines = list(controls.export_thread(native_service, store, thread)) if controls else None
+        except KeyError:
+            lines = None
+        if lines is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "no such thread"}})
+        return StreamingResponse(iter(lines), media_type="application/x-ndjson")
+
+    @app.delete("/v1/orchid/threads/{thread}")
+    async def orchid_delete(thread: str) -> JSONResponse:
+        controls = lean_controls()
+        try:
+            removed = await asyncio.to_thread(controls.delete_thread, native_service, store, thread) if controls else None
+        except KeyError:
+            removed = None
+        if removed is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "no such thread"}})
+        return JSONResponse(removed)
+
+    @app.post("/v1/orchid/caches/purge")
+    async def orchid_purge() -> JSONResponse:
+        controls = lean_controls()
+        if controls is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "lean engine only"}})
+        return JSONResponse(await asyncio.to_thread(controls.purge_caches, native_service))
+
+    @app.get("/v1/orchid/storage")
+    async def orchid_storage() -> JSONResponse:
+        controls = lean_controls()
+        if controls is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "lean engine only"}})
+        return JSONResponse(await asyncio.to_thread(controls.storage, native_service))
+
     @app.get("/v1/models")
     async def models(request: Request) -> JSONResponse:
         if native_service is not None:
