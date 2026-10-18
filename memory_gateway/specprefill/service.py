@@ -31,6 +31,29 @@ class RequestConflict(ValueError):
     pass
 
 
+class _StopText:
+    """Output text cut at the first stop string. Text that could still begin one is
+    held back until it can't (or the output ends), so a stop split across tokens is
+    found and never sent."""
+
+    def __init__(self, stops):
+        self.stops, self.text, self.held, self.hit = list(stops or ()), '', '', False
+
+    def feed(self, text, final=False):
+        if self.hit:
+            return ''
+        buffer = self.held + text
+        cuts = [i for i in (buffer.find(s) for s in self.stops) if i >= 0]
+        if cuts:
+            out, self.held, self.hit = buffer[:min(cuts)], '', True
+        else:
+            keep = 0 if final else max((k for s in self.stops for k in range(1, len(s))
+                                        if buffer.endswith(s[:k])), default=0)
+            out, self.held = buffer[:len(buffer) - keep], buffer[len(buffer) - keep:]
+        self.text += out
+        return out
+
+
 @dataclass(frozen=True)
 class GatewayOptions:
     state_dir: str
@@ -67,6 +90,13 @@ class GatewayOptions:
     # Target K/V cache type ('int8' or 'fp16'); None keeps the config's. Native
     # 256K needs fp16: int8 K/V returns empty replies past ~50K.
     target_kv: str | None = None
+    # Lean engine: generation length when a request names none, and the
+    # conversation size below which a new thread is answered by native
+    # Flash-Next (SpecPrefill costs a student pass that doesn't pay off there).
+    output_tokens: int = 4096
+    # Measured (production plan, Phase 1): below the query-split size lean sends the
+    # whole message anyway, so its student pass only costs time.
+    native_below_tokens: int = 1024
 
     @property
     def lean(self):
@@ -118,7 +148,10 @@ class GatewayOptions:
             if os.environ.get('ORCHID_SPECPREFILL_STUDENT_SPARSE_KEYS') else None,
             student_sparse_rows=int(os.environ['ORCHID_SPECPREFILL_STUDENT_SPARSE_ROWS'])
             if os.environ.get('ORCHID_SPECPREFILL_STUDENT_SPARSE_ROWS') else None,
-            target_kv=os.environ.get('ORCHID_SPECPREFILL_TARGET_KV') or None)
+            target_kv=os.environ.get('ORCHID_SPECPREFILL_TARGET_KV') or None,
+            output_tokens=int(os.environ.get('ORCHID_SPECPREFILL_OUTPUT_TOKENS', str(cls.output_tokens))),
+            native_below_tokens=int(os.environ.get('ORCHID_SPECPREFILL_NATIVE_BELOW_TOKENS',
+                                                   str(cls.native_below_tokens))))
         options.validate()
         return options
 
@@ -130,6 +163,8 @@ class GatewayOptions:
             raise ValueError('Invalid lean SpecPrefill budgets')
         if self.target_kv not in (None, 'int8', 'fp16'):
             raise ValueError("Target K/V type must be 'int8' or 'fp16'")
+        if self.output_tokens < 1 or self.native_below_tokens < 0:
+            raise ValueError('Invalid output or native-threshold token count')
         self.limits
         CompactionPolicy(self.high_water)
         if self.resident_sessions < 1:
@@ -162,6 +197,7 @@ class SpecPrefillService:
                 hash TEXT NOT NULL, PRIMARY KEY(key,seq));
         ''')
         self._migrate_history_ledger()
+        self._migrate_thread_columns()
         configuration = Path(options.config_path)
         student_configuration = Path(options.student_path) / 'config.json'
         identity = digest({'runtime': 'specprefill-gateway-v1', 'limits': asdict(options.limits),
@@ -172,6 +208,8 @@ class SpecPrefillService:
                    if options.student_sparse_rows else {})}
                if options.lean else {}),
             **({'target_kv': options.target_kv} if options.target_kv else {}),
+            # The lean ledger keys messages by normalized identity (requests.identity).
+            **({'ledger': 'identity-v2'} if options.lean else {}),
             'config': str(configuration.resolve()), 'student': str(Path(options.student_path).resolve()),
             'model': options.model,
             'config_hash': hashlib.sha256(configuration.read_bytes()).hexdigest() if configuration.is_file() else None,
@@ -208,7 +246,7 @@ class SpecPrefillService:
                     'SELECT COUNT(*) FROM history_entries WHERE key=?', (key,)).fetchone()[0]
                 if existing:
                     continue
-                self.db.executemany('INSERT OR IGNORE INTO history_entries VALUES (?,?,?)',
+                self.db.executemany('INSERT OR IGNORE INTO history_entries(key,seq,hash) VALUES (?,?,?)',
                     [(key, seq, value) for seq, value in enumerate(hashes)])
             for key, pending in self.db.execute('SELECT key,pending FROM sessions WHERE pending IS NOT NULL'):
                 try:
@@ -226,12 +264,24 @@ class SpecPrefillService:
                     self.db.execute('UPDATE sessions SET pending=? WHERE key=?', (json.dumps(record), key))
             self.db.execute('ALTER TABLE sessions DROP COLUMN history')
 
+    def _migrate_thread_columns(self):
+        """Lean threads: a matching anchor per session and which ledger rows are our replies."""
+        if 'anchor' not in [row[1] for row in self.db.execute('PRAGMA table_info(sessions)')]:
+            with self.db:
+                self.db.execute('ALTER TABLE sessions ADD COLUMN anchor TEXT')
+        if 'ours' not in [row[1] for row in self.db.execute('PRAGMA table_info(history_entries)')]:
+            with self.db:
+                self.db.execute('ALTER TABLE history_entries ADD COLUMN ours INTEGER NOT NULL DEFAULT 0')
+        with self.db:
+            self.db.execute('CREATE INDEX IF NOT EXISTS sessions_anchor ON sessions(anchor)')
+            self.db.execute('CREATE INDEX IF NOT EXISTS completions_rid ON completions(rid)')
+
     def _ledger(self, key):
         return [row[0] for row in self.db.execute(
             'SELECT hash FROM history_entries WHERE key=? ORDER BY seq', (key,))]
 
     def _append_history(self, key, base, hashes):
-        self.db.executemany('INSERT INTO history_entries VALUES (?,?,?)',
+        self.db.executemany('INSERT INTO history_entries(key,seq,hash) VALUES (?,?,?)',
             [(key, base + seq, value) for seq, value in enumerate(hashes)])
 
     @staticmethod
@@ -245,6 +295,12 @@ class SpecPrefillService:
         return pending
 
     def validate(self, payload):
+        if self.options.lean:
+            from .requests import parse
+            return parse(payload, self.options.model)
+        return self._validate_compacting(payload)
+
+    def _validate_compacting(self, payload):
         allowed = {'messages', 'model', 'max_tokens', 'max_completion_tokens', 'stream', 'temperature', 'n'}
         if self.options.lean:
             allowed |= {'tools', 'tool_choice'}
@@ -322,12 +378,12 @@ class SpecPrefillService:
         # The prompt already closes thinking; drop a redundant empty block.
         return re.sub(r'^\s*<think>\s*</think>\s*', '', text)
 
-    def _result(self, session, output, rid, key, tools=False):
+    def _result(self, session, output, rid, key, tools=False, text=None, stopped=False):
         event = next((e for e in reversed(session.events) if e['kind'] == 'answer'), {})
         prompt = event.get('target_tokens', 0)
         maximum = (session.last_answer or {}).get('maximum', session.limits.answer_tokens)
-        ended = output[-1] in getattr(session.target, 'stop_ids', ())
-        message = {'role': 'assistant', 'content': self._text(session.tok, output)}
+        ended = stopped or output[-1] in getattr(session.target, 'stop_ids', ())
+        message = {'role': 'assistant', 'content': self._text(session.tok, output) if text is None else text}
         finish = 'length' if len(output) >= maximum and not ended else 'stop'
         if tools:
             from .tools import parse
@@ -409,7 +465,14 @@ class SpecPrefillService:
             start = end
 
     def complete(self, project, thread, rid, payload, on_text=None, on_commit=None):
-        maximum = self.validate(payload)
+        """One chat completion. project/thread name the thread explicitly; for the lean
+        engine both may be None, and the thread is found from the history itself."""
+        if self.options.lean:
+            return self._complete_lean(project, thread, rid, payload, on_text, on_commit)
+        return self._complete_compacting(project, thread, rid, payload, on_text, on_commit)
+
+    def _complete_compacting(self, project, thread, rid, payload, on_text=None, on_commit=None):
+        maximum = self._validate_compacting(payload)
         if not project or not thread or not rid or max(len(project), len(thread), len(rid)) > 512:
             raise ValueError('Explicit bounded project, thread, and request IDs are required')
         key = digest([project, thread])
@@ -554,6 +617,256 @@ class SpecPrefillService:
             if on_commit:
                 on_commit(result)
             return result
+
+    # ----- lean engine: the default request path ---------------------------
+    def _lean_system(self, request):
+        system = '\n\n'.join(m['content'] for m in request.messages if m['role'] == 'system')
+        system = system or 'Use exact source evidence to answer the user.'
+        if request.tools:
+            from .tools import system_text
+            system = system_text(system, request.tools)
+        return system
+
+    @staticmethod
+    def _matches(hashes, roles, ledger):
+        """The request continues this ledger: every recorded entry is its prefix.
+
+        An assistant entry the gateway itself produced matches any assistant
+        message, since clients re-serialize replies (reasoning, IDs, spacing).
+        """
+        if len(hashes) <= len(ledger):
+            return False
+        return all(h == hashes[i] or (ours and roles[i] == 'assistant')
+                   for i, (h, ours) in enumerate(ledger))
+
+    def _ledger_rows(self, key):
+        return self.db.execute('SELECT hash,ours FROM history_entries WHERE key=? ORDER BY seq',
+                               (key,)).fetchall()
+
+    def _find_thread(self, anchor, hashes, roles, rid):
+        """The longest stored thread this request continues, or None (a new thread)."""
+        best, best_len = None, -1
+        for key, pending in self.db.execute('SELECT key,pending FROM sessions WHERE anchor=?', (anchor,)):
+            if pending and json.loads(pending).get('rid') != rid:
+                continue  # Stuck on another request: branch off instead of waiting on it.
+            ledger = self._ledger_rows(key)
+            if len(ledger) > best_len and self._matches(hashes, roles, ledger):
+                best, best_len = key, len(ledger)
+        return best
+
+    def _conversation_tokens(self, tok, request):
+        return sum(len(tok.encode(m['content'])) for m in request.messages)
+
+    def _native_turn(self, key, rid, fingerprint, payload, request, reason, on_text, on_commit):
+        """Answer with plain Flash-Next. The lean session and ledger are untouched:
+        the next lean turn on this thread ingests whatever it hasn't seen."""
+        resource = self._resources()
+        result = resource.native(payload, on_text)
+        result = {**result, 'orchid': {'engine': 'native', 'reason': reason, 'thread': key}}
+        with self.db:
+            self.db.execute('INSERT OR REPLACE INTO completions VALUES (?,?,?,?)',
+                            (key, rid, fingerprint, json.dumps(result)))
+        if on_commit:
+            on_commit(result)
+        return result
+
+    def _complete_lean(self, project, thread, rid, payload, on_text=None, on_commit=None):
+        from .requests import identity, parse
+        request = parse(payload, self.options.model)
+        if bool(project) != bool(thread):
+            raise ValueError('Send both x-memory-project and x-memory-thread, or neither')
+        if max(len(project or ''), len(thread or ''), len(rid or '')) > 512:
+            raise ValueError('Project, thread, and request IDs must be at most 512 characters')
+        explicit = bool(project)
+        hashes = [digest(identity(m)) for m in request.messages]
+        roles = [m['role'] for m in request.messages]
+        # Everything that can change the answer: the normalized history plus every other
+        # request field (streaming only changes how the same answer is delivered).
+        fingerprint = digest({'messages': hashes, 'fields': {k: v for k, v in payload.items()
+                                                             if k not in ('messages', 'stream', 'stream_options')}})
+        # Without a request ID, a repeated request (a client retry) replays its answer.
+        rid = rid or 'auto-' + fingerprint
+        with self.lock:
+            if self.closed:
+                raise RuntimeError('SpecPrefill service is closed')
+            done = (self.db.execute('SELECT key,hash,response FROM completions WHERE key=? AND rid=?',
+                                    (digest([project, thread]), rid)).fetchone() if explicit
+                    else self.db.execute('SELECT key,hash,response FROM completions WHERE rid=?',
+                                         (rid,)).fetchone())
+            if done:
+                if done[1] != fingerprint:
+                    raise RequestConflict('Request ID was already used for a different payload')
+                result = json.loads(done[2])
+                if on_text and result['choices'][0]['message'].get('content'):
+                    on_text(result['choices'][0]['message']['content'])
+                if on_commit:
+                    on_commit(result)
+                return result
+            system = self._lean_system(request)
+            first = next((h for h, r in zip(hashes, roles) if r != 'system'), '')
+            anchor = digest([system, first])
+            if explicit:
+                key = digest([project, thread])
+                known = self.db.execute('SELECT 1 FROM sessions WHERE key=?', (key,)).fetchone() is not None
+            else:
+                key = self._find_thread(anchor, hashes, roles, rid)
+                known = key is not None
+            reason = request.native_reasons[0] if request.native_reasons else None
+            if (reason is None and not known and self.options.native_below_tokens
+                    and self._conversation_tokens(self._resources().tok, request) < self.options.native_below_tokens):
+                reason = 'short conversation'
+            if key is None:
+                key = digest(['auto', anchor, rid])
+            if reason:
+                return self._native_turn(key, rid, fingerprint, payload, request, reason, on_text, on_commit)
+            streamed = []
+            relay = (lambda text: (streamed.append(True), on_text(text))) if on_text else None
+            try:
+                return self._lean_turn(key, explicit, rid, fingerprint, request, system, anchor, hashes,
+                                       relay, on_commit)
+            except RequestConflict:
+                raise
+            except Exception as error:
+                from .scheduling import CapacityError
+                if isinstance(error, CapacityError):
+                    raise
+                if streamed:
+                    raise
+                # Nothing reached the client: answer natively. The lean turn rolled back;
+                # its ingested sources are kept and skipped when the turn is retried.
+                with self.db:
+                    self.db.execute('UPDATE sessions SET pending=NULL WHERE key=?', (key,))
+                return self._native_turn(key, rid, fingerprint, payload, request, 'lean failure',
+                                         on_text, on_commit)
+
+    def _lean_turn(self, key, explicit, rid, fingerprint, request, system, anchor, hashes, on_text, on_commit):
+        from .tools import message_text
+        messages = request.messages
+        row = self.db.execute('SELECT system,pending,growth FROM sessions WHERE key=?', (key,)).fetchone()
+        single = bool(row) and explicit and len(messages) == 1 and messages[0]['role'] == 'user'
+        if row:
+            pending = json.loads(row[1]) if row[1] else None
+            ledger = self._ledger_rows(key)
+            if pending and (pending['rid'] != rid or pending['hash'] != fingerprint):
+                raise RequestConflict('A prior request is incomplete; retry it with its original request ID')
+            if pending and pending['base'] != len(ledger):
+                raise RequestConflict('Session checkpoint and request ledger disagree')
+            if single:
+                novel = messages  # A client that sends only its newest message.
+            elif self._matches(hashes, [m['role'] for m in messages], ledger):
+                novel = [m for m in messages[len(ledger):] if m['role'] != 'system']
+            else:
+                raise RequestConflict('Conversation history changed; use a new thread for a branch')
+        else:
+            pending, ledger = None, []
+            novel = [m for m in messages if m['role'] != 'system']
+        resource = self._resources()
+        if self.active_key != key:
+            resource.selector.reset()
+            self.active_key = key
+        if key not in self.sessions:
+            self.sessions[key] = resource.session(self.directory / (key + '.json'), system, self.options.limits)
+        session = self.sessions[key]
+        if session.system != system:
+            raise RequestConflict('Pinned system instructions changed')
+        if session.limits != self.options.limits:
+            raise RequestConflict('Session limits changed; restore with the original configuration')
+        self.sessions.move_to_end(key)
+        while len(self.sessions) > self.options.resident_sessions:
+            _, evicted = self.sessions.popitem(last=False)
+            evicted.close()
+        tools = bool(request.tools)
+        if novel[-1]['role'] == 'tool':
+            body, question = message_text(novel[-1]), self._continue_query(session.tok, messages)
+        else:
+            body, question = self._split_query(session.tok, novel[-1]['content'])
+        frame = len(session._system()) + len(session._query(question))
+        bare = frame + session.limits.answer_tokens + self.policy.safety_tokens
+        if bare > min(session.limits.student_context, session.limits.target_context):
+            from .scheduling import CapacityError
+            raise CapacityError('User request alone exceeds context capacity; split the request')
+        # Generation length: what the client asked for (or the default), within the target window.
+        maximum = max(1, min(request.max_tokens or self.options.output_tokens,
+                             session.limits.target_context - frame - 1024))
+        stop = _StopText(request.stop)
+        # With tools, text streams until the first <tool_call>; the calls are parsed at the end.
+        calls = _StopText(['<tool_call>']) if tools else None
+
+        def emit(text, final=False):
+            if calls is not None:
+                text = calls.feed(text, final)
+            if text and on_text:
+                on_text(text)
+        if pending and session.turn == pending['turn'] + 1:
+            if not session.last_answer or session.last_answer['question'] != question:
+                raise RequestConflict('Cannot reconcile completed model turn')
+            output = session.last_answer['output_ids']
+            emit(stop.feed(self._text(session.tok, output), final=True), final=True)
+        else:
+            if pending and session.turn != pending['turn']:
+                raise RequestConflict('Session checkpoint and request ledger disagree')
+            if pending is None:
+                # Ledger entries this turn adds (our reply is added on commit).
+                appended = hashes if not row or single else hashes[len(ledger):]
+                pending = {'rid': rid, 'hash': fingerprint, 'turn': session.turn,
+                           'base': len(ledger), 'appended': appended}
+                with self.db:
+                    if row:
+                        self.db.execute('UPDATE sessions SET pending=? WHERE key=?', (json.dumps(pending), key))
+                    else:
+                        self.db.execute('INSERT INTO sessions(key,system,pending,growth,anchor) VALUES (?,?,?,?,?)',
+                                        (key, system, json.dumps(pending), 0, anchor))
+            imports = [(i, message_text(m)) for i, m in enumerate(novel[:-1])]
+            if body is not None:
+                imports.append((len(novel) - 1, body))
+            for i, content in imports:
+                self._lean_ingest(session, self._label(messages, novel[i], pending['base'] + i), content)
+            decoder = codecs.getincrementaldecoder('utf-8')()
+            target = resource.target
+            target.cancel = threading.Event()
+            target.sampling = request.sampling or None
+
+            def token(token_id):
+                if token_id in getattr(target, 'stop_ids', ()):
+                    return
+                raw = session.tok.token_bytes(token_id)
+                if raw.startswith(b'<|') and raw.endswith(b'|>'):
+                    return
+                emit(stop.feed(decoder.decode(raw)))
+                if stop.hit:
+                    target.cancel.set()
+            target.on_token = token if on_text or request.stop else None
+            try:
+                output = session.answer(question, maximum=maximum)
+                if target.on_token is None:
+                    stop.feed(self._text(session.tok, output), final=True)
+                else:
+                    emit(stop.feed(decoder.decode(b'', final=True), final=True), final=True)
+            finally:
+                target.on_token = None
+                target.sampling = None
+        result = self._result(session, output, rid, key, tools=tools,
+                              text=stop.text if request.stop else None, stopped=stop.hit)
+        result['orchid']['thread'] = key
+        if tools and on_text:
+            # Text after a tool call (rare) was held back with the call: send what's left.
+            content, sent = result['choices'][0]['message'].get('content') or '', calls.text
+            if content.startswith(sent) and len(content) > len(sent):
+                on_text(content[len(sent):])
+        from .requests import identity
+        appended = [(h, 0) for h in pending['appended']] + [
+            (digest(identity(result['choices'][0]['message'])), 1)]
+        with self.db:
+            current = self.db.execute('SELECT COUNT(*) FROM history_entries WHERE key=?', (key,)).fetchone()[0]
+            if current != pending['base']:
+                raise RequestConflict('Session checkpoint and request ledger disagree')
+            self.db.execute('INSERT INTO completions VALUES (?,?,?,?)', (key, rid, fingerprint, json.dumps(result)))
+            self.db.executemany('INSERT INTO history_entries(key,seq,hash,ours) VALUES (?,?,?,?)',
+                [(key, pending['base'] + i, h, ours) for i, (h, ours) in enumerate(appended)])
+            self.db.execute('UPDATE sessions SET pending=NULL WHERE key=?', (key,))
+        if on_commit:
+            on_commit(result)
+        return result
 
     def close(self):
         with self.lock:

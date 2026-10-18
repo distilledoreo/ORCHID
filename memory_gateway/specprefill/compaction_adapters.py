@@ -44,16 +44,28 @@ class NativeTarget:
         self.engine = engine
         self.last = None
         self.on_token = None
+        # Per-request settings the caller may set: engine sampling (greedy when
+        # empty) and the event that ends a generation early (a stop string).
+        self.sampling = None
+        self.cancel = threading.Event()
 
     def __call__(self, ids, maximum):
         # Sequential positions in the new generation. Never backfill old positions.
         started, first, output = time.perf_counter(), None, []
-        for token in self.engine.generate(ids, maximum, {'temperature': 0}, threading.Event()):
-            if token is not None:
-                first = time.perf_counter() if first is None else first
-                output.append(token)
-                if self.on_token:
-                    self.on_token(token)
+        cancel = self.cancel
+        tokens = self.engine.generate(ids, maximum, self.sampling or {'temperature': 0}, cancel)
+        try:
+            for token in tokens:
+                if token is not None:
+                    first = time.perf_counter() if first is None else first
+                    output.append(token)
+                    if self.on_token:
+                        self.on_token(token)
+                if cancel.is_set():
+                    break
+        finally:
+            if hasattr(tokens, 'close'):
+                tokens.close()  # An early stop ends the engine's request too.
         if first is None:
             raise RuntimeError('Target produced no first token')
         self.last = {'output_ids': output, 'target_ttft_s': first-started,

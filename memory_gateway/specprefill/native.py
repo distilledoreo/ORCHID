@@ -1,6 +1,7 @@
 """Lazy local-model resources for the gateway. Never touches a running service."""
 import json
 import sys
+import threading
 from pathlib import Path
 
 from .cached_student import CachedStudent
@@ -27,6 +28,10 @@ class NativeResources:
             tokens[index] = text
         self.tok = st.Tokenizer(tokens, (directory / 'merges.txt').read_text().split('\n'),
                                json.loads((directory / 'token_type.json').read_text()))
+        template = directory / 'chat_template.jinja'
+        self.template_path = template if template.exists() else root / 'serve' / 'chat_template.jinja'
+        self.model_name = cfg.get('model_name', 'qwen3.8-flash-next')
+        self._native = None
         args = [a for a in cfg['args'] if a not in ('--selected-prefill', '--selected-prefix-cache')]
         for flag, value in (('--max-context', limits.target_context), ('--kv-resident', limits.target_context),
                             ('--vram-reserve-mib', vram_reserve_mib), ('--prompt-cache', 6),
@@ -64,6 +69,43 @@ class NativeResources:
         return CompactingSession(self.tok, self.selector, self.target, self.summarize,
                                  system=system, limits=limits, checkpoint=path,
                                  archive_cache_bytes=self.archive_cache_bytes)
+
+    def native(self, payload, on_text=None, cancel=None):
+        """One plain Flash-Next chat completion through Strata's own OpenAI path.
+
+        Same engine and prompt cache as the lean route, and the same template,
+        tool, stop and sampling handling as Strata's native server. A prompt
+        that does not fit the engine's window raises ValueError.
+        """
+        from serve import server as strata
+        if self._native is None:
+            from serve.frontend import ChatTemplate
+            self._native = strata.Service(self.engine, self.tok, ChatTemplate(self.template_path),
+                                          model_name=self.model_name)
+        svc = self._native
+        req = {**payload, 'model': svc.model}
+        messages, tools, kwargs = strata.openai_to_messages(req)
+        if strata.tool_choice_of(req.get('tool_choice'))[0] == 'none':
+            tools = None
+        force = strata.forced_call(req.get('tool_choice'), tools)
+        messages, validator = strata.prepare_format(req.get('response_format'), messages)
+        strata.stop_strings(req)
+        strata.check_request_sampling(req)
+        maximum = int(req.get('max_completion_tokens') or req.get('max_tokens') or 0)
+        ids, thinking, maximum = svc.prepare(messages, tools, kwargs, maximum, force=force, req=req)
+        chunks = strata.openai_chunks(svc, req, ids, thinking, tools, maximum, cancel or threading.Event(),
+                                      force=force)
+        if validator is not None:
+            chunks = strata.structured_chunks(chunks, validator)
+
+        def relay():
+            for chunk in chunks:
+                if chunk and on_text:
+                    text = (chunk['choices'][0].get('delta') or {}).get('content') if chunk.get('choices') else None
+                    if text:
+                        on_text(text)
+                yield chunk
+        return strata.openai_collect(relay())
 
     def close(self):
         self.selector.reset()

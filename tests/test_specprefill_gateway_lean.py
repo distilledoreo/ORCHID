@@ -25,7 +25,7 @@ def options(tmp_path, **kwargs):
     base = GatewayOptions(str(tmp_path / 'native'), 'unused', 'unused', engine='lean',
                           context_tokens=60000, student_context_tokens=60000, answer_tokens=32,
                           new_rate=0.05, recall_tokens=200, query_split_tokens=1024,
-                          query_tail_tokens=200)
+                          query_tail_tokens=200, native_below_tokens=0)
     return replace(base, **kwargs)
 
 

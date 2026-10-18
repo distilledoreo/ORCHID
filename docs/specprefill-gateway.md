@@ -50,13 +50,62 @@ How a turn works:
 | `STUDENT_SPARSE_KEYS` (block-sparse student prefill) | unset (dense) |
 | `STUDENT_SPARSE_ROWS` (query rows per block selection) | unset (256) |
 | `TARGET_KV` (`int8` or `fp16`) | unset (the config's) |
+| `OUTPUT_TOKENS` (generation length when a request names none) | 4096 |
+| `NATIVE_BELOW_TOKENS` (new threads below this go native) | 1024 |
 
 **256K sessions (P100):** `CONTEXT_TOKENS=49152`,
 `STUDENT_CONTEXT_TOKENS=262144`, `VRAM_RESERVE_MIB=8192`,
 `STUDENT_SPARSE_KEYS=16384`, `STUDENT_SPARSE_ROWS=8192`, `TARGET_KV=fp16`. See the 256K section of
 `specprefill-goal.md` for why each value was chosen.
 
-**Tools.** The lean route accepts OpenAI `tools` (`tool_choice` `auto` only).
+**Plain clients, no headers.** On the lean engine, `x-memory-project` and
+`x-memory-thread` are optional:
+- **Thread matching.** The thread is found from the history itself: the
+  longest stored thread whose recorded messages are a prefix of the request.
+  Replies the gateway produced match even if the client re-serializes them
+  (spacing, reasoning, call IDs).
+- **Forks and edits.** A fork, an edited or truncated history, or a different
+  system prompt starts a new thread, which ingests the whole history.
+- **Retries.** A repeated request with no `x-request-id` replays its stored
+  answer without calling the model. Any change to a field other than
+  `stream`/`stream_options` counts as a new request.
+- **Explicit headers** keep the strict behavior: a changed history is a 409.
+
+**Native fallback.** Requests the lean engine can't serve are answered by
+plain Flash-Next through Strata's own OpenAI path, on the same engine and
+prompt cache. `orchid.engine` is `native` and `orchid.reason` says why. That
+covers:
+- an image or other non-text part in the message being answered;
+- `tool_choice` `none`/`required`/named;
+- `logprobs`, `logit_bias` or `response_format` (JSON);
+- a lean failure before any output reached the client.
+
+Native turns don't touch the lean session; the next lean turn ingests
+whatever it missed. A native request must fit the engine's window
+(`CONTEXT_TOKENS`); one that doesn't is a 400 with the reason.
+`NATIVE_BELOW_TOKENS` (default 1024, measured) sends a new conversation below
+that size to native. Under the query-split size lean sends the whole message
+anyway, so native was 0.3–0.6 s faster there. From ~1K tokens lean wins (4.1 s
+vs 8.2 s at 1.1K, 5.7 s vs 24.5 s at 4.1K).
+
+**Request shapes.** The route accepts:
+- content-part lists and the `developer` role;
+- extra message keys (`name`, `refusal`, `reasoning_content`);
+- `temperature`/`top_p`/`top_k`/`seed`/penalties, passed to the engine;
+- `stop` (up to 4 strings, cut before they're sent);
+- `stream_options.include_usage`;
+- `max_tokens`/`max_completion_tokens` up to the target window. 0 or -1 means
+  "no limit of its own", which uses `OUTPUT_TOKENS` (default 4096).
+
+**Responses API.** `POST /v1/responses` (what Codex CLI speaks) is served on the
+lean engine. Strata's converter (`serve/responses.py`) turns the request into
+chat messages and tools, the chat path answers it, and Strata's assembler
+writes the Responses items and events. It is stateless:
+`previous_response_id` is refused, and the client sends the whole
+conversation in `input`.
+
+**Tools.** The lean route accepts OpenAI `tools` (`tool_choice` `auto`; other
+choices go native).
 Definitions are rendered into the pinned system text in Qwen format, and
 `<tool_call>` output comes back as `tool_calls` with
 `finish_reason: "tool_calls"`. With tools, streaming sends the parsed content

@@ -77,6 +77,72 @@ OpenCode) run multi-turn sessions through the gateway with no headers and no
 errors. Every unsupported case is served natively. Forks, edits and retries
 pass offline tests.
 
+**Phase 1 status (2026-10-18): gate passed.** Offline suite: 616 tests, 0 failures, 5 skipped.
+- Built: `requests.py` (request normalization and native reasons), automatic
+  thread matching, content-based retry replay, native fallback through
+  Strata's OpenAI path (`NativeResources.native`), sampling, stop strings,
+  long `max_tokens`, `include_usage`, and `POST /v1/responses` for Codex
+  (Codex 0.162 refuses `wire_api = "chat"`). 15 offline test functions in
+  `tests/test_specprefill_gateway_auto.py`.
+- Short-conversation threshold, measured live (fresh single-turn chats,
+  32-token answers, both routes without thinking, all answers correct):
+
+  | Prompt tokens | Lean | Native |
+  |---:|---:|---:|
+  | 63 | 3.22 s | 2.98 s |
+  | ~230 | 4.94 s | 4.35 s |
+  | ~550 | 6.32 s | 5.79 s |
+  | ~1,070 | 4.11 s | 8.15 s |
+  | ~2,100 | 4.34 s | 13.12 s |
+  | ~4,130 | 5.70 s | 24.45 s |
+
+  The crossover is the lean engine's 1,024-token query split: below it lean
+  sends the whole message anyway. So `NATIVE_BELOW_TOKENS` defaults to 1024.
+  (With native's default thinking on, native took 4.8–26.3 s at the same
+  sizes.)
+- Gate runs (live gateway, 256K configuration, no headers):
+  - **OpenAI Python SDK 3.35.1**, unmodified. All six steps correct:
+    - a plain turn (5.7 s) and a streamed turn with `include_usage` (3.7 s);
+    - a tool call (`finish_reason: tool_calls`, correct arguments) and the
+      answer from its tool result;
+    - a retry of the same request, replayed in 0.01 s with the identical
+      answer;
+    - a sampled turn with `stop`.
+
+    Adding `tools` mid-conversation started a new thread, as designed (the
+    tools are part of the pinned system text). Dropping them continued the
+    original thread.
+  - **OpenCode 1.18.35** (`@ai-sdk/openai-compatible`), two turns:
+    - Turn 1 ran the tests, read `calc.py`, fixed the bug and reran the tests
+      to green.
+    - Turn 2 continued the session and added a test; all 3 pass.
+    - All 10 agent requests stayed on one lean thread (21 ledger entries),
+      with no forks and no native fallbacks.
+  - **Codex CLI 0.162.1** over `POST /v1/responses` (`wire_api = "responses"`),
+    two turns:
+    - Turn 1 found and fixed the bug, with tests green.
+    - Turn 2 (`codex exec resume --last`) added a test; all 3 pass.
+    - All 15 requests (13 tool-call turns, 2 final answers) stayed on one
+      lean thread (32 ledger entries), with no forks, no fallbacks and no
+      HTTP errors.
+  - **Unsupported cases go native** (images, forced or `none` tool choice,
+    `logprobs`, JSON `response_format`, lean failure). Covered offline, and
+    live with `tool_choice: none` (the threshold runs above). **Forks, edits,
+    retries and re-serialized replies:** offline tests.
+- Found while testing:
+  - With tools, the lean path buffered the whole answer, so agents saw
+    nothing until generation ended. Text now streams up to the first
+    `<tool_call>`, and the calls are parsed at the end.
+  - systemd-oomd kills the engine while it pins its 47 GB of experts (user
+    slice pressure over 50% for 20 s). It also killed the Claude app twice,
+    and FRIDAY's Strata service three times this week.
+  - Fix for testing: run the gateway as its own user service. On this
+    machine it also needs the user slice's oomd limit raised, a root change
+    for the user to make (Phase 5 install docs).
+  - Fixed: the retry fingerprint ignored fields like `chat_template_kwargs`,
+    so a changed request could replay an old answer. It now covers every
+    field except `stream`/`stream_options`.
+
 ### Phase 2: fast resume
 
 1. **Student cache on disk, per thread.** When switching away or going idle,
