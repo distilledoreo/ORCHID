@@ -1,0 +1,16 @@
+{
+  "arm": "summary8k",
+  "turns": 22,
+  "correct_fields": 30,
+  "fields": 44,
+  "exact_turns": 11,
+  "total_wall_s": 415.5626432840945,
+  "load_s_excluded": 160.02388580003753,
+  "mean_e2e_ttft_s": 18.278437667494554,
+  "median_e2e_ttft_s": 8.074661029997515,
+  "compactions": 5,
+  "reused_answer_tokens": 56157,
+  "maintenance_s": 230.5423335340456,
+  "late_correct_fields": 1,
+  "late_fields": 8
+}

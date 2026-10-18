@@ -99,7 +99,7 @@ not acquire synthetic hidden states. This interface provides original rotary
 coordinates; it does not restore full-prompt computation or establish that this
 model matches the dense Llama models in the SpecPrefill paper.
 
-Prompt and conversation cache reuse is disabled for the entire opt-in engine,
+In the original selected-prefill mode, prompt and conversation cache reuse is disabled,
 including full-prefill controls, to prevent state reuse across position layouts.
 Without the new flag, no new table is allocated for ordinary text; existing
 requests retain their previous protocol. The patch does not change kernels,
@@ -169,3 +169,31 @@ but ordinary repeats already had different logits (maximum difference 0.6742).
 Numerical parity is therefore established only for the stated controlled
 configuration. All failed diagnostic attempts and raw outputs are preserved
 privately. No benchmark or quality conclusion follows from this smoke test.
+
+### Experimental prefix caching for selected positions
+
+`selected-prefix-cache.patch` applies **after** `selected-prefill.patch`.
+`prefix-cache-manifest.json` binds the four changed files to their exact before
+and after hashes. This extension is opt-in:
+
+```text
+--selected-prefill --selected-prefix-cache --prompt-cache 6 --conversation-cache-mib 0
+```
+
+Without the new flag, the original selected-prefill mode still requires
+`--prompt-cache 0`. Ordinary Strata caching keeps its existing default behavior.
+
+The experimental cache compares both token IDs and all three rotary coordinates.
+A checkpoint can resume only before the first changed coordinate. Token matches
+alone are insufficient. Sparse/contiguous transitions force a cold start. Parked
+conversation snapshots, session SAVE/RESTORE, batching, vision, and device splits are excluded here.
+
+The ORCHID `StableSelection` experiment preserves previously selected positions
+and unions newly selected positions in original order. A newly relevant earlier
+chunk is inserted at its original position and invalidates the affected suffix;
+it is never appended out of order to an existing recurrent state. Retention can
+grow above 30%, and backfill can eliminate most cache savings. These are measured
+costs, not hidden assumptions.
+
+CUDA is the validated backend for this extension. HIP and SYCL builds have not
+been validated on this host. The installed production executable is not replaced.

@@ -1,0 +1,17 @@
+{
+  "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True",
+  "student_prefill_block": 512,
+  "student_model": "/media/distilledoreo/Storage/AI/state-projection/models/Qwen3.5-0.8B",
+  "implementation_sha256": {
+    "memory_gateway/specprefill/exact_lookup.py": "cb304af670bf3c51574b31b450031c59390344aa3746046d55ce1f6a3fbe51b5",
+    "memory_gateway/specprefill/compacting_session.py": "fc48a03aa07a5435cd54be7837aec1cc451769a392af314e13d098c0980043e0",
+    "experiments/strata_specprefill/integrated_recall.py": "4edef651be124f6b74c3de71b05190191a91e6a136137a106f14730a075b93f6",
+    "experiments/strata_specprefill/targeted_recall.py": "0b036de9312771076ad5507f59e0dfd9c7195ceb4dea4554bde26f642ec283a5"
+  },
+  "offline_tests": {
+    "passed": 565,
+    "skipped": 5,
+    "log": "/tmp/orchid-integrated-recall-tests.log"
+  },
+  "scope": "Normal session.answer, real student and target, three isolated frozen pre-answer histories. Not a new complete 44-field benchmark."
+}

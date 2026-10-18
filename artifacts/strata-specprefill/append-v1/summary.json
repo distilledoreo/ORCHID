@@ -1,0 +1,732 @@
+{
+  "rows": 144,
+  "cases": 4,
+  "stateful_actual_outputs": true,
+  "case_sha256": "04a45f2c95540149d0a8b9e41d7616ed569c14b89360421ac5481bee12f38cb8",
+  "arms": {
+    "full-alone": {
+      "requests": 16,
+      "correct": 16,
+      "mean_latency_s": 7.810922618748009,
+      "growing_mean_latency_s": 7.1021879097437095,
+      "held_correct": 8,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 2633.9166666666665,
+      "growing_reuse_fraction": 0.6793843905165187,
+      "prior_prefix_preservation_fraction": 0.9988921245885034,
+      "growing_zero_reuse": 0,
+      "partial_prefix_rewinds": 5,
+      "placeholder_tokens": 0,
+      "final_context_tokens": 5618.75,
+      "omitted_needed": 0,
+      "recovered": 0,
+      "already_delivered_selection_skipped": 0,
+      "off_task_delivered_chunks": 662,
+      "evidence_frame_tokens_including_tools": 0,
+      "fetch_requests": 0,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0,
+      "student_reused_tokens": 0,
+      "growing_student_selection_s": 0,
+      "mean_initial_visible_ttft_s": 7.810922618748009,
+      "answer_agreement_with_full": 16,
+      "oracle_correctness_agreement": 16
+    },
+    "full-matched": {
+      "requests": 16,
+      "correct": 16,
+      "mean_latency_s": 7.964289379819093,
+      "growing_mean_latency_s": 7.271980257758211,
+      "held_correct": 8,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 2634,
+      "growing_reuse_fraction": 0.6794058852610537,
+      "prior_prefix_preservation_fraction": 0.9988921245885034,
+      "growing_zero_reuse": 0,
+      "partial_prefix_rewinds": 5,
+      "placeholder_tokens": 0,
+      "final_context_tokens": 5618.75,
+      "omitted_needed": 0,
+      "recovered": 0,
+      "already_delivered_selection_skipped": 0,
+      "off_task_delivered_chunks": 670,
+      "evidence_frame_tokens_including_tools": 0,
+      "fetch_requests": 0,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0,
+      "student_reused_tokens": 0,
+      "growing_student_selection_s": 0,
+      "mean_initial_visible_ttft_s": 7.964289379819093,
+      "answer_agreement_with_full": 16,
+      "oracle_correctness_agreement": 16
+    },
+    "union30": {
+      "requests": 16,
+      "correct": 16,
+      "mean_latency_s": 7.807037562553887,
+      "growing_mean_latency_s": 8.284490601077172,
+      "held_correct": 8,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 0,
+      "growing_reuse_fraction": 0.0,
+      "prior_prefix_preservation_fraction": 0.0,
+      "growing_zero_reuse": 12,
+      "partial_prefix_rewinds": 0,
+      "placeholder_tokens": 0,
+      "final_context_tokens": 2058.75,
+      "omitted_needed": 2,
+      "recovered": 2,
+      "already_delivered_selection_skipped": 202,
+      "off_task_delivered_chunks": 222,
+      "evidence_frame_tokens_including_tools": 0,
+      "fetch_requests": 0,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0,
+      "student_reused_tokens": 31592,
+      "growing_student_selection_s": 0.5536806187592447,
+      "mean_initial_visible_ttft_s": 7.807037562553887,
+      "answer_agreement_with_full": 16,
+      "oracle_correctness_agreement": 16
+    },
+    "union-adaptive": {
+      "requests": 16,
+      "correct": 10,
+      "mean_latency_s": 4.961504214621527,
+      "growing_mean_latency_s": 5.015818446908573,
+      "held_correct": 8,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 180.83333333333334,
+      "growing_reuse_fraction": 0.25484439224897243,
+      "prior_prefix_preservation_fraction": 0.3641891891891892,
+      "growing_zero_reuse": 6,
+      "partial_prefix_rewinds": 2,
+      "placeholder_tokens": 0,
+      "final_context_tokens": 958.75,
+      "omitted_needed": 3,
+      "recovered": 3,
+      "already_delivered_selection_skipped": 80,
+      "off_task_delivered_chunks": 84,
+      "evidence_frame_tokens_including_tools": 0,
+      "fetch_requests": 0,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0,
+      "student_reused_tokens": 31584,
+      "growing_student_selection_s": 0.5014474949857686,
+      "mean_initial_visible_ttft_s": 4.961504214621527,
+      "answer_agreement_with_full": 10,
+      "oracle_correctness_agreement": 10
+    },
+    "append-none": {
+      "requests": 16,
+      "correct": 16,
+      "mean_latency_s": 4.862208689060935,
+      "growing_mean_latency_s": 4.750480347754395,
+      "held_correct": 8,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 699.0833333333334,
+      "growing_reuse_fraction": 0.6315115928937067,
+      "prior_prefix_preservation_fraction": 0.9958208955223881,
+      "growing_zero_reuse": 0,
+      "partial_prefix_rewinds": 5,
+      "placeholder_tokens": 0,
+      "final_context_tokens": 1624.75,
+      "omitted_needed": 3,
+      "recovered": 3,
+      "already_delivered_selection_skipped": 91,
+      "off_task_delivered_chunks": 90,
+      "evidence_frame_tokens_including_tools": 5540,
+      "fetch_requests": 0,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0,
+      "student_reused_tokens": 31592,
+      "growing_student_selection_s": 0.5388864180907452,
+      "mean_initial_visible_ttft_s": 4.862208689060935,
+      "answer_agreement_with_full": 16,
+      "oracle_correctness_agreement": 16
+    },
+    "append-individual": {
+      "requests": 16,
+      "correct": 16,
+      "mean_latency_s": 7.5859198553152964,
+      "growing_mean_latency_s": 7.497287448422867,
+      "held_correct": 8,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 2003.5,
+      "growing_reuse_fraction": 0.6458042333727302,
+      "prior_prefix_preservation_fraction": 0.9988340134921296,
+      "growing_zero_reuse": 0,
+      "partial_prefix_rewinds": 4,
+      "placeholder_tokens": 11952,
+      "final_context_tokens": 4612.75,
+      "omitted_needed": 3,
+      "recovered": 3,
+      "already_delivered_selection_skipped": 91,
+      "off_task_delivered_chunks": 90,
+      "evidence_frame_tokens_including_tools": 5540,
+      "fetch_requests": 0,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0,
+      "student_reused_tokens": 31592,
+      "growing_student_selection_s": 0.5375640784962646,
+      "mean_initial_visible_ttft_s": 7.5859198553152964,
+      "answer_agreement_with_full": 16,
+      "oracle_correctness_agreement": 16
+    },
+    "append-grouped": {
+      "requests": 16,
+      "correct": 16,
+      "mean_latency_s": 5.125398889063945,
+      "growing_mean_latency_s": 5.0518980652511045,
+      "held_correct": 8,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 763.0833333333334,
+      "growing_reuse_fraction": 0.6322148577740956,
+      "prior_prefix_preservation_fraction": 0.9954123429819771,
+      "growing_zero_reuse": 0,
+      "partial_prefix_rewinds": 6,
+      "placeholder_tokens": 586,
+      "final_context_tokens": 1771.25,
+      "omitted_needed": 3,
+      "recovered": 3,
+      "already_delivered_selection_skipped": 91,
+      "off_task_delivered_chunks": 90,
+      "evidence_frame_tokens_including_tools": 5540,
+      "fetch_requests": 0,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0,
+      "student_reused_tokens": 31592,
+      "growing_student_selection_s": 0.5365513073387168,
+      "mean_initial_visible_ttft_s": 5.125398889063945,
+      "answer_agreement_with_full": 16,
+      "oracle_correctness_agreement": 16
+    },
+    "fetch-grouped": {
+      "requests": 16,
+      "correct": 13,
+      "mean_latency_s": 4.849355512440525,
+      "growing_mean_latency_s": 4.5608460775013855,
+      "held_correct": 5,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 768.9166666666666,
+      "growing_reuse_fraction": 0.7112464349032607,
+      "prior_prefix_preservation_fraction": 0.9962034927866363,
+      "growing_zero_reuse": 0,
+      "partial_prefix_rewinds": 5,
+      "placeholder_tokens": 542,
+      "final_context_tokens": 1439.5,
+      "omitted_needed": 4,
+      "recovered": 1,
+      "already_delivered_selection_skipped": 72,
+      "off_task_delivered_chunks": 83,
+      "evidence_frame_tokens_including_tools": 3940,
+      "fetch_requests": 1,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0.002137073955964297,
+      "student_reused_tokens": 31588,
+      "growing_student_selection_s": 0.5195496015027553,
+      "mean_initial_visible_ttft_s": 4.378111308251391,
+      "answer_agreement_with_full": 13,
+      "oracle_correctness_agreement": 13
+    },
+    "fetch-explicit": {
+      "requests": 16,
+      "correct": 16,
+      "mean_latency_s": 6.097584201692371,
+      "growing_mean_latency_s": 5.840755617668037,
+      "held_correct": 8,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 1173.8333333333333,
+      "growing_reuse_fraction": 0.6983985324012097,
+      "prior_prefix_preservation_fraction": 0.9965245762110788,
+      "growing_zero_reuse": 0,
+      "partial_prefix_rewinds": 7,
+      "placeholder_tokens": 586,
+      "final_context_tokens": 2074.5,
+      "omitted_needed": 2,
+      "recovered": 2,
+      "already_delivered_selection_skipped": 111,
+      "off_task_delivered_chunks": 146,
+      "evidence_frame_tokens_including_tools": 6127,
+      "fetch_requests": 2,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0.005856581963598728,
+      "student_reused_tokens": 31592,
+      "growing_student_selection_s": 0.5550895187431403,
+      "mean_initial_visible_ttft_s": 4.872310523380293,
+      "answer_agreement_with_full": 16,
+      "oracle_correctness_agreement": 16
+    }
+  },
+  "memory": {
+    "full-alone": {
+      "sampled_peak_mib": 16072.875,
+      "sampled_min_mib": 114.75,
+      "samples": 2097,
+      "interval_s": 0.05
+    },
+    "full-matched": {
+      "sampled_peak_mib": 12632.875,
+      "sampled_min_mib": 12394.875,
+      "samples": 2778,
+      "interval_s": 0.05
+    },
+    "union30": {
+      "sampled_peak_mib": 13110.875,
+      "sampled_min_mib": 12632.875,
+      "samples": 2679,
+      "interval_s": 0.05
+    },
+    "union-adaptive": {
+      "sampled_peak_mib": 13110.875,
+      "sampled_min_mib": 13110.875,
+      "samples": 1782,
+      "interval_s": 0.05
+    },
+    "append-none": {
+      "sampled_peak_mib": 13126.875,
+      "sampled_min_mib": 13110.875,
+      "samples": 1800,
+      "interval_s": 0.05
+    },
+    "append-individual": {
+      "sampled_peak_mib": 13126.875,
+      "sampled_min_mib": 13126.875,
+      "samples": 2616,
+      "interval_s": 0.05
+    },
+    "append-grouped": {
+      "sampled_peak_mib": 13126.875,
+      "sampled_min_mib": 13126.875,
+      "samples": 2052,
+      "interval_s": 0.05
+    },
+    "fetch-grouped": {
+      "sampled_peak_mib": 13126.875,
+      "sampled_min_mib": 13126.875,
+      "samples": 1806,
+      "interval_s": 0.05
+    },
+    "fetch-explicit": {
+      "sampled_peak_mib": 13110.875,
+      "sampled_min_mib": 12394.875,
+      "samples": 2229,
+      "interval_s": 0.05
+    }
+  },
+  "archive_audits": {
+    "append-grouped/cache-session-0": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 13,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 13
+    },
+    "append-grouped/cache-session-1": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 13,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 13
+    },
+    "append-grouped/held-recovery": {
+      "sources": 4,
+      "chunks": 179,
+      "delivered_chunks": 37,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 37
+    },
+    "append-grouped/held-versions": {
+      "sources": 4,
+      "chunks": 180,
+      "delivered_chunks": 36,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 36
+    },
+    "append-individual/cache-session-0": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 13,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 13
+    },
+    "append-individual/cache-session-1": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 13,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 13
+    },
+    "append-individual/held-recovery": {
+      "sources": 4,
+      "chunks": 179,
+      "delivered_chunks": 37,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 37
+    },
+    "append-individual/held-versions": {
+      "sources": 4,
+      "chunks": 180,
+      "delivered_chunks": 36,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 36
+    },
+    "append-none/cache-session-0": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 13,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 13
+    },
+    "append-none/cache-session-1": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 13,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 13
+    },
+    "append-none/held-recovery": {
+      "sources": 4,
+      "chunks": 179,
+      "delivered_chunks": 37,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 37
+    },
+    "append-none/held-versions": {
+      "sources": 4,
+      "chunks": 180,
+      "delivered_chunks": 36,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 36
+    },
+    "fetch-explicit/cache-session-0": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 11,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 11
+    },
+    "fetch-explicit/cache-session-1": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 12,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 12
+    },
+    "fetch-explicit/held-recovery": {
+      "sources": 4,
+      "chunks": 179,
+      "delivered_chunks": 72,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 72
+    },
+    "fetch-explicit/held-versions": {
+      "sources": 4,
+      "chunks": 180,
+      "delivered_chunks": 58,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 58
+    },
+    "fetch-grouped/cache-session-0": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 11,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 11
+    },
+    "fetch-grouped/cache-session-1": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 12,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 12
+    },
+    "fetch-grouped/held-recovery": {
+      "sources": 4,
+      "chunks": 179,
+      "delivered_chunks": 8,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 8
+    },
+    "fetch-grouped/held-versions": {
+      "sources": 4,
+      "chunks": 180,
+      "delivered_chunks": 58,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 58
+    },
+    "full-alone/cache-session-0": {
+      "sources": 4,
+      "chunks": 156,
+      "delivered_chunks": 156,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 156
+    },
+    "full-alone/cache-session-1": {
+      "sources": 4,
+      "chunks": 156,
+      "delivered_chunks": 156,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 156
+    },
+    "full-alone/held-recovery": {
+      "sources": 4,
+      "chunks": 177,
+      "delivered_chunks": 177,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 177
+    },
+    "full-alone/held-versions": {
+      "sources": 4,
+      "chunks": 179,
+      "delivered_chunks": 179,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 179
+    },
+    "full-matched/cache-session-0": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 158,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 158
+    },
+    "full-matched/cache-session-1": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 158,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 158
+    },
+    "full-matched/held-recovery": {
+      "sources": 4,
+      "chunks": 179,
+      "delivered_chunks": 179,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 179
+    },
+    "full-matched/held-versions": {
+      "sources": 4,
+      "chunks": 180,
+      "delivered_chunks": 180,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 180
+    },
+    "union-adaptive/cache-session-0": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 10,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 10
+    },
+    "union-adaptive/cache-session-1": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 10,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 10
+    },
+    "union-adaptive/held-recovery": {
+      "sources": 4,
+      "chunks": 179,
+      "delivered_chunks": 37,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 37
+    },
+    "union-adaptive/held-versions": {
+      "sources": 4,
+      "chunks": 180,
+      "delivered_chunks": 36,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 36
+    },
+    "union30/cache-session-0": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 60,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 60
+    },
+    "union30/cache-session-1": {
+      "sources": 4,
+      "chunks": 158,
+      "delivered_chunks": 60,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 60
+    },
+    "union30/held-recovery": {
+      "sources": 4,
+      "chunks": 179,
+      "delivered_chunks": 54,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 54
+    },
+    "union30/held-versions": {
+      "sources": 4,
+      "chunks": 180,
+      "delivered_chunks": 56,
+      "duplicate_semantic_appends": 0,
+      "delivered_source_byte_ranges_verified": 56
+    }
+  },
+  "previously_delivered_source_chunks_reprefilled": {
+    "append-grouped/cache-session-0": 0,
+    "append-grouped/cache-session-1": 0,
+    "append-grouped/held-recovery": 0,
+    "append-grouped/held-versions": 0,
+    "append-individual/cache-session-0": 0,
+    "append-individual/cache-session-1": 0,
+    "append-individual/held-recovery": 0,
+    "append-individual/held-versions": 0,
+    "append-none/cache-session-0": 0,
+    "append-none/cache-session-1": 0,
+    "append-none/held-recovery": 0,
+    "append-none/held-versions": 0,
+    "fetch-explicit/cache-session-0": 0,
+    "fetch-explicit/cache-session-1": 0,
+    "fetch-explicit/held-recovery": 0,
+    "fetch-explicit/held-versions": 0,
+    "fetch-grouped/cache-session-0": 0,
+    "fetch-grouped/cache-session-1": 0,
+    "fetch-grouped/held-recovery": 0,
+    "fetch-grouped/held-versions": 0
+  },
+  "placeholder_counterfactual_tokens": {
+    "individual": 11952,
+    "grouped": 586,
+    "compact_individual": 4821,
+    "compact_grouped": 275,
+    "source_only": 266
+  },
+  "placeholder_audit_events": 16,
+  "protocol": {
+    "case_sha256": "04a45f2c95540149d0a8b9e41d7616ed569c14b89360421ac5481bee12f38cb8",
+    "source_sha256": {
+      "experiments/strata_specprefill/retention_policy.py": "444bcaf21aa0d68c357489fbf41beed91bda690e70e2d048ff4e48b7ccc07b1c",
+      "experiments/strata_specprefill/adaptive_signals.py": "ea83bd796807a9646dd9d649302aa763e4711ec98555596506a1d7d96978160c",
+      "experiments/strata_specprefill/cached_student.py": "53a074efe885a426a37d90c6b00b85f97e6246fafe890cd0f07bdab557fc6d40",
+      "experiments/strata_specprefill/chunked_student.py": "7b2478d5109840b9d7fefb1993bff1a24886328534670047084ed17660e812a2",
+      "experiments/strata_specprefill/append_experiment.py": "0faf0e2b90fe477621e3c72826c38f07ad8500971c21c146064efb29dbf1c7be",
+      "experiments/strata_specprefill/omission_archive.py": "344c55f37a2562c8165dba3e2bf4aed78332493e357c28f7fbc31337133dc566"
+    },
+    "baseline_binary_sha256": "9162087cb0b9debd771580eaae9e49dbdb879fee8fca68859128cf53d0e9a75d",
+    "stateful_actual_replies": true,
+    "seed": 92861403,
+    "tool_clarification_source_sha256": {
+      "experiments/strata_specprefill/retention_policy.py": "444bcaf21aa0d68c357489fbf41beed91bda690e70e2d048ff4e48b7ccc07b1c",
+      "experiments/strata_specprefill/adaptive_signals.py": "ea83bd796807a9646dd9d649302aa763e4711ec98555596506a1d7d96978160c",
+      "experiments/strata_specprefill/cached_student.py": "53a074efe885a426a37d90c6b00b85f97e6246fafe890cd0f07bdab557fc6d40",
+      "experiments/strata_specprefill/chunked_student.py": "7b2478d5109840b9d7fefb1993bff1a24886328534670047084ed17660e812a2",
+      "experiments/strata_specprefill/append_experiment.py": "7e372cbc1ad5f30c53084510e0a97bbd785a336bae8d26130c3c99ccf6b356cc",
+      "experiments/strata_specprefill/omission_archive.py": "344c55f37a2562c8165dba3e2bf4aed78332493e357c28f7fbc31337133dc566"
+    },
+    "delivery_source_sha256": {
+      "experiments/strata_specprefill/append_cases.py": "6e4725e4c44ffe5df07f86ba1dc68aaa682ff3b66c423e9e1c194b3d37447e6a",
+      "experiments/strata_specprefill/append_experiment.py": "b62a4c97a61895bd34886027283ff05a1e3909a184b5c1679ca09fab2efc727c",
+      "experiments/strata_specprefill/append_report.py": "3030a876a14f5bd64bd06bd9bba7f9574edd221f6a5f6ffca6a9d63ed5b4a70a",
+      "experiments/strata_specprefill/gpu_memory.py": "266fd107bf8ff1aa7ffa42e26d1f367a0b6b637602e00d07d40be2d0cebcd73a",
+      "experiments/strata_specprefill/omission_archive.py": "20711889241462f413d2f156d2620c3b2165f9484eca0dcf09b0fbc3d6ef5996"
+    },
+    "delivery_hardening_note": "After measurement: repeated immutable revisions track all original occurrences; late historical revisions cannot replace the current version; stricter reload validation. Existing unique-source benchmark student streams were reconstructed unchanged."
+  },
+  "eviction_check": {
+    "reused": 0,
+    "output_equal": true,
+    "duplicate_semantic_appends": 0
+  },
+  "observed_main_results": {
+    "no_placeholder_reduction_vs_standalone": 0.33112437911744563,
+    "no_placeholder_reduction_vs_union30": 0.42658147899440857,
+    "grouped_placeholder_token_reduction_vs_individual": 0.9509705488621152
+  },
+  "failures": [
+    {
+      "arm": "union-adaptive",
+      "case": "cache-session-0",
+      "turn": 1,
+      "correct": false,
+      "unresolved_fetch": false,
+      "previously_omitted_needed": false,
+      "recovery_succeeded": false,
+      "needed_chunks_delivered": true
+    },
+    {
+      "arm": "union-adaptive",
+      "case": "cache-session-0",
+      "turn": 2,
+      "correct": false,
+      "unresolved_fetch": false,
+      "previously_omitted_needed": false,
+      "recovery_succeeded": false,
+      "needed_chunks_delivered": true
+    },
+    {
+      "arm": "union-adaptive",
+      "case": "cache-session-0",
+      "turn": 3,
+      "correct": false,
+      "unresolved_fetch": false,
+      "previously_omitted_needed": false,
+      "recovery_succeeded": false,
+      "needed_chunks_delivered": true
+    },
+    {
+      "arm": "union-adaptive",
+      "case": "cache-session-1",
+      "turn": 1,
+      "correct": false,
+      "unresolved_fetch": false,
+      "previously_omitted_needed": false,
+      "recovery_succeeded": false,
+      "needed_chunks_delivered": true
+    },
+    {
+      "arm": "union-adaptive",
+      "case": "cache-session-1",
+      "turn": 2,
+      "correct": false,
+      "unresolved_fetch": false,
+      "previously_omitted_needed": false,
+      "recovery_succeeded": false,
+      "needed_chunks_delivered": true
+    },
+    {
+      "arm": "union-adaptive",
+      "case": "cache-session-1",
+      "turn": 3,
+      "correct": false,
+      "unresolved_fetch": false,
+      "previously_omitted_needed": false,
+      "recovery_succeeded": false,
+      "needed_chunks_delivered": true
+    },
+    {
+      "arm": "fetch-grouped",
+      "case": "held-recovery",
+      "turn": 1,
+      "correct": false,
+      "unresolved_fetch": false,
+      "previously_omitted_needed": true,
+      "recovery_succeeded": false,
+      "needed_chunks_delivered": false
+    },
+    {
+      "arm": "fetch-grouped",
+      "case": "held-recovery",
+      "turn": 2,
+      "correct": false,
+      "unresolved_fetch": false,
+      "previously_omitted_needed": true,
+      "recovery_succeeded": false,
+      "needed_chunks_delivered": false
+    },
+    {
+      "arm": "fetch-grouped",
+      "case": "held-recovery",
+      "turn": 3,
+      "correct": false,
+      "unresolved_fetch": false,
+      "previously_omitted_needed": true,
+      "recovery_succeeded": false,
+      "needed_chunks_delivered": false
+    }
+  ]
+}

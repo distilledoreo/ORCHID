@@ -46,3 +46,26 @@ def importance(logits, pool_kernel=13):
     attn = logits.softmax(-1, dtype=torch.float32).to(logits.dtype).flatten(0, 1)
     attn = torch.nn.functional.avg_pool1d(attn, pool_kernel, stride=1, padding=pool_kernel // 2)
     return attn.max(0).values.mean(0)
+
+
+def validate_frozen_selection(ids, trace):
+    """Bind saved positions to the exact prompt, and reject malformed subsets."""
+    if trace.get("input_hash") != token_hash(ids) or trace.get("input_tokens") != len(ids):
+        raise ValueError("Frozen selection does not match this exact prompt")
+    for selection in trace.get("per_rate", {}).values():
+        positions = selection["positions"]
+        if (not positions or any(type(p) is not int or not 0 <= p < len(ids)
+                                 for p in positions)
+                or any(a >= b for a, b in zip(positions, positions[1:]))
+                or selection.get("retained_tokens", len(positions)) != len(positions)):
+            raise ValueError("Invalid frozen selection positions")
+
+
+def validate_selected_response(ids, positions, response):
+    audit = response["prefill"]
+    if (audit.get("token_ids") != [ids[p] for p in positions]
+            or audit.get("position_ids") != positions
+            or audit.get("next_position") != len(ids)
+            or audit.get("original_prompt_length") != len(ids)
+            or audit.get("device_table_verified") is not True):
+        raise RuntimeError("Target did not confirm the exact selected IDs and original positions")

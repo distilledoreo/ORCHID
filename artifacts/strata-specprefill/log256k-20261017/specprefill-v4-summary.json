@@ -1,0 +1,18 @@
+{
+  "arm": "lean256k",
+  "turns": 122,
+  "correct_fields": 112,
+  "fields": 122,
+  "exact_turns": 112,
+  "total_wall_s": 1144.821260671015,
+  "load_s_excluded": 193.29132563900203,
+  "mean_e2e_ttft_s": 8.506535912666974,
+  "median_e2e_ttft_s": 7.728073887526989,
+  "compactions": 0,
+  "reused_answer_tokens": 2607173,
+  "maintenance_s": 0,
+  "recall_correct_fields": 8,
+  "recall_fields": 9,
+  "late_correct_fields": 8,
+  "late_fields": 12
+}

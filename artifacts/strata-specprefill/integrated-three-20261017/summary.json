@@ -1,0 +1,757 @@
+[
+  {
+    "turn": 4,
+    "question": "In config/component_0.py revision 2, return field_003() first. Second, follow its ROUTE_KEY to the earlier revision and return that linked field value.",
+    "text": "217379,385680",
+    "expected": [
+      217379,
+      385680
+    ],
+    "correct_fields": 2,
+    "fields": 2,
+    "exact": true,
+    "wall_s": 23.825942408002447,
+    "student_passes": 1,
+    "append_only_prefixes_verified": true,
+    "event": {
+      "delivered": [
+        "S10:4",
+        "S10:1",
+        "S10:13",
+        "S10:47",
+        "S10:2",
+        "S10:3",
+        "S1:37",
+        "S10:14",
+        "S10:46",
+        "S10:12",
+        "S10:0",
+        "S10:44",
+        "S10:15",
+        "S10:5",
+        "S10:45",
+        "S1:38"
+      ],
+      "exact_lookup": {
+        "status": "delivered",
+        "tokens": 274,
+        "units": [
+          {
+            "path": "config/component_0.py",
+            "revision": 2,
+            "source_id": "S10",
+            "source_sha256": "d504632e82fbbc1a21066df224fa47b75b13d5721c90f97cbb19e8886259cf3c",
+            "symbol": "field_003"
+          },
+          {
+            "path": "config/component_0.py",
+            "revision": 1,
+            "source_id": "S1",
+            "source_sha256": "0a6efd258840e5ce1688c0eaea6bc1c1e5f5caedf812dff84c80ad0df748af1d",
+            "symbol": "field_019"
+          }
+        ]
+      },
+      "expanded": [],
+      "expansion_candidates": 0,
+      "expansion_deferred": 0,
+      "generation": 0,
+      "kind": "answer",
+      "retrieval": {
+        "embedding_id": null,
+        "hits": [],
+        "initial_scope_chunks": 0,
+        "pinned": [],
+        "scope_chunks": 0,
+        "semantic_enabled": false,
+        "widened": true
+      },
+      "scan_chunks": 0,
+      "scan_passes": 0,
+      "student_tokens": 6633,
+      "target_tokens": 2869
+    }
+  },
+  {
+    "turn": 19,
+    "question": "Return field_071() from config/component_0.py revision 1, then field_063() from config/component_1.py revision 3. Use the exact revisions.",
+    "text": "320624,731401",
+    "expected": [
+      320624,
+      731401
+    ],
+    "correct_fields": 2,
+    "fields": 2,
+    "exact": true,
+    "wall_s": 105.77842879499076,
+    "student_passes": 1,
+    "append_only_prefixes_verified": true,
+    "event": {
+      "delivered": [
+        "S1:41",
+        "S1:40",
+        "S1:18",
+        "S1:35",
+        "S1:39",
+        "S10:44",
+        "S19:37",
+        "S1:19",
+        "S1:42",
+        "S10:45"
+      ],
+      "exact_lookup": {
+        "status": "delivered",
+        "tokens": 246,
+        "units": [
+          {
+            "path": "config/component_0.py",
+            "revision": 1,
+            "source_id": "S1",
+            "source_sha256": "0a6efd258840e5ce1688c0eaea6bc1c1e5f5caedf812dff84c80ad0df748af1d",
+            "symbol": "field_071"
+          },
+          {
+            "path": "config/component_1.py",
+            "revision": 3,
+            "source_id": "S22",
+            "source_sha256": "5f8e0bb140167f0b27034011dfc2cfd43197588099590135db65ed0abf35fddb",
+            "symbol": "field_063"
+          }
+        ]
+      },
+      "expanded": [],
+      "expansion_candidates": 0,
+      "expansion_deferred": 0,
+      "generation": 0,
+      "kind": "answer",
+      "retrieval": {
+        "embedding_id": null,
+        "hits": [],
+        "initial_scope_chunks": 0,
+        "pinned": [],
+        "scope_chunks": 0,
+        "semantic_enabled": false,
+        "widened": true
+      },
+      "scan_chunks": 0,
+      "scan_passes": 0,
+      "student_tokens": 28899,
+      "target_tokens": 27594
+    }
+  },
+  {
+    "turn": 21,
+    "question": "Return field_071() from config/component_2.py revision 1, then field_063() from config/component_2.py revision 5. Use the exact revisions.",
+    "text": "436414,265615",
+    "expected": [
+      436414,
+      265615
+    ],
+    "correct_fields": 2,
+    "fields": 2,
+    "exact": true,
+    "wall_s": 24.180047294998076,
+    "student_passes": 2,
+    "append_only_prefixes_verified": true,
+    "event": {
+      "delivered": [
+        "S7:41",
+        "S43:42",
+        "S43:37",
+        "S7:40",
+        "S25:41",
+        "S43:36",
+        "S16:37",
+        "S43:38",
+        "S7:42",
+        "S43:43",
+        "S43:39"
+      ],
+      "exact_lookup": {
+        "status": "delivered",
+        "tokens": 254,
+        "units": [
+          {
+            "path": "config/component_2.py",
+            "revision": 1,
+            "source_id": "S7",
+            "source_sha256": "0f8c77a4ff1c8d9e6091e0872c8495318df7698061fb586aa0773204bcb7ed49",
+            "symbol": "field_071"
+          },
+          {
+            "path": "config/component_2.py",
+            "revision": 5,
+            "source_id": "S43",
+            "source_sha256": "f6313dd5468a6d1a884da0ba90f09faea320363a849a620f68d74a7f899d0ad4",
+            "symbol": "field_063"
+          }
+        ]
+      },
+      "expanded": [
+        "S43:36",
+        "S43:38",
+        "S43:37",
+        "S43:39",
+        "S43:42",
+        "S43:43",
+        "S38:0",
+        "S38:1",
+        "S52:0",
+        "S7:0",
+        "S17:0",
+        "S37:0",
+        "S1:0",
+        "S35:0",
+        "S43:1",
+        "S52:1",
+        "S8:0",
+        "S10:1",
+        "S16:37",
+        "S16:1",
+        "S40:1",
+        "S25:41",
+        "S11:0",
+        "S25:1",
+        "S41:0",
+        "S23:0",
+        "S19:0",
+        "S46:1",
+        "S49:0",
+        "S10:0",
+        "S43:0"
+      ],
+      "expansion_candidates": 64,
+      "expansion_deferred": 33,
+      "generation": 1,
+      "kind": "answer",
+      "retrieval": {
+        "embedding_id": null,
+        "hits": [
+          {
+            "handle": "S43:37",
+            "reasons": [
+              "pinned"
+            ],
+            "score": 0.02803030303030303
+          },
+          {
+            "handle": "S43:36",
+            "reasons": [
+              "pinned",
+              "unit"
+            ],
+            "score": 0.012345679012345678
+          },
+          {
+            "handle": "S43:38",
+            "reasons": [
+              "pinned",
+              "unit"
+            ],
+            "score": 0.011111111111111112
+          },
+          {
+            "handle": "S43:39",
+            "reasons": [
+              "pinned",
+              "unit"
+            ],
+            "score": 0.0
+          },
+          {
+            "handle": "S43:42",
+            "reasons": [
+              "pinned"
+            ],
+            "score": 0.0295159386068477
+          },
+          {
+            "handle": "S43:43",
+            "reasons": [
+              "pinned",
+              "unit"
+            ],
+            "score": 0.014705882352941176
+          },
+          {
+            "handle": "S38:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.04537894986932763
+          },
+          {
+            "handle": "S38:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.04470046082949308
+          },
+          {
+            "handle": "S52:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03973132969034608
+          },
+          {
+            "handle": "S7:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03854737269222966
+          },
+          {
+            "handle": "S17:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03815628815628815
+          },
+          {
+            "handle": "S37:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03616852146263911
+          },
+          {
+            "handle": "S1:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.036088379705400984
+          },
+          {
+            "handle": "S35:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03569869948503099
+          },
+          {
+            "handle": "S43:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03541539089610125
+          },
+          {
+            "handle": "S52:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03462709284627093
+          },
+          {
+            "handle": "S8:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.0336084403981962
+          },
+          {
+            "handle": "S10:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.032676744541151326
+          },
+          {
+            "handle": "S16:37",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03246020804612107
+          },
+          {
+            "handle": "S16:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03237639553429027
+          },
+          {
+            "handle": "S40:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03204225352112676
+          },
+          {
+            "handle": "S25:41",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03185185185185185
+          },
+          {
+            "handle": "S11:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03166666666666667
+          },
+          {
+            "handle": "S25:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03162904959312145
+          },
+          {
+            "handle": "S41:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03158790974882929
+          },
+          {
+            "handle": "S23:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.031265031265031266
+          },
+          {
+            "handle": "S19:0",
+            "reasons": [
+              "symbol"
+            ],
+            "score": 0.03125
+          },
+          {
+            "handle": "S46:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.030563083408611864
+          },
+          {
+            "handle": "S16:41",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.030360531309297913
+          },
+          {
+            "handle": "S49:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.03034547152194211
+          },
+          {
+            "handle": "S28:0",
+            "reasons": [
+              "symbol"
+            ],
+            "score": 0.030303030303030304
+          },
+          {
+            "handle": "S25:37",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.030185841658609946
+          },
+          {
+            "handle": "S49:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.030022918258212378
+          },
+          {
+            "handle": "S53:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.029208194905869324
+          },
+          {
+            "handle": "S13:41",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.029174311926605506
+          },
+          {
+            "handle": "S17:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.028841336863951905
+          },
+          {
+            "handle": "S10:37",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.028811524609843937
+          },
+          {
+            "handle": "S22:37",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.028671846096929337
+          },
+          {
+            "handle": "S5:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.028452986621443375
+          },
+          {
+            "handle": "S10:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.028103616813294235
+          },
+          {
+            "handle": "S22:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.02772514841480359
+          },
+          {
+            "handle": "S52:37",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.02769899792021176
+          },
+          {
+            "handle": "S41:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.02763157894736842
+          },
+          {
+            "handle": "S52:41",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.02728937728937729
+          },
+          {
+            "handle": "S1:36",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.027230769230769232
+          },
+          {
+            "handle": "S23:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.02694746376811594
+          },
+          {
+            "handle": "S35:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.026771101239186346
+          },
+          {
+            "handle": "S19:37",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.026770416904625928
+          },
+          {
+            "handle": "S28:37",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.026713670191931063
+          },
+          {
+            "handle": "S28:36",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.026446280991735537
+          },
+          {
+            "handle": "S53:1",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.02643251018940302
+          },
+          {
+            "handle": "S20:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.026139817629179333
+          },
+          {
+            "handle": "S28:41",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.026053864168618268
+          },
+          {
+            "handle": "S40:37",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.026022588522588524
+          },
+          {
+            "handle": "S40:42",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.025958161551381892
+          },
+          {
+            "handle": "S49:42",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.025625000000000002
+          },
+          {
+            "handle": "S49:37",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.02558175373709354
+          },
+          {
+            "handle": "S43:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.025427412344248043
+          },
+          {
+            "handle": "S29:0",
+            "reasons": [
+              "symbol"
+            ],
+            "score": 0.02531645569620253
+          },
+          {
+            "handle": "S49:41",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.025181993760213933
+          },
+          {
+            "handle": "S37:41",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.02514324233232221
+          },
+          {
+            "handle": "S37:36",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.025006546216286986
+          },
+          {
+            "handle": "S46:41",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.024390243902439025
+          },
+          {
+            "handle": "S40:0",
+            "reasons": [
+              "symbol",
+              "text"
+            ],
+            "score": 0.02438423645320197
+          }
+        ],
+        "initial_scope_chunks": 819,
+        "pinned": [
+          "S43:37",
+          "S43:36",
+          "S43:38",
+          "S43:39",
+          "S43:42",
+          "S43:43"
+        ],
+        "scope_chunks": 819,
+        "semantic_enabled": false,
+        "widened": false
+      },
+      "scan_chunks": 0,
+      "scan_passes": 0,
+      "student_tokens": 7281,
+      "target_tokens": 4624
+    }
+  }
+]

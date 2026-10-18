@@ -1,0 +1,10 @@
+{
+  "run": "/home/distilledoreo/.cache/orchid-three-way-28k/run-32k-spec-retrieval-fix-20261017",
+  "turns": [
+    4,
+    19,
+    21
+  ],
+  "reconstruction": "22 turns: exact target lengths, compact event, final student/target IDs",
+  "native_sha256": "9162087cb0b9debd771580eaae9e49dbdb879fee8fca68859128cf53d0e9a75d"
+}

@@ -1,0 +1,1 @@
+Controls copied byte-for-byte from run-v2. SpecPrefill rerun from turn 1 after lossless summary-item coalescing fix. Failed SpecPrefill attempt retained in ../run-v2/specprefill8k; no partial metrics included here.

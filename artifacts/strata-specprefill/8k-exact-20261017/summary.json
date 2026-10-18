@@ -1,0 +1,57 @@
+{
+  "status": "failed",
+  "completed_turns": 10,
+  "planned_turns": 22,
+  "correct_fields": 20,
+  "scored_fields": 20,
+  "planned_fields": 44,
+  "first_eight_correct_fields": 16,
+  "old_first_eight_correct_fields": 12,
+  "compactions": 7,
+  "late_fields_scored": 0,
+  "lookup_statuses": {
+    "delivered": 10
+  },
+  "completed_turn_wall_s": 434.2997684950824,
+  "total_wall_s_to_failure": 484.9912117010681,
+  "failure": {
+    "error_type": "JSONDecodeError",
+    "error": "Unterminated string starting at: line 23 column 7 (char 2499)",
+    "failed_turn": 11,
+    "phase": "compact",
+    "completed_turns": 10,
+    "correct_fields": 20,
+    "scored_fields": 20,
+    "completed_turn_wall_s": 434.2997684950824,
+    "compactions": 7,
+    "exact_lookup": true,
+    "failed_turn_wall_s": 50.691443205985706,
+    "total_wall_s_to_failure": 484.9912117010681
+  },
+  "summary_final_call": {
+    "turn": 10,
+    "phase": "compact",
+    "input_tokens": 4912,
+    "output_tokens": 1024,
+    "wall_s": 50.68830596702173,
+    "target_ttft_s": 7.289184555003885,
+    "engine": {
+      "generated": 1024,
+      "prompt_tokens": 4912,
+      "prompt_ms": 7215.2,
+      "decode_ms": 43471.0,
+      "finish": "length",
+      "drafts_accepted": 792,
+      "drafts_offered": 902,
+      "reused": 3665,
+      "hits": 313678,
+      "lookups": 360163,
+      "ram_blobs": 0,
+      "file_blobs": 0,
+      "file_mb": 0.0,
+      "prompt_read": 1247,
+      "offloaded": 185597
+    }
+  },
+  "case_and_target_config_match_prior_8k": true
+}

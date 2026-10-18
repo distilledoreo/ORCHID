@@ -1,0 +1,264 @@
+{
+  "protocol": {
+    "cases_sha256": "8c46b67f4262ef6a474dc31fbe905b4da286d3ce7b395501a73ef0f98b9c9065",
+    "styles": [
+      "bare",
+      "minimal",
+      "detailed"
+    ],
+    "student": "Qwen3.5-0.8B resident; retrieval schedules frozen, no timed student inference",
+    "target": "Flash-Next Swift IQ3_S",
+    "hardware": "Tesla P100 16GB",
+    "selection": "Existing actual append-none schedules plus fresh predetermined symbol-boundary schedules; no per-arm reselection.",
+    "latency": "Observed rendering/archive + target TTFT, excludes frozen selector planning and model startup.",
+    "source_status": "No separate source-status messages in any arm; evidence frames are the only provenance variable.",
+    "source_sha256": {
+      "omission_archive.py": "19d789f6ff7b008db67afa44c961906db552f297f63059b7a6e82b1af312f6c9",
+      "provenance_experiment.py": "3a46c4f577dca092cf28037f57cd657799b8ca0786214cd58990e76db3a67e49"
+    },
+    "native_binary_sha256": "9162087cb0b9debd771580eaae9e49dbdb879fee8fca68859128cf53d0e9a75d"
+  },
+  "cases": 8,
+  "rows": 108,
+  "matched_evidence_schedules": 36,
+  "prompt_hashes_verified": 108,
+  "exact_source_byte_spans": 417,
+  "fresh_prompts_with_full_required_function": 60,
+  "previously_delivered_chunks_outside_reused_prefix": {
+    "bare": 0,
+    "minimal": 0,
+    "detailed": 0
+  },
+  "metrics": {
+    "bare": {
+      "all": {
+        "turns": 36,
+        "correct": 22,
+        "stale_version_errors": 4,
+        "wrong_source_errors": 0,
+        "unknown": 7,
+        "mean_target_ttft_s": 3.107794807777585,
+        "mean_delivery_ttft_s": 3.2033527171378307,
+        "growing_target_ttft_s": 2.9402189431753607,
+        "growing_delivery_ttft_s": 3.0451619902451057,
+        "evidence_tokens": 5013,
+        "extra_vs_bare_tokens": 0,
+        "growing_zero_reuse": 0,
+        "mean_final_context_tokens": 906.875
+      },
+      "existing-selector-replay": {
+        "turns": 16,
+        "correct": 12,
+        "stale_version_errors": 0,
+        "wrong_source_errors": 0,
+        "unknown": 3,
+        "mean_target_ttft_s": 3.5983300971893186,
+        "mean_delivery_ttft_s": 3.6749449693743372,
+        "growing_target_ttft_s": 3.3234178520845794,
+        "growing_delivery_ttft_s": 3.399496285327283,
+        "evidence_tokens": 3449,
+        "extra_vs_bare_tokens": 0,
+        "growing_zero_reuse": 0,
+        "mean_final_context_tokens": 1095.75
+      },
+      "fresh-controlled": {
+        "turns": 20,
+        "correct": 10,
+        "stale_version_errors": 4,
+        "wrong_source_errors": 0,
+        "unknown": 4,
+        "mean_target_ttft_s": 2.715366576248198,
+        "mean_delivery_ttft_s": 2.8260789153486257,
+        "growing_target_ttft_s": 2.652819761493447,
+        "growing_delivery_ttft_s": 2.7794112689334725,
+        "evidence_tokens": 1564,
+        "extra_vs_bare_tokens": 0,
+        "growing_zero_reuse": 0,
+        "mean_final_context_tokens": 718
+      }
+    },
+    "minimal": {
+      "all": {
+        "turns": 36,
+        "correct": 34,
+        "stale_version_errors": 0,
+        "wrong_source_errors": 0,
+        "unknown": 2,
+        "mean_target_ttft_s": 3.248295205187686,
+        "mean_delivery_ttft_s": 3.31022436619484,
+        "growing_target_ttft_s": 3.1312801598853963,
+        "growing_delivery_ttft_s": 3.195909215035499,
+        "evidence_tokens": 6009,
+        "extra_vs_bare_tokens": 996,
+        "growing_zero_reuse": 0,
+        "mean_final_context_tokens": 1031.875
+      },
+      "existing-selector-replay": {
+        "turns": 16,
+        "correct": 15,
+        "stale_version_errors": 0,
+        "wrong_source_errors": 0,
+        "unknown": 1,
+        "mean_target_ttft_s": 3.747583419240982,
+        "mean_delivery_ttft_s": 3.8166473751880403,
+        "growing_target_ttft_s": 3.5815320070735956,
+        "growing_delivery_ttft_s": 3.6588458256689287,
+        "evidence_tokens": 4109,
+        "extra_vs_bare_tokens": 660,
+        "growing_zero_reuse": 0,
+        "mean_final_context_tokens": 1261.75
+      },
+      "fresh-controlled": {
+        "turns": 20,
+        "correct": 19,
+        "stale_version_errors": 0,
+        "wrong_source_errors": 0,
+        "unknown": 1,
+        "mean_target_ttft_s": 2.8488646339450496,
+        "mean_delivery_ttft_s": 2.90508595900028,
+        "growing_target_ttft_s": 2.793591274494247,
+        "growing_delivery_ttft_s": 2.8487067570604268,
+        "evidence_tokens": 1900,
+        "extra_vs_bare_tokens": 336,
+        "growing_zero_reuse": 0,
+        "mean_final_context_tokens": 802
+      }
+    },
+    "detailed": {
+      "all": {
+        "turns": 36,
+        "correct": 36,
+        "stale_version_errors": 0,
+        "wrong_source_errors": 0,
+        "unknown": 0,
+        "mean_target_ttft_s": 3.631090799338482,
+        "mean_delivery_ttft_s": 3.765165566916241,
+        "growing_target_ttft_s": 3.5571494863272943,
+        "growing_delivery_ttft_s": 3.7155622235732153,
+        "evidence_tokens": 8128,
+        "extra_vs_bare_tokens": 3115,
+        "growing_zero_reuse": 0,
+        "mean_final_context_tokens": 1296.75
+      },
+      "existing-selector-replay": {
+        "turns": 16,
+        "correct": 16,
+        "stale_version_errors": 0,
+        "wrong_source_errors": 0,
+        "unknown": 0,
+        "mean_target_ttft_s": 4.325123976192117,
+        "mean_delivery_ttft_s": 4.521925206063315,
+        "growing_target_ttft_s": 4.227700604421746,
+        "growing_delivery_ttft_s": 4.4731565257534385,
+        "evidence_tokens": 5540,
+        "extra_vs_bare_tokens": 2091,
+        "growing_zero_reuse": 0,
+        "mean_final_context_tokens": 1619.5
+      },
+      "fresh-controlled": {
+        "turns": 20,
+        "correct": 20,
+        "stale_version_errors": 0,
+        "wrong_source_errors": 0,
+        "unknown": 0,
+        "mean_target_ttft_s": 3.0758642578555735,
+        "mean_delivery_ttft_s": 3.159757855598582,
+        "growing_target_ttft_s": 3.0542361477564555,
+        "growing_delivery_ttft_s": 3.147366496938048,
+        "evidence_tokens": 2588,
+        "extra_vs_bare_tokens": 1024,
+        "growing_zero_reuse": 0,
+        "mean_final_context_tokens": 974
+      }
+    }
+  },
+  "fresh_conflict_turns": {
+    "bare": {
+      "turns": 12,
+      "correct": 2,
+      "stale_version_errors": 4,
+      "wrong_source_errors": 0,
+      "unknown": 4,
+      "mean_target_ttft_s": 2.7407736737416903,
+      "mean_delivery_ttft_s": 2.8623959739973848,
+      "growing_target_ttft_s": 2.7407736737416903,
+      "growing_delivery_ttft_s": 2.8623959739973848,
+      "evidence_tokens": 1264,
+      "extra_vs_bare_tokens": 0,
+      "growing_zero_reuse": 0,
+      "mean_final_context_tokens": 718
+    },
+    "minimal": {
+      "turns": 12,
+      "correct": 11,
+      "stale_version_errors": 0,
+      "wrong_source_errors": 0,
+      "unknown": 1,
+      "mean_target_ttft_s": 2.870715088909492,
+      "mean_delivery_ttft_s": 2.928410466745845,
+      "growing_target_ttft_s": 2.870715088909492,
+      "growing_delivery_ttft_s": 2.928410466745845,
+      "evidence_tokens": 1504,
+      "extra_vs_bare_tokens": 240,
+      "growing_zero_reuse": 0,
+      "mean_final_context_tokens": 802
+    },
+    "detailed": {
+      "turns": 12,
+      "correct": 12,
+      "stale_version_errors": 0,
+      "wrong_source_errors": 0,
+      "unknown": 0,
+      "mean_target_ttft_s": 3.1741117063356796,
+      "mean_delivery_ttft_s": 3.234246519500933,
+      "growing_target_ttft_s": 3.1741117063356796,
+      "growing_delivery_ttft_s": 3.234246519500933,
+      "evidence_tokens": 2056,
+      "extra_vs_bare_tokens": 792,
+      "growing_zero_reuse": 0,
+      "mean_final_context_tokens": 974
+    }
+  },
+  "per_case_correct": {
+    "cache-session-0": {
+      "bare": 2,
+      "minimal": 4,
+      "detailed": 4
+    },
+    "cache-session-1": {
+      "bare": 4,
+      "minimal": 4,
+      "detailed": 4
+    },
+    "held-recovery": {
+      "bare": 4,
+      "minimal": 4,
+      "detailed": 4
+    },
+    "held-versions": {
+      "bare": 2,
+      "minimal": 3,
+      "detailed": 4
+    },
+    "fresh-conflicts-0": {
+      "bare": 2,
+      "minimal": 4,
+      "detailed": 5
+    },
+    "fresh-conflicts-1": {
+      "bare": 3,
+      "minimal": 5,
+      "detailed": 5
+    },
+    "fresh-conflicts-2": {
+      "bare": 2,
+      "minimal": 5,
+      "detailed": 5
+    },
+    "fresh-conflicts-3": {
+      "bare": 3,
+      "minimal": 5,
+      "detailed": 5
+    }
+  }
+}

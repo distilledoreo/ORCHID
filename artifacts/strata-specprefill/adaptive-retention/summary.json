@@ -1,0 +1,47 @@
+{
+  "status": "exploratory_not_production",
+  "rule": "adaptive_rate_by_mass target_mass=0.80 (frozen on dev signals only)",
+  "splits": {
+    "dev": {
+      "cases": 8,
+      "fixed30": {"correct": 8, "mean_pipeline_ttft_s": 3.83},
+      "adaptive": {"correct": 7, "avg_token_retention": 0.264, "mean_pipeline_ttft_s": 3.66},
+      "full_colocated": {"correct": 8, "mean_pipeline_ttft_s": 5.98},
+      "per_arm_correct": {"full": 8, "keep100": 8, "keep75": 8, "keep50": 8, "keep30": 8, "keep20": 6, "keep10": 3, "keep5": 4}
+    },
+    "held": {
+      "cases": 8,
+      "fixed30": {"correct": 7, "avg_token_retention": 0.308, "mean_pipeline_ttft_s": 3.84},
+      "adaptive": {"correct": 8, "avg_token_retention": 0.265, "mean_pipeline_ttft_s": 3.68},
+      "full_colocated": {"correct": 8, "mean_pipeline_ttft_s": 5.95},
+      "per_arm_correct": {"full": 8, "keep100": 8, "keep75": 8, "keep50": 8, "keep30": 7, "keep20": 7, "keep10": 5, "keep5": 2}
+    },
+    "pooled": {
+      "adaptive_correct": 15,
+      "fixed30_correct": 15,
+      "cases": 16
+    }
+  },
+  "target_assessment": {
+    "avg_retention_lte_30pct": true,
+    "adaptive_ge_fixed30_held": true,
+    "adaptive_ge_fixed30_dev": false,
+    "adaptive_ge_fixed30_pooled": true,
+    "ttft_improved_vs_fixed30": true
+  },
+  "signals": "gini/top-mass discriminative; keep/drop margins tiny and noisy; 5pct can collapse to final partial chunk (3 tokens on 515-token prompts)",
+  "failures": [
+    "dev-coding-1536-at20 keep5 correct but keep20 wrong (more context hurt)",
+    "mass thresholds 0.70-0.80 all miss 8/8 on dev; 0.80 picked 0.2 on dev-coding-1536-at20 which needs >=0.3",
+    "adaptive_signals top_mass lacked 0.75 key (KeyError at 0.85); fixed to include 0.75/1.0",
+    "run.py correctness regex misses pure-digit coding answers; adaptive_live uses digit-exact check for coding"
+  ],
+  "validation": {
+    "offline_suite": {"passed": 21, "skipped": 5},
+    "ruff": "passed",
+    "full_retention_equivalence": "passed both splits (COMPLETE.json, exit 0)",
+    "model_api_errors": 0
+  },
+  "isolation": "new files experiments/strata_specprefill/adaptive_*.py only + one compatible signals fix; raw prompts/logs under data/strata_specprefill/adaptive-* (ignored); production unchanged; servers stopped",
+  "environment": "Swift IQ3_S + Qwen3.5-0.8B FP16 on single P100, Strata 0.1.43 CUDA 12.9, int8 KV MTP=4 ctx4096 cache-off, reserves 700/4096 MiB, port 18587, student venv torch 2.7.1+cu126 transformers 5.19.0"
+}

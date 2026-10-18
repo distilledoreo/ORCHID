@@ -18,6 +18,7 @@ from .cold_telemetry import BufferedColdMemoryTelemetry
 from .compaction import CompactionEngine, CompactionWorker
 from .config import RuntimeConfig
 from .context import ContextAssembler, ContextSnapshot
+from .core_goal import MAX_COMPACTION_WAIT_MS as MAXIMUM_FOREGROUND_WAIT_MS
 from .db import SQLiteStore, new_id
 from .foreground_telemetry import (
     append_record,
@@ -25,7 +26,6 @@ from .foreground_telemetry import (
     record_provider_latency,
     substitution_record,
 )
-from .core_goal import MAX_COMPACTION_WAIT_MS as MAXIMUM_FOREGROUND_WAIT_MS
 from .ingestion import append_novel_messages, parse_assistant_message, parse_stream_message
 from .pipeline_adapters import build_lossless_engine
 from .scheduler import CompactionScheduler, ThresholdPolicy
@@ -96,8 +96,12 @@ def create_app(
     backend_url: str | None = None,
     config: RuntimeConfig | None = None,
     compaction_engine: CompactionEngine | None = None,
+    specprefill_service=None,
 ) -> FastAPI:
     runtime = config or RuntimeConfig.from_env(db_path=db_path, backend_url=backend_url)
+    from .specprefill.service import GatewayOptions, SpecPrefillService
+    native_options = GatewayOptions.from_env() if specprefill_service is None else None
+    native_service = specprefill_service or (SpecPrefillService(native_options) if native_options else None)
     from .activity import ActivityGate, ForegroundActivityMiddleware
     from .observer import build_observer_engine
     activity_gate = ActivityGate()
@@ -187,7 +191,7 @@ def create_app(
             publication_economics_enabled=runtime.publication_economics_enabled,
             publication_horizon_turns=runtime.publication_horizon_turns,
         )
-        if engine
+        if engine and native_service is None
         else None
     )
 
@@ -215,6 +219,10 @@ def create_app(
                 except asyncio.CancelledError:
                     pass
             app.state.worker_task = None
+            if app.state.specprefill_tasks:
+                await asyncio.gather(*app.state.specprefill_tasks, return_exceptions=True)
+            if native_service is not None:
+                await asyncio.to_thread(native_service.close)
             if cold_memory_telemetry is not None:
                 cold_memory_telemetry.close()
 
@@ -222,6 +230,8 @@ def create_app(
     app = FastAPI(title="Orchid Memory Gateway", version="0.1.0", lifespan=lifespan)
     app.add_middleware(ForegroundActivityMiddleware, gate=activity_gate)
     app.state.activity_gate = activity_gate
+    app.state.specprefill_service = native_service
+    app.state.specprefill_tasks = set()
     app.state.raw_recall = raw_recall
     app.state.store = store
     app.state.runtime = runtime
@@ -238,11 +248,13 @@ def create_app(
     async def healthz() -> dict[str, str]:
         return {
             "status": "ok",
-            "compaction": "configured" if worker is not None else "not_configured",
+            "compaction": "specprefill" if native_service is not None else ("configured" if worker is not None else "not_configured"),
         }
 
     @app.get("/v1/models")
     async def models(request: Request) -> JSONResponse:
+        if native_service is not None:
+            return JSONResponse({"object": "list", "data": [{"id": native_service.options.model, "object": "model", "owned_by": "local"}]})
         async with httpx.AsyncClient(timeout=30) as client:
             response = await client.get(
                 f"{backend}/v1/models",
@@ -258,6 +270,9 @@ def create_app(
                 status_code=400,
                 content={"error": {"message": "messages must be an array", "type": "invalid_request_error"}},
             )
+        if native_service is not None:
+            from .specprefill.http import handle
+            return await handle(request, payload, native_service, store)
         try:
             completion_reservation(payload, runtime)
         except ValueError as error:
@@ -367,7 +382,6 @@ def create_app(
                 json=outbound,
                 headers=headers,
             )
-        response_text = response.text
         parsed = _json_or_text(response)
         record_provider_latency(
             foreground_record,
@@ -400,6 +414,9 @@ def create_app(
         thread = request.headers.get("x-memory-thread")
         if not project or not thread:
             raise ValueError("recall requires explicit project and thread headers")
+        if native_service is not None:
+            from .specprefill.service import digest
+            thread = "specprefill-" + digest([project, thread])
         return project, thread
 
     @app.post("/v1/memory/recall")

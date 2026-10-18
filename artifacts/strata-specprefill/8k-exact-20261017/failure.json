@@ -1,0 +1,14 @@
+{
+  "error_type": "JSONDecodeError",
+  "error": "Unterminated string starting at: line 23 column 7 (char 2499)",
+  "failed_turn": 11,
+  "phase": "compact",
+  "completed_turns": 10,
+  "correct_fields": 20,
+  "scored_fields": 20,
+  "completed_turn_wall_s": 434.2997684950824,
+  "compactions": 7,
+  "exact_lookup": true,
+  "failed_turn_wall_s": 50.691443205985706,
+  "total_wall_s_to_failure": 484.9912117010681
+}

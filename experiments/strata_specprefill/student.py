@@ -27,7 +27,7 @@ class Student:
         self.stop_ids = set(eos if isinstance(eos, list) else [eos])
         self.stop_ids.add(self.tokenizer.eos_token_id)
 
-    def trace(self, ids, keep_ratio, lookahead=8, pool_kernel=13, chunk_size=32):
+    def trace(self, ids, keep_ratio, lookahead=8, pool_kernel=13, chunk_size=32, return_scores=False):
         from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 
         validate_input(ids, self.allowed_ids)
@@ -105,6 +105,7 @@ class Student:
                     if self.device == "cuda"
                     else None,
                     "score_hash": token_hash(scores.float().tolist()),
+                    **({"scores": scores.float().tolist()} if return_scores else {}),
                 }
         finally:
             ALL_ATTENTION_FUNCTIONS.register("sdpa", original)

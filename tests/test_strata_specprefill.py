@@ -193,3 +193,55 @@ def test_invalid_scoring_configuration_is_rejected(torch):
         select_positions(torch.tensor([float("nan")]), 0.5)
     with pytest.raises(ValueError):
         select_positions(torch.ones(3), 0)
+
+
+def test_frozen_selection_rejects_prompt_drift_and_invalid_positions():
+    from experiments.strata_specprefill.core import validate_frozen_selection
+    trace = {'input_hash': token_hash([1, 2, 3]), 'input_tokens': 3,
+             'per_rate': {'0.3': {'positions': [0, 2], 'retained_tokens': 2}}}
+    validate_frozen_selection([1, 2, 3], trace)
+    with pytest.raises(ValueError, match='exact prompt'):
+        validate_frozen_selection([1, 9, 3], trace)
+    for positions in ([2, 0], [0, 0], [True], [3], []):
+        trace['per_rate']['0.3']['positions'] = positions
+        with pytest.raises(ValueError, match='positions'):
+            validate_frozen_selection([1, 2, 3], trace)
+
+
+def test_selected_response_checks_ids_not_just_positions():
+    from experiments.strata_specprefill.core import validate_selected_response
+    response = {'prefill': {'token_ids': [1, 3], 'position_ids': [0, 2],
+                           'next_position': 3, 'original_prompt_length': 3,
+                           'device_table_verified': True}}
+    validate_selected_response([1, 2, 3], [0, 2], response)
+    response['prefill']['token_ids'] = [1, 9]
+    with pytest.raises(RuntimeError, match='exact selected IDs'):
+        validate_selected_response([1, 2, 3], [0, 2], response)
+
+
+def test_stable_selection_preserves_order_and_invalidates_backfilled_suffix():
+    from experiments.strata_specprefill.stable_selection import StableSelection
+    policy = StableSelection()
+    assert policy.plan([10, 11, 12, 13], [0, 2])[0] == [0, 2]
+    pos, audit = policy.plan([10, 11, 12, 13, 14, 15], [0, 4, 5])
+    assert pos == [0, 2, 4, 5]
+    assert audit['prefix_cells_unchanged'] == 2
+    assert audit['backfilled_tokens'] == 0
+    pos, audit = policy.plan([10, 11, 12, 13, 14, 15, 16], [1, 6])
+    assert pos == [0, 1, 2, 4, 5, 6]  # Never append old position 1 after position 5.
+    assert audit['prefix_cells_unchanged'] == 1
+    assert audit['backfilled_tokens'] == 1
+    pos, audit = policy.plan([99, 11, 12], [2])
+    assert pos == [2]
+    assert audit['history_reset']
+
+
+def test_cache_report_refuses_duplicate_missing_or_changed_input_rows():
+    from experiments.strata_specprefill.cache_report import validate_records
+    frozen = {('session', 0): {'input_ids': [1, 2, 3]}}
+    record = {'session': 'session', 'turn': 0, 'arm': 'cache',
+              'input_hash': token_hash([1, 2, 3])}
+    validate_records([record], ['cache'], frozen)
+    for records in ([], [record, record], [{**record, 'input_hash': token_hash([1, 9, 3])}]):
+        with pytest.raises(ValueError):
+            validate_records(records, ['cache'], frozen)

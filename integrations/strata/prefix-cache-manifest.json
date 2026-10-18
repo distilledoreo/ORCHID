@@ -1,0 +1,21 @@
+{
+  "base": "Apply after selected-prefill.patch; opt-in CUDA-tested experimental prefix cache",
+  "files": {
+    "src/program/generate.cpp": {
+      "before_sha256": "9b3bcd3f1c1bbab5574ef26eb20f81351d24b9df560e61e932b217f24e4fe7c1",
+      "after_sha256": "d929982b731eb19db71773de378fddea4008e3aff2580387a8a43f2b91115fab"
+    },
+    "include/strata/program/selected_prefill.hpp": {
+      "before_sha256": "863d3408941bcf69122721f17dc0c8442cccadb18e023f7f0e64ddcca5b98510",
+      "after_sha256": "c9ec2214d10717b1149073727c1935be69290b8c71545b45a2535aa6919e53c4"
+    },
+    "serve/selected_prefill.py": {
+      "before_sha256": "e2e52bdbe3601f64bdc2af9303a233d1e3a30afca71bf82f39571ae9bd2e2069",
+      "after_sha256": "894b4ffcf92a62750a4b403327a57ab3851a19558dd996f90fed528867342d57"
+    },
+    "src/program/selected_prefill_test.cpp": {
+      "before_sha256": "305160753e36663530a7be67779fda071a903cbd87510e20bbad46d28f77f57b",
+      "after_sha256": "1e6fabcd20ca1782cfb4a35240b288ddda5e7abeaebdb4f590f1c4340408d9a8"
+    }
+  }
+}

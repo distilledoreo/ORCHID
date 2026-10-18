@@ -1,0 +1,9 @@
+{
+  "source_run": "/home/distilledoreo/.cache/orchid-three-way-28k/run-32k-spec-retrieval-fix-20261017",
+  "turns_replayed": 22,
+  "all_target_lengths_exact": true,
+  "final_student_ids_exact": true,
+  "final_target_ids_exact": true,
+  "student_decisions": "Frozen logged expanded/delivered handles; no student inference",
+  "prompt_file_sha256": "465bc1eaed3651dba1927d8b34003073f3384942ec3734fa2fabed8c2da59a0f"
+}
