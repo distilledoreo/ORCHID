@@ -38,6 +38,24 @@ class Student:
         return {'scores': scores, 'reused_prefix_tokens': 0}
 
 
+THOUGHT = 'ok\n</think>\n\n'
+
+
+def thought(ids, out, maximum=None):
+    """Like Flash-Next with thinking on: a short reasoning before the answer when the
+    prompt opens a think block."""
+    out = (Tok().encode(THOUGHT) + list(out)) if Tok().decode(ids).endswith('<think>\n') else list(out)
+    return out[:maximum] if maximum else out
+
+
+def question_at(text):
+    """Start of the request in the last user message (after the turn's excerpts, if any)."""
+    last = text.rfind('<|im_start|>user')
+    message = text[last:]
+    cut = message.rfind('…\n\n')
+    return last + cut + 3 if message.startswith('<|im_start|>user\nRelevant excerpts:') and cut >= 0 else last
+
+
 class Target:
     stop_ids = ()
 
@@ -47,13 +65,14 @@ class Target:
     def __call__(self, ids, maximum):
         self.calls.append(list(ids))
         text = Tok().decode(ids)
-        question = text[text.rfind('<|im_start|>user'):]
+        asked = question_at(text)
+        question = text[asked:]
         answers = []
         for word in re.findall(r'KEY[A-Z0-9]+', question):
-            body = text[:text.rfind('<|im_start|>user')]
+            body = text[:asked]
             at = body.find(word + '=')
             answers.append(body[at + len(word) + 1:at + len(word) + 6] if at >= 0 else 'UNKNOWN')
-        return Tok().encode(','.join(answers)[:maximum])
+        return thought(ids, Tok().encode(','.join(answers)), maximum)
 
 
 def filler(n, seed):

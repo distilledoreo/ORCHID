@@ -1,0 +1,105 @@
+{
+  "probes": {},
+  "arms": {
+    "lean256k": {
+      "wall_s": 1818.7,
+      "edit": {
+        "probes": 11,
+        "line_recall": "1/184",
+        "line_recall_pct": 0.5,
+        "chrf": 23.0
+      },
+      "long": {
+        "probes": 4,
+        "line_recall": "3/80",
+        "line_recall_pct": 3.8,
+        "chrf": 25.6
+      },
+      "whole": {
+        "probes": 4,
+        "line_recall": "71/77",
+        "line_recall_pct": 92.2,
+        "chrf": 91.0
+      }
+    },
+    "native256k": {
+      "wall_s": 2609.6,
+      "edit": {
+        "probes": 11,
+        "line_recall": "8/184",
+        "line_recall_pct": 4.3,
+        "chrf": 30.1
+      },
+      "long": {
+        "probes": 4,
+        "line_recall": "5/80",
+        "line_recall_pct": 6.2,
+        "chrf": 47.3
+      },
+      "whole": {
+        "probes": 4,
+        "line_recall": "76/77",
+        "line_recall_pct": 98.7,
+        "chrf": 97.3
+      }
+    }
+  },
+  "depth": [
+    {
+      "depth": "0K\u201364K",
+      "native256k": {
+        "turns": 29,
+        "wall_s": 775.2,
+        "correct": "39/100"
+      },
+      "lean256k": {
+        "turns": 29,
+        "wall_s": 567.1,
+        "correct": "31/100",
+        "speedup_vs_native": 1.37
+      }
+    },
+    {
+      "depth": "64K\u2013128K",
+      "native256k": {
+        "turns": 37,
+        "wall_s": 1189.6,
+        "correct": "50/205"
+      },
+      "lean256k": {
+        "turns": 37,
+        "wall_s": 691.2,
+        "correct": "34/205",
+        "speedup_vs_native": 1.72
+      }
+    },
+    {
+      "depth": "128K\u2013192K",
+      "native256k": {
+        "turns": 30,
+        "wall_s": 569.6,
+        "correct": "53/88"
+      },
+      "lean256k": {
+        "turns": 30,
+        "wall_s": 433.9,
+        "correct": "49/88",
+        "speedup_vs_native": 1.31
+      }
+    },
+    {
+      "depth": "192K+",
+      "native256k": {
+        "turns": 2,
+        "wall_s": 75.2,
+        "correct": "26/27"
+      },
+      "lean256k": {
+        "turns": 2,
+        "wall_s": 126.5,
+        "correct": "27/27",
+        "speedup_vs_native": 0.59
+      }
+    }
+  ]
+}

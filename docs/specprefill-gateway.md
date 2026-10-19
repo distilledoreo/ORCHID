@@ -29,6 +29,24 @@ How a turn works:
 - The budget is `ceil(NEW_RATE × new tokens) + RECALL_TOKENS` rendered tokens,
   framing included. Filling stops early once chunks score below
   `RELATIVE_FLOOR` × the `FLOOR_RANK`-th best, so easy turns read less.
+- Grounded edits (`grounding.py`). A sparse selection rarely holds the current
+  text of the lines an edit changes, so an edit written from it patches lines
+  that aren't there. When the answer starts changing a file (a `*** Update
+  File:` / `*** Add File:` header, or a git diff), the gateway holds that part
+  back from the client and lets the target draft about 12 lines of it. It then
+  finds what the draft points at in the lossless archive: its hunk location
+  and context lines, or the definitions of the names it imports. That region
+  (±40 lines), the newest earlier patch to the file and the last 1,024 tokens of
+  history are shown, and the target writes the change again from just before
+  the draft. Each file of a multi-file patch is grounded in turn (up to 3). A
+  request to "write the file X" is drafted (its imports) and grounded the same
+  way. If nothing is located, the file's newest reads are shown instead. This
+  evidence, like a whole-history answer's, is shown for that answer only and
+  not kept in the target transcript, so it never fills the window. The client
+  sees one answer. `PATCH_TOKENS` (per file, 4096) bounds it; 0 turns it off.
+- Each turn's excerpts and its question go to the target as one user message.
+  As two messages, Flash-Next often ended its turn at once (an empty reply)
+  when the excerpts ended mid-transcript, for example on a shell command.
 - When the target window fills, it is rebuilt from student-selected chunks plus
   the most recent turns. When the student window fills, its oldest sources roll
   out and come back through identifier search. Both are append-only between
@@ -45,6 +63,7 @@ How a turn works:
 | `NEW_RATE` | 0.06 |
 | `RECALL_TOKENS` | 160 |
 | `RELATIVE_FLOOR` / `FLOOR_RANK` | 0.30 / 3 |
+| `PATCH_TOKENS` (grounded-edit evidence per file; 0 = off) | 4096 |
 | `QUERY_SPLIT_TOKENS` / `QUERY_TAIL_TOKENS` | 1024 / 256 |
 | `VRAM_RESERVE_MIB` (left free for the co-located student) | 4096 |
 | `STUDENT_SPARSE_KEYS` (block-sparse student prefill) | unset (dense) |

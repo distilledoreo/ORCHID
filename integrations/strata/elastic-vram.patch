@@ -1,0 +1,171 @@
+--- a/src/program/generate.cpp	2026-10-16 17:58:16.054164500 -0400
++++ b/src/program/generate.cpp	2026-10-19 08:29:01.752328700 -0400
+@@ -6423,6 +6423,9 @@
+         int64_t cells = 0;                // what every K/V pool holds now
+         std::vector<strata::core::VmmChunk> spare;   // out of the cache, not (yet) in the K/V
+         int64_t grows = 0, trims = 0, fresh = 0, evicted = 0, refilled = 0;
++        // ORCHID (VRAM <reserve_mib> with --kv-grow): VRAM kept free for another program (a co-located model); the
++        // cache's chunks it took were freed to the driver, and growth takes new VRAM only past it (warned otherwise)
++        int64_t reserve_b = 0, released = 0, regained = 0;
+     } kvg;
+     auto kvg_start = [&](int64_t top) {
+         kvg.on = strata::core::qsa_kv_elastic() && xcache.vmm_range() != nullptr && d_res != nullptr &&
+@@ -6524,6 +6527,13 @@
+             return false;
+         }
+         int64_t fresh = 0;
++        if (kvg.reserve_b > 0 && (int64_t) kvg.spare.size() < need) {
++            size_t fb = 0, tb = 0;
++            cudaMemGetInfo(&fb, &tb);
++            if ((int64_t) fb - (need - (int64_t) kvg.spare.size()) * (int64_t) G < kvg.reserve_b)
++                std::fprintf(stderr, "strata: the K/V grows into the %lld MiB VRAM reserve (the expert cache is at its "
++                                     "floor); lower the reserve or the context\n", (long long) (kvg.reserve_b >> 20));
++        }
+         const bool ok = strata::core::qsa_kv_elastic_grow(target, [&]() -> strata::core::VmmChunk {
+             if (kvg.spare.empty()) { ++fresh; return 0; }   // the cache is at its floor: new memory
+             const strata::core::VmmChunk h = kvg.spare.back();
+@@ -9112,12 +9122,144 @@
+             p.first = (int32_t) std::max<int64_t>(0, live - part_slots(p, c));
+             p.first_now = -1;   // laid out again at the next loan
+         };
++        // ORCHID: VRAM <reserve_mib> on an engine with the elastic K/V (--kv-grow), whose cache is one VMM range.
++        // A shrink frees, in order: the chunks no one holds, the K/V's cells past the live session, then whole
++        // chunks of expert slots just below the prompt path's loan (their experts become CPU misses, as the K/V's
++        // growth does).  A grow maps new chunks into those slots and refills them with the profile's hottest experts
++        // the GPU lacks.  Between requests only; the live session and every captured address stay as they are.
++        auto kvg_vram = [&](long long reserve, bool drop, std::string& e) -> bool {
++            if (!ver.wait_commit(e)) return false;
++            if (drop) {   // `VRAM <mib> drop`: the live conversation goes too (its owner saved or will re-read it)
++                live_ok = false;
++                live.clear();
++            }
++            apply_pending(true);
++            if (cudaDeviceSynchronize() != cudaSuccess) {
++                e = std::string("VRAM: ") + cudaGetErrorString(cudaGetLastError());
++                return false;
++            }
++            const auto t0 = Clock::now();
++            const int64_t G = (int64_t) strata::core::vmm_granularity();
++            strata::core::VmmRange& r = *xcache.vmm_range();
++            size_t free_b = 0, total_b = 0;
++            cudaMemGetInfo(&free_b, &total_b);
++            const int64_t want = (int64_t) reserve << 20;
++            kvg.reserve_b = want;
++            int64_t released = 0, regained = 0, evicted = 0, refilled = 0;
++            auto release = [&](strata::core::VmmChunk h) { strata::core::vmm_chunk_free(h); ++released; };
++            const int64_t lo0 = kvg.lo;
++            if ((int64_t) free_b < want) {
++                int64_t need = (want - (int64_t) free_b + G - 1) / G;
++                while (need > 0 && !kvg.spare.empty()) {
++                    release(kvg.spare.back());
++                    kvg.spare.pop_back();
++                    --need;
++                }
++                if (need > 0) {   // the K/V's cells no session reaches
++                    const int64_t live_cells = live_ok ? (int64_t) live.size() : 0;
++                    const int64_t keep = std::max<int64_t>(kvg.step, (live_cells + 256 + kvg.step - 1) / kvg.step * kvg.step);
++                    if (keep < kvg.cells) {
++                        need -= strata::core::qsa_kv_elastic_shrink(keep, [&](strata::core::VmmChunk h) { release(h); });
++                        kvg.cells = strata::core::qsa_kv_elastic_cells();
++                    }
++                }
++                if (need > 0) {   // expert slots below the loan: give up their experts, then their whole chunks
++                    std::vector<int32_t> owner((size_t) xcache.slots(), -1);
++                    for (size_t i = 0; i < host_res.size(); ++i)
++                        if (host_res[i] >= 0 && host_res[i] < xcache.slots()) owner[(size_t) host_res[i]] = (int32_t) i;
++                    auto freeable = [&]() -> int64_t {
++                        const int64_t c0 = (xcache.slot_offset(kvg.lo) + G - 1) / G, c1 = xcache.slot_offset(kvg.top) / G;
++                        int64_t k = 0;
++                        for (int64_t c = c0; c < c1; ++c) k += r.mapped(c) ? 1 : 0;
++                        return k;
++                    };
++                    while (freeable() < need && kvg.lo > kvg.floor) {
++                        --kvg.lo;
++                        if (const int32_t oi = owner[(size_t) kvg.lo]; oi >= 0) {
++                            host_res[(size_t) oi] = strata::core::kNotResident;
++                            ++evicted;
++                        }
++                    }
++                    if (evicted > 0 && res_put(d_res) != cudaSuccess) {
++                        e = "VRAM: the residency table upload failed";
++                        return false;
++                    }
++                    const int64_t c0 = (xcache.slot_offset(kvg.lo) + G - 1) / G, c1 = xcache.slot_offset(kvg.top) / G;
++                    for (int64_t c = c0; c < c1 && need > 0; ++c)
++                        if (r.mapped(c))
++                            if (const strata::core::VmmChunk h = r.unmap(c)) { release(h); --need; }
++                    kvg.evicted += evicted;
++                }
++                kvg.released += released;
++            } else if (kvg.lo < kvg.top) {   // room past the reserve: the slots below the loan hold experts again
++                int64_t room = ((int64_t) free_b - want) / G;
++                const int64_t c0 = xcache.slot_offset(kvg.lo) / G, c1 = xcache.slot_offset(kvg.top) / G;
++                int64_t cend = c0;
++                while (cend < c1 && room > 0) room -= r.mapped(cend++) ? 0 : 1;
++                for (int64_t c = c0; c < cend; ++c) regained += r.mapped(c) ? 0 : 1;
++                if (cend > c0 && !r.map_range(c0, cend, []() -> strata::core::VmmChunk { return 0; })) {
++                    e = "VRAM: the expert cache could not map its chunks again (the driver has no VRAM left)";
++                    return false;
++                }
++                while (kvg.lo < kvg.top) {   // a slot whose chunks are all mapped holds an expert again
++                    const int64_t a = xcache.slot_offset(kvg.lo) / G, b = (xcache.slot_offset(kvg.lo + 1) + G - 1) / G;
++                    bool all = true;
++                    for (int64_t c = a; c < b && all; ++c) all = r.mapped(c);
++                    if (!all) break;
++                    ++kvg.lo;
++                }
++                const auto& lay = strata::kernels::cpu::expert_layout();
++                std::vector<std::pair<size_t, int32_t>> filled;
++                size_t pi = 0;
++                for (int64_t sl = lo0; sl < kvg.lo; ++sl) {
++                    const uint64_t slot_room = xcache.slot_offset(sl + 1) - xcache.slot_offset(sl);
++                    for (; pi < profile.size(); ++pi) {
++                        const int32_t l = profile[pi].first, ex = profile[pi].second;
++                        const size_t i = (size_t) l * (size_t) g.n_expert + (size_t) ex;
++                        if (host_res[i] >= 0 || lay.blob_bytes(l) > slot_room) continue;
++                        const uint8_t* b = srcp->blob_stable(l, ex);
++                        if (b == nullptr) continue;
++                        cudaMemcpyAsync(xcache.device_slot((int32_t) sl), b, (size_t) lay.blob_bytes(l),
++                                        cudaMemcpyHostToDevice, nullptr);
++                        filled.emplace_back(i, (int32_t) sl);
++                        ++pi;
++                        break;
++                    }
++                }
++                if (cudaDeviceSynchronize() != cudaSuccess) {
++                    e = std::string("VRAM: refilling the expert cache failed: ") + cudaGetErrorString(cudaGetLastError());
++                    return false;
++                }
++                for (const auto& [i, sl] : filled) host_res[i] = sl;
++                refilled = (int64_t) filled.size();
++                kvg.refilled += refilled;
++                kvg.regained += regained;
++                if (refilled > 0 && res_put(d_res) != cudaSuccess) {
++                    e = "VRAM: the residency table upload failed";
++                    return false;
++                }
++            }
++            cudaMemGetInfo(&free_b, &total_b);
++            std::fprintf(stderr, "strata serve: VRAM %lld MiB kept free (elastic K/V): %lld chunks freed, %lld mapped "
++                                 "again, %lld experts given up, %lld refilled; the cache holds experts below slot %lld of "
++                                 "%lld, the K/V %lld cells; %lld MiB free now, in %.0f ms\n",
++                         reserve, (long long) released, (long long) regained, (long long) evicted, (long long) refilled,
++                         (long long) kvg.lo, (long long) xcache.slots(), (long long) kvg.cells,
++                         (long long) (free_b >> 20), std::chrono::duration<double, std::milli>(Clock::now() - t0).count());
++            std::printf("VRAM reserve_mib=%lld expert_slots_below=%lld expert_slots_full=%lld kv_cells=%lld "
++                        "vram_free_mib=%lld released_chunks=%lld\n", reserve, (long long) kvg.lo,
++                        (long long) xcache.slots(), (long long) kvg.cells, (long long) (free_b >> 20),
++                        (long long) released);
++            return true;
++        };
+         auto vram_command = [&](const std::string& cmd, std::string& e) -> bool {
+             // `VRAM` alone: the reserve the engine started with (--vram-reserve-mib)
+             char* end = nullptr;
+             const bool bare = cmd.find_first_not_of(' ', 4) == std::string::npos;
+             const long long reserve = bare ? (long long) o.vram_reserve_mib : std::strtoll(cmd.c_str() + 4, &end, 10);
+             if (!bare && (end == cmd.c_str() + 4 || reserve < 0)) { e = "expected: VRAM [reserve_mib]"; return false; }
++            // ORCHID: the elastic K/V's cache is one VMM range; `VRAM <mib> drop` also discards the live session
++            if (kvg.on) return kvg_vram(reserve, cmd.find(" drop") != std::string::npos, e);
+             if (!xcache.segmented()) {
+                 e = "VRAM needs an engine started with --vram-elastic (one NVIDIA GPU, --serve)";
+                 return false;

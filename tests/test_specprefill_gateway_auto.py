@@ -4,7 +4,7 @@ from dataclasses import replace
 
 import pytest
 from fastapi.testclient import TestClient
-from test_spec_session import Student, Target, Tok, doc
+from test_spec_session import Student, Target, Tok, doc, thought
 
 from memory_gateway.config import RuntimeConfig
 from memory_gateway.gateway import create_app
@@ -251,7 +251,7 @@ class CallingTarget(RecordingTarget):
         text = Tok().decode(ids)
         if '<tool_response>' not in text:
             self.calls.append(list(ids))
-            return Tok().encode('<tool_call>\n{"name": "read_file", "arguments": {"path": "a.py"}}\n</tool_call>')
+            return thought(ids, Tok().encode('<tool_call>\n{"name": "read_file", "arguments": {"path": "a.py"}}\n</tool_call>'))
         return super().__call__(ids, maximum)
 
 
@@ -278,6 +278,17 @@ def test_responses_api_for_codex_streams_text_and_tool_calls(tmp_path):
         text = ''.join(part['text'] for item in answer['output'] if item['type'] == 'message'
                        for part in item['content'])
         assert text == '11111' and answer['usage']['output_tokens'] > 0
+        thought_items = [item for item in answer['output'] if item['type'] == 'reasoning']
+        assert thought_items and thought_items[0]['content'][0]['text'] == 'ok'  # Thinking, as native returns it.
+        # Codex asks for the reasoning back in encrypted form, to send it with the next turn.
+        sealed = client.post('/v1/responses', json={**second, 'include': ['reasoning.encrypted_content']}).json()
+        item = next(i for i in sealed['output'] if i['type'] == 'reasoning')
+        assert item['encrypted_content'] and item['encrypted_content'].startswith('strata.r1:')
+        from memory_gateway.specprefill.responses import strata_modules, to_chat
+        rs, _ = strata_modules(str(tmp_path / 'strata.json'))
+        back, _ = to_chat({**second, 'input': second['input'][:1] + [item] + second['input'][1:]}, rs)
+        assert any(m.get('reasoning_content') == 'ok' for m in back['messages'])  # Kept for the template.
+        assert any(e['type'] == 'response.reasoning_text.delta' for e in events)  # And streamed as reasoning.
         bad = client.post('/v1/responses', json={**first, 'previous_response_id': 'resp_1'})
         assert bad.status_code == 400
 
@@ -300,8 +311,8 @@ def test_any_field_that_changes_the_answer_defeats_replay(tmp_path):
 
 class TalkingCaller(RecordingTarget):
     def __call__(self, ids, maximum):
-        output = Tok().encode('Let me read it.\n<tool_call>\n{"name": "read_file", "arguments": {"path": "a.py"}}\n'
-                              '</tool_call>')
+        output = thought(ids, Tok().encode('Let me read it.\n<tool_call>\n{"name": "read_file", "arguments": '
+                                           '{"path": "a.py"}}\n</tool_call>'))
         for token in output:
             if self.on_token:
                 self.on_token(token)
@@ -313,8 +324,11 @@ def test_with_tools_text_before_the_call_streams_and_markup_never_does(tmp_path)
     r.target = TalkingCaller()
     pieces = []
     tools = [{'type': 'function', 'function': {'name': 'read_file', 'parameters': {'type': 'object'}}}]
-    result = s.complete(None, None, None, chat(('user', TOOL + '\n\nRead a.py'), tools=tools), on_text=pieces.append)
+    thinking = []
+    result = s.complete(None, None, None, chat(('user', TOOL + '\n\nRead a.py'), tools=tools),
+                        on_text=lambda text, kind='content': (pieces if kind == 'content' else thinking).append(text))
     streamed = ''.join(pieces)
+    assert ''.join(thinking) == 'ok\n'  # The reasoning streams apart from the answer.
     assert streamed.startswith('Let me read it.') and '<tool' not in streamed and len(pieces) > 1
     assert result['choices'][0]['finish_reason'] == 'tool_calls'
     s.close()
@@ -354,3 +368,71 @@ def test_warm_up_resumes_the_latest_thread_and_requests_meanwhile_get_503(tmp_pa
             __import__('time').sleep(0.05)
         assert client.get('/readyz').json() == {'status': 'ready'}
         assert first['orchid']['thread'] in s2.sessions and s2.active_key == first['orchid']['thread']
+
+
+def test_whole_history_questions_go_native_when_they_fit_and_get_a_broad_budget_when_not(tmp_path):
+    s, r = service(tmp_path, context_tokens=60000)
+    small = s.complete(None, None, None, chat(('user', TOOL + '\n\nSummarize this session.')))
+    assert small['orchid']['reason'] == 'whole history'
+    s2, r2 = service(tmp_path / 'big', context_tokens=6000, student_context_tokens=60000)
+    big = s2.complete(None, None, None, chat(('user', TOOL * 3 + '\n\nList every file you changed so far, then '
+                                                         'Return KEYA.'), max_tokens=256))
+    assert big['orchid']['engine'] == 'lean'
+    session = next(iter(s2.sessions.values()))
+    assert session.events[-1]['broad'] and session.events[-1]['budget'] > 2000  # Broad, clamped to the 6K window.
+    s.close(); s2.close()
+
+
+def test_usage_counts_the_whole_conversation_like_native(tmp_path):
+    s, _ = service(tmp_path)
+    result = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA')))
+    usage, orchid = result['usage'], result['orchid']
+    assert usage['prompt_tokens'] > len(TOOL)  # The client's context: everything it sent.
+    assert orchid['target_prompt_tokens'] < usage['prompt_tokens'] / 2  # What Flash-Next read.
+    s.close()
+
+
+def test_a_reply_the_client_never_received_does_not_fork_the_thread(tmp_path):
+    s, _ = service(tmp_path)
+    first = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA')))
+    second = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA'), ('assistant', reply(first)),
+                                               ('user', 'Return KEYB')))
+    # The client was cancelled before it got the second reply: its next request lacks it.
+    third = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA'), ('assistant', reply(first)),
+                                              ('user', 'Return KEYB'), ('user', 'Return KEYC')))
+    assert reply(third) == '33333' and third['orchid']['thread'] == first['orchid']['thread'] == second['orchid']['thread']
+    # And it goes on from there: the abandoned reply is gone from the ledger.
+    fourth = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA'), ('assistant', reply(first)),
+                                               ('user', 'Return KEYB'), ('user', 'Return KEYC'),
+                                               ('assistant', reply(third)), ('user', 'Return KEYA')))
+    assert reply(fourth) == '11111' and fourth['orchid']['thread'] == first['orchid']['thread']
+    # A history that really changed (an edited user message) still branches.
+    branch = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA'), ('assistant', reply(first)),
+                                               ('user', 'Return KEYC instead'), ('user', 'Return KEYA')))
+    assert branch['orchid']['thread'] != first['orchid']['thread']
+    s.close()
+
+
+def test_elastic_engine_runs_agents_natively_and_lends_the_student_vram_for_lean_turns(tmp_path):
+    s, r = service(tmp_path, elastic_engine='/x/strata', agent_native_tokens=2000)
+    r.elastic, r.student_on_gpu, r.events = {'exe': '/x/strata'}, True, []
+    r.vram = lambda mib, drop=False: r.events.append(('vram', mib, drop))
+
+    def device(where):
+        r.events.append(('student', where))
+        r.student_on_gpu = where == 'cuda'
+    r.student_device = device
+    tools = [{'type': 'function', 'function': {'name': 'read_file', 'parameters': {'type': 'object'}}}]
+    agent = s.complete(None, None, None, chat(('user', TOOL + '\n\nFix the bug'), tools=tools))
+    assert agent['orchid']['engine'] == 'native' and agent['orchid']['reason'] == 'agent'
+    assert r.events == [('student', 'cpu'), ('vram', 700, False)]  # Flash-Next gets the student's VRAM back.
+    r.events.clear()
+    lean = s.complete(None, None, None, chat(('user', 'Another chat. ' + TOOL + '\n\nReturn KEYB')))
+    assert lean['orchid']['engine'] == 'lean' and reply(lean) == '22222'
+    assert r.events == [('vram', 8192, True), ('student', 'cuda')]  # Room first, then the student.
+    r.events.clear()
+    big = 'x' * 8000  # Past 2,000 tokens at the gateway's estimate.
+    long_agent = s.complete(None, None, None, chat(('user', big + TOOL + '\n\nReturn KEYC'), tools=tools))
+    assert long_agent['orchid']['engine'] == 'lean', long_agent['orchid']
+    assert r.events == []  # Past native's share: lean, student on.
+    s.close()

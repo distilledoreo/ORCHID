@@ -46,6 +46,10 @@ def to_chat(req, rs):
     messages = []
     for m in rs.input_messages(req):
         out = {'role': m['role'], 'content': _openai_content(m.get('content') or '')}
+        if m.get('reasoning_content'):
+            # Earlier turns' thinking, as Codex sends it back: the template renders it, so
+            # the history stays the prompt Flash-Next cached (else each turn re-reads the last).
+            out['reasoning_content'] = m['reasoning_content']
         if m.get('tool_calls'):
             out['tool_calls'] = [{'type': 'function', 'function': {
                 'name': c['function']['name'],
@@ -60,6 +64,9 @@ def to_chat(req, rs):
         chat['tool_choice'] = choice
     elif isinstance(choice, dict) and choice.get('name'):
         chat['tool_choice'] = {'type': 'function', 'function': {'name': choice['name']}}
+    effort = (req.get('reasoning') or {}).get('effort') if isinstance(req.get('reasoning'), dict) else None
+    if effort:
+        chat['reasoning_effort'] = effort  # As Strata's Responses path passes it to the template.
     for source, target in (('max_output_tokens', 'max_tokens'), ('temperature', 'temperature'),
                            ('top_p', 'top_p')):
         if req.get(source) is not None:
@@ -108,7 +115,8 @@ async def handle(request, req, service, store):
                             status_code=503, headers={'Retry-After': '15'})
     rid = request.headers.get('x-request-id') or None
     committed = committer(store, None, None, rid, parsed, chat)
-    asm = rs.Assembler(req, service.options.model, 0, names, encrypted=False)
+    include = req.get('include') if isinstance(req.get('include'), list) else []
+    asm = rs.Assembler(req, service.options.model, 0, names, encrypted='reasoning.encrypted_content' in include)
 
     async def run(on_text=None):
         return await asyncio.to_thread(service.complete, None, None, rid, chat, on_text, committed)
@@ -120,6 +128,9 @@ async def handle(request, req, service, store):
             status, body = failure(error, request_error=isinstance(error, ValueError))
             return JSONResponse(body, status_code=status)
         events = asm.start()
+        reasoning = result['choices'][0]['message'].get('reasoning_content')
+        if reasoning:
+            events += asm.feed(fe.Event('reasoning', reasoning))
         text = result['choices'][0]['message'].get('content')
         if text:
             events += asm.feed(fe.Event('content', text))
@@ -129,8 +140,8 @@ async def handle(request, req, service, store):
         loop = asyncio.get_running_loop()
         queue = asyncio.Queue()
 
-        def text(value):
-            loop.call_soon_threadsafe(queue.put_nowait, ('text', value))
+        def text(value, kind='content'):
+            loop.call_soon_threadsafe(queue.put_nowait, ('text' if kind == 'content' else kind, value))
 
         async def worker():
             try:
@@ -144,14 +155,25 @@ async def handle(request, req, service, store):
         def sse(events):
             return ''.join(f'event: {e["type"]}\ndata: {json.dumps(e, ensure_ascii=False)}\n\n' for e in events)
         yield sse(asm.start())
+        streamed = set()
         while True:
             kind, value = await queue.get()
             if kind == 'text':
+                streamed.add('content')
                 yield sse(asm.feed(fe.Event('content', value)))
+            elif kind == 'reasoning':
+                streamed.add('reasoning')
+                yield sse(asm.feed(fe.Event('reasoning', value)))
             elif kind == 'error':
                 yield sse([asm.failed(failure(value)[1]['error']['message'])])
                 break
             else:
+                # What the answer holds but did not stream (a replayed answer) comes now.
+                message = value['choices'][0]['message']
+                if message.get('reasoning_content') and 'reasoning' not in streamed:
+                    yield sse(asm.feed(fe.Event('reasoning', message['reasoning_content'])))
+                if message.get('content') and 'content' not in streamed:
+                    yield sse(asm.feed(fe.Event('content', message['content'])))
                 yield sse(answer_events(asm, rs, fe, value))
                 break
 

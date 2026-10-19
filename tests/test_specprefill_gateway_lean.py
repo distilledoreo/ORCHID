@@ -1,6 +1,6 @@
 from dataclasses import replace
 
-from test_spec_session import Student, Target, Tok, doc
+from test_spec_session import Student, Target, Tok, doc, thought
 
 from memory_gateway.specprefill.service import GatewayOptions, SpecPrefillService
 from memory_gateway.specprefill.spec_session import SpecSession
@@ -84,7 +84,7 @@ class ToolTarget(Target):
         self.calls.append(list(ids))
         text = Tok().decode(ids)
         if 'Return KEY' not in text[text.rfind('<|im_start|>user'):]:
-            return Tok().encode('<tool_call>\n{"name": "read_file", "arguments": {"path": "a.py"}}\n</tool_call>')
+            return thought(ids, Tok().encode('<tool_call>\n{"name": "read_file", "arguments": {"path": "a.py"}}\n</tool_call>'))
         return super().__call__(ids, maximum)
 
 
@@ -94,7 +94,8 @@ TOOLS = [{'type': 'function', 'function': {'name': 'read_file', 'parameters': {'
 def test_tool_call_round_trip_ingests_tool_result_as_source(tmp_path):
     resources = Resources()
     resources.target = ToolTarget()
-    s = SpecPrefillService(options(tmp_path, answer_tokens=96), resources_factory=lambda: resources)
+    s = SpecPrefillService(options(tmp_path, answer_tokens=96, fresh_tool_tokens=8192),
+                           resources_factory=lambda: resources)
     first = s.complete('p', 't', 'r1', {**messages(('user', 'What is KEYA in a.py?')), 'tools': TOOLS})
     message = first['choices'][0]
     assert message['finish_reason'] == 'tool_calls'
@@ -106,7 +107,8 @@ def test_tool_call_round_trip_ingests_tool_result_as_source(tmp_path):
                             {'role': 'user', 'content': 'Return KEYA'}]
     second = s.complete('p', 't', 'r2', history)
     assert second['choices'][0]['message']['content'] == '11111'
-    assert len(resources.target.calls[-1]) < 0.3 * len(tool)
+    # The tool result the model just asked for is delivered in full, not trimmed.
+    assert tool in Tok().decode(resources.target.calls[-1])
     # A trailing tool result is accepted too.
     history['messages'] += [second['choices'][0]['message'], {'role': 'tool', 'tool_call_id': 'x', 'content': 'KEYQ=55555'}]
     third = s.complete('p', 't', 'r3', history)
@@ -114,6 +116,7 @@ def test_tool_call_round_trip_ingests_tool_result_as_source(tmp_path):
     session = next(iter(s.sessions.values()))
     assert any(b'KEYQ=55555' in b''.join(Tok().token_bytes(t) for t in src.ids) for src in session.sources)
     assert 'Continue the task using the tool result above.' in Tok().decode(resources.target.calls[-1])
+    assert 'KEYQ=55555' in Tok().decode(resources.target.calls[-1])
 
 
 def test_compacting_engine_still_rejects_tools(tmp_path):
@@ -197,3 +200,83 @@ def test_an_empty_reply_can_be_sent_back_as_history(tmp_path):
     assert s.complete('p', 't', 'r2', history)['choices'][0]['message']['content'] == '22222'
     with __import__('pytest').raises(ValueError):
         s.complete('p', 't2', 'r3', messages(('user', '   ')))
+
+
+def test_fresh_tool_results_can_be_trimmed_like_any_input(tmp_path):
+    resources = Resources()
+    resources.target = ToolTarget()
+    s = SpecPrefillService(options(tmp_path, answer_tokens=96, fresh_tool_tokens=0),
+                           resources_factory=lambda: resources)
+    first = s.complete('p', 't', 'r1', {**messages(('user', 'What is KEYA in a.py?')), 'tools': TOOLS})
+    call = first['choices'][0]['message']['tool_calls'][0]
+    tool = doc({'KEYA': '11111', 'KEYB': '22222'})
+    history = {**messages(('user', 'What is KEYA in a.py?')), 'tools': TOOLS}
+    history['messages'] += [first['choices'][0]['message'], {'role': 'tool', 'tool_call_id': call['id'], 'content': tool},
+                            {'role': 'user', 'content': 'Return KEYA'}]
+    assert s.complete('p', 't', 'r2', history)['choices'][0]['message']['content'] == '11111'
+    assert tool not in Tok().decode(resources.target.calls[-1])  # Trimmed: excerpts only.
+
+
+def test_tools_use_flash_next_native_call_format():
+    import json
+
+    from memory_gateway.specprefill.tools import message_text, parse, system_text
+    tools = [{'type': 'function', 'function': {'name': 'exec_command', 'parameters': {
+        'type': 'object', 'properties': {'cmd': {'type': 'string'}, 'timeout': {'type': 'number'}}}}}]
+    system = system_text('Be brief.', tools)
+    assert system.startswith('# Tools\n\nYou have access to the following functions:\n\n<tools>\n{"name": "exec_command"')
+    assert '<function=example_function_name>' in system and system.endswith('</IMPORTANT>\n\nBe brief.')
+    text = ('Checking.\n\n<tool_call>\n<function=exec_command>\n<parameter=cmd>\ngrep -rn "class X" .\n'
+            '</parameter>\n<parameter=timeout>\n30\n</parameter>\n</function>\n</tool_call>')
+    content, [call] = parse(text, 'seed', tools)
+    assert content == 'Checking.' and call['function']['name'] == 'exec_command'
+    assert json.loads(call['function']['arguments']) == {'cmd': 'grep -rn "class X" .', 'timeout': 30}
+    # The history renders it back the same way, and JSON bodies are still read.
+    assert message_text({'role': 'assistant', 'content': 'Checking.', 'tool_calls': [call]}) == text
+    assert parse('<tool_call>\n{"name": "exec_command", "arguments": {"cmd": "ls"}}\n</tool_call>', 's', tools)[1]
+    # A call cut off before its closing tags still counts; an undeclared tool doesn't.
+    assert parse('<tool_call>\n<function=exec_command>\n<parameter=cmd>\nls\n', 's', tools)[1]
+    assert parse('<tool_call>\n<function=rm_all>\n</function>\n</tool_call>', 's', tools)[1] == []
+
+
+def test_lean_prompt_frame_matches_native_flash_next_template(tmp_path):
+    import json
+
+    import pytest
+    pytest.importorskip('jinja2')
+    from dataclasses import replace
+    from pathlib import Path
+    config = Path(__file__).parent.parent / 'data/strata_specprefill/longctx-32kctx-alone.json'
+    cwd = Path(json.loads(config.read_text())['cwd']) if config.exists() else None
+    if not cwd or not (cwd / 'serve' / 'frontend.py').exists():
+        pytest.skip('the Strata checkout is not on this machine')
+    s = SpecPrefillService(replace(options(tmp_path), config_path=str(config)), resources_factory=Resources)
+    template = s._chat_template()
+    for settings in ({}, {'reasoning_effort': 'medium'}, {'enable_thinking': False}):
+        frame = s._system_frame('Be brief.', TOOLS, settings)
+        native = template.render([{'role': 'system', 'content': 'Be brief.'}, {'role': 'user', 'content': 'Hi'}],
+                                 tools=[t['function'] for t in TOOLS], **settings)
+        session = SpecSession(Tok(), Student(), Target(), system=frame)
+        lean = Tok().decode(session._frame('system', frame) + session._query(
+            'Hi', settings.get('enable_thinking', True) is not False))
+        assert lean == native, settings
+
+
+def test_a_tool_step_is_never_a_whole_history_request(tmp_path):
+    resources = Resources()
+    resources.target = ToolTarget()
+    resources.native = lambda payload, on_text=None: {
+        'choices': [{'index': 0, 'finish_reason': 'tool_calls', 'message': {
+            'role': 'assistant', 'content': None, 'tool_calls': [{'id': 'call_1', 'type': 'function', 'function': {
+                'name': 'read_file', 'arguments': '{"path": "a.py"}'}}]}}], 'usage': {}}
+    s = SpecPrefillService(options(tmp_path, answer_tokens=96), resources_factory=lambda: resources)
+    ask = 'Summarize every file you read. What is KEYA in a.py?'
+    first = s.complete('p', 't', 'r1', {**messages(('user', ask)), 'tools': TOOLS})
+    assert first['orchid']['reason'] == 'whole history'  # The user's own question: native reads it all.
+    call = first['choices'][0]['message']['tool_calls'][0]
+    history = {**messages(('user', ask)), 'tools': TOOLS}
+    history['messages'] += [first['choices'][0]['message'],
+                            {'role': 'tool', 'tool_call_id': call['id'], 'content': 'KEYQ=55555'}]
+    step = s.complete('p', 't', 'r2', history)
+    assert step['orchid']['engine'] == 'lean'  # A step of the same task: not a new whole-history question,
+    assert not next(iter(s.sessions.values())).events[-1]['broad']  # and no broad evidence either.

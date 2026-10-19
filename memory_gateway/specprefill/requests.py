@@ -30,6 +30,12 @@ class ChatRequest:
     stream: bool
     include_usage: bool
     native_reasons: list = field(default_factory=list)
+    # Chat template settings (enable_thinking, reasoning_effort), as Strata reads them.
+    template: dict = field(default_factory=dict)
+
+    @property
+    def thinking(self):
+        return self.template.get('enable_thinking', True) is not False
 
 
 def _text(content, where, reasons):
@@ -172,6 +178,38 @@ def _stop(payload):
     return [s for s in stop if s]
 
 
+# Thinking levels, as Strata's frontend maps them (serve/frontend.py EFFORT): the
+# template knows low, medium and xhigh (its default), and enable_thinking=false.
+EFFORT = {'none': None, 'off': None, 'minimal': None, 'disabled': None, 'false': None,
+          'low': 'low', 'medium': 'medium', 'high': 'xhigh', 'xhigh': 'xhigh', 'max': 'xhigh', 'maximum': 'xhigh'}
+
+
+def _effort(value):
+    if value is None or value == '':
+        return {}
+    if value is False:
+        return {'enable_thinking': False}
+    key = str(value).strip().lower()
+    if key not in EFFORT:
+        raise ValueError(f'unknown reasoning effort {value!r}: use none, low, medium or high')
+    return {'enable_thinking': False} if EFFORT[key] is None else {'reasoning_effort': EFFORT[key]}
+
+
+def _template(payload):
+    """Template settings from reasoning_effort, reasoning.effort and chat_template_kwargs."""
+    reasoning = payload.get('reasoning') if isinstance(payload.get('reasoning'), dict) else {}
+    out = _effort(payload.get('reasoning_effort') or reasoning.get('effort'))
+    kwargs = payload.get('chat_template_kwargs') or {}
+    if not isinstance(kwargs, dict):
+        raise ValueError('chat_template_kwargs must be an object')
+    for key, value in kwargs.items():
+        if key == 'enable_thinking' and not value:
+            out = {'enable_thinking': False}
+        elif key == 'reasoning_effort' and 'enable_thinking' not in out:
+            out.update(_effort(value))
+    return out
+
+
 def parse(payload, model):
     """Normalized request; ValueError for a malformed one."""
     if not isinstance(payload, dict):
@@ -194,7 +232,8 @@ def parse(payload, model):
         raise ValueError('stream_options must be an object')
     return ChatRequest(messages=messages, tools=tools, max_tokens=_limit(payload), sampling=_sampling(payload),
                        stop=_stop(payload), stream=bool(payload.get('stream', False)),
-                       include_usage=bool(options.get('include_usage')), native_reasons=reasons)
+                       include_usage=bool(options.get('include_usage')), native_reasons=reasons,
+                       template=_template(payload))
 
 
 def identity(message):

@@ -93,8 +93,8 @@ async def handle(request, payload, service, store):
     async def events():
         loop = asyncio.get_running_loop()
         queue = asyncio.Queue()
-        def text(value):
-            loop.call_soon_threadsafe(queue.put_nowait, ('text', value))
+        def text(value, kind='content'):
+            loop.call_soon_threadsafe(queue.put_nowait, ('text' if kind == 'content' else kind, value))
         async def worker():
             try:
                 result = await run(text)
@@ -114,6 +114,8 @@ async def handle(request, payload, service, store):
             kind, value = await queue.get()
             if kind == 'text':
                 yield chunk({'content': value})
+            elif kind == 'reasoning':
+                yield chunk({'reasoning_content': value})
             elif kind == 'error':
                 yield 'data: ' + json.dumps(value) + '\n\n'
                 break

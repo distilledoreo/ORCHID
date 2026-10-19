@@ -59,6 +59,44 @@ class _StopText:
         return out
 
 
+class _Reasoning:
+    """Model text split into reasoning (up to ``</think>``) and the answer after it.
+    A ``</think>`` split across tokens is held until it is complete."""
+    END = '</think>'
+
+    def __init__(self):
+        self.done, self.held, self.lead = False, '', True
+
+    def feed(self, text, final=False):
+        out = []
+        if not self.done:
+            buffer = self.held + text
+            at = buffer.find(self.END)
+            if at < 0:
+                keep = 0 if final else max((k for k in range(1, len(self.END)) if buffer.endswith(self.END[:k])),
+                                           default=0)
+                self.held = buffer[len(buffer) - keep:]
+                return [('reasoning', buffer[:len(buffer) - keep])] if buffer[:len(buffer) - keep] else []
+            self.done, self.held = True, ''
+            if buffer[:at]:
+                out.append(('reasoning', buffer[:at]))
+            text = buffer[at + len(self.END):]
+        if self.lead:  # The template's blank lines after </think> are not part of the answer.
+            text = text.lstrip('\n')
+            self.lead = not text
+        if text:
+            out.append(('content', text))
+        return out
+
+
+def split_reasoning(text):
+    """(reasoning, answer) of a whole thinking output; no </think> means it was all reasoning."""
+    at = text.find(_Reasoning.END)
+    if at < 0:
+        return text.strip(), ''
+    return text[:at].strip(), text[at + len(_Reasoning.END):].lstrip('\n')
+
+
 @dataclass(frozen=True)
 class GatewayOptions:
     state_dir: str
@@ -81,6 +119,17 @@ class GatewayOptions:
     recall_tokens: int = 160
     relative_floor: float = 0.30
     floor_rank: int = 3
+    # Grounded edits (spec_session.SpecLimits.patch_*): evidence per changed file
+    # for an answer that edits or writes files. 0 = off.
+    patch_tokens: int = 4096
+    # Tool results since the model's last message, delivered in full up to this
+    # many tokens per turn (beyond it, their best-scoring chunks). 0 = trimmed
+    # like any other input.
+    fresh_tool_tokens: int = 4096
+    # 'intent': a long fresh tool result is read by the student for what the model's
+    # last step was looking for, and only that part reaches Flash-Next (marked; a re-run
+    # of the command shows it all). 'full': delivered whole, up to fresh_tool_tokens.
+    fresh_mode: str = 'full'
     # A final user message longer than this is ingested as a source; only its
     # tail (last paragraph, at most query_tail_tokens) is sent verbatim.
     query_split_tokens: int = 1024
@@ -122,6 +171,17 @@ class GatewayOptions:
     # Measured (production plan, Phase 1): below the query-split size lean sends the
     # whole message anyway, so its student pass only costs time.
     native_below_tokens: int = 1024
+    # Elastic engine (a Strata build whose --kv-grow engine takes `VRAM <mib>`): one
+    # Flash-Next keeps a whole agent conversation in a 256K elastic K/V, as native does,
+    # and gives the student its VRAM only for lean turns. Requests with tools are
+    # answered natively until their conversation reaches agent_native_tokens; past it
+    # (where native would need the client to compact) the thread goes lean.
+    elastic_engine: str | None = None
+    elastic_window: int = 262144
+    elastic_prefill: int = 1280  # A small prompt loan, so the cache can give the student 8 GB.
+    student_vram_mib: int = 8192
+    engine_vram_mib: int = 700  # What the engine keeps free while the student is parked.
+    agent_native_tokens: int = 200000
 
     @property
     def lean(self):
@@ -133,7 +193,9 @@ class GatewayOptions:
             return SpecLimits(student_context=self.student_context_tokens,
                               target_context=self.context_tokens, answer_tokens=self.answer_tokens,
                               new_rate=self.new_rate, recall_tokens=self.recall_tokens,
-                              relative_floor=self.relative_floor, floor_rank=self.floor_rank)
+                              relative_floor=self.relative_floor, floor_rank=self.floor_rank,
+                              patch_tokens=self.patch_tokens, fresh_tokens=self.fresh_tool_tokens,
+                              fresh_mode=self.fresh_mode)
         return Limits(student_context=self.context_tokens, target_context=self.context_tokens,
                       compact_tokens=self.compact_tokens, answer_tokens=self.answer_tokens,
                       expansion_tokens=self.expansion_tokens, summary_tokens=self.summary_tokens)
@@ -166,6 +228,9 @@ class GatewayOptions:
             recall_tokens=int(os.environ.get('ORCHID_SPECPREFILL_RECALL_TOKENS', str(cls.recall_tokens))),
             relative_floor=float(os.environ.get('ORCHID_SPECPREFILL_RELATIVE_FLOOR', str(cls.relative_floor))),
             floor_rank=int(os.environ.get('ORCHID_SPECPREFILL_FLOOR_RANK', str(cls.floor_rank))),
+            patch_tokens=int(os.environ.get('ORCHID_SPECPREFILL_PATCH_TOKENS', str(cls.patch_tokens))),
+            fresh_tool_tokens=int(os.environ.get('ORCHID_SPECPREFILL_FRESH_TOOL_TOKENS', str(cls.fresh_tool_tokens))),
+            fresh_mode=os.environ.get('ORCHID_SPECPREFILL_FRESH_MODE', cls.fresh_mode),
             query_split_tokens=int(os.environ.get('ORCHID_SPECPREFILL_QUERY_SPLIT_TOKENS', '1024')),
             query_tail_tokens=int(os.environ.get('ORCHID_SPECPREFILL_QUERY_TAIL_TOKENS', '256')),
             vram_reserve_mib=int(os.environ.get('ORCHID_SPECPREFILL_VRAM_RESERVE_MIB', '4096')),
@@ -189,16 +254,25 @@ class GatewayOptions:
             preload=_bool_env('ORCHID_SPECPREFILL_PRELOAD',
                               os.environ.get('ORCHID_SPECPREFILL_ENGINE', cls.engine) == 'lean'),
             native_below_tokens=int(os.environ.get('ORCHID_SPECPREFILL_NATIVE_BELOW_TOKENS',
-                                                   str(cls.native_below_tokens))))
+                                                   str(cls.native_below_tokens))),
+            elastic_engine=os.environ.get('ORCHID_SPECPREFILL_ELASTIC_ENGINE') or None,
+            elastic_window=int(os.environ.get('ORCHID_SPECPREFILL_ELASTIC_WINDOW', str(cls.elastic_window))),
+            elastic_prefill=int(os.environ.get('ORCHID_SPECPREFILL_ELASTIC_PREFILL', str(cls.elastic_prefill))),
+            student_vram_mib=int(os.environ.get('ORCHID_SPECPREFILL_STUDENT_VRAM_MIB', str(cls.student_vram_mib))),
+            engine_vram_mib=int(os.environ.get('ORCHID_SPECPREFILL_ENGINE_VRAM_MIB', str(cls.engine_vram_mib))),
+            agent_native_tokens=int(os.environ.get('ORCHID_SPECPREFILL_AGENT_NATIVE_TOKENS',
+                                                   str(cls.agent_native_tokens))))
         options.validate()
         return options
 
     def validate(self):
         if self.engine not in ('lean', 'compacting'):
             raise ValueError("SpecPrefill engine must be 'lean' or 'compacting'")
-        if self.lean and not (0 <= self.new_rate <= 1 and self.recall_tokens >= 0
+        if self.lean and not (0 <= self.new_rate <= 1 and self.recall_tokens >= 0 and self.patch_tokens >= 0 and self.fresh_tool_tokens >= 0
                               and 0 < self.query_tail_tokens < self.query_split_tokens):
             raise ValueError('Invalid lean SpecPrefill budgets')
+        if self.fresh_mode not in ('full', 'intent'):
+            raise ValueError("Fresh tool result mode must be 'full' or 'intent'")
         if self.target_kv not in (None, 'int8', 'fp16'):
             raise ValueError("Target K/V type must be 'int8' or 'fp16'")
         if self.output_tokens < 1 or self.native_below_tokens < 0:
@@ -421,7 +495,10 @@ class SpecPrefillService:
                     sparse_keys=self.options.student_sparse_keys,
                     sparse_rows=self.options.student_sparse_rows, kv=self.options.target_kv,
                     target_park_mib=self.options.target_park_mib,
-                    restore_floor_mib=self.options.target_restore_floor_mib)
+                    restore_floor_mib=self.options.target_restore_floor_mib,
+                    elastic={'exe': self.options.elastic_engine, 'window': self.options.elastic_window,
+                             'prefill': self.options.elastic_prefill, 'student_mib': self.options.student_vram_mib,
+                             'base_mib': self.options.engine_vram_mib} if self.options.elastic_engine else None)
         return self.resources
 
     @staticmethod
@@ -430,26 +507,56 @@ class SpecPrefillService:
         # The prompt already closes thinking; drop a redundant empty block.
         return re.sub(r'^\s*<think>\s*</think>\s*', '', text)
 
-    def _result(self, session, output, rid, key, tools=False, text=None, stopped=False):
+    def _result(self, session, output, rid, key, tools=False, text=None, stopped=False, thinking=False):
         event = next((e for e in reversed(session.events) if e['kind'] == 'answer'), {})
         prompt = event.get('target_tokens', 0)
+        whole = getattr(session, 'conversation_tokens', prompt) if self.options.lean else prompt
         maximum = (session.last_answer or {}).get('maximum', session.limits.answer_tokens)
         ended = stopped or output[-1] in getattr(session.target, 'stop_ids', ())
-        message = {'role': 'assistant', 'content': self._text(session.tok, output) if text is None else text}
+        full = self._text(session.tok, output)
+        reasoning, answer = split_reasoning(full) if thinking else (None, full)
+        message = {'role': 'assistant', 'content': answer if text is None else text}
+        if reasoning:
+            message['reasoning_content'] = reasoning
         finish = 'length' if len(output) >= maximum and not ended else 'stop'
         if tools:
             from .tools import parse
-            content, calls = parse(message['content'], digest([key, rid]))
+            content, calls = parse(message['content'], digest([key, rid]),
+                                   tools if isinstance(tools, list) else None)
+            if calls and hasattr(session, 'align_patches'):
+                for call in calls:  # A patch in a call's arguments, made exact against the archive.
+                    call['function']['arguments'] = self._aligned_arguments(session, call['function']['arguments'])
             if calls:
-                message, finish = {'role': 'assistant', 'content': content, 'tool_calls': calls}, 'tool_calls'
+                message, finish = {'role': 'assistant', 'content': content, 'tool_calls': calls,
+                                   **({'reasoning_content': reasoning} if reasoning else {})}, 'tool_calls'
         return {'id': 'chatcmpl-' + digest([key, rid])[:24], 'object': 'chat.completion',
                 'created': int(time.time()), 'model': self.options.model,
                 'choices': [{'index': 0, 'message': message, 'finish_reason': finish}],
-                'usage': {'prompt_tokens': prompt, 'completion_tokens': len(output), 'total_tokens': prompt+len(output)},
+                # Usage counts the whole conversation, as native does: clients size their
+                # context from it. What Flash-Next actually read is target_prompt_tokens.
+                'usage': {'prompt_tokens': whole, 'completion_tokens': len(output), 'total_tokens': whole+len(output)},
                 'orchid': {'generation': session.generation, 'retrieval': event.get('retrieval'),
                            **({'engine': 'lean', 'new_tokens': event.get('new_tokens'),
-                               'evidence_tokens': event.get('evidence_tokens')}
+                               'evidence_tokens': event.get('evidence_tokens'), 'target_prompt_tokens': prompt}
                               if self.options.lean else {})}}
+
+    @staticmethod
+    def _aligned_arguments(session, arguments):
+        if '*** Begin Patch' not in arguments:
+            return arguments
+        try:
+            values = json.loads(arguments)
+        except ValueError:
+            return arguments
+        if not isinstance(values, dict):
+            return arguments
+        changed = False
+        for name, value in values.items():
+            if isinstance(value, str) and '*** Begin Patch' in value:
+                aligned, stats = session.align_patches(value)
+                if stats and stats['aligned']:
+                    values[name], changed = aligned, True
+        return json.dumps(values, ensure_ascii=False) if changed else arguments
 
     @staticmethod
     def _label(messages, message, ordinal):
@@ -471,8 +578,8 @@ class SpecPrefillService:
         if versions:
             latest = max(versions, key=lambda s: s.version)
             if session.tok.decode(latest.ids) == text:
-                return
-        session.add_source(label, len(versions) + 1, text)
+                return session.source_index(label, latest.version)
+        return session.add_source(label, len(versions) + 1, text)
 
     def _continue_query(self, tok, messages):
         """Verbatim query after a tool result: carry the latest user instruction."""
@@ -674,10 +781,34 @@ class SpecPrefillService:
     def _lean_system(self, request):
         system = '\n\n'.join(m['content'] for m in request.messages if m['role'] == 'system')
         system = system or 'Use exact source evidence to answer the user.'
-        if request.tools:
-            from .tools import system_text
-            system = system_text(system, request.tools)
-        return system
+        return self._system_frame(system, request.tools, request.template)
+
+    def _chat_template(self):
+        """Flash-Next's chat template as Strata loads it (the tokenizer's, else Strata's own); None without Strata."""
+        if not hasattr(self, '_template'):
+            self._template = None
+            try:
+                from .responses import strata_modules
+                config = json.loads(Path(self.options.config_path).read_text())
+                _, frontend = strata_modules(self.options.config_path)
+                path = Path(config['tokenizer']) / 'chat_template.jinja'
+                path = path if path.exists() else Path(config['cwd']) / 'serve' / 'chat_template.jinja'
+                self._template = frontend.ChatTemplate(path)
+            except (OSError, ValueError, KeyError, ImportError):
+                pass
+        return self._template
+
+    def _system_frame(self, system, tools, settings):
+        """The system text exactly as the chat template renders it: the tools section and
+        the reasoning-effort instructions included, as native Flash-Next sees them."""
+        template = self._chat_template()
+        from .tools import functions, system_text
+        if template is None:
+            return system_text(system, tools)
+        text = template.render([{'role': 'system', 'content': system}, {'role': 'user', 'content': '.'}],
+                               tools=functions(tools) or None, add_generation_prompt=False, **settings)
+        head, end = '<|im_start|>system\n', text.find('<|im_end|>\n<|im_start|>user')
+        return text[len(head):end] if text.startswith(head) and end > 0 else system
 
     @staticmethod
     def _matches(hashes, roles, ledger):
@@ -686,10 +817,26 @@ class SpecPrefillService:
         An assistant entry the gateway itself produced matches any assistant
         message, since clients re-serialize replies (reasoning, IDs, spacing).
         """
-        if len(hashes) <= len(ledger):
-            return False
-        return all(h == hashes[i] or (ours and roles[i] == 'assistant')
-                   for i, (h, ours) in enumerate(ledger))
+        return SpecPrefillService._continues(hashes, roles, ledger) is not None
+
+    @staticmethod
+    def _continues(hashes, roles, ledger):
+        """How many ledger entries the request continues from, or None.
+
+        All of them, normally. A client that never received our last reply (the
+        user cancelled, or the client died mid-turn) continues without it: our
+        own trailing replies it doesn't have are abandoned, not a new branch.
+        """
+        def match(i, h, ours):
+            return i < len(hashes) and (h == hashes[i] or (ours and roles[i] == 'assistant'))
+        k = len(ledger)
+        while k and not all(match(i, h, o) for i, (h, o) in enumerate(ledger[:k])):
+            if not ledger[k - 1][1]:
+                return None  # Only our own replies can go missing.
+            k -= 1
+        if not all(match(i, h, o) for i, (h, o) in enumerate(ledger[:k])):
+            return None
+        return k if len(hashes) > k else None
 
     def _ledger_rows(self, key):
         return self.db.execute('SELECT hash,ours FROM history_entries WHERE key=? ORDER BY seq',
@@ -706,6 +853,18 @@ class SpecPrefillService:
                 best, best_len = key, len(ledger)
         return best
 
+    def _whole_history_fits(self, request):
+        """A question about the whole history, on a conversation native Flash-Next can read in full."""
+        from .spec_session import is_broad
+        if request.messages[-1]['role'] != 'user':
+            return False  # A tool step continues the request; it is not a new question.
+        # The question, not a document pasted before it: a long message's verbatim tail.
+        question = self._split_query(self._resources().tok, request.messages[-1]['content'])[1]
+        if not is_broad(question):
+            return False
+        room = self.options.context_tokens - (request.max_tokens or self.options.output_tokens) - 1024
+        return self._conversation_tokens(self._resources().tok, request) < room
+
     def _conversation_tokens(self, tok, request):
         return sum(len(tok.encode(m['content'])) for m in request.messages)
 
@@ -713,6 +872,7 @@ class SpecPrefillService:
         """Answer with plain Flash-Next. The lean session and ledger are untouched:
         the next lean turn on this thread ingests whatever it hasn't seen."""
         resource = self._resources()
+        self._student_off(resource)
         self.target_owner = None  # The engine now holds this native conversation.
         result = resource.native(payload, on_text)
         result = {**result, 'orchid': {'engine': 'native', 'reason': reason, 'thread': key}}
@@ -770,6 +930,10 @@ class SpecPrefillService:
             if (reason is None and not known and self.options.native_below_tokens
                     and self._conversation_tokens(self._resources().tok, request) < self.options.native_below_tokens):
                 reason = 'short conversation'
+            if reason is None and self._whole_history_fits(request):
+                reason = 'whole history'  # Native reads all of it; lean would read a broad excerpt.
+            if reason is None and self._agent_native(request):
+                reason = 'agent'  # A tool loop: native's cached conversation reads each small step at its cost.
             if key is None:
                 key = digest(['auto', anchor, rid])
             storage = self._storage_check() if self.options.lean else {}
@@ -777,7 +941,7 @@ class SpecPrefillService:
             if reason:
                 return self._native_turn(key, rid, fingerprint, payload, request, reason, on_text, on_commit)
             streamed = []
-            relay = (lambda text: (streamed.append(True), on_text(text))) if on_text else None
+            relay = (lambda *text: (streamed.append(True), on_text(*text))) if on_text else None
             try:
                 result = self._lean_turn(key, explicit, rid, fingerprint, request, system, anchor, hashes,
                                          relay, on_commit)
@@ -816,9 +980,16 @@ class SpecPrefillService:
                 raise RequestConflict('A prior request is incomplete; retry it with its original request ID')
             if pending and pending['base'] != len(ledger):
                 raise RequestConflict('Session checkpoint and request ledger disagree')
+            kept = None if single else self._continues(hashes, [m['role'] for m in messages], ledger)
             if single:
                 novel = messages  # A client that sends only its newest message.
-            elif self._matches(hashes, [m['role'] for m in messages], ledger):
+            elif kept is not None:
+                if kept < len(ledger) and not pending:
+                    # Replies the client never received: drop them from the ledger (the
+                    # session keeps them in its transcript; the client's history goes on).
+                    with self.db:
+                        self.db.execute('DELETE FROM history_entries WHERE key=? AND seq>=?', (key, kept))
+                    ledger = ledger[:kept]
                 novel = [m for m in messages[len(ledger):] if m['role'] != 'system']
             else:
                 raise RequestConflict('Conversation history changed; use a new thread for a branch')
@@ -831,6 +1002,10 @@ class SpecPrefillService:
             # Before the student switch: restoring a session resets the student, which
             # would discard the parked state the switch is about to resume.
             self.sessions[key] = resource.session(self._session_path(key), system, self.options.limits)
+        if getattr(resource, 'elastic', None) and not resource.student_on_gpu:
+            started = time.perf_counter()
+            self._student_on(resource, key)
+            resume['vram_s'] = round(time.perf_counter() - started, 3)
         if self.active_key != key:
             started = time.perf_counter()
             self._switch_student(resource, key)
@@ -859,7 +1034,7 @@ class SpecPrefillService:
         while len(self.sessions) > self.options.resident_sessions:
             _, evicted = self.sessions.popitem(last=False)
             evicted.close()
-        tools = bool(request.tools)
+        tools = list(request.tools) if request.tools else False
         if novel[-1]['role'] == 'tool':
             body, question = message_text(novel[-1]), self._continue_query(session.tok, messages)
         else:
@@ -876,16 +1051,32 @@ class SpecPrefillService:
         # With tools, text streams until the first <tool_call>; the calls are parsed at the end.
         calls = _StopText(['<tool_call>']) if tools else None
 
+        thinking = request.thinking
+        split = _Reasoning() if thinking else None
+
         def emit(text, final=False):
             if calls is not None:
                 text = calls.feed(text, final)
             if text and on_text:
                 on_text(text)
+
+        def deliver(text, final=False):
+            """Raw model text: reasoning streams as reasoning; the answer through stop and tool handling."""
+            flushed = False
+            for kind, piece in (split.feed(text, final) if split else [('content', text)]):
+                if kind == 'reasoning':
+                    if on_text:
+                        on_text(piece, 'reasoning')
+                else:
+                    emit(stop.feed(piece, final), final)
+                    flushed = final
+            if final and not flushed:
+                emit(stop.feed('', True), True)
         if pending and session.turn == pending['turn'] + 1:
             if not session.last_answer or session.last_answer['question'] != question:
                 raise RequestConflict('Cannot reconcile completed model turn')
             output = session.last_answer['output_ids']
-            emit(stop.feed(self._text(session.tok, output), final=True), final=True)
+            deliver(self._text(session.tok, output), final=True)
         else:
             if pending and session.turn != pending['turn']:
                 raise RequestConflict('Session checkpoint and request ledger disagree')
@@ -903,8 +1094,13 @@ class SpecPrefillService:
             imports = [(i, message_text(m)) for i, m in enumerate(novel[:-1])]
             if body is not None:
                 imports.append((len(novel) - 1, body))
+            # Tool results since the model's last message are what it just asked for.
+            last = max((i for i, m in enumerate(novel) if m['role'] == 'assistant'), default=-1)
+            fresh = []
             for i, content in imports:
-                self._lean_ingest(session, self._label(messages, novel[i], pending['base'] + i), content)
+                index = self._lean_ingest(session, self._label(messages, novel[i], pending['base'] + i), content)
+                if i > last and novel[i]['role'] == 'tool':
+                    fresh.append(index)
             decoder = codecs.getincrementaldecoder('utf-8')()
             target = resource.target
             target.cancel = threading.Event()
@@ -916,23 +1112,27 @@ class SpecPrefillService:
                 raw = session.tok.token_bytes(token_id)
                 if raw.startswith(b'<|') and raw.endswith(b'|>'):
                     return
-                emit(stop.feed(decoder.decode(raw)))
+                deliver(decoder.decode(raw))
                 if stop.hit:
                     target.cancel.set()
             target.on_token = token if on_text or request.stop else None
             try:
                 self.target_owner = None
-                output = session.answer(question, maximum=maximum)
+                # A tool step continues the user's request; only a turn that answers the
+                # user's own message can ask about the whole history.
+                broad = False if novel[-1]['role'] == 'tool' else None
+                output = session.answer(question, maximum=maximum, fresh=fresh, thinking=thinking, broad=broad)
                 self.target_owner = key
                 if target.on_token is None:
-                    stop.feed(self._text(session.tok, output), final=True)
+                    full = self._text(session.tok, output)
+                    stop.feed(split_reasoning(full)[1] if thinking else full, final=True)
                 else:
-                    emit(stop.feed(decoder.decode(b'', final=True), final=True), final=True)
+                    deliver(decoder.decode(b'', final=True), final=True)
             finally:
                 target.on_token = None
                 target.sampling = None
         result = self._result(session, output, rid, key, tools=tools,
-                              text=stop.text if request.stop else None, stopped=stop.hit)
+                              text=stop.text if request.stop else None, stopped=stop.hit, thinking=thinking)
         result['orchid']['thread'] = key
         if resume:
             result['orchid']['resume'] = resume
@@ -1072,6 +1272,46 @@ class SpecPrefillService:
             finally:
                 self._copies.task_done()
 
+    def _agent_native(self, request):
+        """A tool loop on the elastic engine, still within native's window."""
+        if not (self.options.elastic_engine and request.tools):
+            return False
+        chars = sum(len(m.get('content') or '') + len(json.dumps(m.get('tool_calls') or ''))
+                    for m in request.messages)
+        # Code and logs run ~4.1 characters a token on this tokenizer (measured on agent sessions); 3.8 errs high.
+        return chars / 3.8 < self.options.agent_native_tokens
+
+    def _student_off(self, resource):
+        """Elastic engine: park the student (its cache to the parking, its weights to RAM) and
+        give its VRAM back to Flash-Next for a native turn."""
+        if not getattr(resource, 'elastic', None) or not resource.student_on_gpu:
+            return
+        student = resource.selector
+        if self.active_key is not None and hasattr(student, 'export_state'):
+            state = student.export_state()
+            if state is not None:
+                self._parking(student).put(self.active_key, state)
+        student.reset()
+        self.active_key = None
+        resource.student_device('cpu')
+        resource.vram(self.options.engine_vram_mib)
+
+    def _student_on(self, resource, key):
+        """Elastic engine: save the conversation Flash-Next holds, free the student's VRAM and
+        load it; the thread's own Flash-Next session is restored (or read) afterwards."""
+        if self.target_owner and self.target_owner != key:
+            self._save_target(resource, self.target_owner, hot=True, protect=(key,))
+        self.target_owner = None
+        resource.vram(self.options.student_vram_mib, drop=True)
+        resource.student_device('cuda')
+
+    def _parking(self, student):
+        if self.parking is None:
+            from .parking import StudentParking
+            self.parking = StudentParking(self.directory / 'student-cache', self.options.student_park_ram_mib * 2**20,
+                                          self.options.student_park_disk_mib * 2**20, student.student.torch)
+        return self.parking
+
     def _switch_student(self, resource, key):
         """Park the outgoing thread's student state and resume the incoming one's."""
         student = resource.selector
@@ -1079,10 +1319,7 @@ class SpecPrefillService:
             student.reset()
             self.active_key = key
             return
-        if self.parking is None:
-            from .parking import StudentParking
-            self.parking = StudentParking(self.directory / 'student-cache', self.options.student_park_ram_mib * 2**20,
-                                          self.options.student_park_disk_mib * 2**20, student.student.torch)
+        self._parking(student)
         # Fetch the incoming state before parking the outgoing one: with room for one state
         # in RAM, parking first would evict exactly the state about to be needed.
         incoming = self.parking.get(key)

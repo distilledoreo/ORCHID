@@ -23,12 +23,44 @@ import json
 import math
 import os
 import re
+import threading
 import time
 from collections import Counter
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+from . import grounding
+
 SNAPSHOT_FORMAT = 'orchid-specsession-v1'
+
+# Questions that need the whole history rather than a few excerpts.
+BROAD = re.compile(r'\b(summar(y|ize|ise|izing)|recap|overview of (the|this) (session|conversation)'
+                   r'|every (file|change|edit|step|command)|all (of )?(the |my |your )?(files|changes|edits|steps|commands)'
+                   r'|(entire|whole) (session|conversation|history)|so far in this (session|conversation))\b', re.I)
+
+
+_QUOTED = re.compile(r'`[^`]*`|"[^"\n]*"|(?:starts|begins)(?: exactly)? with\s*:.*', re.I)
+# "without summarizing", "don't summarize", "no summary": the request says not to.
+_NEGATED = re.compile(r"\b(?:without|no|not|never|don'?t|do not)\s+(?:a\s+|any\s+)?(?:summar\w*|recap\w*)", re.I)
+
+
+def is_broad(question):
+    """Whether the request itself asks about the whole history; quoted material
+    (code spans, quoted text, a line to find) doesn't count."""
+    return bool(BROAD.search(_NEGATED.sub(' ', _QUOTED.sub(' ', question or ''))))
+
+
+# Grounded edits (see grounding.py): requests to write a file, and how an
+# earlier read of a file looks in a transcript.
+_WRITE_FILE = re.compile(r'\b(?:write|create|rewrite|add)\b[^.\n]{0,40}?\bfile\s+`?([\w./-]+\.\w+)', re.I)
+_READ_LINE = re.compile(rb'(^\$ |^\*\*\* |\b(sed|cat|nl|head|tail|less|bat|Get-Content|type)\b)')
+
+
+def write_paths(question):
+    """Paths of files the request asks to have written in full."""
+    return list(dict.fromkeys(_WRITE_FILE.findall(question or '')))
+
+
 _IDENT = re.compile(r'[A-Za-z_][A-Za-z0-9_]{2,}')
 
 
@@ -52,6 +84,39 @@ class SpecLimits:
     # The floor is relative to the floor_rank-th best chunk, so one dominant
     # chunk (e.g. the first of several asked values) cannot cut the others.
     floor_rank: int = 3
+    # Evidence budget for a question about the whole history ("summarize",
+    # "every file you edited"): ~10% of history can't answer it.
+    broad_tokens: int = 12288
+    # Grounded edits (0 disables; grounding.py): when the answer starts changing a
+    # file (or the request asks to write one), the target drafts patch_draft_lines
+    # of it and is stopped. The archive regions the draft points at (its context
+    # lines or the names it imports, +-patch_region_lines lines, up to
+    # patch_regions), the newest earlier patch to the file (patch_prior_tokens)
+    # and the most recent history (patch_recent_tokens) are shown for that answer
+    # only, within patch_tokens per file; with no region found, the file's newest
+    # reads (patch_read_tokens each). Up to patch_files files per answer.
+    patch_tokens: int = 4096
+    patch_recent_tokens: int = 1024
+    patch_read_tokens: int = 2048
+    patch_region_lines: int = 40
+    patch_regions: int = 2
+    patch_prior_tokens: int = 768
+    patch_files: int = 3
+    patch_draft_lines: int = 12
+    # Sources answer(fresh=...) names (the tool results a model just asked for) are
+    # delivered in full up to this many tokens per turn, committed; beyond it,
+    # their best-scoring chunks.
+    fresh_tokens: int = 4096
+    # fresh_mode 'intent': a fresh result longer than fresh_small is read by the
+    # student, asked what the model's last step (its reasoning and call, the last
+    # intent_tokens of its reply) was looking for, and fresh_rate of it (at least
+    # fresh_floor tokens, whole lines) reaches the target, marked as partial. A
+    # result asked for again (the same output) is delivered in full.
+    fresh_mode: str = 'full'
+    fresh_rate: float = 0.30
+    fresh_small: int = 1024
+    fresh_floor: int = 512
+    intent_tokens: int = 384
     # Recent question/answer turns kept verbatim when the target is rebuilt.
     rebuild_turns: int = 4
     # Fraction of the target window filled by a rebuild (rest is headroom).
@@ -104,12 +169,20 @@ class SpecSession:
         self._headers = {}
         self._line_ends = {}
         self._bytes = {}
+        self._line_cache = {}
         self._save()
 
     # ----- compatibility with the gateway service -------------------------
     @property
     def generation(self):
         return self.target_generation
+
+    @property
+    def conversation_tokens(self):
+        """Tokens of the whole conversation (system, every source, every turn): what the
+        prompt would be without selection, as a client counts its context."""
+        return (len(self._frame('system', self.system)) + sum(len(s.ids) for s in self.sources)
+                + sum(len(q) + len(r) for q, r in self.history))
 
     def _system(self):
         return self._frame('system', self.system)
@@ -131,9 +204,11 @@ class SpecSession:
         return (self._encode(f'<|im_start|>{role}\n', True) + self._encode(text)
                 + self._encode('<|im_end|>\n', True))
 
-    def _query(self, question):
-        return self._frame('user', question) + self._encode(
-            '<|im_start|>assistant\n<think>\n\n</think>\n\n', True)
+    def _query(self, question, thinking=False):
+        """The question and the assistant's opening, as the chat template renders it:
+        an open think block when thinking, else an empty one."""
+        opening = '<|im_start|>assistant\n<think>\n' if thinking else '<|im_start|>assistant\n<think>\n\n</think>\n\n'
+        return self._frame('user', question) + self._encode(opening, True)
 
     def _reply(self, ids):
         stop = set(getattr(self.target, 'stop_ids', (248044, 248046)))
@@ -391,7 +466,7 @@ class SpecSession:
             hi += 1
         return [(index, i) for i in range(lo, hi + 1)]
 
-    def _choose(self, ranked, budget):
+    def _choose(self, ranked, budget, floor=True):
         """Fill the budget in rank order, charging each pick its rendered cost.
 
         A pick is the chunk plus the rest of its line. Cost includes scope
@@ -401,7 +476,7 @@ class SpecSession:
         chosen, misses = [], 0
         best = ranked[min(len(ranked), self.limits.floor_rank) - 1][0] if ranked else 0.0
         for score, key in ranked:
-            if self.limits.relative_floor and score < best * self.limits.relative_floor:
+            if floor and self.limits.relative_floor and score < best * self.limits.relative_floor:
                 break
             if key in chosen:
                 continue
@@ -471,37 +546,309 @@ class SpecSession:
         ids += self._close
         return ids, {'chunk_tokens': body, 'framing_tokens': len(ids) - body}
 
-    # ----- answering -----------------------------------------------------
-    def answer(self, question, *, maximum=None):
-        maximum = maximum or self.limits.answer_tokens
-        started = time.perf_counter()
-        query = self._query(question)
-        new_tokens, self.pending_new = self.pending_new, 0
-        self._ensure_student_room(len(query) + maximum)
-        retrieved = self._recall(question) if self.student_rollouts else []
-        prompt = self.student_ids + query
-        trace = self.student.trace(prompt, 1.0)
-        student_s = time.perf_counter() - started
-        scores = trace['scores']
-        if len(scores) != len(prompt):
-            raise ValueError('Student scores do not cover the prompt')
-        budget = math.ceil(self.limits.new_rate * new_tokens) + self.limits.recall_tokens
-        ranked = self._candidates(scores, question)
-        chosen = self._choose(ranked, budget)
-        refreshed = self._refresh(scores, question, ranked)
-        evidence, cost = self._render(chosen + refreshed, self._manifest(question))
+    def _lines(self, index):
+        """(normalized lines, byte offset of each line start) of a source, cached."""
+        cached = self._line_cache.get(index)
+        if cached is None:
+            text = self._source_bytes(index)[0]
+            starts, rows, at = [], [], 0
+            for raw in text.split(b'\n'):
+                starts.append(at)
+                rows.append(grounding.norm(raw.decode(errors='replace')))
+                at += len(raw) + 1
+            cached = self._line_cache[index] = (rows, starts)
+        return cached
+
+    def _line_chunks(self, index, lo, hi):
+        """Chunk keys covering lines lo..hi (inclusive) of a source."""
+        rows, starts = self._lines(index)
+        lo, hi = max(0, lo), min(len(rows) - 1, hi)
+        text, offsets = self._source_bytes(index)
+        first = bisect.bisect_right(offsets, starts[lo]) - 1
+        end = starts[hi + 1] - 1 if hi + 1 < len(starts) else len(text)
+        last = bisect.bisect_right(offsets, max(starts[lo], end - 1)) - 1
+        bounds = [a for a, _ in self.sources[index].bounds]
+        return [(index, c) for c in range(bisect.bisect_right(bounds, first) - 1,
+                                          bisect.bisect_right(bounds, last))]
+
+    def _mentions(self, terms, read_like=True):
+        """(rank, source, chunk) of each mention of terms, newest and read-like first."""
+        out, starts = [], {}
+        for rank, term in enumerate(dict.fromkeys(t for t in terms if len(t) >= 4)):
+            needle = term.encode()
+            for index in range(len(self.sources) - 1, -1, -1):
+                source = self.sources[index]
+                if term in source.path:  # A tool result labelled by the call that read the file.
+                    out.append((0, rank, -index, 0, index, 0))
+                text, offsets = self._source_bytes(index)
+                at = text.rfind(needle)
+                while at >= 0:
+                    line = text[text.rfind(b'\n', 0, at) + 1:text.find(b'\n', at) % (len(text) + 1)]
+                    token = bisect.bisect_right(offsets, at) - 1
+                    if index not in starts:
+                        starts[index] = [lo for lo, _ in source.bounds]
+                    chunk = bisect.bisect_right(starts[index], token) - 1
+                    out.append((0 if read_like and _READ_LINE.search(line) else 1, rank, -index, -chunk,
+                                index, chunk))
+                    at = text.rfind(needle, 0, at)
+        return [(index, chunk) for *_, index, chunk in sorted(out)]
+
+    def _regions(self, path, lines, names):
+        """Archive regions a draft points at, best first: clusters of its context lines
+        or of definitions of the names it uses, newest first among equals."""
+        wanted = {line: i for i, line in enumerate(lines)}
+        span = self.limits.patch_region_lines
+        base = path.rsplit('/', 1)[-1]
+        clusters = []
+        for index in range(len(self.sources) - 1, -1, -1):
+            rows, _ = self._lines(index)
+            hits = []
+            for n, row in enumerate(rows):
+                if row in wanted:
+                    hits.append((n, ('line', wanted[row])))
+                elif lines and len(lines[0]) >= 12 and lines[0] in row:
+                    hits.append((n, ('line', 0)))  # The hunk location line, quoted in part.
+                if names and (name := grounding.defines(row, names)):
+                    hits.append((n, ('name', name)))
+            group = []
+            for n, what in hits + [(None, None)]:
+                if group and (n is None or n - group[-1][0] > 2 * span):
+                    found = {w for _, w in group}
+                    near = '\n'.join(rows[max(0, group[0][0] - 400):group[0][0]])
+                    bonus = 0.5 if base in self.sources[index].path or base in near else 0.0
+                    if len(found) >= 2 or any(w[0] == 'name' for w in found):
+                        clusters.append((len(found) + bonus, index, group[0][0], group[-1][0], found))
+                    group = []
+                if n is not None:
+                    group.append((n, what))
+        clusters.sort(key=lambda c: (-c[0], -c[1]))
+        picked, covered = [], set()
+        for score, index, lo, hi, found in clusters:
+            if found <= covered:
+                continue  # The same code again (an older read of it).
+            picked.append((index, lo - span, hi + span))
+            covered |= found
+            if len(picked) >= self.limits.patch_regions:
+                break
+        return picked
+
+    def _ground(self, path, kind, draft, skip, budget):
+        """Chunks grounding a change to ``path`` from its draft, and what was found."""
+        limits, taken = self.limits, set(skip) | self.delivered
+        lines, names, modules = grounding.anchors(draft, kind)
+        groups = []  # Priority order: first region, prior patch, recent history, others.
+
+        def window(index, chunk, tokens):
+            keys = []
+            while index < len(self.sources) and tokens > 0:
+                for c in range(chunk, len(self.sources[index].bounds)):
+                    keys.append((index, c))
+                    tokens -= len(self.chunk_ids((index, c)))
+                    if tokens <= 0:
+                        break
+                index, chunk = index + 1, 0
+            return keys
+        regions = self._regions(path, lines, names)
+        region_keys = [self._line_chunks(*r) for r in regions]
+        if region_keys:
+            groups.append(region_keys[0])
+        prior = self._mentions([f'File: {path}', f'+++ b/{path}'], read_like=False)
+        if prior and kind != 'write':
+            groups.append(window(*prior[0], limits.patch_prior_tokens))
+        recent, used = [], 0
+        for index in range(len(self.sources) - 1, -1, -1):
+            for c in range(len(self.sources[index].bounds) - 1, -1, -1):
+                recent.append((index, c))
+                used += len(self.chunk_ids((index, c)))
+                if used >= limits.patch_recent_tokens:
+                    break
+            if used >= limits.patch_recent_tokens:
+                break
+        groups.append(recent)
+        groups += region_keys[1:]
+        if not region_keys:  # Nothing located: the file's (or its modules') newest reads.
+            name = path.rsplit('/', 1)[-1]
+            terms = [path, name] + ([name[5:]] if name.startswith('test_') else []) + [f'{m}.' for m in modules]
+            for index, chunk in self._mentions(terms)[:4]:
+                groups.append(window(index, chunk, limits.patch_read_tokens))
+        order = []
+        for group in groups:
+            for key in group:
+                if key not in taken:
+                    taken.add(key)
+                    order.append(key)
+        base = len(self._render(list(skip))[0])
+        lo, hi = 0, len(order)  # Longest prefix of the picks whose rendering fits.
+        while lo < hi:
+            mid = (lo + hi + 1) // 2
+            if len(self._render(list(skip) + order[:mid])[0]) - base <= budget:
+                lo = mid
+            else:
+                hi = mid - 1
+        info = {'path': path, 'kind': kind, 'regions': len(regions), 'anchors': len(lines) + len(names),
+                'chunks': lo, 'tokens': sum(len(self.chunk_ids(k)) for k in order[:lo])}
+        return order[:lo], info
+
+    def align_patches(self, text):
+        """``text`` with its apply_patch hunks made exact against the archive (grounding.align_patch)."""
+        if '*** Begin Patch' not in text or not self.limits.patch_tokens:
+            return text, None
+        sources = [self._source_bytes(i)[0].decode(errors='replace').split('\n')
+                   for i in range(len(self.sources) - 1, -1, -1)]
+        return grounding.align_patch(text, sources)
+
+    def _patch_budget(self, query, maximum):
+        room = self.limits.target_context - len(self._frame('system', self.system)) - len(query) - maximum
+        return max(0, min(self.limits.patch_tokens, room // 2))
+
+    def _with_evidence(self, evidence, query):
+        """The turn's excerpts and question as one user message.
+
+        As two consecutive user messages, Flash-Next often ends its turn at once
+        (an empty reply) when the excerpts end mid-transcript, e.g. on a shell command.
+        """
+        user = self._encode('<|im_start|>user\n', True)
+        if not evidence or query[:len(user)] != user:
+            return evidence + query
+        return evidence[:len(evidence) - len(self._close)] + self._encode('\n') + query[len(user):]
+
+    def _generate(self, scores, keys, question, query, maximum, prefix=(), ephemeral=()):
+        """One target call on the current transcript plus evidence.
+
+        ``keys`` are committed: they stay in the transcript. ``ephemeral`` chunks
+        (a grounded edit's file, a whole-history answer's evidence) are shown after
+        them for this answer only, so they never fill the window; the next turn
+        re-reads only this turn's question and reply.
+        Returns (transcript before the reply, output, prompt evidence, cost, rebuilt).
+        """
+        committed, cost = self._render(keys, list(getattr(self, '_note', [])) + list(self._manifest(question)))
+        evidence = committed
+        if ephemeral:
+            extra, extra_cost = self._render(ephemeral)
+            body = extra[len(self._open):len(extra) - len(self._close)]
+            evidence = (committed[:len(committed) - len(self._close)] + body + self._close if committed
+                        else extra)
+            cost = {k: cost[k] + extra_cost[k] for k in cost}
         rebuilt = False
-        saved = (self.target_ids, set(self.delivered), self.target_generation, dict(self.delivered_at))
         if len(self.target_ids) + len(evidence) + len(query) + maximum > self.limits.target_context:
-            self._rebuild_target(scores, chosen + refreshed, question,
+            if scores is None:  # A verbatim turn that still needs a rebuild: the student scores now.
+                prompt = self.student_ids + query
+                scores = self.student.trace(prompt, 1.0)['scores']
+            self._rebuild_target(scores, list(keys) + list(ephemeral), question,
                                  reserve=len(evidence) + len(query) + maximum)
             rebuilt = True
-        target_prompt = self.target_ids + evidence + query
+        target_prompt = self.target_ids + self._with_evidence(evidence, query)
+        output = list(self.target(target_prompt + list(prefix), maximum - len(prefix)))
+        if not output or len(output) > maximum - len(prefix):
+            raise ValueError('Invalid target output length')
+        return self.target_ids + self._with_evidence(committed, query), list(prefix) + output, evidence, cost, rebuilt
+
+    # ----- answering -----------------------------------------------------
+    def answer(self, question, *, maximum=None, fresh=(), thinking=False, broad=None):
+        maximum = maximum or self.limits.answer_tokens
+        started = time.perf_counter()
+        query = self._query(question, thinking)
+        new_tokens, self.pending_new = self.pending_new, 0
+        self._ensure_student_room(len(query) + maximum)
+        prompt = self.student_ids + query
+        broad = is_broad(question) if broad is None else broad
+        # Verbatim turn: everything new is what the model just asked for (fresh tool results)
+        # and fits, so it goes straight to the target and the student is not waited on; its
+        # prompt cache reads this turn's text at its next selection.
+        new_sources = [i for i, s in enumerate(self.sources) if s.turn == self.turn]
+        new_keys = [k for i in new_sources for k in self.chunks(i) if k not in self.delivered]
+        # Intent mode: large fresh results are read by the student, for what the last step wanted.
+        large = [i for i in fresh if self.limits.fresh_mode == 'intent' and self.sources[i].turn == self.turn
+                 and len(self.sources[i].ids) > self.limits.fresh_small]
+        if large and self.history:
+            intent = self.tok.decode(self.history[-1][1][-self.limits.intent_tokens:])
+            intent = re.sub(r'<\|[^>]+\|>', '', intent).strip()
+            prompt = self.student_ids + self._query(
+                'Find what the assistant needs from the tool results above for its next step. '
+                f'Its last step:\n{intent}', False)
+        verbatim = (bool(new_sources) and not broad and not large and set(new_sources) <= set(fresh)
+                    and 0 < new_tokens <= self.limits.fresh_tokens
+                    and len(self.target_ids) + 2 * new_tokens + len(query) + maximum
+                    + 2 * self.limits.patch_tokens <= self.limits.target_context)
+        trace, scores, retrieved = {}, None, []
+        if not verbatim:
+            retrieved = self._recall(question) if self.student_rollouts else []
+            trace = self.student.trace(prompt, 1.0)
+            scores = trace['scores']
+            if len(scores) != len(prompt):
+                raise ValueError('Student scores do not cover the prompt')
+        student_s = time.perf_counter() - started
+        if verbatim:
+            budget, ranked, pinned, refreshed, extra = 0, [], list(new_keys), [], []
+            chosen = list(new_keys)
+        if not verbatim and broad:
+            # At most half the window left beside the system text, question and answer,
+            # so a rebuild can always make room for it.
+            room = self.limits.target_context - len(self._frame('system', self.system)) - len(query) - maximum
+            budget = max(0, min(self.limits.broad_tokens, room // 2))
+        elif not verbatim:
+            budget = math.ceil(self.limits.new_rate * new_tokens) + self.limits.recall_tokens
+        self._note = []
+        if not verbatim:
+            ranked = self._candidates(scores, question)
+            pinned = []
+            if fresh and self.limits.fresh_tokens:
+                again = [i for i in fresh if self.sources[i].turn < self.turn]
+                wanted = set(fresh) - set(large) - set(again)
+                pinned = self._choose([r for r in ranked if r[1][0] in wanted], self.limits.fresh_tokens, floor=False)
+                for index in again:  # Asked for again: the whole output, in one piece, even what was shown before.
+                    if len(self.sources[index].ids) <= self.limits.fresh_tokens:
+                        pinned += [k for k in self.chunks(index) if k not in pinned]
+                for index in large:  # The part of each large result the last step was looking for.
+                    size = len(self.sources[index].ids)
+                    room = max(self.limits.fresh_floor, math.ceil(self.limits.fresh_rate * size))
+                    pinned += self._choose([r for r in ranked if r[1][0] == index], room, floor=False)
+                if large:
+                    self._note = self._encode('(Long tool output is shown in part: the lines most relevant to '
+                                              'the current step. Run the same command again to see all of it.)\n')
+                ranked = [r for r in ranked if r[1] not in set(pinned)]
+            chosen = pinned + self._choose(ranked, budget, floor=not broad)
+            refreshed = self._refresh(scores, question, ranked)
+            # Whole-history evidence is for this answer only (see _generate).
+            extra, chosen = (chosen[len(pinned):], pinned) if broad else ([], chosen)
+        grounded = []
+        saved = (self.target_ids, set(self.delivered), self.target_generation, dict(self.delivered_at))
         selected_s = time.perf_counter() - started
+        limits = self.limits
+        write = (write_paths(question) or [None])[0]
+        done, prefix, rebuilt = set(), [], False
         try:
-            output = list(self.target(target_prompt, maximum))
-            if not output or len(output) > maximum:
-                raise ValueError('Invalid target output length')
+            for attempt in range(1 + (limits.patch_files if limits.patch_tokens else 0)):
+                watch = None
+                if limits.patch_tokens and attempt < limits.patch_files and maximum > 1:
+                    watch = grounding.Watch(self.tok, self.target, prefix=prefix, grounded=done,
+                                            write=write if attempt == 0 else None, lines=limits.patch_draft_lines,
+                                            thinking=thinking)
+                    self.target.on_token = watch
+                try:
+                    target_prompt, output, evidence, cost, again = self._generate(
+                        scores, chosen + refreshed, question, query, maximum, prefix, ephemeral=extra)
+                finally:
+                    if watch:
+                        self.target.on_token = watch.downstream
+                rebuilt = rebuilt or again
+                if not watch or not watch.finish(output[len(prefix):]):
+                    break
+                if watch.cut >= maximum - 1 or not watch.path:
+                    watch.release_all()  # No room left to continue: keep the output as it is.
+                    break
+                # The answer began changing a file: show what its draft points at, then redo it.
+                spent = sum(g['tokens'] for g in grounded)
+                budget = min(self._patch_budget(query, maximum), 2 * limits.patch_tokens - spent)
+                fetched, info = self._ground(watch.path, watch.kind, watch.draft,
+                                             chosen + refreshed + extra, max(0, budget))
+                info['discarded_tokens'] = len(watch.ids) - watch.cut
+                grounded.append(info)
+                extra = extra + fetched
+                done.add(watch.path)
+                prefix = watch.ids[:watch.cut]
+                if getattr(self.target, 'cancel', None) is not None:
+                    self.target.cancel = threading.Event()
         except BaseException:
             # Nothing is committed: the same request can be retried.
             self.target_ids, self.delivered, self.target_generation, self.delivered_at = saved
@@ -509,8 +856,9 @@ class SpecSession:
             raise
         reply = self._reply(output)
         self.delivered.update(chosen + refreshed)
+        committed_at = len(target_prompt) - len(query) - len(self._render(chosen + refreshed)[0])
         for key in chosen + refreshed:
-            self.delivered_at[key] = len(target_prompt) - len(query)
+            self.delivered_at[key] = max(0, committed_at)
         self.target_ids = target_prompt + reply
         self.student_ids = prompt + reply
         self.history.append((query, reply))
@@ -520,17 +868,19 @@ class SpecSession:
         new_keys = sum(1 for k in chosen if self.sources[k[0]].turn == self.turn - 1)
         event = {'kind': 'answer', 'turn': self.turn, 'target_tokens': len(target_prompt),
                  'refreshed_chunks': len(refreshed),
-                 'new_tokens': new_tokens, 'budget': budget,
+                 'new_tokens': new_tokens, 'budget': budget, 'broad': broad,
                  'delivered_chunks': len(chosen), 'delivered_new_chunks': new_keys,
+                 'ephemeral_chunks': len(extra), 'fresh_chunks': len(pinned),
                  'delivered_recall_chunks': len(chosen) - new_keys,
                  'evidence_tokens': len(evidence), **cost,
                  'query_tokens': len(query), 'reply_tokens': len(reply),
                  'candidates': len(ranked), 'retrieved_sources': retrieved,
                  'target_prompt_tokens': len(target_prompt), 'student_prompt_tokens': len(prompt),
-                 'student_reused': trace.get('reused_prefix_tokens'),
+                 'student_reused': trace.get('reused_prefix_tokens'), 'verbatim': verbatim,
                  'student_s': student_s, 'select_s': selected_s - student_s,
                  'target_rebuilt': rebuilt, 'target_generation': self.target_generation,
-                 'chosen': [list(k) for k in chosen]}
+                 'grounded': grounded or None,
+                 'chosen': [list(k) for k in chosen + extra]}
         self.events.append(event)
         self._save()
         return output
@@ -630,6 +980,7 @@ class SpecSession:
         obj._headers = {}
         obj._line_ends = {}
         obj._bytes = {}
+        obj._line_cache = {}
         obj._store = store
         # The student's prefix cache is process memory; the next trace rebuilds it.
         if hasattr(student, 'reset'):

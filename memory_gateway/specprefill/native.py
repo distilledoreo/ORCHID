@@ -14,8 +14,13 @@ from .student import Student
 class NativeResources:
     def __init__(self, config_path, student_path, limits, log_path, *, archive_cache_bytes=8 * 1024**2,
                  lean=False, vram_reserve_mib=4096, sparse_keys=None, sparse_rows=None, kv=None,
-                 target_park_mib=0, restore_floor_mib=1024):
+                 target_park_mib=0, restore_floor_mib=1024, elastic=None):
         self.archive_cache_bytes = archive_cache_bytes
+        # Elastic engine (a Strata build with VRAM <mib> under --kv-grow): Flash-Next keeps whole agent
+        # conversations in a 256K elastic K/V and hands the student its VRAM only when a lean turn needs it.
+        # {'exe', 'window', 'prefill', 'student_mib', 'base_mib'}; None: the fixed lean configuration.
+        self.elastic = elastic
+        self.student_on_gpu = True
         self.lean = lean
         cfg = json.loads(Path(config_path).read_text())
         root = Path(cfg['cwd'])
@@ -34,8 +39,13 @@ class NativeResources:
         self.model_name = cfg.get('model_name', 'qwen3.8-flash-next')
         self._native = None
         args = [a for a in cfg['args'] if a not in ('--selected-prefill', '--selected-prefix-cache')]
-        for flag, value in (('--max-context', limits.target_context), ('--kv-resident', limits.target_context),
-                            ('--vram-reserve-mib', vram_reserve_mib), ('--prompt-cache', 6),
+        window = elastic['window'] if elastic else limits.target_context
+        for flag, value in (('--max-context', window), ('--kv-resident', 0 if elastic else window),
+                            # Elastic: the cache starts at its full size (it can't grow past it later)
+                            # and frees the student's VRAM right after the engine is up.
+                            ('--vram-reserve-mib', elastic['base_mib'] if elastic else vram_reserve_mib),
+                            *((('--prefill', elastic['prefill']),) if elastic else ()),
+                            ('--prompt-cache', 6),
                             # Parked conversations: a thread switch keeps the other thread's
                             # Flash-Next K/V in RAM instead of re-reading its prompt.
                             ('--conversation-cache-mib', target_park_mib if lean else 0),
@@ -50,10 +60,15 @@ class NativeResources:
                 args[args.index(flag)+1] = str(value)
             else:
                 args.extend((flag, str(value)))
+        if elastic and '--kv-grow' not in args:
+            args.append('--kv-grow')
         env = child_env(cfg)
         env.update(STRATA_ROUTE_TAIL_SKIP='0', STRATA_PREFILL_CPU_SHARE='0')
-        self.engine = StrataEngine(cfg['exe'], args, cwd=cfg['cwd'], log=str(log_path), env=env)
+        self.engine = StrataEngine(elastic['exe'] if elastic else cfg['exe'], args, cwd=cfg['cwd'],
+                                   log=str(log_path), env=env)
         try:
+            if elastic:
+                self.vram(elastic['student_mib'])
             allowed = compatible_ids(vocab, json.loads((Path(student_path) / 'tokenizer.json').read_text()))
             self.student = CachedStudent(Student(student_path, allowed), block=2048 if lean else 1024,
                                          sparse_keys=sparse_keys if lean else None,
@@ -78,6 +93,41 @@ class NativeResources:
         return CompactingSession(self.tok, self.selector, self.target, self.summarize,
                                  system=system, limits=limits, checkpoint=path,
                                  archive_cache_bytes=self.archive_cache_bytes)
+
+    def vram(self, reserve_mib, drop=False, timeout=120.0):
+        """Elastic engine: keep `reserve_mib` of VRAM free (`drop`: the live conversation goes too)."""
+        import queue
+        import time
+        from serve.server import EngineDied
+        engine = self.engine
+        if not engine.alive():
+            raise EngineDied('the engine is not running')
+        engine.proc.stdin.write(f'VRAM {int(reserve_mib)}' + (' drop' if drop else '') + '\n')
+        engine.proc.stdin.flush()
+        deadline = time.time() + timeout
+        while True:
+            try:
+                line = engine.lines.get(timeout=max(0.1, deadline - time.time()))
+            except queue.Empty:
+                raise EngineDied('the engine did not answer the VRAM command') from None
+            if line is None:
+                raise EngineDied('the engine ended')
+            line = line.strip()
+            if line.startswith('ERR'):
+                raise ValueError(line[4:].strip() or 'the engine refused the VRAM command')
+            if line.startswith('VRAM '):
+                return dict(kv.partition('=')[::2] for kv in line.split()[1:])
+            if time.time() > deadline:
+                raise EngineDied('the engine did not answer the VRAM command')
+
+    def student_device(self, device):
+        """Move the student's weights (its cache is parked by the caller first)."""
+        model = self.student.student.model
+        model.to(device)
+        self.student_on_gpu = device == 'cuda'
+        if device != 'cuda':
+            import torch
+            torch.cuda.empty_cache()
 
     def save_target(self, path):
         """Write the engine's current conversation (a thread's Flash-Next K/V) to a session file."""
@@ -138,10 +188,12 @@ class NativeResources:
 
         def relay():
             for chunk in chunks:
-                if chunk and on_text:
-                    text = (chunk['choices'][0].get('delta') or {}).get('content') if chunk.get('choices') else None
-                    if text:
-                        on_text(text)
+                if chunk and on_text and chunk.get('choices'):
+                    delta = chunk['choices'][0].get('delta') or {}
+                    if delta.get('reasoning_content'):
+                        on_text(delta['reasoning_content'], 'reasoning')
+                    if delta.get('content'):
+                        on_text(delta['content'])
                 yield chunk
         return strata.openai_collect(relay())
 

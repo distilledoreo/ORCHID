@@ -41,6 +41,12 @@ def clean(text):
 
 def score(text, expected, mode=None):
     text = clean(text)
+    if mode == 'lines':
+        # Agent-eval probes: each expected line (or path) found in the reply counts,
+        # whitespace-normalized; a patch's leading +/- markers are ignored.
+        reply = re.sub(r'\s+', ' ', '\n'.join(re.sub(r'^\s*[+-]', '', l) for l in text.splitlines()))
+        found = [re.sub(r'\s+', ' ', str(v).strip()) in reply for v in expected]
+        return {'correct_fields': sum(found), 'fields': len(expected), 'exact': all(found)}
     if mode == 'whole':
         # Exact text probes: compare the whole reply, ignoring a wrapping code
         # fence or backticks (never quote characters, which can be content).
@@ -108,15 +114,19 @@ class MeasuredTarget(NativeTarget):
         if len(ids) + maximum > self.context:
             raise ValueError(f'{self.phase}: {len(ids)} + {maximum} exceeds {self.context}')
         started = time.perf_counter()
+        outer = self.on_token  # A caller's hook (e.g. the session's patch watch) still sees every token.
+
         def token(t):
             raw = self.tok.token_bytes(t)
             if self.phase == 'answer' and self.first is None and raw and not raw.startswith(b'<|'):
                 self.first = time.perf_counter()
+            if outer:
+                outer(t)
         self.on_token = token
         try:
             output = super().__call__(ids, maximum)
         finally:
-            self.on_token = None
+            self.on_token = outer
         record = {'turn': self.turn, 'phase': self.phase, 'input_tokens': len(ids),
                   'output_tokens': len(output), 'wall_s': time.perf_counter()-started,
                   'target_ttft_s': self.last['target_ttft_s'], 'engine': self.last['engine']}
@@ -157,7 +167,7 @@ class PlainSession:
             'Do not answer the next question yet. Return only the summary, at most 1024 tokens. '
             f'Next question: {question}')
 
-    def answer(self, source, question):
+    def answer(self, source, question, maximum=64):
         incoming = self.frame('user', source['text']) if source else []
         query = self.query(question)
         # Leave room to summarize after this turn as well, without truncation.
@@ -172,7 +182,7 @@ class PlainSession:
             self.compactions += 1
         prompt = self.ids + incoming + query
         self.target.phase = 'answer'
-        output = self.target(prompt, 64)
+        output = self.target(prompt, maximum)
         stop = output and output[-1] in self.target.stop_ids
         self.ids = prompt + output + ([] if stop else self.enc('<|im_end|>', True)) + self.enc('\n')
         return output
@@ -184,7 +194,7 @@ def full_bound(tok, case):
     for turn in case['turns']:
         if turn['source']:
             total += len(session.frame('user', turn['source']['text']))
-        total += len(session.query(turn['question'])) + 64 + 2
+        total += len(session.query(turn['question'])) + turn.get('max_tokens', 64) + 2
     return total
 
 
@@ -274,6 +284,7 @@ def run_arm(name, cfg, tok, vocab, student_path, case, output, *, student_block=
             if turn['source']:
                 conversation += len(tok.encode(turn['source']['text']))
             target.turn, target.first = i, None
+            maximum = turn.get('max_tokens', 64)
             target.turn_started = time.perf_counter()
             call_start = len(target.calls)
             compaction_before = (session.target_generation if name.startswith('lean') else
@@ -283,7 +294,7 @@ def run_arm(name, cfg, tok, vocab, student_path, case, output, *, student_block=
                     session.add_source(turn['source']['path'], turn['source']['version'],
                                        turn['source']['text'])
                 target.phase = 'answer'
-                ids = session.answer(turn['question'], maximum=64)
+                ids = session.answer(turn['question'], maximum=maximum)
                 compactions = session.target_generation
             elif student:
                 source = turn['source']
@@ -305,10 +316,10 @@ def run_arm(name, cfg, tok, vocab, student_path, case, output, *, student_block=
                     session.add_source(source['path'], source['version'], source['text'],
                                        cue='Configuration code, exact revision fields and ROUTE_KEY linkage.')
                 target.phase = 'answer'
-                ids = session.answer(turn['question'], maximum=64)
+                ids = session.answer(turn['question'], maximum=maximum)
                 compactions = session.generation
             else:
-                ids = session.answer(turn['source'], turn['question'])
+                ids = session.answer(turn['source'], turn['question'], maximum)
                 compactions = session.compactions
             elapsed = time.perf_counter()-target.turn_started
             text = clean(tok.decode(ids))
@@ -393,7 +404,7 @@ def main():
     parser.add_argument('--log', type=Path, default=None, help='Codex rollout for --case log')
     parser.add_argument('--max-turns', type=int, default=None, help='pilot: keep only the first N turns')
     parser.add_argument('--log-budget', type=int, default=241000, help='replayed source tokens for --case log')
-    parser.add_argument('--case', choices=('config', 'agent', 'long', 'log'), default='config',
+    parser.add_argument('--case', choices=('config', 'agent', 'long', 'log', 'agenteval'), default='config',
                         help='config: 44-field development case; agent: held-out generator')
     parser.add_argument('--seed', type=int, default=None, help='agent case seed')
     parser.add_argument('--lean', type=json.loads, default=None,
@@ -408,6 +419,11 @@ def main():
         if args.log is None or args.seed is None:
             parser.error('--case log needs --log and --seed')
         case = build_log_case(tok, args.log, args.seed, budget=args.log_budget)
+    elif args.case == 'agenteval':
+        from .agent_eval_cases import build_agent_eval_case
+        if args.log is None or args.seed is None:
+            parser.error('--case agenteval needs --log and --seed')
+        case = build_agent_eval_case(tok, args.log, args.seed)
     elif args.case in ('agent', 'long'):
         from .agent_cases import build_agent_case, build_long_case
         if args.seed is None:
@@ -418,7 +434,8 @@ def main():
     if args.max_turns:
         case = {**case, 'turns': case['turns'][:args.max_turns], 'pilot_turns': args.max_turns}
     bound = full_bound(tok, case)
-    low, high = (250000, 262144) if args.case in ('long', 'log') else (25000, 30000)
+    low, high = ((250000, 262144) if args.case in ('long', 'log') else
+                 (200000, 262144) if args.case == 'agenteval' else (25000, 30000))
     if args.max_turns:
         low = 0  # Pilots are deliberately short.
     if not low <= bound <= high:

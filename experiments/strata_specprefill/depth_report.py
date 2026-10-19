@@ -51,7 +51,7 @@ def report(run, native, arms):
             continue
         summary = {'turns': len(turns), 'wall_s': round(sum(r['wall_s'] for r in turns), 1),
                    'correct': f"{sum(r['correct_fields'] for r in turns)}/{sum(r['fields'] for r in turns)}"}
-        for kind in ('current', 'recall', 'late'):
+        for kind in sorted({r['kind'] for r in turns} - {'filler'}):
             sel = [r for r in turns if r['kind'] == kind]
             if sel:
                 summary[kind] = f"{sum(r['correct_fields'] for r in sel)}/{sum(r['fields'] for r in sel)}"
