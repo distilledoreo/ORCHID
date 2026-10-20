@@ -56,7 +56,7 @@ How a turn works:
 
 | Variable suffix after `ORCHID_SPECPREFILL_` | Lean default |
 |---|---:|
-| `ENGINE` | `compacting` (set `lean`) |
+| `ENGINE` | `compacting` (set `lean`; `native` = SpecPrefill off) |
 | `CONTEXT_TOKENS` (target window) | 8192 |
 | `STUDENT_CONTEXT_TOKENS` | 32768 |
 | `ANSWER_TOKENS` | 128 |
@@ -64,6 +64,12 @@ How a turn works:
 | `RECALL_TOKENS` | 160 |
 | `RELATIVE_FLOOR` / `FLOOR_RANK` | 0.30 / 3 |
 | `PATCH_TOKENS` (grounded-edit evidence per file; 0 = off) | 4096 |
+| `FRESH_TOOL_TOKENS` (fresh tool results delivered whole, per turn) | 4096 |
+| `FRESH_MODE` (`intent`: the student reads long tool results for the last step) | `full` |
+| `ELASTIC_ENGINE` (a Strata build with integrations/strata/elastic-vram.patch) | unset |
+| `AGENT_NATIVE_TOKENS` (elastic: tool requests go native below this) | 200000 |
+| `ELASTIC_PREFILL` / `STUDENT_VRAM_MIB` / `ENGINE_VRAM_MIB` | 1280 / 8192 / 700 |
+| `AUTO` (fill unset settings from the measured table for this GPU) | true |
 | `QUERY_SPLIT_TOKENS` / `QUERY_TAIL_TOKENS` | 1024 / 256 |
 | `VRAM_RESERVE_MIB` (left free for the co-located student) | 4096 |
 | `STUDENT_SPARSE_KEYS` (block-sparse student prefill) | unset (dense) |

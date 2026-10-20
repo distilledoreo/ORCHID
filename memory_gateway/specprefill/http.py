@@ -44,7 +44,7 @@ def committer(store, project, thread, rid, parsed, payload):
 async def handle(request, payload, service, store):
     project = request.headers.get('x-memory-project')
     thread = request.headers.get('x-memory-thread')
-    lean = service.options.lean
+    lean = service.options.serves_clients
     # The lean engine finds the thread from the history; a retry without a request
     # ID is recognized by its content. The compacting engine needs explicit scope.
     rid = request.headers.get('x-request-id') or (None if lean else new_id('req'))

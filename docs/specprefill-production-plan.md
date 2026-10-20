@@ -501,6 +501,32 @@ Gateway bugs the live eval found, all fixed with tests:
 existing Flash-Next setup gives a working gateway with SpecPrefill on, and
 native fallback when the student is absent.
 
+**Phase 5 status (2026-10-19): gate passed.**
+- One environment: `scripts/install-specprefill.sh --strata-config PATH` makes a
+  venv and installs the gateway with `[specprefill]` (torch 2.7.1+cu126, which
+  keeps sm_60 kernels; transformers 5.19.0; Strata's frontend needs only jinja2
+  and regex, reached through the config's `cwd`). No `PYTHONPATH`. It writes
+  `~/.config/orchid/specprefill.env`; `orchid-specprefill serve|doctor|fetch-student`.
+- Auto-configuration (`memory_gateway/specprefill/setup.py`): the measured table
+  (16 GB: the P100 settings) fills what the user left unset; no NVIDIA GPU, a
+  card older than compute 6.0, a card under 16 GB, or a missing or incomplete
+  student make the gateway run native, with one notice line.
+- Student: `fetch-student` asks first, downloads `Qwen/Qwen3.5-0.8B` and keeps a
+  file only when its sha256 matches the pinned one (tested against a local
+  mirror, including a mismatching file, which is not kept).
+- Fast kernels: `fla` and `causal_conv1d` are used only if they import and the
+  student's scores match the plain path; they are not installed here (Triton,
+  which `fla` needs, does not support Pascal), so the plain path runs.
+- `ORCHID_SPECPREFILL_ENGINE=native` (and every fallback) answers through Strata's
+  own OpenAI path at the full window and shares lean's state untouched.
+- Gate run, a fresh `HOME` (simulating a clean account; user's choice) with only
+  `HOME`, `PATH` and `LANG` set: the installer finished in 9 min 55 s, `doctor`
+  reported "SpecPrefill: on"; the gateway answered a lean turn ("ZEBRA-7731");
+  with the student path pointing nowhere it printed "SpecPrefill is off (the
+  student model is not at ...); answering with native Flash-Next." and answered
+  natively. Found and fixed on the way: switching to native refused the state
+  directory (its identity differed from lean's). Offline suite: 663 passed, 5 skipped.
+
 ### Phase 6: operations and launch
 
 1. **Load limits.** Queue limit, per-request timeout, cancellation on client

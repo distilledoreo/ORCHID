@@ -183,9 +183,17 @@ class GatewayOptions:
     engine_vram_mib: int = 700  # What the engine keeps free while the student is parked.
     agent_native_tokens: int = 200000
 
+    # Why SpecPrefill is off (engine 'native'): an unfit card, a missing student, or the user.
+    native_reason: str | None = None
+
     @property
     def lean(self):
         return self.engine == 'lean'
+
+    @property
+    def serves_clients(self):
+        """OpenAI-style serving (no thread headers needed, the Responses API): lean and native."""
+        return self.engine in ('lean', 'native')
 
     @property
     def limits(self):
@@ -203,16 +211,29 @@ class GatewayOptions:
     @classmethod
     def from_env(cls):
         from ..config import _bool_env
+        from .setup import apply_auto, check_student
         if not _bool_env('ORCHID_SPECPREFILL_ENABLED', False):
             return None
-        required = ['STATE_DIR', 'CONFIG', 'STUDENT']
-        values = {key: os.environ.get('ORCHID_SPECPREFILL_' + key) for key in required}
-        if not all(values.values()):
-            raise ValueError('SpecPrefill requires STATE_DIR, CONFIG, and STUDENT paths')
-        for key in ('CONFIG', 'STUDENT'):
-            if not Path(values[key]).exists():
-                raise ValueError(f'SpecPrefill {key} path does not exist')
-        options = cls(state_dir=values['STATE_DIR'], config_path=values['CONFIG'], student_path=values['STUDENT'],
+        engine = os.environ.get('ORCHID_SPECPREFILL_ENGINE', cls.engine)
+        # Settings the user left unset come from the measured table for this GPU (setup.py).
+        _, unfit = apply_auto(os.environ) if engine == 'lean' else (None, None)
+        values = {key: os.environ.get('ORCHID_SPECPREFILL_' + key) for key in ('STATE_DIR', 'CONFIG', 'STUDENT')}
+        if not values['STATE_DIR'] or not values['CONFIG']:
+            raise ValueError('SpecPrefill requires STATE_DIR and CONFIG paths (CONFIG: the Flash-Next Strata config)')
+        if not Path(values['CONFIG']).exists():
+            raise ValueError('SpecPrefill CONFIG path does not exist')
+        reason = None
+        if engine == 'lean':
+            reason = unfit or check_student(values['STUDENT'])
+            if reason:  # SpecPrefill can't run here: plain Flash-Next, said once.
+                print(f'orchid: SpecPrefill is off ({reason}); answering with native Flash-Next.', file=sys.stderr)
+                engine = 'native'
+        elif engine == 'native':
+            reason = 'set by ORCHID_SPECPREFILL_ENGINE=native'
+        elif not values['STUDENT'] or not Path(values['STUDENT']).exists():
+            raise ValueError('SpecPrefill STUDENT path does not exist')
+        options = cls(state_dir=values['STATE_DIR'], config_path=values['CONFIG'], student_path=values['STUDENT'] or '',
+            native_reason=reason,
             model=os.environ.get('ORCHID_SPECPREFILL_MODEL', cls.model),
             context_tokens=int(os.environ.get('ORCHID_SPECPREFILL_CONTEXT_TOKENS', '8192')),
             compact_tokens=int(os.environ.get('ORCHID_SPECPREFILL_COMPACT_TOKENS', '3072')),
@@ -222,7 +243,7 @@ class GatewayOptions:
             high_water=float(os.environ.get('ORCHID_SPECPREFILL_HIGH_WATER', '.70')),
             resident_sessions=int(os.environ.get('ORCHID_SPECPREFILL_RESIDENT_SESSIONS', '4')),
             archive_cache_mib=int(os.environ.get('ORCHID_SPECPREFILL_ARCHIVE_CACHE_MIB', '8')),
-            engine=os.environ.get('ORCHID_SPECPREFILL_ENGINE', cls.engine),
+            engine=engine,
             student_context_tokens=int(os.environ.get('ORCHID_SPECPREFILL_STUDENT_CONTEXT_TOKENS', '32768')),
             new_rate=float(os.environ.get('ORCHID_SPECPREFILL_NEW_RATE', str(cls.new_rate))),
             recall_tokens=int(os.environ.get('ORCHID_SPECPREFILL_RECALL_TOKENS', str(cls.recall_tokens))),
@@ -266,8 +287,8 @@ class GatewayOptions:
         return options
 
     def validate(self):
-        if self.engine not in ('lean', 'compacting'):
-            raise ValueError("SpecPrefill engine must be 'lean' or 'compacting'")
+        if self.engine not in ('lean', 'native', 'compacting'):
+            raise ValueError("SpecPrefill engine must be 'lean', 'native' or 'compacting'")
         if self.lean and not (0 <= self.new_rate <= 1 and self.recall_tokens >= 0 and self.patch_tokens >= 0 and self.fresh_tool_tokens >= 0
                               and 0 < self.query_tail_tokens < self.query_split_tokens):
             raise ValueError('Invalid lean SpecPrefill budgets')
@@ -315,8 +336,9 @@ class SpecPrefillService:
         student_configuration = Path(options.student_path) / 'config.json'
         # Lean threads stay valid when settings change: only the ledger format and the
         # model name define them. Student and Flash-Next caches check their own settings.
+        # Native (SpecPrefill off) shares lean's state, untouched: turning it back on finds every thread.
         identity = digest({'runtime': 'specprefill-gateway-v1', 'engine': 'lean', 'ledger': 'identity-v2',
-                           'model': options.model}) if options.lean else digest({
+                           'model': options.model}) if options.serves_clients else digest({
             'runtime': 'specprefill-gateway-v1', 'limits': asdict(options.limits),
             **({'engine': 'lean', 'query_split': [options.query_split_tokens, options.query_tail_tokens],
                 **({'student_sparse_keys': options.student_sparse_keys}
@@ -419,7 +441,7 @@ class SpecPrefillService:
         return pending
 
     def validate(self, payload):
-        if self.options.lean:
+        if self.options.serves_clients:
             from .requests import parse
             return parse(payload, self.options.model)
         return self._validate_compacting(payload)
@@ -496,6 +518,8 @@ class SpecPrefillService:
                     sparse_rows=self.options.student_sparse_rows, kv=self.options.target_kv,
                     target_park_mib=self.options.target_park_mib,
                     restore_floor_mib=self.options.target_restore_floor_mib,
+                    native_only=self.options.engine == 'native', native_window=self.options.elastic_window,
+                    native_reserve_mib=self.options.engine_vram_mib,
                     elastic={'exe': self.options.elastic_engine, 'window': self.options.elastic_window,
                              'prefill': self.options.elastic_prefill, 'student_mib': self.options.student_vram_mib,
                              'base_mib': self.options.engine_vram_mib} if self.options.elastic_engine else None)
@@ -628,7 +652,22 @@ class SpecPrefillService:
         engine both may be None, and the thread is found from the history itself."""
         if self.options.lean:
             return self._complete_lean(project, thread, rid, payload, on_text, on_commit)
+        if self.options.engine == 'native':
+            return self._complete_native(payload, on_text, on_commit)
         return self._complete_compacting(project, thread, rid, payload, on_text, on_commit)
+
+    def _complete_native(self, payload, on_text=None, on_commit=None):
+        """SpecPrefill off: plain Flash-Next through Strata's own OpenAI path (full window, its prompt cache)."""
+        from .requests import parse
+        parse(payload, self.options.model)  # The same request checks as the lean engine.
+        with self.lock:
+            if self.closed:
+                raise RuntimeError('SpecPrefill service is closed')
+            result = self._resources().native(payload, on_text)
+        result = {**result, 'orchid': {'engine': 'native', 'reason': self.options.native_reason}}
+        if on_commit:
+            on_commit(result)
+        return result
 
     def _complete_compacting(self, project, thread, rid, payload, on_text=None, on_commit=None):
         maximum = self._validate_compacting(payload)
@@ -1172,7 +1211,7 @@ class SpecPrefillService:
                     return
                 resource = self._resources()
                 if not self.options.lean:
-                    return
+                    return  # Native and compacting: the engine is up; nothing to resume.
                 row = self.db.execute('SELECT key,system FROM sessions WHERE used_at IS NOT NULL '
                                       'ORDER BY used_at DESC LIMIT 1').fetchone()
                 path = row and self._session_path(row[0])

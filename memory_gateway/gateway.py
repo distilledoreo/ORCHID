@@ -323,9 +323,9 @@ def create_app(
 
     @app.post("/v1/responses", response_model=None)
     async def responses(request: Request) -> StreamingResponse | JSONResponse:
-        if native_service is None or not native_service.options.lean:
+        if native_service is None or not native_service.options.serves_clients:
             return JSONResponse(status_code=404, content={"error": {
-                "type": "not_found", "message": "The Responses API is served by the lean SpecPrefill engine"}})
+                "type": "not_found", "message": "The Responses API is served by the lean or native SpecPrefill engine"}})
         payload = await request.json()
         if not isinstance(payload, dict):
             return JSONResponse(status_code=400, content={"error": {

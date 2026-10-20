@@ -14,7 +14,8 @@ from .student import Student
 class NativeResources:
     def __init__(self, config_path, student_path, limits, log_path, *, archive_cache_bytes=8 * 1024**2,
                  lean=False, vram_reserve_mib=4096, sparse_keys=None, sparse_rows=None, kv=None,
-                 target_park_mib=0, restore_floor_mib=1024, elastic=None):
+                 target_park_mib=0, restore_floor_mib=1024, elastic=None, native_only=False,
+                 native_window=262144, native_reserve_mib=700):
         self.archive_cache_bytes = archive_cache_bytes
         # Elastic engine (a Strata build with VRAM <mib> under --kv-grow): Flash-Next keeps whole agent
         # conversations in a 256K elastic K/V and hands the student its VRAM only when a lean turn needs it.
@@ -39,7 +40,10 @@ class NativeResources:
         self.model_name = cfg.get('model_name', 'qwen3.8-flash-next')
         self._native = None
         args = [a for a in cfg['args'] if a not in ('--selected-prefill', '--selected-prefix-cache')]
-        window = elastic['window'] if elastic else limits.target_context
+        # Native only (SpecPrefill off): plain Flash-Next with its whole window, no student.
+        window = native_window if native_only else elastic['window'] if elastic else limits.target_context
+        if native_only:
+            elastic, vram_reserve_mib = None, native_reserve_mib
         for flag, value in (('--max-context', window), ('--kv-resident', 0 if elastic else window),
                             # Elastic: the cache starts at its full size (it can't grow past it later)
                             # and frees the student's VRAM right after the engine is up.
@@ -66,6 +70,9 @@ class NativeResources:
         env.update(STRATA_ROUTE_TAIL_SKIP='0', STRATA_PREFILL_CPU_SHARE='0')
         self.engine = StrataEngine(elastic['exe'] if elastic else cfg['exe'], args, cwd=cfg['cwd'],
                                    log=str(log_path), env=env)
+        if native_only:
+            self.student = self.selector = self.target = self.summarize = None
+            return
         try:
             if elastic:
                 self.vram(elastic['student_mib'])
@@ -198,6 +205,9 @@ class NativeResources:
         return strata.openai_collect(relay())
 
     def close(self):
+        if self.selector is None:  # Native only: no student was loaded.
+            self.engine.close()
+            return
         self.selector.reset()
         self.engine.close()
         # Release the student's VRAM even if a session still references it, so a
