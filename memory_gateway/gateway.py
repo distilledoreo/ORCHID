@@ -260,7 +260,7 @@ def create_app(
         ready = native_service.ready()
         return JSONResponse({"status": "ready" if ready else "warming"}, status_code=200 if ready else 503)
 
-    # Strata's own server endpoints, so a client written for it (FRIDAY) can use the gateway on
+    # Strata's own server endpoints, so a client written for Strata's server can use the gateway on
     # Strata's port: /health and /v1/status in its format. `started`, `engine` and `model` stay the
     # same while this process runs (clients use them to tell when the server changed).
     started_at = int(time.time())

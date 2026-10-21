@@ -1,4 +1,4 @@
-"""The gateway in Strata's place: a client written for Strata's own server (FRIDAY) finds the
+"""The gateway in Strata's place: a client written for Strata's own server finds the
 endpoints, model names and request fields it uses."""
 import pytest
 from fastapi.testclient import TestClient

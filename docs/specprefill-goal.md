@@ -329,8 +329,8 @@ Flash-Next, sets SpecPrefill's speed. Flash-Next under SpecPrefill reads
 
 ### Benchmark: the user's real Codex session
 
-`experiments/strata_specprefill/log_cases.py` replays the 2026-10-08 FRIDAY
-roadmap Codex session (user and assistant messages, commands and outputs,
+`experiments/strata_specprefill/log_cases.py` replays a 2026-10-08 product-roadmap
+Codex session (user and assistant messages, commands and outputs,
 JSON-wrapped parallel outputs decoded) for 240,765 source tokens, which comes
 to ~253K of conversation with the questions and replies. It has 122 turns:
 101 probes on the newest material, 9 in-session recalls ≥20 turns back, and
