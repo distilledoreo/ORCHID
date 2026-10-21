@@ -1,0 +1,31 @@
+{
+  "root_pytest": {
+    "passed": 443,
+    "skipped": 12
+  },
+  "student_runtime_focused_passed": 43,
+  "ruff": "passed",
+  "native_target_calls": 185,
+  "measured_turns": 144,
+  "additional_fetch_inferences": 3,
+  "conversation_isolation_calls": 36,
+  "eviction_validation_calls": 2,
+  "lossless_archive_audits": 36,
+  "exact_delivered_source_byte_ranges": 2205,
+  "normal_turn_source_reprefill_chunks": 0,
+  "semantic_duplicate_appends": 0,
+  "unicode_native_tokenizer_audit": {
+    "roundtrip": true,
+    "target_tokenizer": true,
+    "chunks": 20,
+    "delivery_token_ranges_cover_exact_utf8": true
+  },
+  "cache_eviction": {
+    "reused": 0,
+    "output_equal": true,
+    "duplicate_semantic_appends": 0
+  },
+  "gpu_memory_after_run_mib": 0,
+  "production_strata_changes": "none in this task",
+  "adaptive_policy_changed": false
+}

@@ -29,9 +29,11 @@ def initialize_index(connection):
             index_id TEXT NOT NULL, vector_json TEXT NOT NULL,
             PRIMARY KEY(event_id, view_start, index_id));
     """)
+    # event_id is UNINDEXED in the FTS table: a join on it scans the whole index once per
+    # document (quadratic; 40K events took over 20 minutes at startup). NOT IN reads it once.
     connection.execute("""INSERT INTO raw_events_fts(event_id, text)
         SELECT d.event_id, d.text FROM raw_event_documents d
-        LEFT JOIN raw_events_fts f ON f.event_id=d.event_id WHERE f.event_id IS NULL""")
+        WHERE d.event_id NOT IN (SELECT event_id FROM raw_events_fts)""")
     while True:
         rows = connection.execute("""SELECT e.* FROM events e
             LEFT JOIN raw_event_documents d ON d.event_id=e.id

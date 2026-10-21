@@ -1,0 +1,13 @@
+{
+  "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True",
+  "student_block": 512,
+  "exact_lookup": true,
+  "comparison": "Earlier full32k, summary8k and failed specprefill8k results retained; no disabled rerun per user direction. Multiple implementation changes since prior 8K run, not a paired ablation.",
+  "historical_student_block": 1024,
+  "implementation_sha256": {
+    "memory_gateway/specprefill/exact_lookup.py": "cb304af670bf3c51574b31b450031c59390344aa3746046d55ce1f6a3fbe51b5",
+    "memory_gateway/specprefill/compacting_session.py": "fc48a03aa07a5435cd54be7837aec1cc451769a392af314e13d098c0980043e0",
+    "memory_gateway/specprefill/archive_search.py": "d928bc863a6f96408260e72d7930b88ac851a92e85115e476029039b6b6795fe",
+    "experiments/strata_specprefill/three_way_compaction.py": "55a322b04c47d2f66ea3db63e11fe9f95dd15eb18e757e0c70430e334770edd0"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "arm": "specprefill8k",
+  "status": "failed",
+  "failure_turn": 9,
+  "error": "Compaction would orphan archive references",
+  "failure_detail": "Generated summary returned archive A/S references instead of the requested M IDs and did not preserve complete provenance coverage. Rejected without advancing generation.",
+  "turns": 8,
+  "correct_fields": 12,
+  "fields": 16,
+  "exact_turns": 4,
+  "completed_turn_wall_s": 318.2945996860508,
+  "failed_turn_native_s": 47.707530840998515,
+  "total_wall_s": 366.0021305270493,
+  "total_wall_is_lower_bound": true,
+  "mean_e2e_ttft_s": 39.09689747189259,
+  "median_e2e_ttft_s": 46.875488136021886,
+  "compactions": 5,
+  "reused_answer_tokens": 12000,
+  "maintenance_s": 283.28350187593605,
+  "late_correct_fields": null,
+  "late_fields": 8
+}

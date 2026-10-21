@@ -1,0 +1,147 @@
+{
+  "sessions": 2,
+  "turns_per_session": 4,
+  "prompt_lengths": [
+    1517,
+    2051,
+    3069,
+    5099
+  ],
+  "growth_tokens": [
+    1517,
+    534,
+    1018,
+    2030
+  ],
+  "control": {
+    "control-cache": {
+      "requests": 8,
+      "correct": 8,
+      "mean_ttft_s": 7.116627679846715,
+      "growing_turn_mean_ttft_s": 7.025765038473764,
+      "per_turn_ttft_s": [
+        7.389215603965567,
+        5.130533755465876,
+        6.696896029490745,
+        9.249865330464672
+      ],
+      "mean_target_reused_tokens": 1695.5,
+      "retained_fraction": 1.0
+    },
+    "control-off": {
+      "requests": 8,
+      "correct": 8,
+      "mean_ttft_s": 11.295990471735422,
+      "growing_turn_mean_ttft_s": 12.500551564822672,
+      "per_turn_ttft_s": [
+        7.682307192473672,
+        8.931408791511785,
+        11.551444970973535,
+        17.018800931982696
+      ],
+      "mean_target_reused_tokens": 0,
+      "retained_fraction": 1.0
+    }
+  },
+  "student_isolation": {
+    "student-off": {
+      "requests": 8,
+      "correct": 8,
+      "mean_ttft_s": 6.91974436774035,
+      "growing_turn_mean_ttft_s": 7.477574427990476,
+      "per_turn_ttft_s": [
+        5.246254186989972,
+        6.011219889012864,
+        7.532825090980623,
+        8.88867830397794
+      ],
+      "mean_target_reused_tokens": 0,
+      "retained_fraction": 0.2992501704158146
+    },
+    "student-on": {
+      "requests": 8,
+      "correct": 8,
+      "mean_ttft_s": 6.334569499013014,
+      "growing_turn_mean_ttft_s": 6.761546084841636,
+      "per_turn_ttft_s": [
+        5.0536397415271495,
+        5.4422184190189,
+        6.924853697506478,
+        7.917566137999529
+      ],
+      "mean_target_reused_tokens": 0,
+      "retained_fraction": 0.2992501704158146
+    }
+  },
+  "both_caches": {
+    "full-colocated-cache": {
+      "requests": 8,
+      "correct": 8,
+      "mean_ttft_s": 7.359286747509032,
+      "growing_turn_mean_ttft_s": 7.246246003681638,
+      "per_turn_ttft_s": [
+        7.6984089789912105,
+        5.494404866010882,
+        7.126496762532042,
+        9.117836382501991
+      ],
+      "mean_target_reused_tokens": 1661,
+      "retained_fraction": 1.0
+    },
+    "stable-both-cache": {
+      "requests": 8,
+      "correct": 8,
+      "mean_ttft_s": 6.912748981631012,
+      "growing_turn_mean_ttft_s": 7.4629539383458905,
+      "per_turn_ttft_s": [
+        5.262134111486375,
+        6.251553665002575,
+        6.750570020521991,
+        9.386738129513105
+      ],
+      "mean_target_reused_tokens": 0,
+      "retained_fraction": 0.3660531697341513
+    }
+  },
+  "equivalence": {
+    "comparisons": 8,
+    "cached_vs_chunked_positions_equal": 7,
+    "cached_vs_full_positions_equal": 6,
+    "drafts_equal": 8,
+    "max_score_abs_diff": 0.0001220703125,
+    "min_selection_jaccard": 0.9331243469174504,
+    "target_cached_cold_outputs_equal": 8
+  },
+  "position_binding": {
+    "append_reused": 512,
+    "changed_position_reused": 0,
+    "changed_position_cold_output_equal": true,
+    "sparse_to_implicit_reused": 0
+  },
+  "stable_backfill_turns": 6,
+  "stable_target_reused_per_turn": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "stable_retained_per_turn": [
+    0.3038892551087673,
+    0.3681131155533886,
+    0.36917562724014336,
+    0.38183957638752697
+  ],
+  "provenance": {
+    "frozen_sets_sha256": "46ad4ff2fbe4ccac7cfa8c14a162b5cf3bcc613775aa8d6d0837ec5b67a216a3",
+    "control_off_binary_sha256": "b50131332d7ed2eefc0329fb3ef2aa51588aab174aa1f4f7e276f542604ad6a1",
+    "control_on_build_note": "First experimental build, opt-in selected flags disabled. Current experimental build differs only in help text; intermediate binary hash was not retained.",
+    "benchmark_binary_sha256": "94bda1d4f27b0baaeb7391cf0f51853813605594239ce5e64bdc65bcc9615077",
+    "delivery_binary_sha256": "9162087cb0b9debd771580eaae9e49dbdb879fee8fca68859128cf53d0e9a75d",
+    "delivery_build_note": "Adds rejection of session SAVE/RESTORE in selected-prefix-cache mode; measured GEN execution path unchanged."
+  },
+  "reference_distinct_selection_checks": {
+    "requests": 2,
+    "correct": 2
+  },
+  "spec_reduction_vs_production_control": -0.062226518746077764
+}

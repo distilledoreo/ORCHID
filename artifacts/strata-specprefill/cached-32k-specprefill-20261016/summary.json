@@ -1,0 +1,18 @@
+[
+  {
+    "arm": "specprefill32k",
+    "turns": 22,
+    "correct_fields": 39,
+    "fields": 44,
+    "exact_turns": 18,
+    "total_wall_s": 296.89041220297804,
+    "load_s_excluded": 162.9305337590049,
+    "mean_e2e_ttft_s": 12.807676961955043,
+    "median_e2e_ttft_s": 10.110734960035188,
+    "compactions": 1,
+    "reused_answer_tokens": 227430,
+    "maintenance_s": 56.147732127981726,
+    "late_correct_fields": 4,
+    "late_fields": 8
+  }
+]

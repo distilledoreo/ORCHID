@@ -1,0 +1,24 @@
+{
+  "measured_prompts": 12,
+  "native_requests": 106,
+  "saved_logit_files_hash_verified": 106,
+  "vocabulary": 248320,
+  "original_baseline_artifacts_verified_unchanged": 40,
+  "original_binary_and_source_unchanged": true,
+  "full_retention_controls_max_abs": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "target_reuse_all_zero": true,
+  "student_prefix_reuse_all_zero": true,
+  "native_CUDA_build": "passed",
+  "native_focused_unit_tests_passed": 4,
+  "diagnostic_unit_tests_passed": 8,
+  "earlier_core_and_student_cache_unit_tests_passed": 32,
+  "ruff": "passed",
+  "git_diff_check": "passed",
+  "second_student_trace_matching_original_prompts": 12,
+  "short_controls": "Nonzero distributional differences retained in control-audit.json; not bit equivalence.",
+  "free_running_compounding_evaluated": false
+}

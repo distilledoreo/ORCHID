@@ -18,6 +18,7 @@ from .cold_telemetry import BufferedColdMemoryTelemetry
 from .compaction import CompactionEngine, CompactionWorker
 from .config import RuntimeConfig
 from .context import ContextAssembler, ContextSnapshot
+from .core_goal import MAX_COMPACTION_WAIT_MS as MAXIMUM_FOREGROUND_WAIT_MS
 from .db import SQLiteStore, new_id
 from .foreground_telemetry import (
     append_record,
@@ -25,7 +26,6 @@ from .foreground_telemetry import (
     record_provider_latency,
     substitution_record,
 )
-from .core_goal import MAX_COMPACTION_WAIT_MS as MAXIMUM_FOREGROUND_WAIT_MS
 from .ingestion import append_novel_messages, parse_assistant_message, parse_stream_message
 from .pipeline_adapters import build_lossless_engine
 from .scheduler import CompactionScheduler, ThresholdPolicy
@@ -96,8 +96,12 @@ def create_app(
     backend_url: str | None = None,
     config: RuntimeConfig | None = None,
     compaction_engine: CompactionEngine | None = None,
+    specprefill_service=None,
 ) -> FastAPI:
     runtime = config or RuntimeConfig.from_env(db_path=db_path, backend_url=backend_url)
+    from .specprefill.service import GatewayOptions, SpecPrefillService
+    native_options = GatewayOptions.from_env() if specprefill_service is None else None
+    native_service = specprefill_service or (SpecPrefillService(native_options) if native_options else None)
     from .activity import ActivityGate, ForegroundActivityMiddleware
     from .observer import build_observer_engine
     activity_gate = ActivityGate()
@@ -187,7 +191,7 @@ def create_app(
             publication_economics_enabled=runtime.publication_economics_enabled,
             publication_horizon_turns=runtime.publication_horizon_turns,
         )
-        if engine
+        if engine and native_service is None
         else None
     )
 
@@ -204,6 +208,8 @@ def create_app(
                 name="orchid-compaction-worker",
             )
             app.state.worker_task = worker_task
+        if native_service is not None and native_service.options.preload:
+            native_service.start_warm_up()
         try:
             yield
         finally:
@@ -215,6 +221,10 @@ def create_app(
                 except asyncio.CancelledError:
                     pass
             app.state.worker_task = None
+            if app.state.specprefill_tasks:
+                await asyncio.gather(*app.state.specprefill_tasks, return_exceptions=True)
+            if native_service is not None:
+                await asyncio.to_thread(native_service.close)
             if cold_memory_telemetry is not None:
                 cold_memory_telemetry.close()
 
@@ -222,6 +232,8 @@ def create_app(
     app = FastAPI(title="Orchid Memory Gateway", version="0.1.0", lifespan=lifespan)
     app.add_middleware(ForegroundActivityMiddleware, gate=activity_gate)
     app.state.activity_gate = activity_gate
+    app.state.specprefill_service = native_service
+    app.state.specprefill_tasks = set()
     app.state.raw_recall = raw_recall
     app.state.store = store
     app.state.runtime = runtime
@@ -238,17 +250,129 @@ def create_app(
     async def healthz() -> dict[str, str]:
         return {
             "status": "ok",
-            "compaction": "configured" if worker is not None else "not_configured",
+            "compaction": "specprefill" if native_service is not None else ("configured" if worker is not None else "not_configured"),
         }
+
+    @app.get("/readyz")
+    async def readyz() -> JSONResponse:
+        if native_service is None:
+            return JSONResponse({"status": "ready"})
+        ready = native_service.ready()
+        return JSONResponse({"status": "ready" if ready else "warming"}, status_code=200 if ready else 503)
+
+    # Strata's own server endpoints, so a client written for it (FRIDAY) can use the gateway on
+    # Strata's port: /health and /v1/status in its format. `started`, `engine` and `model` stay the
+    # same while this process runs (clients use them to tell when the server changed).
+    started_at = int(time.time())
+
+    def strata_shape():
+        options = native_service.options
+        window = options.elastic_window if (options.elastic_engine or options.engine == 'native') \
+            else options.limits.student_context
+        images = getattr(native_service.resources, 'vision', None) is not None
+        return options, window, images
+
+    @app.get("/health")
+    async def health() -> JSONResponse:
+        if native_service is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "not found"}})
+        options, window, images = strata_shape()
+        return JSONResponse({"status": "ok", "max_context": window, "model": options.model, "images": images,
+                             "api_key": False, "loaded": native_service.ready(), "service": "strata"})
+
+    @app.get("/v1/status")
+    async def v1_status() -> JSONResponse:
+        if native_service is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "not found"}})
+        options, window, images = strata_shape()
+        return JSONResponse({
+            "service": "strata", "model": options.model, "loaded": native_service.ready(),
+            "engine": f"orchid-specprefill-{options.engine}", "started": started_at,
+            "uptime_s": int(time.time()) - started_at, "cache_max_tokens": window,
+            "context": {"native": window, "max_positions": window},
+            "concurrency": {"serving": 1, "requested": 1},
+            "dialects": ["/v1/chat/completions", "/v1/responses"],
+            "vision": {"enabled": images, "available": images, "error": None},
+            "activity": {"in_flight": native_service.waiting}})
+
+    def lean_controls():
+        if native_service is None or not native_service.options.lean:
+            return None
+        from .specprefill import controls
+        return controls
+
+    @app.get("/v1/orchid/threads")
+    async def orchid_threads() -> JSONResponse:
+        controls = lean_controls()
+        if controls is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "lean engine only"}})
+        rows = await asyncio.to_thread(controls.list_threads, native_service, store)
+        return JSONResponse({"object": "list", "data": rows})
+
+    @app.get("/v1/orchid/threads/{thread}/export", response_model=None)
+    async def orchid_export(thread: str) -> StreamingResponse | JSONResponse:
+        controls = lean_controls()
+        try:
+            lines = list(controls.export_thread(native_service, store, thread)) if controls else None
+        except KeyError:
+            lines = None
+        if lines is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "no such thread"}})
+        return StreamingResponse(iter(lines), media_type="application/x-ndjson")
+
+    @app.delete("/v1/orchid/threads/{thread}")
+    async def orchid_delete(thread: str) -> JSONResponse:
+        controls = lean_controls()
+        try:
+            removed = await asyncio.to_thread(controls.delete_thread, native_service, store, thread) if controls else None
+        except KeyError:
+            removed = None
+        if removed is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "no such thread"}})
+        return JSONResponse(removed)
+
+    @app.post("/v1/orchid/caches/purge")
+    async def orchid_purge() -> JSONResponse:
+        controls = lean_controls()
+        if controls is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "lean engine only"}})
+        return JSONResponse(await asyncio.to_thread(controls.purge_caches, native_service))
+
+    @app.get("/v1/orchid/metrics")
+    async def orchid_metrics() -> JSONResponse:
+        if native_service is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "SpecPrefill is off"}})
+        return JSONResponse(await asyncio.to_thread(native_service.metrics_snapshot))
+
+    @app.get("/v1/orchid/storage")
+    async def orchid_storage() -> JSONResponse:
+        controls = lean_controls()
+        if controls is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "lean engine only"}})
+        return JSONResponse(await asyncio.to_thread(controls.storage, native_service))
 
     @app.get("/v1/models")
     async def models(request: Request) -> JSONResponse:
+        if native_service is not None:
+            return JSONResponse({"object": "list", "data": [{"id": native_service.options.model, "object": "model", "owned_by": "local"}]})
         async with httpx.AsyncClient(timeout=30) as client:
             response = await client.get(
                 f"{backend}/v1/models",
                 headers=_backend_headers(request, runtime.backend_api_key),
             )
         return JSONResponse(status_code=response.status_code, content=_json_or_text(response))
+
+    @app.post("/v1/responses", response_model=None)
+    async def responses(request: Request) -> StreamingResponse | JSONResponse:
+        if native_service is None or not native_service.options.serves_clients:
+            return JSONResponse(status_code=404, content={"error": {
+                "type": "not_found", "message": "The Responses API is served by the lean or native SpecPrefill engine"}})
+        payload = await request.json()
+        if not isinstance(payload, dict):
+            return JSONResponse(status_code=400, content={"error": {
+                "type": "invalid_request_error", "message": "the body must be an object"}})
+        from .specprefill.responses import handle as handle_responses
+        return await handle_responses(request, payload, native_service, store)
 
     @app.post("/v1/chat/completions", response_model=None)
     async def chat_completions(request: Request) -> StreamingResponse | JSONResponse:
@@ -258,6 +382,9 @@ def create_app(
                 status_code=400,
                 content={"error": {"message": "messages must be an array", "type": "invalid_request_error"}},
             )
+        if native_service is not None:
+            from .specprefill.http import handle
+            return await handle(request, payload, native_service, store)
         try:
             completion_reservation(payload, runtime)
         except ValueError as error:
@@ -367,7 +494,6 @@ def create_app(
                 json=outbound,
                 headers=headers,
             )
-        response_text = response.text
         parsed = _json_or_text(response)
         record_provider_latency(
             foreground_record,
@@ -400,6 +526,9 @@ def create_app(
         thread = request.headers.get("x-memory-thread")
         if not project or not thread:
             raise ValueError("recall requires explicit project and thread headers")
+        if native_service is not None:
+            from .specprefill.service import digest
+            thread = "specprefill-" + digest([project, thread])
         return project, thread
 
     @app.post("/v1/memory/recall")

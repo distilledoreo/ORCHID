@@ -1,0 +1,29 @@
+{
+  "base": "local Strata engine 0.1.43 source; preserve existing local changes",
+  "files": {
+    "serve/server.py": {
+      "before_sha256": "132812d98e587c09df2275f3e32f734ef1dcdf5f2be98fd2377a2e31978bc859",
+      "after_sha256": "276a17134adc075d601c65059f26dd254383049866073f40a1e62cf11655c90b"
+    },
+    "src/program/generate.cpp": {
+      "before_sha256": "23c2b4d0aba33b9f891f52ad10ef988e11b29ffe079aae6cbae1888900c1c47d",
+      "after_sha256": "9b3bcd3f1c1bbab5574ef26eb20f81351d24b9df560e61e932b217f24e4fe7c1"
+    },
+    "serve/selected_prefill.py": {
+      "before_sha256": null,
+      "after_sha256": "e2e52bdbe3601f64bdc2af9303a233d1e3a30afca71bf82f39571ae9bd2e2069"
+    },
+    "serve/test_selected_prefill.py": {
+      "before_sha256": null,
+      "after_sha256": "e04ff2de375765ff0797385387e8e15366139b9f40f49e9335b006f87e3063be"
+    },
+    "include/strata/program/selected_prefill.hpp": {
+      "before_sha256": null,
+      "after_sha256": "863d3408941bcf69122721f17dc0c8442cccadb18e023f7f0e64ddcca5b98510"
+    },
+    "src/program/selected_prefill_test.cpp": {
+      "before_sha256": null,
+      "after_sha256": "305160753e36663530a7be67779fda071a903cbd87510e20bbad46d28f77f57b"
+    }
+  }
+}

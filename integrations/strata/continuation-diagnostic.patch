@@ -1,0 +1,53 @@
+--- a/src/program/generate.cpp
++++ b/src/program/generate.cpp
+@@ -11870,6 +11870,32 @@
+                     std::fprintf(stderr, "strata pipeline calibration (p_on decile: on/scored):%s\n", cal.c_str());
+                 }
+             }
++            // Opt-in offline continuation diagnostic. Raw logits precede forced token selection.
++            const char* diag_prefix = std::getenv("STRATA_DIAGNOSTIC_LOGITS");
++            std::vector<int32_t> diag_forced;
++            static int diag_request = 0;
++            std::string diag_path;
++            if (diag_prefix) {
++                if (pl_ran || use_mtp || o.suffix_draft > 0 || o.lookup_chain > 0 || o.prompt_cache != 0) {
++                    std::printf("ERR diagnostic requires serial non-speculative uncached decoding\n"); return 1;
++                }
++                const char* force_path = std::getenv("STRATA_DIAGNOSTIC_FORCE_FILE");
++                if (!force_path) { std::printf("ERR diagnostic force file missing\n"); return 1; }
++                std::ifstream force(force_path);
++                if (!force) { std::printf("ERR diagnostic cannot open force file\n"); return 1; }
++                int64_t token;
++                while (force >> token) {
++                    if (token < 0 || token >= ver.vocab()) { std::printf("ERR diagnostic invalid token\n"); return 1; }
++                    diag_forced.push_back((int32_t) token);
++                }
++                if (!force.eof() || (!diag_forced.empty() && (int) diag_forced.size() != max_new)) {
++                    std::printf("ERR diagnostic force count/format mismatch\n"); return 1;
++                }
++                diag_path = std::string(diag_prefix) + "." + std::to_string(diag_request++) + ".f32";
++                std::FILE* clear = std::fopen(diag_path.c_str(), "wb");
++                if (!clear) { std::printf("ERR diagnostic output unavailable\n"); return 1; }
++                std::fclose(clear);
++            }
+             while (!pl_ran && !cancelled && produced_n < max_new) {
+                 int T = use_mtp ? S_mtp : 1;   // no --mtp: one token a round unless a lookup draft fires
+                 if (use_mtp && req_spec_min_p > 0.0) {
+@@ -11979,6 +12005,17 @@
+                             std::fprintf(stderr, "strata serve: STRATA_DUMP_FIRST_LOGITS: cannot write %s\n", path.c_str());
+                         if (f) std::fclose(f);
+                     }
++                }
++                if (diag_prefix) {
++                    if (T != 1) { std::printf("ERR diagnostic window must equal one\n"); return 1; }
++                    std::vector<float> raw((size_t) ver.vocab());
++                    std::FILE* file = ver.copy_logits(0, raw.data()) ? std::fopen(diag_path.c_str(), "ab") : nullptr;
++                    if (!file || std::fwrite(raw.data(), sizeof(float), raw.size(), file) != raw.size()) {
++                        if (file) std::fclose(file);
++                        std::printf("ERR diagnostic logits write failed\n"); return 1;
++                    }
++                    std::fclose(file);
++                    if (!diag_forced.empty()) outv[0] = diag_forced[(size_t) produced_n];
+                 }
+                 int a = 0;
+                 while (a < T - 1 && window[(size_t) a + 1] == outv[(size_t) a]) ++a;

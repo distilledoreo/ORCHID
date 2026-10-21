@@ -1,0 +1,13 @@
+{
+  "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True",
+  "student_block": 512,
+  "native_vram_reserve_mib": 4096,
+  "comparison": "Existing completed full32k control and pre-fix specprefill32k run; same 44 fields and case/native hashes.",
+  "git_head": "6ca543ce374a915237beb2e88b0d23b26add885d",
+  "implementation_sha256": {
+    "memory_gateway/specprefill/archive_search.py": "d928bc863a6f96408260e72d7930b88ac851a92e85115e476029039b6b6795fe",
+    "memory_gateway/specprefill/compacting_session.py": "5b58a2999d1c3ec26901ff62334472efec90434354bb8577af2d51cdbead8d64",
+    "memory_gateway/specprefill/service.py": "78c2ffa2f9047a2feea2564d54cc21c3083e14c025cfaae1f742370c5c96ac0f",
+    "experiments/strata_specprefill/three_way_compaction.py": "4d6658a259e65e8b7008836d76e7d6c3eefdaf99549feae2f93860e5028b90e3"
+  }
+}

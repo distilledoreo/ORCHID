@@ -1,0 +1,19 @@
+{
+  "focused_tests": {
+    "passed": 45,
+    "files": [
+      "tests/test_strata_specprefill.py",
+      "tests/test_strata_student_cache.py",
+      "tests/test_strata_omission_archive.py"
+    ]
+  },
+  "ruff": "passed",
+  "git_diff_check": "passed",
+  "cases_identical_to_append_v1": true,
+  "live_measured_turns": 32,
+  "identical_initial_prompt_selection_pairs": 4,
+  "verified_source_byte_spans": 153,
+  "permanent_omissions_never_delivered": true,
+  "current_questions_retained": true,
+  "all_append_only_prompt_hashes_verified": true
+}

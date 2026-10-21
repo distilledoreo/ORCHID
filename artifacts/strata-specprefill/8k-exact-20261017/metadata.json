@@ -1,0 +1,19 @@
+{
+  "max_full_context_tokens_including_64_token_answers": 29250,
+  "case_sha256": "d745a202951fca47fbb1bea27fd97d6631dad0e6aeb7ad9e89b08678af319b98",
+  "turns": 22,
+  "source_tokens": 26583,
+  "native_executable": "/home/distilledoreo/AI/Strata/build-cuda12/strata",
+  "native_sha256": "9162087cb0b9debd771580eaae9e49dbdb879fee8fca68859128cf53d0e9a75d",
+  "caching": "prompt-cache=6; sequential positions; conversation-cache-mib=0",
+  "summary_token_budget": 1024,
+  "answer_cap": 64,
+  "seed": 2026101628,
+  "selected_arms": [
+    "specprefill8k"
+  ],
+  "student_prefill_block": 512,
+  "exact_lookup": true,
+  "timing": "Turn admission through final token, including compaction/search/student/persistence. Load and warmup excluded.",
+  "design": "One synthetic code/revision/linked-field conversation; each arm keeps own actual replies. At least two compactions per 8K arm."
+}

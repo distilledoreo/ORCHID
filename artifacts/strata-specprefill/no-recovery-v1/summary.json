@@ -1,0 +1,127 @@
+{
+  "setup": {
+    "student": "Qwen3.5-0.8B",
+    "target": "Flash-Next Swift IQ3_S",
+    "gpu": "Tesla P100-PCIE-16GB 16384 MiB",
+    "student_cache": true,
+    "target_cache": true,
+    "warm_resident_timing": true
+  },
+  "source_sha256": {
+    "append_experiment.py": "d6ee5b4b12ab2863bf4c561562465c0b80946f4914600a5a8d5740bee10e8ed8",
+    "omission_archive.py": "20711889241462f413d2f156d2620c3b2165f9484eca0dcf09b0fbc3d6ef5996",
+    "cached_student.py": "53a074efe885a426a37d90c6b00b85f97e6246fafe890cd0f07bdab557fc6d40",
+    "append_cases.py": "6e4725e4c44ffe5df07f86ba1dc68aaa682ff3b66c423e9e1c194b3d37447e6a"
+  },
+  "native_binary_sha256": "9162087cb0b9debd771580eaae9e49dbdb879fee8fca68859128cf53d0e9a75d",
+  "case_sha256": "04a45f2c95540149d0a8b9e41d7616ed569c14b89360421ac5481bee12f38cb8",
+  "rows": 32,
+  "identical_initial_prompts_and_selections": 4,
+  "verified_source_byte_spans": 153,
+  "arms": {
+    "append-none": {
+      "requests": 16,
+      "correct": 16,
+      "mean_latency_s": 5.430736068563419,
+      "growing_mean_latency_s": 5.276383263995133,
+      "held_correct": 8,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 699.0833333333334,
+      "growing_reuse_fraction": 0.6315115928937067,
+      "prior_prefix_preservation_fraction": 0.9958208955223881,
+      "growing_zero_reuse": 0,
+      "partial_prefix_rewinds": 5,
+      "placeholder_tokens": 0,
+      "final_context_tokens": 1624.75,
+      "omitted_needed": 3,
+      "recovered": 3,
+      "already_delivered_selection_skipped": 91,
+      "off_task_delivered_chunks": 90,
+      "evidence_frame_tokens_including_tools": 5540,
+      "fetch_requests": 0,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0,
+      "student_reused_tokens": 31592,
+      "growing_student_selection_s": 0.5466388087515952,
+      "mean_initial_visible_ttft_s": 5.430736068563419,
+      "paired_recovery_needed_turns": 3,
+      "paired_recovery_needed_correct": 3,
+      "paired_recovery_needed_answer_visible": 3
+    },
+    "append-no-recovery": {
+      "requests": 16,
+      "correct": 12,
+      "mean_latency_s": 3.908046691929485,
+      "growing_mean_latency_s": 3.4897935337454933,
+      "held_correct": 4,
+      "held_requests": 8,
+      "growing_mean_reused_tokens": 538.75,
+      "growing_reuse_fraction": 0.7579132473622509,
+      "prior_prefix_preservation_fraction": 0.9956582415878431,
+      "growing_zero_reuse": 0,
+      "partial_prefix_rewinds": 4,
+      "placeholder_tokens": 0,
+      "final_context_tokens": 917.75,
+      "omitted_needed": 4,
+      "recovered": 0,
+      "already_delivered_selection_skipped": 58,
+      "off_task_delivered_chunks": 49,
+      "evidence_frame_tokens_including_tools": 2724,
+      "fetch_requests": 0,
+      "unresolved_fetches": 0,
+      "tool_lookup_s": 0,
+      "student_reused_tokens": 31588,
+      "growing_student_selection_s": 0.509542628749235,
+      "mean_initial_visible_ttft_s": 3.908046691929485,
+      "paired_recovery_needed_turns": 3,
+      "paired_recovery_needed_correct": 0,
+      "paired_recovery_needed_answer_visible": 0
+    }
+  },
+  "control_permanently_missing_needed": [
+    {
+      "case": "held-recovery",
+      "turn": 1,
+      "correct": false,
+      "answer_visible_before_inference": false,
+      "blocked_selected_chunks": 8
+    },
+    {
+      "case": "held-recovery",
+      "turn": 2,
+      "correct": false,
+      "answer_visible_before_inference": false,
+      "blocked_selected_chunks": 3
+    },
+    {
+      "case": "held-recovery",
+      "turn": 3,
+      "correct": false,
+      "answer_visible_before_inference": false,
+      "blocked_selected_chunks": 0
+    },
+    {
+      "case": "held-versions",
+      "turn": 2,
+      "correct": false,
+      "answer_visible_before_inference": false,
+      "blocked_selected_chunks": 2
+    }
+  ],
+  "control_correct_with_permanently_missing_needed": 0,
+  "control_blocked_selection_count": 19,
+  "recovery_needed_paired_turns": [
+    {
+      "case": "held-recovery",
+      "turn": 1
+    },
+    {
+      "case": "held-recovery",
+      "turn": 2
+    },
+    {
+      "case": "held-versions",
+      "turn": 2
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "files": {
+    "config-alone-config.json": "af86667514b1b626e8480f606a4cdfd635f1a81f725345c0311dbf2d4f99bf5f",
+    "config-colocated-config.json": "fccd2ab39b6f117e2c3080fc95268aa4cf00f5795fb3b5feee8120d1d5051ab3",
+    "config-longctx-8k-alone.json": "30948b0fa38963a7e7aa4eea65945893f046c37b6fd7030de5d950583cfe4f47",
+    "config-longctx-16kctx-alone.json": "68f8bfbe4dabdb16bd06e51fe328dd06e496df2227f043729a480d728f33860a",
+    "longctx-offline-8k-dev-v1.json": "676e1280c7d2e05af33511121e20033eb5faf954e214151878e9456a5b1eb743",
+    "longctx-offline-8k-held-v1.json": "f8ac3c46b34a74754e2d2b416cfcdaad0fad2eaa362f160e5d8f2d82953f3919",
+    "live-8k-dev-requests.jsonl": "7b3f5ac6a9fbdf86b5706df27bd4bd6f4c8dab57b4df64249b94ee6f900924ce",
+    "live-8k-held-requests.jsonl": "2e14a4a931e085f94a16ac7daa30bd96f42349a4aaa1804ccd98b0180cdf8f6f",
+    "live-8k-dev-COMPLETE.json": "4b6c73c51588386e03de9326947482dddb1fa149b2b3fb716c36434bc9f976fc",
+    "live-8k-held-COMPLETE.json": "4b6c73c51588386e03de9326947482dddb1fa149b2b3fb716c36434bc9f976fc",
+    "prior-smoke-summary.json": "469863e6d954b2715db624cbdf9fd7acfa4e4541823deb20e8035aa6aec772a8",
+    "prior-adaptive-retention-summary.json": "65518962cfdfaa5867faa2b32edda46364adf71b89255786d15769d35ca8f4cd",
+    "prior-keep-rates-summary.json": "876824bf90769781e3ef4e71d9a62959b877a657b1e814dfec6715a751592c7c",
+    "environment.json": "2ab80399ff73b9eff1297c137469eb9ed4fa68c15967df5cf3e352d8b8856dfb",
+    "quality.json": "d5ff8f98eff2a828ed486733ad5481fd8efe954ec29d59c38c28c9a28c4facce",
+    "REPORT.md": "7da30a9f132cfe1026717d285fd1fec1fd1753a1c457acc7980f5648eaf1ded1"
+  }
+}

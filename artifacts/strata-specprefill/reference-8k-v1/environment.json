@@ -1,0 +1,22 @@
+{
+  "target": "Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S (IQ3_S GGUF)",
+  "student": "Qwen3.5-0.8B FP16 (/media/distilledoreo/Storage/AI/state-projection/models/Qwen3.5-0.8B)",
+  "hardware": "Tesla P100-PCIE-16GB, single GPU, sequential student-then-target",
+  "engine": "Strata 0.1.43 / CUDA 12.9, int8 KV, MTP=4 (spec 4)",
+  "student_runtime": "torch 2.7.1+cu126, transformers 5.19.0 (reference fallbacks)",
+  "contexts": {
+    "validation_ctx": 16384,
+    "validation_prompt_tokens": "~8170-8290",
+    "short_ctx": 4096
+  },
+  "controls": {
+    "route_tail_skip": 0,
+    "cpu_prefill_share": 0,
+    "pcie_frac": 1,
+    "prompt_cache": 0,
+    "temperature": 0
+  },
+  "timing": "server_ttft_s live; pipeline_seq_ttft_s = offline student_s + server_ttft_s (sequential estimate)",
+  "strata_commit": "unknown",
+  "orchid_commit": "6ca543ce374a915237beb2e88b0d23b26add885d"
+}

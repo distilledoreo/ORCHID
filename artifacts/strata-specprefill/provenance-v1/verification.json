@@ -1,0 +1,17 @@
+{
+  "focused_tests_passed": 49,
+  "ruff": "passed",
+  "git_diff_check": "passed",
+  "runtime_source_hashes_verified": true,
+  "measured_turns": 108,
+  "matched_payload_order_schedules": 36,
+  "target_prompt_hashes_verified": 108,
+  "exact_source_byte_spans_verified": 417,
+  "fresh_prompts_with_full_required_function": 60,
+  "previously_delivered_source_chunks_reprefilled": {
+    "bare": 0,
+    "minimal": 0,
+    "detailed": 0
+  },
+  "semantic_duplicate_deliveries": 0
+}

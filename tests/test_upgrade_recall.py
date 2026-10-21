@@ -124,3 +124,27 @@ def test_mcp_stdio_outputs_only_protocol_json():
                             capture_output=True, timeout=10, check=True)
     replies = [json.loads(line) for line in result.stdout.splitlines()]
     assert [reply["id"] for reply in replies] == [1, 2]
+
+
+def test_reopening_a_large_store_backfills_the_index_once_and_quickly(tmp_path):
+    """The FTS backfill at open must not scan the index once per document (quadratic: a
+    40K-event store took over 20 minutes to open, past the gateway's readiness timeout)."""
+    import sqlite3
+    import time
+    path = tmp_path / "big.db"
+    store = SQLiteStore(path)
+    store.ensure_project_and_thread("p", "t")
+    with store.connect() as connection:
+        connection.execute("BEGIN")
+        for i in range(6000):
+            connection.execute(
+                "INSERT INTO raw_event_documents VALUES (?, 'p', 't', ?, 'user', ?, 'h')", (f"e{i}", i, f"word{i}"))
+        connection.execute("INSERT INTO raw_events_fts(event_id, text) SELECT event_id, text FROM raw_event_documents "
+                           "WHERE sequence < 5000")  # 1000 documents are missing from the index.
+        connection.execute("COMMIT")
+    started = time.perf_counter()
+    SQLiteStore(path)
+    assert time.perf_counter() - started < 5
+    SQLiteStore(path)
+    with sqlite3.connect(path) as connection:
+        assert connection.execute("SELECT count(*), count(DISTINCT event_id) FROM raw_events_fts").fetchone() == (6000, 6000)

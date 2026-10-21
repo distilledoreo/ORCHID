@@ -15,6 +15,19 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# SpecPrefill (memory_gateway.specprefill): the student runtime and Strata's frontend.
+# torch 2.7.1 (CUDA 12.6 wheels) still carries Pascal (sm_60) kernels; transformers
+# 5.19.0 is the version the student was measured with.
+specprefill = [
+  "torch==2.7.1",
+  "transformers==5.19.0",
+  "tokenizers>=0.21",
+  "safetensors>=0.4",
+  "jinja2>=3.1",
+  "regex>=2024.0",
+  "numpy>=1.26",
+  "pillow>=10.0",
+]
 test = ["pytest>=8.3", "hypothesis>=6.100"]
 dev = [
   "pytest>=8.3",
@@ -28,6 +41,9 @@ experiments = [
   "onnxruntime>=1.18",
   "tokenizers>=0.19",
 ]
+
+[project.scripts]
+orchid-specprefill = "memory_gateway.specprefill.setup:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

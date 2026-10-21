@@ -1,0 +1,9 @@
+{
+  "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True",
+  "student_block": 512,
+  "native_vram_reserve_mib": 4096,
+  "prior_attempts": [
+    "../run-32k-spec-v1",
+    "../run-32k-spec-v2"
+  ]
+}

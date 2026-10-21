@@ -1,0 +1,18 @@
+{
+  "root_pytest": {
+    "passed": 432,
+    "skipped": 12
+  },
+  "student_runtime_focused": {
+    "passed": 32
+  },
+  "native_interface_unittest": {
+    "passed": 9
+  },
+  "cuda_build": "passed",
+  "native_position_prefix_test": "passed",
+  "patch_apply_and_hash_chain": "passed (4 files)",
+  "ruff": "passed",
+  "hip_sycl": "not tested; compilers unavailable",
+  "gpu_memory_after_run_mib": 0
+}
