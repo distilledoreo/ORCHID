@@ -553,6 +553,131 @@ native fallback when the student is absent.
 - The fake-clock tests pass.
 - The docs cover install, opt-out and storage.
 
+**Phase 6 status (2026-10-20).**
+
+What was built:
+- **Load limits** (`service.py`):
+  - At most `queue_limit` (4) requests wait. Beyond that a request gets
+    `503 busy` with `Retry-After: 5`.
+  - `request_timeout_s` (1800) stops a request that runs too long.
+  - A client that disconnects cancels its generation through the engine's
+    abort.
+  - Tests in `tests/test_specprefill_limits.py`.
+- **Metrics without content:** `GET /v1/orchid/metrics` (`metrics.py`) gives
+  turns by engine, fallback reasons, time per stage, evidence tokens, waiting
+  requests and storage use. A test checks that no conversation text appears.
+- **Versioning:** each released state format has a fixture in
+  `tests/fixtures/formats/` (pre-plan, Phase 1 to Phase 4). Every release's
+  state directory opens and its thread continues
+  (`tests/test_specprefill_formats.py`).
+- **Fake-clock tests** (an injectable clock):
+  - caches of a thread idle for 14 days go;
+  - its archive is compacted losslessly after 30 days, once, and still resumes.
+- **Default switch:** `ORCHID_SPECPREFILL_ENGINE=lean` is the default, and
+  `native` is the one-setting opt-out. An unfit card or a missing student
+  falls back to native with a one-line notice.
+- **The elastic engine is the install default** when the CUDA toolkit is
+  found (`--no-elastic` skips it).
+- **User docs:** `docs/specprefill-install.md` covers install, what changes,
+  the opt-out and the storage controls.
+
+Found and fixed on the way:
+- **Engine: deep native turns ran out of VRAM.** At ~187K tokens with the
+  automatic 8192-token prompt chunk, the elastic K/V could not grow, and the
+  verifier then failed to allocate. The engine now shrinks the prompt loan
+  before the K/V grows when the room past the reserve is short (8192 -> 4096
+  at 195K; verified on the GPU).
+- **Gateway: restart time grew with the square of stored messages.** The
+  request store's index backfill at open joined on an unindexed FTS5 column,
+  so opening took over 20 minutes at 40K events. It now reads the index once:
+  0.2 s on the same store. A regression test fails on the old code.
+- **Hot-file directories left in `/dev/shm`** by unused state directories
+  held RAM until reboot. Maintenance now removes this user's ones that
+  nothing has written for 24 h (`STALE_HOT_HOURS`).
+- Harness only, no gateway change: a rollout that starts mid-session has no
+  user message. The restart script raced a killed unit. A kill could cut a
+  streamed reply short.
+
+**Deep agent eval on the final install** (elastic engine, auto prompt chunk,
+the same 11 live Codex tasks as Phase 4; seconds per output token at the
+fixed calibration):
+
+| depth | native | elastic, Phase 4 | elastic, final |
+|---|---|---|---|
+| 64-128K | 0.185 | 0.207 | 0.101 |
+| 128-192K | 0.079 | 0.093 | 0.090 |
+| 192K+ | 0.111 | 0.104 | 0.091 |
+
+- Tasks passed: native 10/11, elastic Phase 4 11/11, elastic final 11/11.
+- Mean per call: native 28.3 s, elastic Phase 4 26.3 s, elastic final 26.7 s.
+- The 128-192K gap to native persists (about 14% per output token). At that
+  depth the K/V takes the VRAM the large prompt chunk used, and this is the
+  limit on a 16 GB card.
+
+**Soak** (`experiments/strata_specprefill/soak.py`, the final install):
+- 12 real Codex rollouts. Every other one was replayed as plain chat, which
+  the gateway serves lean (494 turns); the rest went as agent requests with
+  tools, served native (583 turns).
+- 1,077 turns, 81 thread switches, 10 clean restarts, and 2 `kill -9`s while
+  a turn was generating. Each killed turn was retried after the restart and
+  answered.
+- **0 errors.**
+- Zero data loss: after the run every one of the 12 threads took one more
+  turn on its whole history and continued its own stored thread (12 distinct
+  threads, no conflict).
+- The rollouts hold 1,077 answer points at this setting, short of the planned
+  1,500 turns, and the switch count (81 of a planned 100) is short for the
+  same reason. The user accepted the run as it
+  stands (2026-10-20) instead of extending the harness: every restart and kill
+  ran, with zero errors and zero data loss.
+
+Flatness by quarter of the run:
+
+| quarter | VRAM (GB) | gateway RSS (GB) | RAM available (GB) | disk (GB) |
+|---|---|---|---|---|
+| 1 | 10.1-15.8 | 52.8-56.4 | 6.2-9.4 | 0-3.5 |
+| 2 | 10.6-15.8 | 52.3-55.3 | 3.7-9.4 | 3.5-6.3 |
+| 3 | 11.1-15.6 | 51.5-54.8 | 5.3-9.4 | 6.3-10.1 |
+| 4 | 12.3-15.8 | 51.6-55.6 | 5.6-11.2 | 9.6-11.8 |
+
+- VRAM ranges over the student's 8 GB lend and its return, and is flat.
+  RSS is flat.
+- Disk ends at 11.8 GB, within the caps: student caches 6.4 of 16 GB,
+  Flash-Next session files 5.6 of 16 GB, the `/dev/shm` hot files at their
+  4 GB cap, and archives a few MB per thread.
+- Median turn 11.9 s. The first turn after a switch costs more as threads
+  deepen (2-6 minutes late in the run): an agent thread is read again on
+  return, as with native Flash-Next.
+
+**Speed (matched 256K benchmark, Phase 6 code, the same case and native run):**
+
+| depth | native s | lean s | speed-up | Phase 4 | correct, lean / native |
+|---|---|---|---|---|---|
+| 0-64K | 466.6 | 230.8 | 2.02x | 2.03x | 28/29 / 25/29 |
+| 64-128K | 462.0 | 215.6 | 2.14x | 2.15x | 26/27 / 23/27 |
+| 128-192K | 531.8 | 268.6 | 1.98x | 1.99x | 33/33 / 28/33 |
+| 192K+ | 406.6 | 250.5 | 1.62x | 1.63x | 30/33 / 28/33 |
+
+Overall 1.93x (Phase 4: 1.94x); 117/122 correct vs native 104/122, as in
+Phase 4 (`artifacts/strata-specprefill/log256k-phase6.json`).
+
+**Phase 6 gate:**
+- Soak, zero errors and zero data loss: met (1,077 turns and 81 switches,
+  accepted by the user in place of 1,500 and 100).
+- VRAM and RAM flat, disk within the caps: met.
+- No speed regression versus Phase 4: met (every bin within 0.01x).
+- Fake-clock tests pass: met.
+- Docs cover install, opt-out and storage: met.
+
+**Phase 6 gate passed.** Offline suite: 678 passed, 5 skipped (optional
+dependencies and opt-in live tests).
+
+Left for later, not part of the gate:
+- The `/dev/shm` hot-file cap (4 GB) plus Flash-Next (53 GB) on a 64 GB
+  machine pushes the hot files into swap. The cap should follow free RAM.
+- Native agent threads are not saved at a switch, so a return to one re-reads
+  it.
+
 ## Out of scope
 
 - Multimodal inputs: served natively.

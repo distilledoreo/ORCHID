@@ -61,7 +61,7 @@ def test_native_engine_answers_through_strata(tmp_path):
     from memory_gateway.specprefill.service import SpecPrefillService
 
     class Native:
-        def native(self, payload, on_text=None):
+        def native(self, payload, on_text=None, cancel=None):
             return {'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': 'hi'},
                                  'finish_reason': 'stop'}], 'usage': {}}
 
@@ -126,3 +126,11 @@ def test_turning_specprefill_off_and_on_keeps_the_same_state(tmp_path):
                                                ('user', 'Return KEYB')))
     assert reply(later) == '22222' and later['orchid']['thread'] == first['orchid']['thread']
     s2.close()
+
+
+def test_lean_is_the_default_engine(monkeypatch, tmp_path):
+    environment(monkeypatch, tmp_path, Path(setup.__file__).parent)  # Any dir: the student check fails...
+    monkeypatch.delenv('ORCHID_SPECPREFILL_ENGINE')
+    monkeypatch.setattr(setup, 'check_student', lambda path, full=False: None)  # ... unless it is complete.
+    assert GatewayOptions.from_env().engine == 'lean'
+    assert GatewayOptions('s', 'c', 'p').engine == 'lean'

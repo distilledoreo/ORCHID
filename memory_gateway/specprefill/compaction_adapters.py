@@ -61,7 +61,8 @@ class NativeTarget:
                     output.append(token)
                     if self.on_token:
                         self.on_token(token)
-                if cancel.is_set():
+                abort = getattr(self, 'abort', None)
+                if cancel.is_set() or (abort is not None and abort.is_set()):
                     break
         finally:
             if hasattr(tokens, 'close'):

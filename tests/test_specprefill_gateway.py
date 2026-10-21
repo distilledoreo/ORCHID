@@ -57,7 +57,7 @@ class Resources:
 
 
 def options(tmp_path, **kwargs):
-    base = GatewayOptions(str(tmp_path / 'native'), 'unused', 'unused', context_tokens=12000,
+    base = GatewayOptions(str(tmp_path / 'native'), 'unused', 'unused', engine='compacting', context_tokens=12000,
                           compact_tokens=2200, expansion_tokens=1400, summary_tokens=1200,
                           high_water=.01)
     return replace(base, **kwargs)

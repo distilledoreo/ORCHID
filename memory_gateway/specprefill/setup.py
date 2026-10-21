@@ -212,6 +212,9 @@ def doctor(out=print):
     out(f'Student: {student or "-"} ({missing or "complete"})')
     config = os.environ.get('ORCHID_SPECPREFILL_CONFIG')
     out(f'Flash-Next (Strata) config: {config or "-"} ({"found" if config and Path(config).is_file() else "missing"})')
+    elastic = os.environ.get('ORCHID_SPECPREFILL_ELASTIC_ENGINE')
+    out(f'Elastic engine: {elastic or "-"} (' + ('found' if elastic and Path(elastic).is_file() else
+        'missing: agents run on plain SpecPrefill' if elastic else 'not set: agents run on plain SpecPrefill') + ')')
     use, why = fast_kernels(None if missing else student)
     out(f'Fast kernels: {why}')
     verdict = reason or missing or (None if config and Path(config).is_file() else 'no Strata config')

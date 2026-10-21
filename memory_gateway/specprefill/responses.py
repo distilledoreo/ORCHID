@@ -9,6 +9,7 @@ server is stateless: the client sends the whole conversation in `input`.
 from __future__ import annotations
 
 import asyncio
+import threading
 import json
 import sys
 from pathlib import Path
@@ -118,12 +119,17 @@ async def handle(request, req, service, store):
     include = req.get('include') if isinstance(req.get('include'), list) else []
     asm = rs.Assembler(req, service.options.model, 0, names, encrypted='reasoning.encrypted_content' in include)
 
+    cancel = threading.Event()  # Set when the client goes away.
+
     async def run(on_text=None):
-        return await asyncio.to_thread(service.complete, None, None, rid, chat, on_text, committed)
+        return await asyncio.to_thread(service.complete, None, None, rid, chat, on_text, committed, cancel)
 
     if not req.get('stream'):
         try:
             result = await run()
+        except asyncio.CancelledError:
+            cancel.set()
+            raise
         except Exception as error:
             status, body = failure(error, request_error=isinstance(error, ValueError))
             return JSONResponse(body, status_code=status)
@@ -154,27 +160,33 @@ async def handle(request, req, service, store):
 
         def sse(events):
             return ''.join(f'event: {e["type"]}\ndata: {json.dumps(e, ensure_ascii=False)}\n\n' for e in events)
+        async def pieces(streamed):
+            while True:
+                kind, value = await queue.get()
+                if kind == 'text':
+                    streamed.add('content')
+                    yield sse(asm.feed(fe.Event('content', value)))
+                elif kind == 'reasoning':
+                    streamed.add('reasoning')
+                    yield sse(asm.feed(fe.Event('reasoning', value)))
+                elif kind == 'error':
+                    yield sse([asm.failed(failure(value)[1]['error']['message'])])
+                    break
+                else:
+                    # What the answer holds but did not stream (a replayed answer) comes now.
+                    message = value['choices'][0]['message']
+                    if message.get('reasoning_content') and 'reasoning' not in streamed:
+                        yield sse(asm.feed(fe.Event('reasoning', message['reasoning_content'])))
+                    if message.get('content') and 'content' not in streamed:
+                        yield sse(asm.feed(fe.Event('content', message['content'])))
+                    yield sse(answer_events(asm, rs, fe, value))
+                    break
         yield sse(asm.start())
         streamed = set()
-        while True:
-            kind, value = await queue.get()
-            if kind == 'text':
-                streamed.add('content')
-                yield sse(asm.feed(fe.Event('content', value)))
-            elif kind == 'reasoning':
-                streamed.add('reasoning')
-                yield sse(asm.feed(fe.Event('reasoning', value)))
-            elif kind == 'error':
-                yield sse([asm.failed(failure(value)[1]['error']['message'])])
-                break
-            else:
-                # What the answer holds but did not stream (a replayed answer) comes now.
-                message = value['choices'][0]['message']
-                if message.get('reasoning_content') and 'reasoning' not in streamed:
-                    yield sse(asm.feed(fe.Event('reasoning', message['reasoning_content'])))
-                if message.get('content') and 'content' not in streamed:
-                    yield sse(asm.feed(fe.Event('content', message['content'])))
-                yield sse(answer_events(asm, rs, fe, value))
-                break
+        try:
+            async for piece in pieces(streamed):
+                yield piece
+        finally:
+            cancel.set()  # A disconnect stops the generation; a finished one is not affected.
 
     return StreamingResponse(stream(), media_type='text/event-stream')

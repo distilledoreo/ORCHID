@@ -265,7 +265,7 @@ def test_lean_prompt_frame_matches_native_flash_next_template(tmp_path):
 def test_a_tool_step_is_never_a_whole_history_request(tmp_path):
     resources = Resources()
     resources.target = ToolTarget()
-    resources.native = lambda payload, on_text=None: {
+    resources.native = lambda payload, on_text=None, cancel=None: {
         'choices': [{'index': 0, 'finish_reason': 'tool_calls', 'message': {
             'role': 'assistant', 'content': None, 'tool_calls': [{'id': 'call_1', 'type': 'function', 'function': {
                 'name': 'read_file', 'arguments': '{"path": "a.py"}'}}]}}], 'usage': {}}

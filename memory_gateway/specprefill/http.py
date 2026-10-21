@@ -1,5 +1,6 @@
 """OpenAI-shaped HTTP responses for the explicitly enabled native text route."""
 import asyncio
+import threading
 import json
 import time
 
@@ -8,12 +9,16 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from ..db import new_id
 from ..ingestion import append_novel_messages
 from .scheduling import CapacityError
-from .service import RequestConflict, Warming, digest
+from .service import Busy, Cancelled, RequestConflict, Warming, digest
 
 
 def failure(error, *, request_error=False):
     if isinstance(error, Warming):
         return 503, {'error': {'type': 'warming', 'message': str(error)}}
+    if isinstance(error, Busy):
+        return 503, {'error': {'type': 'busy', 'message': str(error)}}
+    if isinstance(error, Cancelled):
+        return 499, {'error': {'type': 'cancelled', 'message': str(error)}}
     if isinstance(error, RequestConflict):
         return 409, {'error': {'type': 'session_conflict', 'message': str(error)}}
     if isinstance(error, CapacityError):
@@ -66,8 +71,10 @@ async def handle(request, payload, service, store):
     include_usage = bool(getattr(parsed, 'include_usage', False))
     committed = committer(store, project, thread, rid, parsed, payload)
 
+    cancel = threading.Event()  # Set when the client goes away: the generation stops where it is.
+
     async def run(on_text=None):
-        return await asyncio.to_thread(service.complete, project, thread, rid, payload, on_text, committed)
+        return await asyncio.to_thread(service.complete, project, thread, rid, payload, on_text, committed, cancel)
 
     def start(coro):
         task = asyncio.create_task(coro)
@@ -83,11 +90,14 @@ async def handle(request, payload, service, store):
         try:
             result = await asyncio.shield(start(run()))
             return JSONResponse(result, headers={'x-request-id': rid or result['id']})
+        except asyncio.CancelledError:
+            cancel.set()  # The client disconnected.
+            raise
         except Exception as error:
             status, body = failure(error, request_error=isinstance(error, ValueError) and lean)
             headers = {'x-request-id': rid} if rid else {}
-            if body['error']['type'] == 'warming':
-                headers['Retry-After'] = '15'
+            if body['error']['type'] in ('warming', 'busy'):
+                headers['Retry-After'] = '15' if body['error']['type'] == 'warming' else '5'
             return JSONResponse(body, status_code=status, headers=headers or None)
 
     async def events():
@@ -107,26 +117,32 @@ async def handle(request, payload, service, store):
                 'created': int(time.time()), 'model': service.options.model}
         def chunk(delta, finish=None):
             return 'data: ' + json.dumps({**base, 'choices': [{'index': 0, 'delta': delta, 'finish_reason': finish}]}) + '\n\n'
+        async def pieces():
+            while True:
+                kind, value = await queue.get()
+                if kind == 'text':
+                    yield chunk({'content': value})
+                elif kind == 'reasoning':
+                    yield chunk({'reasoning_content': value})
+                elif kind == 'error':
+                    yield 'data: ' + json.dumps(value) + '\n\n'
+                    break
+                else:
+                    calls = value['choices'][0]['message'].get('tool_calls')
+                    if calls:
+                        yield chunk({'tool_calls': [{'index': i, **c} for i, c in enumerate(calls)]})
+                    yield chunk({}, value['choices'][0]['finish_reason'])
+                    if include_usage:
+                        yield 'data: ' + json.dumps({**base, 'choices': [], 'usage': value['usage']}) + '\n\n'
+                    break
         yield chunk({'role': 'assistant'})
-        # Disconnect detaches delivery; the serialized worker finishes/checkpoints
-        # its turn. It is never cancelled while a native cache is being mutated.
-        while True:
-            kind, value = await queue.get()
-            if kind == 'text':
-                yield chunk({'content': value})
-            elif kind == 'reasoning':
-                yield chunk({'reasoning_content': value})
-            elif kind == 'error':
-                yield 'data: ' + json.dumps(value) + '\n\n'
-                break
-            else:
-                calls = value['choices'][0]['message'].get('tool_calls')
-                if calls:
-                    yield chunk({'tool_calls': [{'index': i, **c} for i, c in enumerate(calls)]})
-                yield chunk({}, value['choices'][0]['finish_reason'])
-                if include_usage:
-                    yield 'data: ' + json.dumps({**base, 'choices': [], 'usage': value['usage']}) + '\n\n'
-                break
+        # A disconnect stops the generation (the request's cancel); the worker still
+        # commits what was made, so the thread stays consistent.
+        try:
+            async for piece in pieces():
+                yield piece
+        finally:
+            cancel.set()
         yield 'data: [DONE]\n\n'
 
     return StreamingResponse(events(), media_type='text/event-stream',

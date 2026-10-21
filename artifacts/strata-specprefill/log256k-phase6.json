@@ -1,0 +1,91 @@
+{
+  "run": "/home/distilledoreo/.cache/orchid-three-way-28k/log256k-compare-phase6",
+  "native": "native256k",
+  "bins": [
+    {
+      "depth": "0K\u201364K",
+      "native256k": {
+        "turns": 29,
+        "wall_s": 466.6,
+        "correct": "25/29"
+      },
+      "lean256k": {
+        "turns": 29,
+        "wall_s": 230.8,
+        "correct": "28/29",
+        "speedup_vs_native": 2.02
+      }
+    },
+    {
+      "depth": "64K\u2013128K",
+      "native256k": {
+        "turns": 27,
+        "wall_s": 462.0,
+        "correct": "23/27"
+      },
+      "lean256k": {
+        "turns": 27,
+        "wall_s": 215.6,
+        "correct": "26/27",
+        "speedup_vs_native": 2.14
+      }
+    },
+    {
+      "depth": "128K\u2013192K",
+      "native256k": {
+        "turns": 33,
+        "wall_s": 531.8,
+        "correct": "28/33"
+      },
+      "lean256k": {
+        "turns": 33,
+        "wall_s": 268.6,
+        "correct": "33/33",
+        "speedup_vs_native": 1.98
+      }
+    },
+    {
+      "depth": "192K+",
+      "native256k": {
+        "turns": 33,
+        "wall_s": 406.6,
+        "correct": "28/33"
+      },
+      "lean256k": {
+        "turns": 33,
+        "wall_s": 250.5,
+        "correct": "30/33",
+        "speedup_vs_native": 1.62
+      }
+    }
+  ],
+  "arms": {
+    "native256k": {
+      "turns": 122,
+      "wall_s": 1866.9,
+      "correct": "104/122",
+      "current": "85/98",
+      "late": "10/12",
+      "recall": "6/9",
+      "recall_by_fact_depth": {
+        "first_50K": "4/9",
+        "middle": "7/7",
+        "last_third": "5/5"
+      }
+    },
+    "lean256k": {
+      "turns": 122,
+      "wall_s": 965.5,
+      "correct": "117/122",
+      "current": "96/98",
+      "late": "10/12",
+      "recall": "8/9",
+      "recall_by_fact_depth": {
+        "first_50K": "8/9",
+        "middle": "5/7",
+        "last_third": "5/5"
+      },
+      "speedup_vs_native": 1.93
+    }
+  }
+}

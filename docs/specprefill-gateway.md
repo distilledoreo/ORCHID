@@ -1,14 +1,35 @@
-# Native SpecPrefill gateway (opt-in)
+# SpecPrefill gateway
 
-The existing `/v1/chat/completions` route can now use the local 0.8B student and
-Flash-Next through the packaged `memory_gateway.specprefill` runtime. The old
-summary/observer/backend route remains the default. This is an implemented text
-integration with offline verification, not a completed production rollout or a
-new live-model latency result. See the [production plan](specprefill-production-plan.md).
+With `ORCHID_SPECPREFILL_ENABLED=true` (the installer sets it), `/v1/chat/completions`
+and `/v1/responses` are served by Flash-Next with the local 0.8B student. Install and
+first steps: [specprefill-install.md](specprefill-install.md); measurements and the
+production gates: [the production plan](specprefill-production-plan.md).
 
-## Lean engine (recommended)
+Engines (`ORCHID_SPECPREFILL_ENGINE`):
+- `lean` (the default): SpecPrefill, below.
+- `native`: SpecPrefill off; plain Flash-Next through Strata's own OpenAI path
+  at its full window. The one-setting opt-out; stored threads are kept for when
+  lean is turned back on. A GPU without a measured configuration, or a missing
+  student, also runs native, with one notice line.
+- `compacting`: the earlier summary/provenance session (kept for existing state).
 
-`ORCHID_SPECPREFILL_ENGINE=lean` switches the route to `SpecSession`
+Operations:
+- Load: up to `QUEUE_LIMIT` (4) requests wait; more get a 503 `busy` with
+  `Retry-After: 5`. A request is stopped where it is when its client disconnects
+  or after `REQUEST_TIMEOUT_S` (1800; 0 = none); what it generated is kept.
+- `GET /v1/orchid/metrics`: turns by engine and native reason, the time split
+  (student, selection, Flash-Next prefill and decode), Flash-Next and student
+  cache reuse, rebuilds, verbatim and grounded turns, the queue and storage. No
+  message text, thread name or tool argument is ever recorded.
+- Time-based storage: a thread idle `CACHE_TTL_DAYS` (14) loses its caches (its
+  archive stays; it resumes with one re-read); idle `ARCHIVE_IDLE_DAYS` (30), its
+  archive is compacted once (SQLite VACUUM, lossless). Checked at start and hourly.
+- State formats: every released state directory (fixtures in
+  `tests/fixtures/formats`) opens and continues with the current code.
+
+## Lean engine
+
+`ORCHID_SPECPREFILL_ENGINE=lean` (the default) routes to `SpecSession`
 (`memory_gateway/specprefill/spec_session.py`), the design from
 [specprefill-goal.md](specprefill-goal.md). The student reads every input. The
 target receives only top-ranked, line-aligned excerpts under a per-turn token
@@ -56,7 +77,7 @@ How a turn works:
 
 | Variable suffix after `ORCHID_SPECPREFILL_` | Lean default |
 |---|---:|
-| `ENGINE` | `compacting` (set `lean`; `native` = SpecPrefill off) |
+| `ENGINE` | `lean` (`native` = SpecPrefill off; `compacting`) |
 | `CONTEXT_TOKENS` (target window) | 8192 |
 | `STUDENT_CONTEXT_TOKENS` | 32768 |
 | `ANSWER_TOKENS` | 128 |
@@ -70,6 +91,8 @@ How a turn works:
 | `AGENT_NATIVE_TOKENS` (elastic: tool requests go native below this) | 200000 |
 | `ELASTIC_PREFILL` / `STUDENT_VRAM_MIB` / `ENGINE_VRAM_MIB` | 1280 / 8192 / 700 |
 | `AUTO` (fill unset settings from the measured table for this GPU) | true |
+| `QUEUE_LIMIT` / `REQUEST_TIMEOUT_S` | 4 / 1800 |
+| `CACHE_TTL_DAYS` / `ARCHIVE_IDLE_DAYS` | 14 / 30 |
 | `QUERY_SPLIT_TOKENS` / `QUERY_TAIL_TOKENS` | 1024 / 256 |
 | `VRAM_RESERVE_MIB` (left free for the co-located student) | 4096 |
 | `STUDENT_SPARSE_KEYS` (block-sparse student prefill) | unset (dense) |
@@ -82,6 +105,7 @@ How a turn works:
 | `TARGET_PARK_MIB` (Flash-Next parked conversations, RAM) | 0 (session files instead) |
 | `TARGET_DISK_MIB` (Flash-Next session files) | 16384 |
 | `TARGET_HOT_MIB` (Flash-Next session files in `/dev/shm`) | 4096 |
+| `STALE_HOT_HOURS` (another state directory's `/dev/shm` files nothing wrote for this long go at maintenance; 0 keeps them) | 24 |
 | `TARGET_RESTORE_FLOOR_MIB` (RAM Strata keeps free when restoring) | 1024 |
 | `STATE_QUOTA_MIB` (archive quota; 0 = none) | 0 |
 | `MIN_FREE_DISK_MIB` (below this, turns go native) | 1024 |

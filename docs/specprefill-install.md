@@ -27,9 +27,11 @@ against pinned checksums; nothing is downloaded without a yes), and writes the
 settings to `~/.config/orchid/specprefill.env`. Options:
 
 - `--student DIR`: a student model you already have (it is checked, not fetched).
-- `--elastic`: also build Strata's elastic engine (a patched copy; your Strata is
-  not touched) so agents run natively and the student borrows VRAM only when it
-  helps. Needs the CUDA toolkit; about 15 minutes of compiling.
+- The elastic engine is built by default when the CUDA toolkit is found: a patched
+  copy of Strata (your Strata is not touched) that lets tool-using agents run on
+  native Flash-Next while the student borrows VRAM only for the turns it speeds up.
+  About 15 minutes of compiling. `--no-elastic` skips it (plain SpecPrefill for
+  everything; agents then run about 1.4x slower per call).
 
 Start it, and check what it will do on your machine:
 
@@ -63,5 +65,8 @@ export or delete them (a delete leaves nothing recoverable), or clear the caches
 
 `ORCHID_SPECPREFILL_STATE_QUOTA_MIB` caps the archives (a warning at 80%, then
 new turns go native until space is freed); below `MIN_FREE_DISK_MIB` free disk
-the gateway answers natively instead of writing. Details of every setting:
+the gateway answers natively instead of writing. A thread unused for 14 days
+drops its caches (it resumes with one re-read); after 30 days its archive is
+compacted, losslessly. `GET /v1/orchid/metrics` shows timings, fallbacks and
+storage use, with no conversation text. Details of every setting:
 [specprefill-gateway.md](specprefill-gateway.md).

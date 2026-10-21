@@ -36,6 +36,14 @@ class Warming(RuntimeError):
     """The models are still loading: retry shortly."""
 
 
+class Busy(RuntimeError):
+    """Too many requests are already waiting: retry shortly."""
+
+
+class Cancelled(RuntimeError):
+    """The client went away (or the request ran out of time) before an answer existed."""
+
+
 class _StopText:
     """Output text cut at the first stop string. Text that could still begin one is
     held back until it can't (or the output ends), so a stop split across tokens is
@@ -113,7 +121,7 @@ class GatewayOptions:
     archive_cache_mib: int = 8
     # 'lean': SpecSession (student selects, target reads 5-30%, no target-written
     # summaries). 'compacting': the earlier summary/provenance CompactingSession.
-    engine: str = 'compacting'
+    engine: str = 'lean'
     student_context_tokens: int = 32768
     new_rate: float = 0.06
     recall_tokens: int = 160
@@ -161,6 +169,9 @@ class GatewayOptions:
     target_hot_mib: int = 4096  # Two ~250K-token threads.
     target_hot_dir: str = '/dev/shm'
     target_restore_floor_mib: int = 1024
+    # Another state directory's hot files (RAM) that nothing wrote for this long go at
+    # maintenance: their gateway is gone, and the copier kept them on disk (0 = keep).
+    stale_hot_hours: float = 24
     # Storage (production plan, Phase 3): archives above the quota (0 = none) or a
     # disk below this much free space make lean turns go native instead of writing.
     state_quota_mib: int = 0
@@ -171,6 +182,16 @@ class GatewayOptions:
     # Measured (production plan, Phase 1): below the query-split size lean sends the
     # whole message anyway, so its student pass only costs time.
     native_below_tokens: int = 1024
+    # Load limits (production plan, Phase 6): requests waiting beyond queue_limit get a
+    # 503 "busy"; a request running longer than request_timeout_s (0 = none) is stopped
+    # where it is, as a client disconnect stops it.
+    queue_limit: int = 4
+    request_timeout_s: float = 1800
+    # Time-based storage (Phase 6): a thread idle this long loses its caches (parked
+    # student state, Flash-Next session files; its lossless archive stays, so it
+    # resumes with one re-read), and its archive is compacted (VACUUM, lossless) once.
+    cache_ttl_days: float = 14
+    archive_idle_days: float = 30
     # Elastic engine (a Strata build whose --kv-grow engine takes `VRAM <mib>`): one
     # Flash-Next keeps a whole agent conversation in a 256K elastic K/V, as native does,
     # and gives the student its VRAM only for lean turns. Requests with tools are
@@ -178,7 +199,9 @@ class GatewayOptions:
     # (where native would need the client to compact) the thread goes lean.
     elastic_engine: str | None = None
     elastic_window: int = 262144
-    elastic_prefill: int = 1280  # A small prompt loan, so the cache can give the student 8 GB.
+    # The prompt chunk: 'auto' is native's own; the VRAM command shrinks the prompt loan
+    # (and the chunk) while the student holds its VRAM, and restores both after.
+    elastic_prefill: str = 'auto'
     student_vram_mib: int = 8192
     engine_vram_mib: int = 700  # What the engine keeps free while the student is parked.
     agent_native_tokens: int = 200000
@@ -268,6 +291,7 @@ class GatewayOptions:
             target_park_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_PARK_MIB', str(cls.target_park_mib))),
             target_disk_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_DISK_MIB', str(cls.target_disk_mib))),
             target_hot_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_HOT_MIB', str(cls.target_hot_mib))),
+            stale_hot_hours=float(os.environ.get('ORCHID_SPECPREFILL_STALE_HOT_HOURS', str(cls.stale_hot_hours))),
             target_restore_floor_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_RESTORE_FLOOR_MIB',
                                                         str(cls.target_restore_floor_mib))),
             state_quota_mib=int(os.environ.get('ORCHID_SPECPREFILL_STATE_QUOTA_MIB', str(cls.state_quota_mib))),
@@ -278,11 +302,17 @@ class GatewayOptions:
                                                    str(cls.native_below_tokens))),
             elastic_engine=os.environ.get('ORCHID_SPECPREFILL_ELASTIC_ENGINE') or None,
             elastic_window=int(os.environ.get('ORCHID_SPECPREFILL_ELASTIC_WINDOW', str(cls.elastic_window))),
-            elastic_prefill=int(os.environ.get('ORCHID_SPECPREFILL_ELASTIC_PREFILL', str(cls.elastic_prefill))),
+            elastic_prefill=os.environ.get('ORCHID_SPECPREFILL_ELASTIC_PREFILL', cls.elastic_prefill),
             student_vram_mib=int(os.environ.get('ORCHID_SPECPREFILL_STUDENT_VRAM_MIB', str(cls.student_vram_mib))),
             engine_vram_mib=int(os.environ.get('ORCHID_SPECPREFILL_ENGINE_VRAM_MIB', str(cls.engine_vram_mib))),
             agent_native_tokens=int(os.environ.get('ORCHID_SPECPREFILL_AGENT_NATIVE_TOKENS',
-                                                   str(cls.agent_native_tokens))))
+                                                   str(cls.agent_native_tokens))),
+            queue_limit=int(os.environ.get('ORCHID_SPECPREFILL_QUEUE_LIMIT', str(cls.queue_limit))),
+            cache_ttl_days=float(os.environ.get('ORCHID_SPECPREFILL_CACHE_TTL_DAYS', str(cls.cache_ttl_days))),
+            archive_idle_days=float(os.environ.get('ORCHID_SPECPREFILL_ARCHIVE_IDLE_DAYS',
+                                                   str(cls.archive_idle_days))),
+            request_timeout_s=float(os.environ.get('ORCHID_SPECPREFILL_REQUEST_TIMEOUT_S',
+                                                   str(cls.request_timeout_s))))
         options.validate()
         return options
 
@@ -355,6 +385,12 @@ class SpecPrefillService:
             'student_config_hash': hashlib.sha256(student_configuration.read_bytes()).hexdigest()
                 if student_configuration.is_file() else None})
         prior = self.db.execute("SELECT value FROM metadata WHERE key='identity'").fetchone()
+        if prior and prior[0] != identity and options.serves_clients and self._lean_checkpoints():
+            # Before Phase 2 a lean state directory was keyed by every budget; its threads
+            # (lean checkpoints) are still valid, so it takes the current identity.
+            with self.db:
+                self.db.execute("UPDATE metadata SET value=? WHERE key='identity'", (identity,))
+            prior = (identity,)
         if prior and prior[0] != identity:
             self.db.close()
             self.owner.close()
@@ -362,6 +398,12 @@ class SpecPrefillService:
         with self.db:
             self.db.execute("INSERT OR IGNORE INTO metadata VALUES ('identity',?)", (identity,))
         self.lock = threading.RLock()
+        self._admission = threading.Lock()
+        self.waiting = 0
+        from .metrics import Metrics
+        self.metrics = Metrics()
+        self.clock = time.time  # Injectable: tests advance it instead of waiting.
+        self._maintained_at = None
         self.resources_factory = resources_factory
         self.resources = None
         self.sessions = OrderedDict()
@@ -647,23 +689,144 @@ class SpecPrefillService:
             yield piece, end - start
             start = end
 
-    def complete(self, project, thread, rid, payload, on_text=None, on_commit=None):
+    def complete(self, project, thread, rid, payload, on_text=None, on_commit=None, cancel=None):
         """One chat completion. project/thread name the thread explicitly; for the lean
-        engine both may be None, and the thread is found from the history itself."""
-        if self.options.lean:
-            return self._complete_lean(project, thread, rid, payload, on_text, on_commit)
-        if self.options.engine == 'native':
-            return self._complete_native(payload, on_text, on_commit)
-        return self._complete_compacting(project, thread, rid, payload, on_text, on_commit)
+        engine both may be None, and the thread is found from the history itself.
 
-    def _complete_native(self, payload, on_text=None, on_commit=None):
+        `cancel` (set when the client goes away) stops the generation where it is, as the
+        request timeout does; beyond queue_limit waiting requests, Busy.
+        """
+        with self._admission:
+            if self.waiting >= self.options.queue_limit:
+                raise Busy(f'{self.waiting} requests are waiting; retry in a few seconds')
+            self.waiting += 1
+        cancel = cancel or threading.Event()
+        timer = None
+        if self.options.request_timeout_s:
+            timer = threading.Timer(self.options.request_timeout_s, cancel.set)
+            timer.daemon = True
+            timer.start()
+        started = time.perf_counter()
+        try:
+            if self.options.lean:
+                result = self._complete_lean(project, thread, rid, payload, on_text, on_commit, cancel)
+            elif self.options.engine == 'native':
+                result = self._complete_native(payload, on_text, on_commit, cancel)
+            else:
+                result = self._complete_compacting(project, thread, rid, payload, on_text, on_commit)
+            self._record(result, time.perf_counter() - started, cancel)
+            if self.options.lean and (self._maintained_at is None or self.clock() - self._maintained_at > 3600):
+                self.maintain()  # At most hourly, after a turn (it touches idle threads only).
+            return result
+        except Exception as error:
+            self.metrics.error(type(error).__name__)
+            raise
+        finally:
+            if timer:
+                timer.cancel()
+            with self._admission:
+                self.waiting -= 1
+
+    def _record(self, result, wall_s, cancel):
+        """Metrics for one turn: numbers only (metrics.py)."""
+        try:
+            orchid = result.get('orchid') or {}
+            session = self.sessions.get(orchid.get('thread')) if orchid.get('engine') == 'lean' else None
+            event = next((e for e in reversed(session.events) if e.get('kind') == 'answer'), None) if session else None
+            target = getattr(self.resources, 'target', None)
+            stats = (getattr(target, 'last', None) or {}).get('engine') if orchid.get('engine') == 'lean' else (
+                getattr(getattr(self.resources, 'engine', None), 'last', None))
+            self.metrics.record(result, wall_s, event, stats if isinstance(stats, dict) else None)
+            if cancel is not None and cancel.is_set():
+                self.metrics.events['stopped'] += 1  # Cancelled by the client, or out of time.
+        except Exception:  # Metrics never fail a turn.
+            pass
+
+    def maintain(self):
+        """Time-based storage policies (see GatewayOptions.cache_ttl_days): caches of
+        threads idle past their TTL go, idle archives are compacted once. Returns counts."""
+        import sqlite3
+        done = {'caches_removed': 0, 'cache_bytes': 0, 'archives_compacted': 0}
+        with self.lock:
+            now, day = self.clock(), 86400
+            self._maintained_at = now
+            busy = {self.active_key, self.target_owner, *self.sessions}
+            rows = self.db.execute('SELECT key, used_at FROM sessions WHERE used_at IS NOT NULL').fetchall()
+            for key, used in rows:
+                idle = now - used
+                if key in busy:
+                    continue
+                if self.options.cache_ttl_days and idle > self.options.cache_ttl_days * day:
+                    if self.parking is not None:
+                        self.parking.discard(key)
+                    for path in (self.directory / 'student-cache' / f'{key}.pt', self._target_file(key),
+                                 self._target_hot(key)):
+                        if path.exists():
+                            done['cache_bytes'] += path.stat().st_size
+                            path.unlink(missing_ok=True)
+                            done['caches_removed'] += 1
+                    self._copied.pop(key, None) if hasattr(self, '_copied') else None
+                path = self._session_path(key)
+                mark = f'compacted:{key}'
+                if (self.options.archive_idle_days and idle > self.options.archive_idle_days * day and path.exists()
+                        and (self.db.execute('SELECT value FROM metadata WHERE key=?', (mark,)).fetchone() or [None])[0]
+                        != str(used)):
+                    with sqlite3.connect(path) as archive:
+                        archive.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+                        archive.execute('VACUUM')
+                    with self.db:
+                        self.db.execute('INSERT OR REPLACE INTO metadata VALUES (?,?)', (mark, str(used)))
+                    done['archives_compacted'] += 1
+            done.update(self._sweep_stale_hot(now))
+        return done
+
+    def _sweep_stale_hot(self, now):
+        """Hot-file directories of other state directories (this user's only) whose newest
+        file is older than stale_hot_hours: /dev/shm is RAM until reboot, and an abandoned
+        state directory's files would hold it for good."""
+        import shutil
+        done = {'stale_hot_dirs': 0, 'stale_hot_bytes': 0}
+        hours = self.options.stale_hot_hours
+        if not hours or self.options.target_hot_mib <= 0:
+            return done
+        own = self._target_hot('x').parent
+        for directory in Path(self.options.target_hot_dir).glob(f'orchid-{os.getuid()}-*'):
+            try:
+                if directory == own or not directory.is_dir() or directory.is_symlink():
+                    continue
+                files = list(directory.iterdir())
+                newest = max((f.stat().st_mtime for f in files), default=directory.stat().st_mtime)
+                if now - newest <= hours * 3600:
+                    continue
+                size = sum(f.stat().st_size for f in files if f.is_file())
+                shutil.rmtree(directory)
+            except OSError:
+                continue
+            done['stale_hot_dirs'] += 1
+            done['stale_hot_bytes'] += size
+        return done
+
+    def metrics_snapshot(self):
+        from .controls import storage
+        extra = {'waiting': self.waiting, 'warming': bool(self.warming), 'engine': self.options.engine,
+                 'native_reason': self.options.native_reason, 'threads_resident': len(self.sessions)}
+        if self.options.lean:
+            try:
+                extra['storage'] = storage(self)
+            except Exception:
+                pass
+        return self.metrics.snapshot(**extra)
+
+    def _complete_native(self, payload, on_text=None, on_commit=None, cancel=None):
         """SpecPrefill off: plain Flash-Next through Strata's own OpenAI path (full window, its prompt cache)."""
         from .requests import parse
         parse(payload, self.options.model)  # The same request checks as the lean engine.
         with self.lock:
             if self.closed:
                 raise RuntimeError('SpecPrefill service is closed')
-            result = self._resources().native(payload, on_text)
+            if cancel is not None and cancel.is_set():
+                raise Cancelled('The request was cancelled before it started')
+            result = self._resources().native(payload, on_text, cancel=cancel)
         result = {**result, 'orchid': {'engine': 'native', 'reason': self.options.native_reason}}
         if on_commit:
             on_commit(result)
@@ -907,13 +1070,15 @@ class SpecPrefillService:
     def _conversation_tokens(self, tok, request):
         return sum(len(tok.encode(m['content'])) for m in request.messages)
 
-    def _native_turn(self, key, rid, fingerprint, payload, request, reason, on_text, on_commit):
+    def _native_turn(self, key, rid, fingerprint, payload, request, reason, on_text, on_commit, cancel=None):
         """Answer with plain Flash-Next. The lean session and ledger are untouched:
         the next lean turn on this thread ingests whatever it hasn't seen."""
         resource = self._resources()
         self._student_off(resource)
         self.target_owner = None  # The engine now holds this native conversation.
-        result = resource.native(payload, on_text)
+        if cancel is not None and cancel.is_set():
+            raise Cancelled('The request was cancelled before it started')
+        result = resource.native(payload, on_text, cancel=cancel) if cancel is not None else resource.native(payload, on_text)
         result = {**result, 'orchid': {'engine': 'native', 'reason': reason, 'thread': key}}
         with self.db:
             self.db.execute('INSERT OR REPLACE INTO completions VALUES (?,?,?,?)',
@@ -922,7 +1087,7 @@ class SpecPrefillService:
             on_commit(result)
         return result
 
-    def _complete_lean(self, project, thread, rid, payload, on_text=None, on_commit=None):
+    def _complete_lean(self, project, thread, rid, payload, on_text=None, on_commit=None, cancel=None):
         from .requests import identity, parse
         request = parse(payload, self.options.model)
         if bool(project) != bool(thread):
@@ -978,16 +1143,17 @@ class SpecPrefillService:
             storage = self._storage_check() if self.options.lean else {}
             reason = reason or storage.get('reason')
             if reason:
-                return self._native_turn(key, rid, fingerprint, payload, request, reason, on_text, on_commit)
+                return self._native_turn(key, rid, fingerprint, payload, request, reason, on_text, on_commit,
+                                         cancel)
             streamed = []
             relay = (lambda *text: (streamed.append(True), on_text(*text))) if on_text else None
             try:
                 result = self._lean_turn(key, explicit, rid, fingerprint, request, system, anchor, hashes,
-                                         relay, on_commit)
+                                         relay, on_commit, cancel)
                 if storage.get('warning'):
                     result['orchid']['storage_warning'] = True  # Archives past 80% of the quota.
                 return result
-            except RequestConflict:
+            except (RequestConflict, Cancelled):
                 raise
             except Exception as error:
                 from .scheduling import CapacityError
@@ -1004,10 +1170,13 @@ class SpecPrefillService:
                 dropped = self.sessions.pop(key, None)
                 if dropped is not None:
                     dropped.close()
+                if cancel is not None and cancel.is_set():
+                    raise Cancelled('The request was cancelled') from error
                 return self._native_turn(key, rid, fingerprint, payload, request, 'lean failure',
-                                         on_text, on_commit)
+                                         on_text, on_commit, cancel)
 
-    def _lean_turn(self, key, explicit, rid, fingerprint, request, system, anchor, hashes, on_text, on_commit):
+    def _lean_turn(self, key, explicit, rid, fingerprint, request, system, anchor, hashes, on_text, on_commit,
+                   cancel=None):
         from .tools import message_text
         messages = request.messages
         row = self.db.execute('SELECT system,pending,growth FROM sessions WHERE key=?', (key,)).fetchone()
@@ -1143,6 +1312,8 @@ class SpecPrefillService:
             decoder = codecs.getincrementaldecoder('utf-8')()
             target = resource.target
             target.cancel = threading.Event()
+            # The request's own stop (disconnect, timeout): the target checks it at every token.
+            target.abort = cancel
             target.sampling = request.sampling or None
 
             def token(token_id):
@@ -1190,7 +1361,7 @@ class SpecPrefillService:
             self.db.execute('INSERT INTO completions VALUES (?,?,?,?)', (key, rid, fingerprint, json.dumps(result)))
             self.db.executemany('INSERT INTO history_entries(key,seq,hash,ours) VALUES (?,?,?,?)',
                 [(key, pending['base'] + i, h, ours) for i, (h, ours) in enumerate(appended)])
-            self.db.execute('UPDATE sessions SET pending=NULL,used_at=? WHERE key=?', (time.time(), key))
+            self.db.execute('UPDATE sessions SET pending=NULL,used_at=? WHERE key=?', (self.clock(), key))
         if on_commit:
             on_commit(result)
         return result
@@ -1212,6 +1383,10 @@ class SpecPrefillService:
                 resource = self._resources()
                 if not self.options.lean:
                     return  # Native and compacting: the engine is up; nothing to resume.
+                try:
+                    self.maintain()  # Idle threads' caches and archives (time-based policies).
+                except Exception as error:
+                    print(f'orchid: storage maintenance skipped ({type(error).__name__})', file=sys.stderr)
                 row = self.db.execute('SELECT key,system FROM sessions WHERE used_at IS NOT NULL '
                                       'ORDER BY used_at DESC LIMIT 1').fetchone()
                 path = row and self._session_path(row[0])
@@ -1239,6 +1414,27 @@ class SpecPrefillService:
             if used['warning']:
                 return {'warning': True}
         return {}
+
+    def _lean_checkpoints(self):
+        """The state directory holds lean thread checkpoints (any released format)."""
+        from .spec_session import SNAPSHOT_FORMAT
+        rows = [r[0] for r in self.db.execute('SELECT key FROM sessions LIMIT 50')]
+        if not rows:
+            return False
+        for key in rows:
+            path = self._session_path(key)
+            legacy = path.with_suffix('.json')
+            try:
+                if path.exists():
+                    import sqlite3
+                    with sqlite3.connect(f'file:{path}?mode=ro', uri=True) as db:
+                        value = db.execute("SELECT value FROM state WHERE key='snapshot'").fetchone()
+                    return bool(value) and SNAPSHOT_FORMAT in value[0][:200]
+                if legacy.exists():
+                    return json.loads(legacy.read_text()).get('format') == SNAPSHOT_FORMAT
+            except Exception:
+                return False
+        return False
 
     def _session_path(self, key):
         """A lean thread's checkpoint (incremental SQLite; a legacy .json migrates on open)."""

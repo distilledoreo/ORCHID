@@ -43,7 +43,7 @@ class Resources:
             return SpecSession.restore(path, self.tok, self.student, self.target)
         return SpecSession(self.tok, self.student, self.target, system=system, limits=limits, checkpoint=path)
 
-    def native(self, payload, on_text=None):
+    def native(self, payload, on_text=None, cancel=None):
         self.native_calls.append(payload)
         if on_text:
             on_text('native answer')

@@ -497,8 +497,7 @@ class SQLiteStore:
                 """
                 SELECT m.id, m.project_id, m.thread_id, m.memory_type, m.content
                 FROM long_term_memories AS m
-                LEFT JOIN long_term_memories_fts AS f ON f.memory_id = m.id
-                WHERE f.memory_id IS NULL
+                WHERE m.id NOT IN (SELECT memory_id FROM long_term_memories_fts)
                 """
             ).fetchall()
             connection.executemany(

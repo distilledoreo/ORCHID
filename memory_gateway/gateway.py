@@ -303,6 +303,12 @@ def create_app(
             return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "lean engine only"}})
         return JSONResponse(await asyncio.to_thread(controls.purge_caches, native_service))
 
+    @app.get("/v1/orchid/metrics")
+    async def orchid_metrics() -> JSONResponse:
+        if native_service is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "SpecPrefill is off"}})
+        return JSONResponse(await asyncio.to_thread(native_service.metrics_snapshot))
+
     @app.get("/v1/orchid/storage")
     async def orchid_storage() -> JSONResponse:
         controls = lean_controls()
