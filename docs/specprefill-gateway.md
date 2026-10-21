@@ -297,6 +297,30 @@ output request above `ANSWER_TOKENS` return HTTP 400 before loading models.
 The gateway factory currently uses indexed lexical/symbol retrieval. It does not
 silently enable a semantic encoder or full archive scan.
 
+## In place of Strata's own server
+
+A client written for Strata's server can use the gateway on Strata's port:
+- `/health` and `/v1/status` answer in Strata's format. `loaded` follows the
+  gateway's readiness; `started`, `engine` and `model` stay the same while it
+  runs.
+- `ORCHID_SPECPREFILL_MODEL_ALIASES` lists other model names to accept, with
+  `*` for any, as Strata accepts.
+- Strata's own request fields (`cache_prompt`, `strata_prefix`) reach native
+  turns unchanged and do not divert lean ones.
+- A Strata config with a `vision` block starts Strata's image encoder before
+  the engine, so image requests (served natively) work.
+
+FRIDAY runs this way. The settings are in `~/.config/friday/specprefill.env`,
+and the systemd drop-in is `assistant-strata.service.d/50-specprefill.conf`.
+It uses:
+- the combined engine: the elastic VRAM patch plus Strata's research top-k
+  MoE prefill (`STRATA_RESEARCH_ADAPTIVE_PREFILL=ON`), 15–29% faster prefill
+  than the elastic engine alone;
+- FP16 K/V and a 262,144-token context;
+- native below 32,768 tokens.
+
+Deleting the drop-in and restarting the unit goes back to Strata's server.
+
 ## Streaming, ownership, and persistence
 
 SSE content is emitted from actual target token callbacks after scheduling and

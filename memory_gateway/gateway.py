@@ -260,6 +260,41 @@ def create_app(
         ready = native_service.ready()
         return JSONResponse({"status": "ready" if ready else "warming"}, status_code=200 if ready else 503)
 
+    # Strata's own server endpoints, so a client written for it (FRIDAY) can use the gateway on
+    # Strata's port: /health and /v1/status in its format. `started`, `engine` and `model` stay the
+    # same while this process runs (clients use them to tell when the server changed).
+    started_at = int(time.time())
+
+    def strata_shape():
+        options = native_service.options
+        window = options.elastic_window if (options.elastic_engine or options.engine == 'native') \
+            else options.limits.student_context
+        images = getattr(native_service.resources, 'vision', None) is not None
+        return options, window, images
+
+    @app.get("/health")
+    async def health() -> JSONResponse:
+        if native_service is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "not found"}})
+        options, window, images = strata_shape()
+        return JSONResponse({"status": "ok", "max_context": window, "model": options.model, "images": images,
+                             "api_key": False, "loaded": native_service.ready(), "service": "strata"})
+
+    @app.get("/v1/status")
+    async def v1_status() -> JSONResponse:
+        if native_service is None:
+            return JSONResponse(status_code=404, content={"error": {"type": "not_found", "message": "not found"}})
+        options, window, images = strata_shape()
+        return JSONResponse({
+            "service": "strata", "model": options.model, "loaded": native_service.ready(),
+            "engine": f"orchid-specprefill-{options.engine}", "started": started_at,
+            "uptime_s": int(time.time()) - started_at, "cache_max_tokens": window,
+            "context": {"native": window, "max_positions": window},
+            "concurrency": {"serving": 1, "requested": 1},
+            "dialects": ["/v1/chat/completions", "/v1/responses"],
+            "vision": {"enabled": images, "available": images, "error": None},
+            "activity": {"in_flight": native_service.waiting}})
+
     def lean_controls():
         if native_service is None or not native_service.options.lean:
             return None

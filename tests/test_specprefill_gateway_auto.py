@@ -62,7 +62,9 @@ def service(tmp_path, **kwargs):
                           new_rate=0.05, recall_tokens=200, query_split_tokens=1024, query_tail_tokens=200, native_below_tokens=0,
                           target_hot_dir=str(tmp_path / 'shm'))
     resources = Resources()
-    return SpecPrefillService(replace(base, **kwargs), resources_factory=lambda: resources), resources
+    s = SpecPrefillService(replace(base, **kwargs), resources_factory=lambda: resources)
+    s.meminfo = lambda: {}  # Hot-file decisions must not depend on the test machine's free RAM.
+    return s, resources
 
 
 TOOL = doc({'KEYA': '11111', 'KEYB': '22222', 'KEYC': '33333'})

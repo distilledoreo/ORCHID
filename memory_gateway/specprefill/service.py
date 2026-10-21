@@ -134,6 +134,8 @@ class GatewayOptions:
     config_path: str
     student_path: str
     model: str = 'orchid-flash-next-specprefill'
+    # Other names a request may use (Strata's `aliases`); '*' accepts any name, as Strata does.
+    model_aliases: tuple = ()
     context_tokens: int = 8192
     compact_tokens: int = 3072
     answer_tokens: int = 128
@@ -242,6 +244,10 @@ class GatewayOptions:
         return self.engine == 'lean'
 
     @property
+    def model_names(self):
+        return (self.model, *self.model_aliases)
+
+    @property
     def serves_clients(self):
         """OpenAI-style serving (no thread headers needed, the Responses API): lean and native."""
         return self.engine in ('lean', 'native')
@@ -286,6 +292,8 @@ class GatewayOptions:
         options = cls(state_dir=values['STATE_DIR'], config_path=values['CONFIG'], student_path=values['STUDENT'] or '',
             native_reason=reason,
             model=os.environ.get('ORCHID_SPECPREFILL_MODEL', cls.model),
+            model_aliases=tuple(name.strip() for name in os.environ.get('ORCHID_SPECPREFILL_MODEL_ALIASES', '').split(',')
+                                if name.strip()),
             context_tokens=int(os.environ.get('ORCHID_SPECPREFILL_CONTEXT_TOKENS', '8192')),
             compact_tokens=int(os.environ.get('ORCHID_SPECPREFILL_COMPACT_TOKENS', '3072')),
             answer_tokens=int(os.environ.get('ORCHID_SPECPREFILL_ANSWER_TOKENS', '128')),
@@ -518,7 +526,7 @@ class SpecPrefillService:
     def validate(self, payload):
         if self.options.serves_clients:
             from .requests import parse
-            return parse(payload, self.options.model)
+            return parse(payload, self.options.model_names)
         return self._validate_compacting(payload)
 
     def _validate_compacting(self, payload):
@@ -861,7 +869,7 @@ class SpecPrefillService:
     def _complete_native(self, payload, on_text=None, on_commit=None, cancel=None):
         """SpecPrefill off: plain Flash-Next through Strata's own OpenAI path (full window, its prompt cache)."""
         from .requests import parse
-        parse(payload, self.options.model)  # The same request checks as the lean engine.
+        parse(payload, self.options.model_names)  # The same request checks as the lean engine.
         with self.lock:
             if self.closed:
                 raise RuntimeError('SpecPrefill service is closed')
@@ -1132,7 +1140,7 @@ class SpecPrefillService:
 
     def _complete_lean(self, project, thread, rid, payload, on_text=None, on_commit=None, cancel=None):
         from .requests import identity, parse
-        request = parse(payload, self.options.model)
+        request = parse(payload, self.options.model_names)
         if bool(project) != bool(thread):
             raise ValueError('Send both x-memory-project and x-memory-thread, or neither')
         if max(len(project or ''), len(thread or ''), len(rid or '')) > 512:

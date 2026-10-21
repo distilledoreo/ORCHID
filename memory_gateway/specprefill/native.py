@@ -1,5 +1,6 @@
 """Lazy local-model resources for the gateway. Never touches a running service."""
 import json
+import os
 import sys
 import threading
 from pathlib import Path
@@ -68,6 +69,15 @@ class NativeResources:
             args.append('--kv-grow')
         env = child_env(cfg)
         env.update(STRATA_ROUTE_TAIL_SKIP='0', STRATA_PREFILL_CPU_SHARE='0')
+        # Images (native turns): Strata's image encoder, started before the engine as Strata's own
+        # server does, so the engine's automatic expert cache sizes itself around the encoder's VRAM.
+        self.vision = None
+        if cfg.get('vision'):
+            from serve.server import Vision, vision_env
+            vcfg = {k: (os.path.abspath(os.path.join(cfg['cwd'], v))
+                        if k in ('exe', 'mmproj', 'model') and isinstance(v, str) and not os.path.isabs(v) else v)
+                    for k, v in cfg['vision'].items()}
+            self.vision = Vision(vcfg, log=open(log_path, 'a', encoding='utf-8'), env=vision_env(cfg, env))
         self.engine = StrataEngine(elastic['exe'] if elastic else cfg['exe'], args, cwd=cfg['cwd'],
                                    log=str(log_path), env=env)
         if native_only:
@@ -176,7 +186,7 @@ class NativeResources:
         if self._native is None:
             from serve.frontend import ChatTemplate
             self._native = strata.Service(self.engine, self.tok, ChatTemplate(self.template_path),
-                                          model_name=self.model_name)
+                                          model_name=self.model_name, vision=self.vision)
         svc = self._native
         req = {**payload, 'model': svc.model}
         messages, tools, kwargs = strata.openai_to_messages(req)
@@ -205,6 +215,9 @@ class NativeResources:
         return strata.openai_collect(relay())
 
     def close(self):
+        if getattr(self, 'vision', None) is not None:
+            self.vision.close()
+            self.vision = None
         if self.selector is None:  # Native only: no student was loaded.
             self.engine.close()
             return

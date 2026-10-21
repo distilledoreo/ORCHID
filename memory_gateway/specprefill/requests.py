@@ -211,10 +211,12 @@ def _template(payload):
 
 
 def parse(payload, model):
-    """Normalized request; ValueError for a malformed one."""
+    """Normalized request; ValueError for a malformed one. `model`: the served name, or a
+    collection of accepted names, where '*' accepts any (as Strata's own server does)."""
     if not isinstance(payload, dict):
         raise ValueError('The request body must be an object')
-    if payload.get('model', model) != model:
+    names = {model} if isinstance(model, str) else set(model)
+    if '*' not in names and payload.get('model', next(iter(names))) not in names:
         raise ValueError('Unknown model for the configured SpecPrefill gateway')
     if payload.get('n', 1) != 1:
         raise ValueError('Only n=1 is supported')
