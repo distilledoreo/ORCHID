@@ -135,7 +135,7 @@ pass offline tests.
     `<tool_call>`, and the calls are parsed at the end.
   - systemd-oomd kills the engine while it pins its 47 GB of experts (user
     slice pressure over 50% for 20 s). It also killed the Claude app twice,
-    and FRIDAY's Strata service three times this week.
+    and another Strata service on the machine three times this week.
   - Fix for testing: run the gateway as its own user service. On this
     machine it also needs the user slice's oomd limit raised, a root change
     for the user to make (Phase 5 install docs).

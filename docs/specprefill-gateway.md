@@ -310,16 +310,18 @@ A client written for Strata's server can use the gateway on Strata's port:
 - A Strata config with a `vision` block starts Strata's image encoder before
   the engine, so image requests (served natively) work.
 
-FRIDAY runs this way. The settings are in `~/.config/friday/specprefill.env`,
-and the systemd drop-in is `assistant-strata.service.d/50-specprefill.conf`.
-It uses:
-- the combined engine: the elastic VRAM patch plus Strata's research top-k
-  MoE prefill (`STRATA_RESEARCH_ADAPTIVE_PREFILL=ON`), 15–29% faster prefill
-  than the elastic engine alone;
+A deployment that runs this way replaces Strata's server unit with
+`orchid-specprefill serve --port <Strata's port>` and points the gateway at a
+copy of its Strata config. A measured setup for a client that also sends short
+chats and pasted documents uses:
+- a combined engine: the elastic VRAM patch plus Strata's research top-k MoE
+  prefill (`STRATA_RESEARCH_ADAPTIVE_PREFILL=ON`), 15–29% faster prefill than
+  the elastic engine alone;
 - FP16 K/V and a 262,144-token context;
-- native below 32,768 tokens.
+- `NATIVE_BELOW_TOKENS=32768`, so short and medium conversations, including
+  a freshly pasted document, are read whole by native.
 
-Deleting the drop-in and restarting the unit goes back to Strata's server.
+Restoring the original unit goes back to Strata's server.
 
 ## Streaming, ownership, and persistence
 
