@@ -20,6 +20,29 @@ from .scheduling import CompactionPolicy
 from .spec_session import SpecLimits
 
 
+def native_file_key(anchor):
+    """The session-file name of a native conversation. Native turns are not stored as threads
+    (their key changes per request), so the file is named by the conversation's anchor (its
+    system text and first message). Two conversations with the same anchor share a file
+    safely: the engine reuses a restored session only when it is a prefix of the prompt."""
+    return f'{anchor}-native'
+
+
+def _meminfo():
+    """{field: bytes} from /proc/meminfo ({} where there is none)."""
+    try:
+        lines = Path('/proc/meminfo').read_text().splitlines()
+    except OSError:
+        return {}
+    out = {}
+    for line in lines:
+        name, _, rest = line.partition(':')
+        parts = rest.split()
+        if parts and parts[0].isdigit():
+            out[name] = int(parts[0]) * 1024
+    return out
+
+
 def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
@@ -168,6 +191,11 @@ class GatewayOptions:
     # are memory copies, ~1 s each); a background copy keeps them on disk too.
     target_hot_mib: int = 4096  # Two ~250K-token threads.
     target_hot_dir: str = '/dev/shm'
+    # /dev/shm is RAM: a hot file is written only while RAM can hold it, i.e. MemAvailable
+    # stays above this floor after it and swap is not nearly full (below the swap floor,
+    # which also evicts older hot files already on disk). Otherwise it goes to disk.
+    hot_ram_floor_mib: int = 4096
+    hot_swap_floor_mib: int = 2048
     target_restore_floor_mib: int = 1024
     # Another state directory's hot files (RAM) that nothing wrote for this long go at
     # maintenance: their gateway is gone, and the copier kept them on disk (0 = keep).
@@ -292,6 +320,9 @@ class GatewayOptions:
             target_disk_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_DISK_MIB', str(cls.target_disk_mib))),
             target_hot_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_HOT_MIB', str(cls.target_hot_mib))),
             stale_hot_hours=float(os.environ.get('ORCHID_SPECPREFILL_STALE_HOT_HOURS', str(cls.stale_hot_hours))),
+            hot_ram_floor_mib=int(os.environ.get('ORCHID_SPECPREFILL_HOT_RAM_FLOOR_MIB', str(cls.hot_ram_floor_mib))),
+            hot_swap_floor_mib=int(os.environ.get('ORCHID_SPECPREFILL_HOT_SWAP_FLOOR_MIB',
+                                                  str(cls.hot_swap_floor_mib))),
             target_restore_floor_mib=int(os.environ.get('ORCHID_SPECPREFILL_TARGET_RESTORE_FLOOR_MIB',
                                                         str(cls.target_restore_floor_mib))),
             state_quota_mib=int(os.environ.get('ORCHID_SPECPREFILL_STATE_QUOTA_MIB', str(cls.state_quota_mib))),
@@ -410,6 +441,8 @@ class SpecPrefillService:
         self.active_key = None
         self.parking = None
         self.target_owner = None  # The thread whose lean turn the engine last ran.
+        self.native_owner = None  # The thread whose native conversation the engine holds.
+        self.meminfo = _meminfo  # /proc/meminfo in bytes (tests replace it).
         self.seen = set()  # Threads served since this process started.
         self.warming = False
         self.closed = False
@@ -750,7 +783,7 @@ class SpecPrefillService:
         with self.lock:
             now, day = self.clock(), 86400
             self._maintained_at = now
-            busy = {self.active_key, self.target_owner, *self.sessions}
+            busy = {self.active_key, self.target_owner, self.native_owner, *self.sessions}
             rows = self.db.execute('SELECT key, used_at FROM sessions WHERE used_at IS NOT NULL').fetchall()
             for key, used in rows:
                 idle = now - used
@@ -778,6 +811,14 @@ class SpecPrefillService:
                         self.db.execute('INSERT OR REPLACE INTO metadata VALUES (?,?)', (mark, str(used)))
                     done['archives_compacted'] += 1
             done.update(self._sweep_stale_hot(now))
+            if self.options.cache_ttl_days:  # Native conversations' session files, by age.
+                mine = native_file_key(self.native_owner) if self.native_owner else None
+                for directory in (self.directory / 'target-cache', self._target_hot('x').parent):
+                    for path in directory.glob('*-native.bin') if directory.is_dir() else ():
+                        if path.stem != mine and now - path.stat().st_mtime > self.options.cache_ttl_days * day:
+                            done['cache_bytes'] += path.stat().st_size
+                            path.unlink(missing_ok=True)
+                            done['caches_removed'] += 1
         return done
 
     def _sweep_stale_hot(self, now):
@@ -1070,16 +1111,18 @@ class SpecPrefillService:
     def _conversation_tokens(self, tok, request):
         return sum(len(tok.encode(m['content'])) for m in request.messages)
 
-    def _native_turn(self, key, rid, fingerprint, payload, request, reason, on_text, on_commit, cancel=None):
+    def _native_turn(self, key, rid, fingerprint, payload, request, reason, on_text, on_commit, cancel=None,
+                     anchor=None):
         """Answer with plain Flash-Next. The lean session and ledger are untouched:
         the next lean turn on this thread ingests whatever it hasn't seen."""
         resource = self._resources()
         self._student_off(resource)
-        self.target_owner = None  # The engine now holds this native conversation.
         if cancel is not None and cancel.is_set():
             raise Cancelled('The request was cancelled before it started')
+        resume = self._hold_native(resource, anchor or key)
         result = resource.native(payload, on_text, cancel=cancel) if cancel is not None else resource.native(payload, on_text)
-        result = {**result, 'orchid': {'engine': 'native', 'reason': reason, 'thread': key}}
+        result = {**result, 'orchid': {'engine': 'native', 'reason': reason, 'thread': key,
+                                       **({'resume': resume} if resume else {})}}
         with self.db:
             self.db.execute('INSERT OR REPLACE INTO completions VALUES (?,?,?,?)',
                             (key, rid, fingerprint, json.dumps(result)))
@@ -1144,7 +1187,7 @@ class SpecPrefillService:
             reason = reason or storage.get('reason')
             if reason:
                 return self._native_turn(key, rid, fingerprint, payload, request, reason, on_text, on_commit,
-                                         cancel)
+                                         cancel, anchor)
             streamed = []
             relay = (lambda *text: (streamed.append(True), on_text(*text))) if on_text else None
             try:
@@ -1173,7 +1216,7 @@ class SpecPrefillService:
                 if cancel is not None and cancel.is_set():
                     raise Cancelled('The request was cancelled') from error
                 return self._native_turn(key, rid, fingerprint, payload, request, 'lean failure',
-                                         on_text, on_commit, cancel)
+                                         on_text, on_commit, cancel, anchor)
 
     def _lean_turn(self, key, explicit, rid, fingerprint, request, system, anchor, hashes, on_text, on_commit,
                    cancel=None):
@@ -1219,6 +1262,7 @@ class SpecPrefillService:
             self._switch_student(resource, key)
             resume['student_s'] = round(time.perf_counter() - started, 3)
         self.seen.add(key)
+        self._park_native(resource, protect=(key,))
         if self.target_owner != key and hasattr(resource, 'restore_target'):
             # Flash-Next holds another thread (or none): save that one's K/V to its
             # session file, then load this thread's, so neither prompt is read again.
@@ -1462,11 +1506,16 @@ class SpecPrefillService:
         puts it on disk too), straight to disk at shutdown. Hot files are evicted only
         here, only once copied to disk, and never the ones in use (`protect`)."""
         disk = self._target_file(key)
-        if not hot or self.options.target_hot_mib <= 0:
+        path = self._target_hot(key)
+        expected = max((f.stat().st_size for f in (path, disk) if f.exists()), default=0)
+        if not hot or self.options.target_hot_mib <= 0 or not self._hot_room(expected):
+            if path.exists() and getattr(self, '_copies', None) is not None:
+                self._copies.join()  # A copy of the older hot file must not land over this one.
             saved = resource.save_target(disk)
+            if saved and path.exists():
+                path.unlink(missing_ok=True)  # Older than the disk file now.
             self._trim(disk.parent, self.options.target_disk_mib * 2**20)
             return saved
-        path = self._target_hot(key)
         path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
         saved = resource.save_target(path)
         if saved and path.exists():
@@ -1474,13 +1523,23 @@ class SpecPrefillService:
         files = sorted(path.parent.glob('*.bin'), key=lambda f: f.stat().st_mtime)
         total = sum(f.stat().st_size for f in files)
         for f in files:
-            if total <= self.options.target_hot_mib * 2**20:
+            if total <= self.options.target_hot_mib * 2**20 and self._hot_room(0):
                 break
             if f.stem in (key, *protect) or getattr(self, '_copied', {}).get(f.stem) != f.stat().st_mtime:
                 continue  # In use, or not on disk yet.
             total -= f.stat().st_size
             f.unlink(missing_ok=True)
         return saved
+
+    def _hot_room(self, expected):
+        """Whether RAM holds another `expected` bytes in /dev/shm without pushing the machine
+        into swap: MemAvailable stays above the floor and swap is not nearly full."""
+        info = self.meminfo()
+        if not info:
+            return True
+        if info.get('MemAvailable', 0) - expected < self.options.hot_ram_floor_mib * 2**20:
+            return False
+        return not info.get('SwapTotal') or info.get('SwapFree', 0) >= self.options.hot_swap_floor_mib * 2**20
 
     def _copy_queue(self):
         if getattr(self, '_copies', None) is None:
@@ -1531,9 +1590,42 @@ class SpecPrefillService:
         resource.student_device('cpu')
         resource.vram(self.options.engine_vram_mib)
 
+    def _hold_native(self, resource, key):
+        """Before a native turn on conversation `key` (its anchor): save the conversation the engine holds (a lean
+        thread's prompt, or another native thread) and restore this thread's own, so Strata's
+        prompt cache continues it instead of reading its whole history again."""
+        resume = {}
+        if not hasattr(resource, 'restore_target'):
+            self.target_owner, self.native_owner = None, key
+            return resume
+        mine = native_file_key(key)
+        if self.target_owner:
+            started = time.perf_counter()
+            self._save_target(resource, self.target_owner, hot=True, protect=(mine,))
+            resume['target_save_s'] = round(time.perf_counter() - started, 3)
+            self.target_owner = None
+        if self.native_owner != key:
+            if self.native_owner:
+                started = time.perf_counter()
+                self._save_target(resource, native_file_key(self.native_owner), hot=True, protect=(mine,))
+                resume['target_save_s'] = round(resume.get('target_save_s', 0) + time.perf_counter() - started, 3)
+            started = time.perf_counter()
+            hot = self._target_hot(mine)
+            if (hot.exists() and resource.restore_target(hot)) or resource.restore_target(self._target_file(mine)):
+                resume['target_restore_s'] = round(time.perf_counter() - started, 3)
+        self.native_owner = key
+        return resume
+
+    def _park_native(self, resource, protect=()):
+        """Before the engine serves anything else: save the native conversation it holds."""
+        if self.native_owner and hasattr(resource, 'save_target'):
+            self._save_target(resource, native_file_key(self.native_owner), hot=True, protect=protect)
+        self.native_owner = None
+
     def _student_on(self, resource, key):
         """Elastic engine: save the conversation Flash-Next holds, free the student's VRAM and
         load it; the thread's own Flash-Next session is restored (or read) afterwards."""
+        self._park_native(resource, protect=(key,))
         if self.target_owner and self.target_owner != key:
             self._save_target(resource, self.target_owner, hot=True, protect=(key,))
         self.target_owner = None
@@ -1578,6 +1670,8 @@ class SpecPrefillService:
                 self.parking.flush()
             if self.target_owner and self.resources and hasattr(self.resources, 'save_target'):
                 self._save_target(self.resources, self.target_owner)
+            if self.native_owner and self.resources and hasattr(self.resources, 'save_target'):
+                self._save_target(self.resources, native_file_key(self.native_owner))
             if getattr(self, '_copies', None) is not None:
                 self._copies.join()  # Hot session files reach disk before a reboot can clear them.
             for session in self.sessions.values():

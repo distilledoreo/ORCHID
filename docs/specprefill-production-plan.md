@@ -622,9 +622,14 @@ fixed calibration):
   a turn was generating. Each killed turn was retried after the restart and
   answered.
 - **0 errors.**
-- Zero data loss: after the run every one of the 12 threads took one more
-  turn on its whole history and continued its own stored thread (12 distinct
-  threads, no conflict).
+- Zero data loss: after the run, each of the 12 threads took one more turn
+  on its whole history.
+  - The 6 lean threads each continued their own stored thread (6 stored, no
+    conflict).
+  - The 6 agent threads are served natively from the client's history, which
+    the gateway does not store as a thread, so a restart cannot lose them.
+    They were answered.
+  - (Corrected 2026-10-21: this first read "12 distinct stored threads".)
 - The rollouts hold 1,077 answer points at this setting, short of the planned
   1,500 turns, and the switch count (81 of a planned 100) is short for the
   same reason. The user accepted the run as it
@@ -672,11 +677,33 @@ Phase 4 (`artifacts/strata-specprefill/log256k-phase6.json`).
 **Phase 6 gate passed.** Offline suite: 678 passed, 5 skipped (optional
 dependencies and opt-in live tests).
 
-Left for later, not part of the gate:
-- The `/dev/shm` hot-file cap (4 GB) plus Flash-Next (53 GB) on a 64 GB
-  machine pushes the hot files into swap. The cap should follow free RAM.
-- Native agent threads are not saved at a switch, so a return to one re-reads
-  it.
+Follow-ups after the gate (2026-10-21):
+- **Native conversations are saved at a switch.** Before a native turn, the
+  engine's held conversation is saved, whether a lean thread or another
+  native one, and this conversation's own session file is restored.
+  - The file is named by the conversation's anchor (system text and first
+    message), because native turns are not stored as threads and their key
+    changes per request.
+  - A native turn used to overwrite the lean thread's session without saving
+    it. That is fixed too.
+  - Delete removes a thread's native file; native files expire with the
+    cache TTL.
+- **Hot files follow free RAM.** A switch file goes to `/dev/shm` only while
+  MemAvailable stays above `HOT_RAM_FLOOR_MIB` (4096) and free swap above
+  `HOT_SWAP_FLOOR_MIB` (2048). Otherwise it goes to disk, and under swap
+  pressure older hot files already on disk are evicted.
+- **Measured:** one agent conversation and one chat thread alternating every
+  6 turns, 44 turns, the same schedule before and after.
+
+  | | before | after |
+  |---|---:|---:|
+  | First turn after a switch, agent (native), mean | 86.1 s | 21.8 s |
+  | First turn after a switch, chat (lean), mean | 56.1 s | 26.7 s |
+  | Whole run | 1,038 s | 718 s |
+
+  An ordinary agent turn's median is 21 s, so a return to an agent
+  conversation now costs about the same. 0 errors in both runs.
+- Offline suite: 682 passed, 5 skipped.
 
 ## Out of scope
 

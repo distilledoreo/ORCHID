@@ -28,7 +28,13 @@ def archive_paths(service, key):
 
 
 def cache_paths(service, key):
-    return [service.directory / 'student-cache' / f'{key}.pt', service._target_file(key), service._target_hot(key)]
+    from .service import native_file_key
+    paths = [service.directory / 'student-cache' / f'{key}.pt', service._target_file(key), service._target_hot(key)]
+    row = service.db.execute('SELECT anchor FROM sessions WHERE key=?', (key,)).fetchone()
+    if row and row[0]:  # The thread's native turns (a native session file, by its anchor).
+        native = native_file_key(row[0])
+        paths += [service._target_file(native), service._target_hot(native)]
+    return paths
 
 
 def _turns(service, key):
@@ -99,6 +105,9 @@ def delete_thread(service, store, key):
             service.active_key = None
         if service.target_owner == key:
             service.target_owner = None
+        row = service.db.execute('SELECT anchor FROM sessions WHERE key=?', (key,)).fetchone()
+        if row and service.native_owner == row[0]:  # Its conversation in the engine is not saved again.
+            service.native_owner = None
         service.seen.discard(key)
         if service.parking is not None:
             service.parking.discard(key)

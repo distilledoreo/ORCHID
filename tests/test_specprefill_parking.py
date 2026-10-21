@@ -152,3 +152,110 @@ def test_alternating_threads_always_find_their_session_file_under_a_tight_hot_bu
     assert r.restores[2:] == [True] * 4  # After the first visit of each, every switch found its file.
     assert len(list((tmp_path / 'native' / 'target-cache').glob('*.bin'))) == 2  # Both reached disk.
     s.close()
+
+
+class _SessionFiles:
+    """Resources whose engine writes and reads session files, logging which (by name)."""
+
+    @staticmethod
+    def make():
+        from test_specprefill_gateway_auto import Resources
+
+        class SessionFiles(Resources):
+            def __init__(self):
+                super().__init__()
+                self.log = []
+
+            def save_target(self, path):
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b'x' * 1000)
+                self.log.append(('save', path.stem))
+                return {'tokens': 1}
+
+            def restore_target(self, path):
+                found = path.exists()
+                self.log.append(('restore', path.stem, found))
+                return {'tokens': 1} if found else None
+        return SessionFiles()
+
+
+def test_native_conversations_are_saved_at_a_switch_and_resumed_on_return(tmp_path):
+    from test_specprefill_gateway_auto import chat, service
+    r = _SessionFiles.make()
+    s, _ = service(tmp_path)
+    s.resources_factory = lambda: r
+    a = [('user', 'Agent A: fix the parser.')]
+    b = [('user', 'Agent B: fix the scheduler.')]
+    for history, step in ((a, 1), (b, 1), (a, 2), (b, 2)):
+        result = s.complete(None, None, None, chat(*history, logprobs=True))
+        assert result['orchid']['engine'] == 'native'
+        history += [('assistant', 'native answer'), ('user', f'Step {step + 1}.')]
+    native = [entry for entry in r.log if entry[1].endswith('-native')]
+    restores = [entry[2] for entry in native if entry[0] == 'restore']
+    assert restores == [False, False, True, True]  # Each return found its own conversation saved.
+    assert [entry[0] for entry in native] == ['restore', 'save', 'restore', 'save', 'restore', 'save', 'restore']
+    assert len({entry[1] for entry in native}) == 2  # One file per conversation, not per request.
+    s.close()
+    assert r.log[-1][0] == 'save' and r.log[-1][1].endswith('-native')  # Shutdown keeps it too.
+
+
+def test_a_native_turn_saves_the_lean_thread_it_displaces(tmp_path):
+    from test_specprefill_gateway_auto import TOOL, chat, reply, service
+    r = _SessionFiles.make()
+    s, _ = service(tmp_path)
+    s.resources_factory = lambda: r
+    lean = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA')))
+    key = lean['orchid']['thread']
+    s.complete(None, None, None, chat(('user', 'Agent: run the tests.'), logprobs=True))
+    assert ('save', key) in r.log  # Before the native turn took the engine.
+    again = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA'), ('assistant', reply(lean)),
+                                              ('user', 'Return KEYB')))
+    assert again['orchid']['engine'] == 'lean' and r.log[-1] == ('restore', key, True)
+    s.close()
+
+
+def test_hot_files_go_to_disk_when_ram_is_short_and_old_ones_leave_under_swap_pressure(tmp_path):
+    from test_specprefill_gateway_auto import TOOL, chat, reply, service
+    r = _SessionFiles.make()
+    s, _ = service(tmp_path, hot_ram_floor_mib=1, hot_swap_floor_mib=1)
+    s.resources_factory = lambda: r
+    plenty = {'MemAvailable': 8 << 30, 'SwapTotal': 4 << 30, 'SwapFree': 4 << 30}
+    s.meminfo = lambda: plenty
+    a = s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA')))
+    b = s.complete(None, None, None, chat(('user', 'Other. ' + TOOL + '\n\nReturn KEYB')))
+    hot_dir = s._target_hot('x').parent
+    assert (hot_dir / f"{a['orchid']['thread']}.bin").exists()  # RAM to spare: A's switch file is hot.
+    s._copies.join()
+    s.meminfo = lambda: {**plenty, 'MemAvailable': 1 << 19}  # RAM short: under the 1 MiB floor.
+    s.complete(None, None, None, chat(('user', TOOL + '\n\nReturn KEYA'), ('assistant', reply(a)),
+                                      ('user', 'Return KEYB')))
+    kb = b['orchid']['thread']
+    assert not (hot_dir / f'{kb}.bin').exists() and (tmp_path / 'native' / 'target-cache' / f'{kb}.bin').exists()
+    s.meminfo = lambda: {**plenty, 'SwapFree': 0}  # Swap nearly full: copied hot files are evicted.
+    s.complete(None, None, None, chat(('user', 'Other. ' + TOOL + '\n\nReturn KEYB'), ('assistant', reply(b)),
+                                      ('user', 'Return KEYC')))
+    s._copies.join()
+    assert not list(hot_dir.glob('*.bin'))
+    s.close()
+
+
+def test_deleting_a_thread_removes_its_native_session_file(tmp_path):
+    from test_specprefill_gateway_auto import TOOL, chat, reply, service
+
+    from memory_gateway.specprefill import controls
+    from memory_gateway.specprefill.service import native_file_key
+    r = _SessionFiles.make()
+    s, _ = service(tmp_path)
+    s.resources_factory = lambda: r
+    first = ('user', TOOL + '\n\nReturn KEYA')
+    lean = s.complete(None, None, None, chat(first))
+    key = lean['orchid']['thread']
+    s.complete(None, None, None, chat(first, ('assistant', reply(lean)), ('user', 'Run it.'), logprobs=True))
+    s.complete(None, None, None, chat(('user', 'Other. ' + TOOL + '\n\nReturn KEYB')))  # Saves the native one.
+    s._copies.join()
+    anchor = s.db.execute('SELECT anchor FROM sessions WHERE key=?', (key,)).fetchone()[0]
+    native = native_file_key(anchor)
+    assert s._target_file(native).exists()
+    controls.delete_thread(s, None, key)
+    assert not s._target_file(native).exists() and not s._target_hot(native).exists()
+    s.close()

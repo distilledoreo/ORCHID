@@ -468,8 +468,10 @@ headers and no changes.
 plain chat, served lean (494 turns), and six as agent loops with tools, served
 natively (583 turns). The run covered 1,077 turns and 81 thread switches,
 with 10 clean restarts and 2 `kill -9`s mid-generation. It had **zero
-errors**, and after it every thread continued its own stored history, so
-there was **zero data loss**. VRAM and resident memory stayed flat, and disk
+errors**. After it, each of the six lean threads continued its own stored
+history, so there was **zero data loss**. The six agent threads are answered
+natively from the client's own history, which the gateway does not store, so
+they had nothing to lose; they were answered too. VRAM and resident memory stayed flat, and disk
 stayed within its caps (11.8 GB).
 
 The soak also exposed a startup cost that grew with the square of stored

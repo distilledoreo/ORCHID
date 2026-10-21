@@ -105,6 +105,8 @@ How a turn works:
 | `TARGET_PARK_MIB` (Flash-Next parked conversations, RAM) | 0 (session files instead) |
 | `TARGET_DISK_MIB` (Flash-Next session files) | 16384 |
 | `TARGET_HOT_MIB` (Flash-Next session files in `/dev/shm`) | 4096 |
+| `HOT_RAM_FLOOR_MIB` (a switch file goes to `/dev/shm` only if MemAvailable stays above this after it; else to disk) | 4096 |
+| `HOT_SWAP_FLOOR_MIB` (below this much free swap, switch files go to disk and older hot ones already on disk are evicted) | 2048 |
 | `STALE_HOT_HOURS` (another state directory's `/dev/shm` files nothing wrote for this long go at maintenance; 0 keeps them) | 24 |
 | `TARGET_RESTORE_FLOOR_MIB` (RAM Strata keeps free when restoring) | 1024 |
 | `STATE_QUOTA_MIB` (archive quota; 0 = none) | 0 |
